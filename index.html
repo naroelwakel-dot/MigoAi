@@ -1,0 +1,1422 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Migo AI Solution | السوشيال ميديا، البرامج، نماذج API والألعاب</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&amp;display=swap" rel="stylesheet">
+  <style>
+        :root {
+            --bg-main: #0b0811;
+            --bg-surface: #130e1d;
+            --bg-card: #1c152b;
+            --border-color: #382854;
+        }
+        * { box-sizing: border-box; }
+        html, body {
+            font-family: 'Tajawal', sans-serif;
+            scroll-behavior: smooth;
+            background-color: var(--bg-main);
+            color: #f4f4f5;
+            overflow-x: hidden;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #130e1d; border-radius: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #f43f5e; border-radius: 8px; }
+        details > summary { list-style: none; }
+        details > summary::-webkit-details-marker { display: none; }
+
+        /* Rose Neon Theme */
+        .rose-surface { background-color: #130e1d; border-color: #382854; }
+        .rose-card { background-color: #1c152b; border-color: #382854; transition: all 0.2s ease; }
+        .rose-card:hover { border-color: #f43f5e; }
+        .rose-btn {
+            background: linear-gradient(135deg, #f43f5e, #f97316);
+            color: #ffffff;
+            box-shadow: 0 4px 15px rgba(244, 63, 94, 0.25);
+        }
+        .rose-btn:hover { background: linear-gradient(135deg, #fb7185, #fb923c); }
+        .rose-active-tab {
+            border: 2px solid #f43f5e !important;
+            background: linear-gradient(135deg, rgba(244, 63, 94, 0.22), rgba(249, 115, 22, 0.12)) !important;
+            box-shadow: 0 6px 20px rgba(244, 63, 94, 0.2);
+        }
+        select, select option { background-color: #130e1d !important; color: #ffffff !important; }
+  </style>
+ </head>
+ <body class="min-h-screen selection:bg-rose-500 selection:text-white">
+  <!-- Header / Navbar -->
+  <header class="border-b rose-surface sticky top-0 z-40 backdrop-blur-md bg-[#130e1d]/95">
+   <div class="max-w-7xl mx-auto px-3 sm:px-4 py-3 flex justify-between items-center gap-2">
+    <!-- Right: Hamburger Button + Logo -->
+    <div class="flex items-center gap-2.5 min-w-0">
+     <button type="button" onclick="toggleSidebar()" aria-label="القائمة الرئيسية" class="w-10 h-10 shrink-0 rounded-xl rose-card border flex flex-col items-center justify-center gap-1.5"><span class="w-5 h-0.5 bg-zinc-200 rounded-full"></span> <span class="w-5 h-0.5 bg-rose-500 rounded-full"></span> <span class="w-5 h-0.5 bg-zinc-200 rounded-full"></span></button>
+     <a href="#" class="flex items-center gap-2 min-w-0"> 
+      <div class="w-9 h-9 shrink-0 rounded-xl rose-btn flex items-center justify-center font-black text-lg">M</div> 
+      <div class="truncate">
+       <span class="text-sm sm:text-lg font-extrabold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-white via-rose-200 to-amber-400 block truncate">Migo AI Solution</span> <small class="text-[10px] text-rose-400 font-bold block truncate">خدمات رقمية متكاملة بالجنيه</small>
+      </div> 
+     </a>
+    </div>
+    <!-- Center: Desktop Navigation -->
+    <nav class="hidden lg:flex items-center gap-1.5 rose-card border p-1 rounded-xl text-xs font-bold">
+     <a href="#sec-social" class="px-3 py-1.5 rounded-lg transition rose-btn">📱 السوشيال ميديا</a> <a href="#sec-apps" class="px-3 py-1.5 rounded-lg transition text-zinc-300 hover:text-white">🔥 البرامج والذكاء</a> <a href="#sec-games" class="px-3 py-1.5 rounded-lg transition text-zinc-300 hover:text-white">🎮 شحن الألعاب</a> <a href="#sec-api" class="px-3 py-1.5 rounded-lg transition text-zinc-300 hover:text-white">⚡ API والتوكنز</a> <a href="#reviews" class="px-3 py-1.5 rounded-lg transition text-zinc-300 hover:text-white">⭐ آراء العملاء</a>
+    </nav>
+    <!-- Left: Auth & WhatsApp -->
+    <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
+     <button type="button" id="navLoginBtn" onclick="openAuthModal('login')" class="rose-card border text-zinc-200 font-bold px-2.5 sm:px-3 py-2 rounded-xl text-xs transition flex items-center gap-1"><span>👤</span> <span class="hidden sm:inline">دخول / تسجيل</span></button>
+     <div id="navUserBadge" class="hidden items-center gap-1.5 rose-card border px-2.5 py-1 rounded-xl">
+      <div class="text-right">
+       <div class="text-[9px] text-sky-400 font-bold flex items-center gap-0.5">
+        <span>✓</span> حساب موثق
+       </div>
+       <div id="navUserName" class="text-xs font-extrabold text-white truncate max-w-[85px]"></div>
+      </div>
+      <button type="button" onclick="handleLogout()" class="bg-red-500/20 text-red-300 border border-red-500/40 text-[10px] font-bold px-2 py-1 rounded-lg">خروج</button>
+     </div>
+     <a href="https://wa.me/201060934020" target="_blank" class="rose-btn font-bold px-3 py-2 rounded-xl text-xs transition shrink-0">💬 واتساب</a>
+    </div>
+   </div>
+  </header>
+  <!-- FIXED HAMBURGER SIDEBAR MODAL -->
+  <div id="sidebarContainer" class="fixed inset-0 z-50 hidden">
+   <div onclick="toggleSidebar()" class="fixed inset-0 bg-black/80 backdrop-blur-sm"></div>
+   <aside class="fixed top-0 right-0 h-full w-72 max-w-[85vw] rose-surface border-l border-[#382854] z-10 p-5 flex flex-col justify-between overflow-y-auto shadow-2xl">
+    <div>
+     <div class="flex justify-between items-center pb-4 border-b border-[#382854]">
+      <div class="flex items-center gap-2">
+       <div class="w-8 h-8 rounded-lg rose-btn flex items-center justify-center font-black">M</div>
+       <span class="font-extrabold text-white text-sm">أقسام Migo AI</span>
+      </div>
+      <button type="button" onclick="toggleSidebar()" class="w-8 h-8 rounded-lg rose-card border text-zinc-300 hover:text-white flex items-center justify-center">✕</button>
+     </div>
+     <div class="mt-4 space-y-2">
+      <div class="text-[11px] font-bold text-rose-400 px-1 mb-2">الانتقال السريع للأقسام:</div>
+      <a href="#sec-social" onclick="toggleSidebar()" class="w-full px-3 py-2.5 rounded-xl rose-card border text-zinc-100 text-xs font-bold flex items-center justify-between"> <span>📱 خدمات السوشيال ميديا</span> <span class="text-[10px] text-amber-400 font-bold">18 منصة</span> </a> <a href="#sec-apps" onclick="toggleSidebar()" class="w-full px-3 py-2.5 rounded-xl rose-card border text-zinc-100 text-xs font-bold flex items-center justify-between"> <span>🔥 البرامج واشتراكات الذكاء</span> <span class="text-[10px] text-rose-400 font-bold">رسمي</span> </a> <a href="#sec-games" onclick="toggleSidebar()" class="w-full px-3 py-2.5 rounded-xl rose-card border text-zinc-100 text-xs font-bold flex items-center justify-between"> <span>🎮 شحن الألعاب الفوري</span> <span class="text-[10px] text-emerald-400 font-bold">6 ألعاب</span> </a> <a href="#sec-api" onclick="toggleSidebar()" class="w-full px-3 py-2.5 rounded-xl rose-card border text-zinc-100 text-xs font-bold flex items-center justify-between"> <span>⚡ نماذج API وحاسبة Tokens</span> <span class="text-[10px] text-sky-400 font-bold">35 نموذج</span> </a> <a href="#packages" onclick="toggleSidebar()" class="w-full px-3 py-2.5 rounded-xl rose-card border text-zinc-100 text-xs font-bold flex items-center justify-between"> <span>💎 باقات شحن الـ API</span> <span class="text-[10px] text-amber-400 font-bold">بونص</span> </a>
+     </div>
+     <div class="mt-5 pt-4 border-t border-[#382854] space-y-1.5">
+      <div class="text-[11px] font-bold text-zinc-400 px-1 mb-1">روابط مهمة:</div>
+      <a href="#payment" onclick="toggleSidebar()" class="block px-3 py-2 rounded-xl hover:bg-white/5 text-zinc-300 text-xs font-medium">💳 وسائل التحويل والدفع</a> <a href="#why-us" onclick="toggleSidebar()" class="block px-3 py-2 rounded-xl hover:bg-white/5 text-zinc-300 text-xs font-medium">🛡️ الضمان والأمان</a> <a href="#faq" onclick="toggleSidebar()" class="block px-3 py-2 rounded-xl hover:bg-white/5 text-zinc-300 text-xs font-medium">❓ الأسئلة الشائعة</a> <a href="#reviews" onclick="toggleSidebar()" class="block px-3 py-2 rounded-xl hover:bg-white/5 text-zinc-300 text-xs font-medium">⭐ آراء العملاء الموثقين</a>
+     </div>
+    </div>
+    <div class="pt-4 border-t border-[#382854] space-y-2 mt-4">
+     <button type="button" onclick="toggleSidebar(); openAuthModal('login');" class="w-full rose-card border text-white font-bold py-2.5 rounded-xl text-xs">👤 دخول / تسجيل حساب موثق</button>
+     <a href="https://wa.me/201060934020" target="_blank" class="block text-center rose-btn font-extrabold py-2.5 rounded-xl text-xs">💬 تواصل واتساب مباشر</a>
+    </div>
+   </aside>
+  </div>
+  <!-- AUTHENTICATION MODAL -->
+  <div id="authModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+   <div class="rose-surface border rounded-2xl max-w-md w-full p-6 sm:p-8 relative shadow-2xl">
+    <button type="button" onclick="closeAuthModal()" class="absolute top-4 left-4 text-zinc-300 hover:text-white rose-card border w-8 h-8 rounded-lg flex items-center justify-center">✕</button>
+    <div class="text-center mb-5">
+     <div class="w-12 h-12 rounded-2xl rose-btn flex items-center justify-center font-black text-2xl mx-auto mb-2">M</div>
+     <h3 class="text-xl font-extrabold text-white">بوابة عملاء Migo AI</h3>
+     <p class="text-xs text-zinc-400 mt-1">سجل حسابك الموثق أو ادخل كعميل مسجل</p>
+    </div>
+    <div class="grid grid-cols-2 gap-2 rose-card p-1 rounded-xl mb-5 border">
+     <button type="button" id="tabLoginBtn" onclick="switchAuthTab('login')" class="py-2 text-xs font-bold rounded-lg transition rose-btn">دخول العملاء</button>
+     <button type="button" id="tabRegisterBtn" onclick="switchAuthTab('register')" class="py-2 text-xs font-bold rounded-lg transition text-zinc-400">تسجيل حساب جديد</button>
+    </div>
+    <div id="authAlert" class="hidden mb-4 p-3 rounded-xl text-xs font-bold border"></div>
+    <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+     <div>
+      <label class="block text-xs font-bold text-zinc-300 mb-1">البريد الإلكتروني:</label><input type="email" id="loginEmail" required placeholder="name@gmail.com" class="w-full rose-card border rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none font-mono">
+     </div>
+     <div>
+      <label class="block text-xs font-bold text-zinc-300 mb-1">الرقم السري:</label><input type="password" id="loginPassword" required placeholder="••••••••" class="w-full rose-card border rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none font-mono">
+     </div>
+     <button type="submit" class="w-full rose-btn font-extrabold py-3 rounded-xl text-sm">دخول الآن</button>
+    </form>
+    <form id="registerForm" onsubmit="handleRegister(event)" class="space-y-3.5 hidden">
+     <div>
+      <label class="block text-xs font-bold text-zinc-300 mb-1">الاسم الكامل:</label><input type="text" id="regName" required minlength="3" placeholder="أدخل اسمك الثلاثي" class="w-full rose-card border rounded-xl px-4 py-2 text-sm text-white">
+     </div>
+     <div>
+      <label class="block text-xs font-bold text-zinc-300 mb-1">البريد الإلكتروني:</label><input type="email" id="regEmail" required placeholder="name@gmail.com" class="w-full rose-card border rounded-xl px-4 py-2 text-sm text-white font-mono">
+     </div>
+     <div>
+      <label class="block text-xs font-bold text-zinc-300 mb-1">رقم الهاتف:</label><input type="tel" id="regPhone" required placeholder="01012345678" class="w-full rose-card border rounded-xl px-4 py-2 text-sm text-white font-mono">
+     </div>
+     <div>
+      <label class="block text-xs font-bold text-zinc-300 mb-1">الرقم السري (8 أحرف وأرقام):</label><input type="password" id="regPassword" required minlength="6" placeholder="••••••••" class="w-full rose-card border rounded-xl px-4 py-2 text-sm text-white font-mono">
+     </div>
+     <button type="submit" class="w-full rose-btn font-extrabold py-3 rounded-xl text-sm">تسجيل حساب موثق</button>
+    </form>
+   </div>
+  </div>
+  <!-- HERO + 3 STEPS + QUICK JUMP CARDS -->
+  <section class="max-w-6xl mx-auto px-4 pt-7 pb-4 text-center">
+   <div class="inline-flex items-center gap-2 px-3 py-1 rose-card border rounded-full mb-4 text-[11px] sm:text-xs font-bold">
+    <span class="rose-btn px-2 py-0.5 rounded-full text-[10px] font-black">EGP</span> <span class="text-rose-300">ادفع بالجنيه المصري · من غير فيزا دولية · تفعيل رسمي وفوري</span>
+   </div>
+   <h1 class="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight mb-3 leading-tight text-white">منصة <span class="bg-clip-text text-transparent bg-gradient-to-r from-rose-500 via-orange-400 to-amber-400">Migo AI</span> لجميع الخدمات الرقمية</h1>
+   <p class="text-zinc-300 text-xs sm:text-base max-w-2xl mx-auto mb-5">منصتك المتكاملة لخدمات السوشيال ميديا، تفعيل البرامج واشتراكات الذكاء الاصطناعي، مفاتيح الـ API لـ 35 نموذجاً، وشحن الألعاب الفوري.</p>
+   <!-- 3 Simple Steps Bar -->
+   <div class="grid grid-cols-3 gap-2 sm:gap-4 max-w-3xl mx-auto mb-6 rose-surface border p-3 rounded-2xl text-right">
+    <div class="flex items-center gap-2">
+     <span class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg rose-btn font-black text-xs flex items-center justify-center shrink-0">1</span>
+     <div>
+      <b class="text-[11px] sm:text-xs text-white block">اختار الخدمة</b><span class="text-[9px] sm:text-[10px] text-zinc-400">من الأقسام بالأسفل</span>
+     </div>
+    </div>
+    <div class="flex items-center gap-2">
+     <span class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg rose-btn font-black text-xs flex items-center justify-center shrink-0">2</span>
+     <div>
+      <b class="text-[11px] sm:text-xs text-white block">ادفع بالجنيه</b><span class="text-[9px] sm:text-[10px] text-zinc-400">كاش أو إنستاباي</span>
+     </div>
+    </div>
+    <div class="flex items-center gap-2">
+     <span class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg rose-btn font-black text-xs flex items-center justify-center shrink-0">3</span>
+     <div>
+      <b class="text-[11px] sm:text-xs text-white block">استلم فوراً</b><span class="text-[9px] sm:text-[10px] text-zinc-400">بضمان كامل</span>
+     </div>
+    </div>
+   </div>
+   <!-- 4 QUICK CATEGORY JUMP CARDS -->
+   <div class="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-3 max-w-4xl mx-auto">
+    <a href="#sec-social" class="p-3.5 sm:p-4 rounded-2xl rose-active-tab text-right transition flex flex-col justify-between"> 
+     <div class="flex justify-between items-center w-full mb-2">
+      <span class="text-xl sm:text-2xl">📱</span> <span class="text-[10px] font-bold px-2 py-0.5 rounded-full rose-btn">18 منصة</span>
+     </div> 
+     <div>
+      <div class="font-extrabold text-xs sm:text-base text-white">خدمات السوشيال ميديا</div>
+      <div class="text-[10px] sm:text-[11px] text-rose-200">متابعين، لايكات، مشاهدات وبث</div>
+     </div> 
+    </a> <a href="#sec-apps" class="p-3.5 sm:p-4 rounded-2xl rose-card border text-right transition flex flex-col justify-between"> 
+     <div class="flex justify-between items-center w-full mb-2">
+      <span class="text-xl sm:text-2xl">🔥</span> <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-black/50 text-amber-400">على إيميلك</span>
+     </div> 
+     <div>
+      <div class="font-extrabold text-xs sm:text-base text-white">البرامج والذكاء الاصطناعي</div>
+      <div class="text-[10px] sm:text-[11px] text-zinc-400">Claude Max, ChatGPT, Gemini</div>
+     </div> 
+    </a> <a href="#sec-games" class="p-3.5 sm:p-4 rounded-2xl rose-card border text-right transition flex flex-col justify-between"> 
+     <div class="flex justify-between items-center w-full mb-2">
+      <span class="text-xl sm:text-2xl">🎮</span> <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-black/50 text-emerald-400">تسليم فوري</span>
+     </div> 
+     <div>
+      <div class="font-extrabold text-xs sm:text-base text-white">شحن الألعاب</div>
+      <div class="text-[10px] sm:text-[11px] text-zinc-400">فيفا FC، بابجي، فري فاير، سيلك رود</div>
+     </div> 
+    </a> <a href="#sec-api" class="p-3.5 sm:p-4 rounded-2xl rose-card border text-right transition flex flex-col justify-between"> 
+     <div class="flex justify-between items-center w-full mb-2">
+      <span class="text-xl sm:text-2xl">⚡</span> <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-black/50 text-sky-400">خصم 70%</span>
+     </div> 
+     <div>
+      <div class="font-extrabold text-xs sm:text-base text-white">نماذج API والتوكنز</div>
+      <div class="text-[10px] sm:text-[11px] text-zinc-400">35 نموذج + حاسبة + باقات شحن</div>
+     </div> 
+    </a>
+   </div>
+  </section>
+  <!-- =========================================================
+       ALL SECTIONS VISIBLE & ACCESSIBLE TO EVERYONE
+       ========================================================= -->
+  <main class="max-w-7xl mx-auto px-3 sm:px-4 py-4 space-y-10">
+   <!-- SECTION 1: SOCIAL MEDIA SERVICES (ALL 18 PLATFORMS) -->
+   <section id="sec-social" class="rose-surface border rounded-3xl p-4 sm:p-8 shadow-2xl scroll-mt-20">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+     <div>
+      <span class="px-3 py-1 rose-card border text-rose-400 text-xs font-bold rounded-full">قسم السوشيال ميديا الشامل</span>
+      <h2 class="text-xl sm:text-3xl font-black text-white mt-2">🚀 خدمات السوشيال ميديا وتعزيز الحسابات</h2>
+      <p class="text-zinc-400 text-xs sm:text-sm">اختر المنصة ثم القسم والخدمة، وسيتم حساب التكلفة بالجنيه تلقائياً</p>
+     </div>
+     <div class="w-full sm:w-64">
+      <input type="text" id="smmSearchInput" oninput="filterSMMServices()" placeholder="🔍 ابحث عن خدمة أو رقم ID..." class="w-full rose-card border rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none">
+     </div>
+    </div>
+    <!-- Platforms Grid -->
+    <div class="mb-4">
+     <div class="text-xs font-bold text-zinc-300 mb-3">⊞ اختر المنصة:</div>
+     <div id="smmPlatformsGrid" class="grid grid-cols-3 sm:grid-cols-6 gap-2"></div>
+     <div class="mt-3 text-center">
+      <button type="button" id="toggleMorePlatformsBtn" onclick="toggleMoreSMMPlatforms()" class="rose-card border text-rose-400 text-xs font-bold px-5 py-2 rounded-full">عرض المزيد من المنصات (+12) ⌄</button>
+     </div>
+    </div>
+    <!-- Order Box -->
+    <div class="mt-5 rose-card border rounded-2xl p-4 sm:p-6">
+     <div class="flex items-center justify-between border-b border-[#382854] pb-4 mb-4">
+      <div class="flex items-center gap-3">
+       <div id="selectedPlatformIcon" class="w-11 h-11 rounded-xl bg-[#0b0811] border border-[#382854] flex items-center justify-center text-2xl">🎵</div>
+       <div>
+        <h3 id="selectedPlatformTitle" class="font-extrabold text-base sm:text-lg text-white">تيك توك (TikTok)</h3>
+        <span id="selectedPlatformCount" class="text-xs text-amber-400 font-bold">75 خدمة متاحة</span>
+       </div>
+      </div>
+      <span id="selectedServiceBadgeId" class="bg-[#0b0811] border border-rose-500/40 text-rose-400 font-mono text-xs font-bold px-3 py-1 rounded-lg">ID: #2218</span>
+     </div>
+     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      <div>
+       <label class="block text-xs font-bold text-zinc-200 mb-1.5">اختر القسم:</label> <select id="smmCategorySelect" onchange="onSMMCategoryChange()" class="w-full bg-[#0b0811] border border-[#382854] rounded-xl px-3 py-3 text-xs sm:text-sm text-white font-bold"></select>
+      </div>
+      <div>
+       <label class="block text-xs font-bold text-zinc-200 mb-1.5">اختر الخدمة:</label> <select id="smmServiceSelect" onchange="onSMMServiceChange()" class="w-full bg-[#0b0811] border border-[#382854] rounded-xl px-3 py-3 text-xs sm:text-sm text-white font-bold"></select>
+      </div>
+     </div>
+     <div id="smmServiceMeta" class="flex flex-wrap items-center gap-2 mb-4 bg-[#0b0811] border border-[#382854] p-3 rounded-xl text-xs"></div>
+     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      <div>
+       <div class="flex justify-between text-xs mb-1.5">
+        <label class="font-bold text-zinc-200">الرابط (Link):</label> <span class="text-zinc-400 text-[10px]">يجب أن يكون الحساب أو المنشور عام</span>
+       </div>
+       <input type="url" id="smmLinkInput" placeholder="🔗 أدخل رابط الحساب أو المنشور هنا..." class="w-full bg-[#0b0811] border border-[#382854] rounded-xl px-4 py-2.5 text-xs sm:text-sm text-white">
+      </div>
+      <div>
+       <div class="flex justify-between text-xs mb-1.5">
+        <label class="font-bold text-zinc-200">الكمية المطلوبة:</label> <span id="smmLimitsNote" class="text-zinc-400 text-[10px]">أقل طلب: 10 · أكبر طلب: 1,000,000</span>
+       </div>
+       <input type="number" id="smmQtyInput" value="1000" min="10" oninput="calculateSMMCost()" class="w-full bg-[#0b0811] border border-[#382854] rounded-xl px-4 py-2 text-sm text-white font-mono">
+       <div class="flex flex-wrap gap-1.5 mt-2">
+        <button type="button" onclick="setSMMQty(100)" class="px-2.5 py-1 text-[11px] font-mono bg-[#0b0811] border border-[#382854] rounded-lg">100</button>
+        <button type="button" onclick="setSMMQty(500)" class="px-2.5 py-1 text-[11px] font-mono bg-[#0b0811] border border-[#382854] rounded-lg">500</button>
+        <button type="button" onclick="setSMMQty(1000)" class="px-2.5 py-1 text-[11px] font-mono bg-[#0b0811] border border-[#382854] rounded-lg">1.0k</button>
+        <button type="button" onclick="setSMMQty(5000)" class="px-2.5 py-1 text-[11px] font-mono bg-[#0b0811] border border-[#382854] rounded-lg">5.0k</button>
+        <button type="button" onclick="setSMMQty(10000)" class="px-2.5 py-1 text-[11px] font-mono bg-[#0b0811] border border-[#382854] rounded-lg">10k</button>
+       </div>
+      </div>
+     </div>
+     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+      <div class="bg-[#0b0811] border border-[#382854] rounded-xl p-3 flex items-center justify-between">
+       <div>
+        <div class="text-[11px] text-zinc-400">⚡ متوسط السرعة والضمان</div>
+        <div id="smmSpeedDisplay" class="text-sm font-extrabold text-rose-400 mt-0.5">⚡ فوري</div>
+       </div>
+       <span class="text-xl">⚡</span>
+      </div>
+      <div class="bg-[#0b0811] border border-amber-500/40 rounded-xl p-3 flex items-center justify-between">
+       <div>
+        <div class="text-[11px] text-zinc-400">💰 التكلفة الإجمالية</div>
+        <div class="flex items-baseline gap-2 mt-0.5">
+         <span id="smmPriceEGP" class="text-xl font-black text-amber-400 font-mono">69.50 ج.م</span> <span id="smmOldPriceEGP" class="text-xs text-zinc-500 line-through font-mono hidden"></span> <span id="smmPriceUSD" class="text-xs text-zinc-400 font-mono">($1.39)</span>
+        </div>
+       </div>
+       <span class="text-xl">💵</span>
+      </div>
+     </div>
+     <button type="button" onclick="submitSMMOrder()" class="w-full rose-btn font-black py-3.5 rounded-xl text-sm transition">✓ إرسال الطلب وتأكيد الدفع عبر واتساب</button>
+     <!-- Discount Code Button & Box under SMM Purchase -->
+     <div class="mt-3 pt-3 border-t border-[#382854]/80">
+      <button type="button" onclick="toggleCouponBox('smmCouponBox')" class="w-full bg-[#0b0811] hover:border-rose-500 border border-[#382854] text-amber-400 font-bold py-2.5 px-4 rounded-xl text-xs transition flex items-center justify-center gap-2"><span>🎟️</span> <span>استخدام كود خصم على المشتريات</span></button>
+      <div id="smmCouponBox" class="hidden mt-2.5 bg-[#0b0811] border border-[#382854] p-3 rounded-xl">
+       <div class="flex flex-col sm:flex-row gap-2">
+        <input type="text" id="smmCouponInput" placeholder="أدخل كود الخصم هنا..." class="flex-1 rose-card border rounded-xl px-3 py-2 text-xs text-white font-mono uppercase focus:outline-none">
+        <button type="button" onclick="applyCouponCode('smm')" class="rose-btn font-extrabold px-5 py-2 rounded-xl text-xs shrink-0">تطبيق الكود</button>
+       </div>
+       <div id="smmCouponStatus" class="text-[11px] font-bold mt-2 hidden"></div>
+      </div>
+     </div>
+    </div>
+   </section>
+   <!-- SECTION 2: DIRECT ACTIVATION APPS & AI SUBSCRIPTIONS -->
+   <section id="sec-apps" class="rose-surface border rounded-3xl p-4 sm:p-8 shadow-2xl scroll-mt-20">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+     <div>
+      <span class="px-3 py-1 rose-card border text-rose-400 text-xs font-bold rounded-full">قسم البرامج واشتراكات الذكاء الاصطناعي</span>
+      <h2 class="text-xl sm:text-3xl font-extrabold text-white mt-2">🔥 تفعيل مباشر واشتراكات التطبيقات والبرامج</h2>
+      <p class="text-zinc-400 text-xs sm:text-sm">تفعيل رسمي ومباشر على حسابك وإيميلك الشخصي بالجنيه المصري (بدون باسورد)</p>
+     </div>
+     <input type="text" id="appSearchInput" onkeyup="handleAppSearch()" placeholder="🔍 ابحث عن برنامج أو اشتراك..." class="rose-card border text-sm rounded-xl px-4 py-2.5 text-zinc-200 focus:outline-none w-full md:w-64">
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" id="appCardsContainer"></div>
+    <!-- Discount Code Button under Apps Purchases -->
+    <div class="mt-6 rose-card border rounded-2xl p-4 max-w-xl mx-auto">
+     <button type="button" onclick="toggleCouponBox('appsCouponBox')" class="w-full bg-[#0b0811] hover:border-rose-500 border border-[#382854] text-amber-400 font-bold py-2.5 px-4 rounded-xl text-xs transition flex items-center justify-center gap-2"><span>🎟️</span> <span>استخدام كود خصم على مشتريات البرامج والاشتراكات</span></button>
+     <div id="appsCouponBox" class="hidden mt-3 bg-[#0b0811] border border-[#382854] p-3 rounded-xl">
+      <div class="flex flex-col sm:flex-row gap-2">
+       <input type="text" id="appsCouponInput" placeholder="أدخل كود الخصم هنا..." class="flex-1 rose-card border rounded-xl px-3 py-2 text-xs text-white font-mono uppercase focus:outline-none">
+       <button type="button" onclick="applyCouponCode('apps')" class="rose-btn font-extrabold px-5 py-2 rounded-xl text-xs shrink-0">تطبيق الكود</button>
+      </div>
+      <div id="appsCouponStatus" class="text-[11px] font-bold mt-2 hidden"></div>
+     </div>
+    </div>
+   </section>
+   <!-- SECTION 3: GAMES SECTION (WITH FC MOBILE + ALL GAMES) -->
+   <section id="sec-games" class="rose-surface border rounded-3xl p-4 sm:p-8 shadow-2xl scroll-mt-20">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+     <div>
+      <span class="px-3 py-1 rose-card border text-rose-400 text-xs font-bold rounded-full">قسم الألعاب</span>
+      <h2 class="text-xl sm:text-3xl font-extrabold text-white mt-2">🎮 قسم شحن الألعاب وبطاقات الهدايا</h2>
+      <p class="text-zinc-400 text-xs sm:text-sm">كل لعبة موضحة بجميع فئاتها وأسعارها المنفصلة بالجنيه المصري (تسليم فوري)</p>
+     </div>
+     <input type="text" id="gameSearchInput" onkeyup="handleGameSearch()" placeholder="🔍 ابحث عن لعبة أو فئة شحن..." class="rose-card border text-sm rounded-xl px-4 py-2.5 text-zinc-200 focus:outline-none w-full md:w-64">
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6" id="gamesCardsContainer"></div>
+    <!-- Discount Code Button under Games Purchases -->
+    <div class="mt-6 rose-card border rounded-2xl p-4 max-w-xl mx-auto">
+     <button type="button" onclick="toggleCouponBox('gamesCouponBox')" class="w-full bg-[#0b0811] hover:border-rose-500 border border-[#382854] text-amber-400 font-bold py-3 px-4 rounded-xl text-xs sm:text-sm transition flex items-center justify-center gap-2"><span>🎟️</span> <span>استخدام كود خصم على مشتريات الألعاب</span></button>
+     <div id="gamesCouponBox" class="hidden mt-3 bg-[#0b0811] border border-[#382854] p-3.5 rounded-xl">
+      <div class="flex flex-col sm:flex-row gap-2">
+       <input type="text" id="gamesCouponInput" placeholder="أدخل كود الخصم هنا..." class="flex-1 rose-card border rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white font-mono uppercase focus:outline-none">
+       <button type="button" onclick="applyCouponCode('games')" class="rose-btn font-extrabold px-6 py-2.5 rounded-xl text-xs sm:text-sm shrink-0">تطبيق الكود</button>
+      </div>
+      <div id="gamesCouponStatus" class="text-xs font-bold mt-2.5 hidden"></div>
+     </div>
+    </div>
+   </section>
+   <!-- SECTION 4: API MODELS, CALCULATOR & PACKAGES -->
+   <section id="sec-api" class="rose-surface border rounded-3xl p-4 sm:p-8 shadow-2xl scroll-mt-20 space-y-8">
+    <div class="rose-card border rounded-2xl p-3.5 max-w-xl mx-auto flex flex-wrap items-center justify-between gap-2 font-mono text-xs sm:text-sm">
+     <span class="text-zinc-300 font-sans">رابط الـ API الأساسي:</span> <code class="text-rose-400 font-bold bg-[#0b0811] px-3 py-1 rounded-lg border border-[#382854]">https://api.migoai.com/v1</code>
+    </div>
+    <div>
+     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-5 gap-4">
+      <div>
+       <span class="px-3 py-1 rose-card border text-rose-400 text-xs font-bold rounded-full">قسم النماذج</span>
+       <h2 class="text-xl sm:text-2xl font-bold text-white mt-2">⚡ جميع نماذج الذكاء الاصطناعي المتاحة للـ API (35 نموذج)</h2>
+       <p class="text-zinc-400 text-xs">أسعار كل مليون توكن بالجنيه المصري</p>
+      </div>
+      <input type="text" id="searchInput" onkeyup="handleSearch()" placeholder="🔍 ابحث عن نموذج API..." class="rose-card border text-sm rounded-xl px-4 py-2 text-zinc-200 focus:outline-none w-full md:w-64">
+     </div>
+     <div class="overflow-x-auto border border-[#382854] rounded-2xl rose-card">
+      <table class="w-full text-right text-xs sm:text-sm text-zinc-300">
+       <thead class="bg-[#0b0811] text-zinc-400 border-b border-[#382854] font-medium text-xs">
+        <tr>
+         <th class="p-3">اسم النموذج</th>
+         <th class="p-3">المزود</th>
+         <th class="p-3">نافذة السياق</th>
+         <th class="p-3">سعر الإدخال (1M)</th>
+         <th class="p-3">سعر الإخراج (1M)</th>
+         <th class="p-3">نسبة الخصم</th>
+        </tr>
+       </thead>
+       <tbody id="modelsTable" class="divide-y divide-[#382854]/60"></tbody>
+      </table>
+     </div>
+    </div>
+    <!-- Token Calculator -->
+    <div id="calculator" class="rose-card border rounded-2xl p-4 sm:p-6">
+     <h3 class="text-lg sm:text-xl font-extrabold text-white mb-4">🧮 حاسبة تكلفة التوكنز Tokens التفاعلية الشاملة</h3>
+     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+      <div>
+       <label class="block text-xs font-bold text-zinc-300 mb-1.5">اختر نموذج الذكاء الاصطناعي:</label> <select id="calcModelSelect" onchange="calculateCost()" class="w-full bg-[#0b0811] border border-[#382854] rounded-xl px-3 py-2.5 text-xs sm:text-sm text-white"></select>
+      </div>
+      <div>
+       <label class="block text-xs font-bold text-zinc-300 mb-1.5">عدد توكنز الإدخال (1M):</label> <input type="number" id="calcInputCount" value="1" min="0" step="0.5" oninput="calculateCost()" class="w-full bg-[#0b0811] border border-[#382854] rounded-xl px-3 py-2.5 text-sm text-white font-mono">
+      </div>
+      <div>
+       <label class="block text-xs font-bold text-zinc-300 mb-1.5">عدد توكنز الإخراج (1M):</label> <input type="number" id="calcOutputCount" value="1" min="0" step="0.5" oninput="calculateCost()" class="w-full bg-[#0b0811] border border-[#382854] rounded-xl px-3 py-2.5 text-sm text-white font-mono">
+      </div>
+     </div>
+     <div class="bg-[#0b0811] border border-[#382854] rounded-xl p-4 grid grid-cols-1 sm:grid-cols-3 gap-3 text-center items-center mb-4">
+      <div>
+       <div class="text-xs text-zinc-400">تكلفة الإدخال</div>
+       <div class="text-lg font-bold text-rose-400" id="calcInputRes">30 ج.م</div>
+      </div>
+      <div>
+       <div class="text-xs text-zinc-400">تكلفة الإخراج</div>
+       <div class="text-lg font-bold text-rose-400" id="calcOutputRes">180 ج.م</div>
+      </div>
+      <div>
+       <div class="text-xs text-zinc-300 font-bold">التكلفة الإجمالية</div>
+       <div class="text-2xl font-black text-amber-400" id="calcTotalRes">210 ج.م</div>
+      </div>
+     </div>
+     <div class="flex flex-col sm:flex-row justify-between items-center gap-3">
+      <span class="text-xs text-zinc-400">النموذج المختار يوفر خصم حتى 70% مقارنة بالسعر العالمي.</span> <a href="https://wa.me/201060934020" target="_blank" class="w-full sm:w-auto text-center rose-btn font-bold text-xs px-5 py-2.5 rounded-xl">اطلب شحن رصيد Tokens عبر واتساب</a>
+     </div>
+    </div>
+    <!-- API Balance Packages -->
+    <div id="packages">
+     <h3 class="text-xl font-extrabold text-white mb-4 text-center">💎 باقات شحن رصيد الـ API</h3>
+     <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+      <div class="rose-card border p-5 rounded-2xl text-center flex flex-col justify-between">
+       <div>
+        <span class="text-xs font-bold text-zinc-300 bg-[#0b0811] px-3 py-1 rounded-full">باقة المبتدئين</span>
+        <h4 class="text-2xl font-black text-white mt-3 mb-1">250 ج.م</h4>
+        <p class="text-xs text-zinc-400 mb-4">مناسبة للتجربة والمشاريع الصغيرة</p>
+        <ul class="text-xs text-zinc-300 space-y-2 text-right mb-5">
+         <li>✓ رصيد كامل بقيمة 250 جنيه</li>
+         <li>✓ صلاحية لمدة 60 يوماً</li>
+         <li>✓ وصول لكافة الـ 35 نموذجاً</li>
+        </ul>
+       </div>
+       <a href="https://wa.me/201060934020?text=%D8%A7%D8%B1%D9%8A%D8%AF%20%D8%B4%D8%AD%D9%86%20%D8%A8%D8%A7%D9%82%D8%A9%20250%20%D8%AC%D9%86%D9%8A%D9%87" target="_blank" class="rose-btn font-bold text-xs py-2.5 rounded-xl transition">اشحن الآن</a>
+      </div>
+      <div class="rose-card border-2 border-rose-500 p-5 rounded-2xl text-center flex flex-col justify-between relative">
+       <span class="absolute -top-3 right-1/2 translate-x-1/2 rose-btn text-[10px] font-black px-3 py-0.5 rounded-full">الأكثر طلباً 🌟</span>
+       <div>
+        <span class="text-xs font-bold text-rose-400 bg-rose-500/10 px-3 py-1 rounded-full">باقة المطورين</span>
+        <h4 class="text-2xl font-black text-amber-400 mt-3 mb-1">1,000 ج.م</h4>
+        <p class="text-xs text-zinc-400 mb-4">المثالية للتطبيقات والمواقع النشطة</p>
+        <ul class="text-xs text-zinc-300 space-y-2 text-right mb-5">
+         <li>✓ رصيد كامل + 100ج رصيد إضافي مجاناً</li>
+         <li>✓ بدون تاريخ انتهاء للرصيد</li>
+         <li>✓ أولوية في سرعة استجابة الـ API</li>
+        </ul>
+       </div>
+       <a href="https://wa.me/201060934020?text=%D8%A7%D8%B1%D9%8A%D8%AF%20%D8%B4%D8%AD%D9%86%20%D8%A8%D8%A7%D9%82%D8%A9%201000%20%D8%AC%D9%86%D9%8A%D9%87" target="_blank" class="rose-btn font-extrabold text-xs py-2.5 rounded-xl transition">اشحن الآن + البونص</a>
+      </div>
+      <div class="rose-card border p-5 rounded-2xl text-center flex flex-col justify-between">
+       <div>
+        <span class="text-xs font-bold text-zinc-300 bg-[#0b0811] px-3 py-1 rounded-full">باقة الشركات</span>
+        <h4 class="text-2xl font-black text-white mt-3 mb-1">3,000 ج.م</h4>
+        <p class="text-xs text-zinc-400 mb-4">للشركات والمشروعات الضخمة</p>
+        <ul class="text-xs text-zinc-300 space-y-2 text-right mb-5">
+         <li>✓ رصيد كامل + 500ج بونص إضافي</li>
+         <li>✓ معدل طلبات غير محدود</li>
+         <li>✓ مدير حساب خاص لمشروعك</li>
+        </ul>
+       </div>
+       <a href="https://wa.me/201060934020?text=%D8%A7%D8%B1%D9%8A%D8%AF%20%D8%B4%D8%AD%D9%86%20%D8%A8%D8%A7%D9%82%D8%A9%203000%20%D8%AC%D9%86%D9%8A%D9%87" target="_blank" class="rose-btn font-bold text-xs py-2.5 rounded-xl transition">اشحن باقة الشركات</a>
+      </div>
+     </div>
+    </div>
+   </section>
+  </main>
+  <!-- PAYMENT METHODS (ICONS ONLY - CLICK TO REVEAL DETAILS) -->
+  <section id="payment" class="max-w-7xl mx-auto px-3 sm:px-4 py-6 scroll-mt-20">
+   <div class="rose-surface border rounded-3xl p-5 sm:p-6 text-center">
+    <h2 class="text-base sm:text-lg font-extrabold text-white mb-1">💳 وسائل التحويل والدفع المعتمدة</h2>
+    <p class="text-zinc-400 text-xs mb-5">اضغط على أيقونة وسيلة الدفع لإظهار رقم التحويل ونسخه مباشرة</p>
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-3xl mx-auto">
+     <button type="button" onclick="togglePaymentModal('vodafone')" class="rose-card border p-3.5 rounded-2xl flex flex-col items-center gap-1.5 hover:border-rose-500 transition"><span class="w-11 h-11 rounded-xl bg-red-500/20 text-red-400 flex items-center justify-center text-2xl">📱</span> <span class="font-bold text-xs sm:text-sm text-white">فودافون كاش</span> <span class="text-[10px] text-rose-400">اضغط لإظهار الرقم ⌄</span></button>
+     <button type="button" onclick="togglePaymentModal('instapay')" class="rose-card border p-3.5 rounded-2xl flex flex-col items-center gap-1.5 hover:border-rose-500 transition"><span class="w-11 h-11 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center text-2xl">⚡</span> <span class="font-bold text-xs sm:text-sm text-white">إنستا باي / اتصالات</span> <span class="text-[10px] text-rose-400">اضغط لإظهار الرقم ⌄</span></button>
+     <button type="button" onclick="togglePaymentModal('paypal')" class="rose-card border p-3.5 rounded-2xl flex flex-col items-center gap-1.5 hover:border-rose-500 transition"><span class="w-11 h-11 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center text-2xl">🅿️</span> <span class="font-bold text-xs sm:text-sm text-white">PayPal (بايبال)</span> <span class="text-[10px] text-rose-400">اضغط لإظهار الإيميل ⌄</span></button>
+     <button type="button" onclick="togglePaymentModal('whatsapp')" class="rose-card border p-3.5 rounded-2xl flex flex-col items-center gap-1.5 hover:border-rose-500 transition"><span class="w-11 h-11 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-2xl">💬</span> <span class="font-bold text-xs sm:text-sm text-white">واتساب التأكيد</span> <span class="text-[10px] text-emerald-400">إرسال الإيصال</span></button>
+    </div>
+    <div id="paymentDetailsBox" class="mt-5 hidden max-w-md mx-auto bg-[#0b0811] border-2 border-rose-500 rounded-2xl p-4 text-center shadow-xl">
+     <div class="flex justify-between items-center mb-2">
+      <h3 id="payBoxTitle" class="font-extrabold text-sm text-amber-400">بيانات التحويل</h3>
+      <button type="button" onclick="document.getElementById('paymentDetailsBox').classList.add('hidden')" class="text-zinc-400 hover:text-white text-xs bg-zinc-800 px-2 py-0.5 rounded">إغلاق ✕</button>
+     </div>
+     <div id="payBoxContent" class="text-sm font-mono text-white"></div>
+    </div>
+   </div>
+  </section>
+  <!-- WHY US + SECURITY NOTICE -->
+  <section id="why-us" class="max-w-7xl mx-auto px-3 sm:px-4 py-6">
+   <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+    <div class="rose-card border p-4 rounded-2xl">
+     <div class="text-xl mb-1">🔐</div>
+     <b class="text-xs sm:text-sm text-white block">رسمي وآمن 100%</b> <span class="text-[11px] text-zinc-400">التفعيل على إيميلك أو بالرابط بدون باسورد أبداً.</span>
+    </div>
+    <div class="rose-card border p-4 rounded-2xl">
+     <div class="text-xl mb-1">💳</div>
+     <b class="text-xs sm:text-sm text-white block">ادفع بالجنيه المصري</b> <span class="text-[11px] text-zinc-400">فودافون كاش أو إنستاباي من غير فيزا دولية.</span>
+    </div>
+    <div class="rose-card border p-4 rounded-2xl">
+     <div class="text-xl mb-1">⚡</div>
+     <b class="text-xs sm:text-sm text-white block">تنفيذ فوري وسريع</b> <span class="text-[11px] text-zinc-400">شحن الألعاب والسوشيال ميديا والبرامج بأقصى سرعة.</span>
+    </div>
+    <div class="rose-card border p-4 rounded-2xl">
+     <div class="text-xl mb-1">💬</div>
+     <b class="text-xs sm:text-sm text-white block">دعم بشري حقيقي</b> <span class="text-[11px] text-zinc-400">فريق دعم متواجد على واتساب لخدمتك خطوة بخطوة.</span>
+    </div>
+   </div>
+   <div class="rose-surface border rounded-2xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+    <div class="flex items-center gap-3">
+     <span class="text-2xl">🔒</span>
+     <div>
+      <b class="text-xs sm:text-sm text-rose-400 block">تنبيه أمني: إحنا عمرنا ما هنطلب الباسورد بتاعك!</b>
+      <p class="text-[11px] text-zinc-300">كل اللي بنحتاجه إيميل التفعيل أو رابط المنشور العام أو الـ ID فقط. حسابك في أمان تام وتحت سيطرتك.</p>
+     </div>
+    </div>
+    <a href="https://wa.me/201060934020" target="_blank" class="shrink-0 rose-btn font-bold text-xs px-4 py-2 rounded-xl transition">💬 تواصل مع الدعم</a>
+   </div>
+  </section>
+  <!-- FAQ SECTION -->
+  <section id="faq" class="max-w-5xl mx-auto px-3 sm:px-4 py-6">
+   <h2 class="text-xl font-extrabold text-white mb-4 text-center">❓ أسئلة شائعة</h2>
+   <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+    <details class="rose-card border rounded-xl p-3.5 cursor-pointer">
+     <summary class="font-bold text-white flex justify-between items-center">هل أحتاج فيزا أو بطاقة دولية للدفع؟ <span class="text-rose-400">+</span></summary>
+     <p class="text-zinc-300 mt-2">لا نهائياً. يمكنك الدفع بالجنيه المصري عبر فودافون كاش أو إنستاباي، ونحن نقوم بالتفعيل الرسمي فوراً.</p>
+    </details>
+    <details class="rose-card border rounded-xl p-3.5 cursor-pointer">
+     <summary class="font-bold text-white flex justify-between items-center">هل تطلبون الرقم السري لحسابي؟ <span class="text-rose-400">+</span></summary>
+     <p class="text-zinc-300 mt-2">إطلاقاً! التفعيل يتم على بريدك الإلكتروني أو عبر رابط المنشور العام أو الـ ID في الألعاب.</p>
+    </details>
+    <details class="rose-card border rounded-xl p-3.5 cursor-pointer">
+     <summary class="font-bold text-white flex justify-between items-center">ما هو وقت تنفيذ الطلبات؟ <span class="text-rose-400">+</span></summary>
+     <p class="text-zinc-300 mt-2">خدمات السوشيال ميديا والألعاب تبدأ فورياً، واشتراكات البرامج الرسمية خلال دقائق.</p>
+    </details>
+    <details class="rose-card border rounded-xl p-3.5 cursor-pointer">
+     <summary class="font-bold text-white flex justify-between items-center">هل يوجد ضمان على الخدمات؟ <span class="text-rose-400">+</span></summary>
+     <p class="text-zinc-300 mt-2">نعم، جميع البرامج أصلية بضمان كامل المدة، وخدمات السوشيال ميديا تشمل ضمان تعويض حسب الخدمة المختارة.</p>
+    </details>
+   </div>
+  </section>
+  <!-- VERIFIED CUSTOMER REVIEWS SECTION (12 REVIEWS WITH BLUE BADGE) -->
+  <section id="reviews" class="max-w-7xl mx-auto px-3 sm:px-4 py-8 scroll-mt-20">
+   <div class="flex flex-wrap items-center justify-between gap-2 mb-5">
+    <div class="flex items-center gap-2">
+     <h2 class="text-xl font-extrabold text-white">⭐ آراء عملائنا الموثقين</h2>
+     <span class="rose-card border text-amber-400 text-xs font-black px-2.5 py-0.5 rounded-full">4.9 ★ (+168 تقييم فعلي)</span>
+    </div>
+    <span class="text-xs text-zinc-400">جميع التقييمات لعملاء موثقين داخل المنصة</span>
+   </div>
+   <div id="reviewsContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3"></div>
+  </section>
+  <!-- Footer -->
+  <footer class="rose-surface border-t mt-8 py-8 text-center text-xs text-zinc-400">
+   <p class="font-extrabold text-white text-sm mb-1">Migo AI Solution</p>
+   <p>للدعم الفني والاستفسارات (واتساب): <span class="text-amber-400 font-mono">01060934020</span></p>
+   <p class="mt-2 text-[11px] text-zinc-500">© 2026 Migo AI Solution. جميع الحقوق محفوظة.</p>
+  </footer>
+  <!-- =========================================================
+       COMPLETE JAVASCRIPT ENGINE
+       ========================================================= -->
+  <script>
+        var USD_TO_EGP = 50;
+
+        /* 0. DISCOUNT COUPON ENGINE (3 VALID CODES, MAX 5 USES EACH) */
+        var VALID_COUPONS = {
+            'SIAFFC15': { discountPercent: 15, maxUses: 5 },
+            'SIAF15': { discountPercent: 15, maxUses: 5 },
+            'SIAFGAMING15': { discountPercent: 15, maxUses: 5 }
+        };
+        var COUPON_STORAGE_KEY = 'migo_coupon_usage_v1';
+        var activeCouponCode = null;
+        var activeDiscountRate = 0;
+
+        function getCouponUsageMap() {
+            try {
+                return JSON.parse(localStorage.getItem(COUPON_STORAGE_KEY)) || {};
+            } catch (e) {
+                return {};
+            }
+        }
+
+        function saveCouponUsageMap(map) {
+            localStorage.setItem(COUPON_STORAGE_KEY, JSON.stringify(map));
+        }
+
+        function toggleCouponBox(boxId) {
+            var el = document.getElementById(boxId);
+            if (!el) return;
+            el.classList.toggle('hidden');
+        }
+
+        function applyCouponCode(section) {
+            var inputId = section + 'CouponInput';
+            var statusId = section + 'CouponStatus';
+            var inputEl = document.getElementById(inputId);
+            var statusEl = document.getElementById(statusId);
+            if (!inputEl || !statusEl) return;
+
+            var code = inputEl.value.trim().toUpperCase();
+            statusEl.classList.remove('hidden');
+
+            if (!code) {
+                statusEl.className = 'text-xs font-bold mt-2 text-red-400';
+                statusEl.innerText = '⚠️ يرجى كتابة كود الخصم أولاً.';
+                return;
+            }
+
+            if (!VALID_COUPONS[code]) {
+                statusEl.className = 'text-xs font-bold mt-2 text-red-400';
+                statusEl.innerText = '❌ كود الخصم غير صالح! تأكد من كتابة الكود بشكل صحيح.';
+                return;
+            }
+
+            var usageMap = getCouponUsageMap();
+            var usedCount = usageMap[code] || 0;
+            var maxUses = VALID_COUPONS[code].maxUses;
+
+            if (usedCount >= maxUses) {
+                statusEl.className = 'text-xs font-bold mt-2 text-red-400';
+                statusEl.innerText = '⛔ عذراً، هذا الكود تم استخدامه 5 مرات بالفعل ولم يعد صالحاً للاستخدام.';
+                return;
+            }
+
+            // Increment usage and activate discount
+            usageMap[code] = usedCount + 1;
+            saveCouponUsageMap(usageMap);
+
+            activeCouponCode = code;
+            activeDiscountRate = VALID_COUPONS[code].discountPercent / 100;
+            var remaining = maxUses - usageMap[code];
+
+            var msg = '✅ تم تفعيل كود الخصم (' + code + ') بنجاح! خصم 15% مطبق الآن (متبقي ' + remaining + ' من 5 مرات استخدام).';
+            var allStatuses = ['smmCouponStatus', 'appsCouponStatus', 'gamesCouponStatus'];
+            for (var i = 0; i < allStatuses.length; i++) {
+                var st = document.getElementById(allStatuses[i]);
+                if (st) {
+                    st.classList.remove('hidden');
+                    st.className = 'text-xs font-bold mt-2 text-emerald-400';
+                    st.innerText = msg;
+                }
+            }
+
+            // Re-render prices across sections
+            calculateSMMCost();
+            renderApps();
+            renderGames();
+        }
+
+        function formatPriceWithDiscount(rawPriceNum) {
+            if (activeDiscountRate > 0) {
+                var discounted = rawPriceNum * (1 - activeDiscountRate);
+                return {
+                    finalText: discounted.toFixed(2) + ' ج.م',
+                    oldText: rawPriceNum.toFixed(2) + ' ج.م',
+                    hasDiscount: true
+                };
+            }
+            return {
+                finalText: rawPriceNum.toFixed(2) + ' ج.م',
+                oldText: null,
+                hasDiscount: false
+            };
+        }
+
+        /* 1. SIDEBAR TOGGLE (SAFE MODAL DRAWER) */
+        function toggleSidebar() {
+            var container = document.getElementById('sidebarContainer');
+            if (!container) return;
+            container.classList.toggle('hidden');
+        }
+
+        /* 2. PAYMENT ICONS CLICK REVEAL */
+        function togglePaymentModal(method) {
+            var box = document.getElementById('paymentDetailsBox');
+            var title = document.getElementById('payBoxTitle');
+            var content = document.getElementById('payBoxContent');
+            if (method === 'whatsapp') {
+                window.open('https://wa.me/201060934020?text=' + encodeURIComponent('السلام عليكم، أود إرسال إيصال التحويل لتأكيد الطلب'), '_blank');
+                return;
+            }
+            box.classList.remove('hidden');
+            if (method === 'vodafone') {
+                title.innerText = "📱 رقم تحويل فودافون كاش";
+                content.innerHTML = '<div class="text-lg font-black text-amber-400 my-2">01020323432</div><button type="button" onclick="copyToClipboard('01020323432', 'تم نسخ رقم فودافون كاش')" class="rose-btn text-xs px-4 py-1.5 rounded-lg font-bold">نسخ الرقم</button>';
+            } else if (method === 'instapay') {
+                title.innerText = "⚡ رقم تحويل إنستا باي / اتصالات";
+                content.innerHTML = '<div class="text-lg font-black text-amber-400 my-2">01146691073</div><button type="button" onclick="copyToClipboard('01146691073', 'تم نسخ رقم إنستاباي')" class="rose-btn text-xs px-4 py-1.5 rounded-lg font-bold">نسخ الرقم</button>';
+            } else if (method === 'paypal') {
+                title.innerText = "🅿️ بريد الدفع الدولي (PayPal)";
+                content.innerHTML = '<div class="text-xs sm:text-sm font-black text-amber-400 my-2 break-all">sahermohamed123456@gmail.com</div><button type="button" onclick="copyToClipboard('sahermohamed123456@gmail.com', 'تم نسخ البريد')" class="rose-btn text-xs px-4 py-1.5 rounded-lg font-bold">نسخ البريد</button>';
+            }
+        }
+
+        /* 3. SOCIAL MEDIA PLATFORMS & SERVICES (ALL 18 PLATFORMS) */
+        var smmPlatforms = [
+            {
+                id: 'tiktok', name: 'تيك توك', count: '75 خدمة', icon: '🎵', extra: false,
+                categories: [
+                    {
+                        name: 'تيك توك - لايكات وإعجابات (10 خدمة)',
+                        services: [
+                            { id: 2218, title: '#2218 - تيك توك لايكات | فوري | 10K/يوم | ضمان تعويض 30 يوم ♻️', pricePer1kUSD: 1.39, min: 10, max: 1000000, speed: '⚡ فوري (10K/يوم)' },
+                            { id: 2221, title: '#2221 - تيك توك لايكات | فوري فائق السرعة | 20K/يوم | بدون ضمان 🔥', pricePer1kUSD: 0.855, min: 10, max: 500000, speed: '⚡ فوري (20K/يوم)' },
+                            { id: 2100, title: '#2100 - تيك توك لايكات | جودة عالية | بدون نقص | ضمان 365 يوم ♻️', pricePer1kUSD: 0.5347, min: 50, max: 1000000, speed: '⚡ +50K/يوم' },
+                            { id: 2101, title: '#2101 - تيك توك لايكات | جودة عالية | بدون نقص | +50K/يوم', pricePer1kUSD: 0.48, min: 50, max: 1000000, speed: '⚡ +50K/يوم' }
+                        ]
+                    },
+                    {
+                        name: 'تيك توك - مشاهدات فيديو وبث مباشر',
+                        services: [
+                            { id: 2301, title: '#2301 - تيك توك مشاهدات فيديو | فوري مليون/يوم | حقيقي 100%', pricePer1kUSD: 0.15, min: 500, max: 10000000, speed: '⚡ فوري' },
+                            { id: 2305, title: '#2305 - تيك توك مشاهدات بث مباشر | 30 دقيقة | استقرار عالي', pricePer1kUSD: 2.40, min: 50, max: 50000, speed: '⚡ فوري للبث' }
+                        ]
+                    },
+                    {
+                        name: 'تيك توك - متابعين وتعليقات وإكسبلور',
+                        services: [
+                            { id: 2410, title: '#2410 - تيك توك متابعين | جودة عالية | ضمان تعويض 30 يوم ♻️', pricePer1kUSD: 2.90, min: 50, max: 100000, speed: '⚡ 5K/يوم' },
+                            { id: 2415, title: '#2415 - تيك توك مشاركات وإكسبلور (شير) | فوري لرفع الريتش', pricePer1kUSD: 0.35, min: 100, max: 1000000, speed: '⚡ فوري (50K/يوم)' }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 'facebook', name: 'فيسبوك', count: '134 خدمة', icon: '📘', extra: false,
+                categories: [
+                    {
+                        name: 'فيسبوك - مشاهدات بث مباشر [اقتصادي]',
+                        services: [
+                            { id: 1913, title: '#1913 - فيسبوك - بث مباشر | Viewers | 15 دقيقة 🚀', pricePer1kUSD: 1.29, min: 50, max: 20000, speed: '⚡ فوري (0-1 ساعة)' },
+                            { id: 1914, title: '#1914 - فيسبوك - بث مباشر | Viewers | 30 دقيقة 🚀', pricePer1kUSD: 2.59, min: 50, max: 20000, speed: '⚡ فوري (0-1 ساعة)' },
+                            { id: 1915, title: '#1915 - فيسبوك - بث مباشر | Viewers | 60 دقيقة 🚀', pricePer1kUSD: 5.17, min: 50, max: 20000, speed: '⚡ فوري (0-1 ساعة)' },
+                            { id: 1916, title: '#1916 - فيسبوك - بث مباشر | Viewers | 90 دقيقة 🚀', pricePer1kUSD: 7.76, min: 50, max: 20000, speed: '⚡ فوري (0-1 ساعة)' },
+                            { id: 3066, title: '#3066 - فيسبوك - بث مباشر | Viewers | 90 دقيقة (VIP) 🚀', pricePer1kUSD: 3.76, min: 10, max: 5000, speed: '⚡ فوري (0-1 ساعة)' },
+                            { id: 3067, title: '#3067 - فيسبوك - بث مباشر | Viewers | 120 دقيقة 🚀', pricePer1kUSD: 5.02, min: 10, max: 5000, speed: '⚡ فوري (0-1 ساعة)' },
+                            { id: 1918, title: '#1918 - فيسبوك - بث مباشر | Viewers | 150 دقيقة 🚀', pricePer1kUSD: 14.90, min: 50, max: 20000, speed: '⚡ فوري (0-1 ساعة)' },
+                            { id: 1919, title: '#1919 - فيسبوك - بث مباشر | Viewers | 180 دقيقة 🚀', pricePer1kUSD: 15.48, min: 50, max: 20000, speed: '⚡ فوري (0-1 ساعة)' }
+                        ]
+                    },
+                    {
+                        name: 'فيسبوك - متابعين صفحات وتفاعلات وساعات مشاهدة',
+                        services: [
+                            { id: 1950, title: '#1950 - فيسبوك متابعين صفحات (Pages) | ضمان 30 يوم ♻️', pricePer1kUSD: 1.85, min: 100, max: 500000, speed: '⚡ 10K/يوم' },
+                            { id: 1960, title: '#1960 - فيسبوك تفاعلات المنشورات (Love, Care, Wow) | فوري', pricePer1kUSD: 0.95, min: 50, max: 50000, speed: '⚡ فوري' },
+                            { id: 1975, title: '#1975 - فيسبوك باقة ساعات المشاهدة وتفعيل الأرباح', pricePer1kUSD: 4.50, min: 1000, max: 60000, speed: '⚡ 1-2 يوم' }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 'instagram', name: 'انستقرام', count: '217 خدمة', icon: '📸', extra: false,
+                categories: [
+                    {
+                        name: 'انستقرام - خدمات مميزة و App Install',
+                        services: [
+                            { id: 2350, title: '#2350 - App Install [عالمي] [حقيقي 100% via جوجل أدوردز]', pricePer1kUSD: 85.50, min: 1000, max: 1000000, speed: '⚡ فوري (0-1 ساعة)' },
+                            { id: 2472, title: '#2472 - App Install [عالمي] [حقيقي 100% via Google Ads]', pricePer1kUSD: 52.73, min: 5000, max: 1000000, speed: '⚡ فوري (0-1 ساعة)' },
+                            { id: 2473, title: '#2473 - App Install [هندي] [حقيقي 100% via Google Ads]', pricePer1kUSD: 133.00, min: 5000, max: 1000000, speed: '⚡ فوري (0-1 ساعة)' }
+                        ]
+                    },
+                    {
+                        name: 'انستقرام - متابعين ولايكات وتعليقات الشارة الزرقاء',
+                        services: [
+                            { id: 2510, title: '#2510 - انستقرام متابعين [ضمان 365 يوم] | جودة عالية جداً ♻️', pricePer1kUSD: 1.65, min: 50, max: 500000, speed: '⚡ 20K/يوم' },
+                            { id: 2520, title: '#2520 - انستقرام لايكات فورية | 50K/يوم | ضمان 30 يوم', pricePer1kUSD: 0.45, min: 20, max: 100000, speed: '⚡ فوري' },
+                            { id: 2530, title: '#2530 - انستقرام تعليقات حسابات موثقة بالشارة الزرقاء ✔️', pricePer1kUSD: 18.00, min: 10, max: 5000, speed: '⚡ فوري' }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 'telegram', name: 'تليجرام', count: '736 خدمة', icon: '✈️', extra: false,
+                categories: [
+                    {
+                        name: 'تليجرام - أعضاء قنوات ومشاهدات ونجوم',
+                        services: [
+                            { id: 3101, title: '#3101 - تليجرام أعضاء قنوات | بدون نقص | ضمان 60 يوم', pricePer1kUSD: 1.75, min: 100, max: 200000, speed: '⚡ 25K/يوم' },
+                            { id: 3105, title: '#3105 - تليجرام مشاهدات منشورات | فوري', pricePer1kUSD: 0.12, min: 500, max: 1000000, speed: '⚡ فوري' },
+                            { id: 3110, title: '#3110 - تليجرام نجوم وبريميوم وتفاعلات ⭐', pricePer1kUSD: 0.65, min: 50, max: 100000, speed: '⚡ فوري' }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 'youtube', name: 'يوتيوب', count: '245 خدمة', icon: '▶️', extra: false,
+                categories: [
+                    {
+                        name: 'يوتيوب - مشاهدات ومشتركين وساعات تحقيق الربح',
+                        services: [
+                            { id: 3201, title: '#3201 - يوتيوب مشاهدات حقيقية | ضمان مدى الحياة ♻️', pricePer1kUSD: 1.90, min: 500, max: 1000000, speed: '⚡ 10K-30K/يوم' },
+                            { id: 3205, title: '#3205 - يوتيوب مشتركين قنوات | استقرار عالي وضمان تعويض', pricePer1kUSD: 8.50, min: 50, max: 50000, speed: '⚡ 500/يوم' }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 'twitter', name: 'تويتر (X)', count: '141 خدمة', icon: '✖️', extra: false,
+                categories: [
+                    {
+                        name: 'تويتر (X) - متابعين ولايكات وريتويت ومشاهدات',
+                        services: [
+                            { id: 3301, title: '#3301 - تويتر X لايكات وريتويت | تنفيذ فوري', pricePer1kUSD: 1.40, min: 50, max: 100000, speed: '⚡ فوري' },
+                            { id: 3305, title: '#3305 - تويتر X مشاهدات تغريدات | مليونية سريعة', pricePer1kUSD: 0.10, min: 1000, max: 5000000, speed: '⚡ فوري' }
+                        ]
+                    }
+                ]
+            },
+            {
+                id: 'whatsapp', name: 'واتساب', count: '56 خدمة', icon: '💬', extra: true,
+                categories: [
+                    {
+                        name: 'واتساب - أعضاء القناة وتفاعلات الريأكشن',
+                        services: [
+                            { id: 1515, title: '#1515 - واتساب أعضاء القناة [عالمي 🌍] | ضمان 30 يوم ♻️', pricePer1kUSD: 7.13, min: 10, max: 10000, speed: '⚡ +5K/يوم' },
+                            { id: 1608, title: '#1608 - واتساب أعضاء القناة [عالمي 🌍] | ضمان 365 يوم ♻️', pricePer1kUSD: 9.97, min: 10, max: 50000, speed: '⚡ +5K/يوم' },
+                            { id: 2197, title: '#2197 - واتساب أعضاء القناة | HQ Profiles | Day 10K', pricePer1kUSD: 4.06, min: 10, max: 50000, speed: '⚡ فوري (0-1 ساعة)' },
+                            { id: 2198, title: '#2198 - واتساب أعضاء القناة | بدون نقص 100%', pricePer1kUSD: 0.4275, min: 10, max: 20000, speed: '⚡ +5K/يوم' },
+                            { id: 4025, title: '#4025 - واتساب أعضاء القناة | ضمان 365 يوم | تعويض مدى الحياة', pricePer1kUSD: 0.9802, min: 10, max: 20000, speed: '⚡ +20K/يوم' }
+                        ]
+                    }
+                ]
+            },
+            { id: 'spotify', name: 'سبوتيفاي', count: '487 خدمة', icon: '🎧', extra: true, categories: [{ name: 'سبوتيفاي - استماعات ومتابعين', services: [{ id: 5001, title: '#5001 - سبوتيفاي Plays & Followers | ضمان عدم النقص', pricePer1kUSD: 1.20, min: 500, max: 1000000, speed: '⚡ 10K/يوم' }] }] },
+            { id: 'traffic', name: 'زيارات موقع', count: '100 خدمة', icon: '🌐', extra: true, categories: [{ name: 'زيارات مواقع حقيقية عبر جوجل', services: [{ id: 5101, title: '#5101 - زيارات مواقع عالمية وعربية مستهدفة', pricePer1kUSD: 0.60, min: 1000, max: 1000000, speed: '⚡ 20K/يوم' }] }] },
+            { id: 'social_mix', name: 'سوشيال ميديا', count: '34 خدمة', icon: '✨', extra: true, categories: [{ name: 'باقات سوشيال ميديا شاملة', services: [{ id: 5201, title: '#5201 - باقة تفاعل شامل للحسابات التجارية', pricePer1kUSD: 2.50, min: 100, max: 50000, speed: '⚡ فوري' }] }] },
+            { id: 'linkedin', name: 'لينكد إن', count: '20 خدمة', icon: '💼', extra: true, categories: [{ name: 'لينكد إن - متابعين واتصالات', services: [{ id: 5301, title: '#5301 - لينكد إن متابعين صفحات وحسابات رسمية', pricePer1kUSD: 6.50, min: 50, max: 10000, speed: '⚡ 1K/يوم' }] }] },
+            { id: 'reddit', name: 'ريديت', count: '15 خدمة', icon: '👽', extra: true, categories: [{ name: 'ريديت - Upvotes & Karma', services: [{ id: 5401, title: '#5401 - Reddit Upvotes فورية', pricePer1kUSD: 8.00, min: 20, max: 5000, speed: '⚡ فوري' }] }] },
+            { id: 'snapchat', name: 'سناب شات', count: '13 خدمة', icon: '👻', extra: true, categories: [{ name: 'سناب شات - مشاهدات ومتابعين', services: [{ id: 5501, title: '#5501 - سناب شات متابعين ومشاهدات الأضواء', pricePer1kUSD: 3.20, min: 100, max: 50000, speed: '⚡ فوري' }] }] },
+            { id: 'google', name: 'جوجل', count: '13 خدمة', icon: '🇬', extra: true, categories: [{ name: 'تقييمات خرائط جوجل', services: [{ id: 5601, title: '#5601 - تقييمات خرائط جوجل 5 نجوم', pricePer1kUSD: 45.00, min: 10, max: 1000, speed: '⚡ تدريجي آمن' }] }] },
+            { id: 'pinterest', name: 'بينترست', count: '9 خدمة', icon: '📌', extra: true, categories: [{ name: 'بينترست - متابعين وحفظ', services: [{ id: 5701, title: '#5701 - Pinterest Followers & Repins', pricePer1kUSD: 2.10, min: 100, max: 50000, speed: '⚡ فوري' }] }] },
+            { id: 'discord', name: 'ديسكورد', count: '7 خدمة', icon: '🎮', extra: true, categories: [{ name: 'ديسكورد - أعضاء سيرفرات', services: [{ id: 5801, title: '#5801 - Discord Server Members', pricePer1kUSD: 3.40, min: 100, max: 25000, speed: '⚡ فوري' }] }] },
+            { id: 'quora', name: 'Quora', count: '2 خدمة', icon: '❓', extra: true, categories: [{ name: 'Quora Views', services: [{ id: 5901, title: '#5901 - Quora إجابات وتأييد ومشاهدات', pricePer1kUSD: 4.00, min: 50, max: 10000, speed: '⚡ فوري' }] }] },
+            { id: 'medium', name: 'Medium', count: '2 خدمة', icon: 'Ⓜ️', extra: true, categories: [{ name: 'Medium Followers', services: [{ id: 6001, title: '#6001 - Medium متابعين وتصفيق للمقالات', pricePer1kUSD: 3.80, min: 50, max: 10000, speed: '⚡ فوري' }] }] }
+        ];
+
+        var currentSMMPlatform = smmPlatforms[0];
+        var showExtraSMMPlatforms = false;
+
+        function renderSMMPlatforms() {
+            var grid = document.getElementById('smmPlatformsGrid');
+            if (!grid) return;
+            var html = '';
+            for (var i = 0; i < smmPlatforms.length; i++) {
+                var p = smmPlatforms[i];
+                if (p.extra && !showExtraSMMPlatforms) continue;
+                var isSelected = (p.id === currentSMMPlatform.id);
+                var cls = isSelected
+                    ? "p-2.5 sm:p-3 rounded-2xl rose-active-tab text-center transition flex flex-col items-center gap-1"
+                    : "p-2.5 sm:p-3 rounded-2xl rose-card border text-center transition flex flex-col items-center gap-1";
+                html += '<button type="button" onclick="selectSMMPlatform('' + p.id + '')" class="' + cls + '">' +
+                        '<span class="text-xl sm:text-2xl">' + p.icon + '</span>' +
+                        '<span class="text-xs font-extrabold text-white">' + p.name + '</span>' +
+                        '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#0b0811] text-amber-400">' + p.count + '</span>' +
+                        '</button>';
+            }
+            grid.innerHTML = html;
+        }
+
+        function toggleMoreSMMPlatforms() {
+            showExtraSMMPlatforms = !showExtraSMMPlatforms;
+            var btn = document.getElementById('toggleMorePlatformsBtn');
+            if (btn) btn.innerText = showExtraSMMPlatforms ? 'عرض أقل ⌃' : 'عرض المزيد من المنصات (+12) ⌄';
+            renderSMMPlatforms();
+        }
+
+        function selectSMMPlatform(pid) {
+            for (var i = 0; i < smmPlatforms.length; i++) {
+                if (smmPlatforms[i].id === pid) { currentSMMPlatform = smmPlatforms[i]; break; }
+            }
+            renderSMMPlatforms();
+            document.getElementById('selectedPlatformIcon').innerText = currentSMMPlatform.icon;
+            document.getElementById('selectedPlatformTitle').innerText = currentSMMPlatform.name;
+            document.getElementById('selectedPlatformCount').innerText = currentSMMPlatform.count;
+
+            var catSelect = document.getElementById('smmCategorySelect');
+            catSelect.innerHTML = '';
+            for (var j = 0; j < currentSMMPlatform.categories.length; j++) {
+                var opt = document.createElement('option');
+                opt.value = j;
+                opt.text = currentSMMPlatform.categories[j].name;
+                catSelect.appendChild(opt);
+            }
+            onSMMCategoryChange();
+        }
+
+        function onSMMCategoryChange() {
+            var catIdx = parseInt(document.getElementById('smmCategorySelect').value, 10) || 0;
+            var cat = currentSMMPlatform.categories[catIdx] || currentSMMPlatform.categories[0];
+            var srvSelect = document.getElementById('smmServiceSelect');
+            srvSelect.innerHTML = '';
+            for (var i = 0; i < cat.services.length; i++) {
+                var srv = cat.services[i];
+                var egpPer1k = (srv.pricePer1kUSD * USD_TO_EGP).toFixed(1);
+                var opt = document.createElement('option');
+                opt.value = i;
+                opt.text = srv.title + ' — (' + egpPer1k + ' ج.م / 1k)';
+                srvSelect.appendChild(opt);
+            }
+            onSMMServiceChange();
+        }
+
+        function getCurrentSMMService() {
+            var catIdx = parseInt(document.getElementById('smmCategorySelect').value, 10) || 0;
+            var srvIdx = parseInt(document.getElementById('smmServiceSelect').value, 10) || 0;
+            var cat = currentSMMPlatform.categories[catIdx] || currentSMMPlatform.categories[0];
+            return cat.services[srvIdx] || cat.services[0];
+        }
+
+        function onSMMServiceChange() {
+            var srv = getCurrentSMMService();
+            if (!srv) return;
+            document.getElementById('selectedServiceBadgeId').innerText = 'ID: #' + srv.id;
+            document.getElementById('smmLimitsNote').innerText = 'أقل طلب: ' + srv.min + ' · أكبر طلب: ' + srv.max;
+            document.getElementById('smmSpeedDisplay').innerText = srv.speed;
+            var egpPer1k = (srv.pricePer1kUSD * USD_TO_EGP).toFixed(2);
+            document.getElementById('smmServiceMeta').innerHTML =
+                '<span class="bg-rose-500/15 text-rose-400 border border-rose-500/30 px-2.5 py-1 rounded-lg font-bold">' + srv.speed + '</span>' +
+                '<span class="bg-amber-500/15 text-amber-400 border border-amber-500/30 px-2.5 py-1 rounded-lg font-mono font-bold">سعر الـ 1000: ' + egpPer1k + ' ج.م ($' + srv.pricePer1kUSD + ')</span>' +
+                '<span class="text-zinc-300">الحدود: ' + srv.min + ' ↔ ' + srv.max + '</span>';
+            calculateSMMCost();
+        }
+
+        function setSMMQty(val) {
+            document.getElementById('smmQtyInput').value = val;
+            calculateSMMCost();
+        }
+
+        function calculateSMMCost() {
+            var srv = getCurrentSMMService();
+            if (!srv) return;
+            var qty = Math.max(0, parseFloat(document.getElementById('smmQtyInput').value) || 0);
+            var totalUSD = (qty / 1000) * srv.pricePer1kUSD;
+            var totalEGP = totalUSD * USD_TO_EGP;
+            var oldEl = document.getElementById('smmOldPriceEGP');
+
+            if (activeDiscountRate > 0) {
+                var discountedEGP = totalEGP * (1 - activeDiscountRate);
+                var discountedUSD = totalUSD * (1 - activeDiscountRate);
+                document.getElementById('smmPriceEGP').innerText = discountedEGP.toFixed(2) + ' ج.م';
+                if (oldEl) {
+                    oldEl.innerText = totalEGP.toFixed(2) + ' ج.م';
+                    oldEl.classList.remove('hidden');
+                }
+                document.getElementById('smmPriceUSD').innerText = '($' + discountedUSD.toFixed(4) + ')';
+            } else {
+                document.getElementById('smmPriceEGP').innerText = totalEGP.toFixed(2) + ' ج.م';
+                if (oldEl) oldEl.classList.add('hidden');
+                document.getElementById('smmPriceUSD').innerText = '($' + totalUSD.toFixed(4) + ')';
+            }
+        }
+
+        function filterSMMServices() {
+            var q = document.getElementById('smmSearchInput').value.toLowerCase().trim();
+            if (!q) return;
+            for (var i = 0; i < smmPlatforms.length; i++) {
+                var p = smmPlatforms[i];
+                for (var cIdx = 0; cIdx < p.categories.length; cIdx++) {
+                    var services = p.categories[cIdx].services;
+                    for (var sIdx = 0; sIdx < services.length; sIdx++) {
+                        if (services[sIdx].title.toLowerCase().indexOf(q) !== -1 || String(services[sIdx].id).indexOf(q) !== -1) {
+                            if (p.extra && !showExtraSMMPlatforms) toggleMoreSMMPlatforms();
+                            selectSMMPlatform(p.id);
+                            document.getElementById('smmCategorySelect').value = cIdx;
+                            onSMMCategoryChange();
+                            document.getElementById('smmServiceSelect').value = sIdx;
+                            onSMMServiceChange();
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
+        function submitSMMOrder() {
+            var srv = getCurrentSMMService();
+            var link = document.getElementById('smmLinkInput').value.trim();
+            var qty = document.getElementById('smmQtyInput').value;
+            var egp = document.getElementById('smmPriceEGP').innerText;
+            if (!link) { alert('يرجى إدخال رابط الحساب أو المنشور أولاً!'); return; }
+            var couponLine = activeCouponCode ? ('
+- كود الخصم المطبق: ' + activeCouponCode + ' (خصم 15%)') : '';
+            var msg = 'السلام عليكم، أريد طلب خدمة سوشيال ميديا:
+- المنصة: ' + currentSMMPlatform.name + '
+- الخدمة: ' + srv.title + '
+- الرابط: ' + link + '
+- الكمية: ' + qty + '
+- التكلفة: ' + egp + couponLine;
+            window.open('https://wa.me/201060934020?text=' + encodeURIComponent(msg), '_blank');
+        }
+
+        /* 4. APPS & AI SUBSCRIPTIONS */
+        var allApps = [
+            { name: "Claude Max 5x", plansCount: "للعمل اليومي المكثف · 5 أضعاف Pro", desc: "تفعيل رسمي على حسابك: 5 أضعاف حدود باقة Pro (توفّر 3,605 ج.م كل شهر).", rawPrice: 3605, oldPrice: "7,210 ج.م", icon: "✴️", tag: "Max 5x 🔥" },
+            { name: "Claude Max 20x", plansCount: "للعمل طوال اليوم · 20 ضعفاً لحدود Pro", desc: "أعلى حدود استخدام في Claude للمحترفين والفرق (توفّر 6,211 ج.م كل شهر).", rawPrice: 7179, oldPrice: "13,390 ج.م", icon: "✴️", tag: "Max 20x 💎" },
+            { name: "Claude AI Pro", plansCount: "اشتراك شهري رسمي", desc: "تفعيل كلود برو لأقوى نماذج البرمجة والكتابة والتحليل على إيميلك.", rawPrice: 1300, oldPrice: "1,500 ج.م", icon: "✴️", tag: "حصري" },
+            { name: "Google Gemini (عرض Jio 18 شهر)", plansCount: "اشتراك 18 شهر كاملة + مساحة تخزين", desc: "عرض Jio الحصري لتفعيل Google Gemini Pro لمدة 18 شهراً متواصلة على حسابك.", rawPrice: 75, oldPrice: "360 ج.م", icon: "✨", tag: "عرض Jio 18 شهر 🔥" },
+            { name: "ChatGPT Plus", plansCount: "4 الخطط المتاحة · تفعيل رسمي", desc: "تفعيل شات جي بي تي بلس الرسمي على حسابك وإيميلك الشخصي.", rawPrice: 950, oldPrice: "1,100 ج.م", icon: "🤖", tag: "تفعيل رسمي" },
+            { name: "Canva Pro", plansCount: "2 خطط المتاحة · تفعيل سنوي", desc: "تفعيل كانفا برو بكامل المزايا والقوالب على إيميلك الشخصي.", rawPrice: 250, oldPrice: "290 ج.م", icon: "🎨", tag: "تفعيل سنوي" },
+            { name: "CapCut Pro", plansCount: "4 الخطط المتاحة", desc: "تنسيق وتعديل الفيديو بالذكاء الاصطناعي بدون علامة مائية.", rawPrice: 180, oldPrice: "210 ج.م", icon: "✂️", tag: "تفعيل مباشر" },
+            { name: "Duolingo Super (12M)", plansCount: "اشتراك سنوي", desc: "دولينجو سوبر بدون إعلانات لمدة سنة كاملة على حسابك.", rawPrice: 60, oldPrice: "70 ج.م", icon: "🦉", tag: "سنة كاملة" }
+        ];
+        var filteredApps = allApps.slice();
+
+        function renderApps() {
+            var container = document.getElementById('appCardsContainer');
+            if (!container) return;
+            var html = '';
+            for (var i = 0; i < filteredApps.length; i++) {
+                var app = filteredApps[i];
+                var finalPriceNum = activeDiscountRate > 0 ? (app.rawPrice * (1 - activeDiscountRate)) : app.rawPrice;
+                var displayPrice = (finalPriceNum % 1 === 0 ? finalPriceNum.toLocaleString() : finalPriceNum.toFixed(2)) + ' ج.م';
+                var couponNote = activeCouponCode ? (' (بكود خصم ' + activeCouponCode + ')') : '';
+                var waUrl = 'https://wa.me/201060934020?text=' + encodeURIComponent('السلام عليكم، أريد تفعيل ' + app.name + ' بسعر ' + displayPrice + couponNote);
+                html += '<div class="rose-card border p-5 rounded-2xl flex flex-col justify-between">' +
+                        '<div>' +
+                        '<div class="flex justify-between items-start mb-3"><span class="text-3xl">' + app.icon + '</span><span class="bg-[#0b0811] text-rose-400 border border-rose-500/30 text-[11px] font-bold px-2.5 py-0.5 rounded-full">' + app.tag + '</span></div>' +
+                        '<h3 class="font-bold text-lg text-white">' + app.name + '</h3>' +
+                        '<div class="text-[11px] text-amber-400 font-medium mb-1.5">' + app.plansCount + '</div>' +
+                        '<p class="text-xs text-zinc-300 mb-4 leading-relaxed">' + app.desc + '</p>' +
+                        '</div>' +
+                        '<div class="pt-3 border-t border-[#382854] flex items-center justify-between">' +
+                        '<div><span class="text-xl font-extrabold text-amber-400">' + displayPrice + '</span> <span class="text-xs text-zinc-500 line-through">' + app.oldPrice + '</span></div>' +
+                        '<a href="' + waUrl + '" target="_blank" class="rose-btn font-bold text-xs px-3.5 py-2 rounded-xl transition">اطلب التفعيل</a>' +
+                        '</div></div>';
+            }
+            container.innerHTML = html;
+        }
+
+        function handleAppSearch() {
+            var q = document.getElementById('appSearchInput').value.toLowerCase().trim();
+            filteredApps = [];
+            for (var i = 0; i < allApps.length; i++) {
+                if (allApps[i].name.toLowerCase().indexOf(q) !== -1 || allApps[i].desc.toLowerCase().indexOf(q) !== -1) {
+                    filteredApps.push(allApps[i]);
+                }
+            }
+            renderApps();
+        }
+
+        /* 5. GAMES SECTION (FC MOBILE + ALL 5 OTHER GAMES) */
+        var allGames = [
+            {
+                name: "فيفا موبايل (FC Mobile)", badge: "نقاط FC Points الرسمية", icon: "⚽",
+                packages: [
+                    { label: "40 FC Points", rawPrice: 28.45 },
+                    { label: "100 FC Points", rawPrice: 70.74 }
+                ],
+                details: "قم بتدريب وبناء فريق !EA SPORTS™ انضم إلى نادي مشجعي من نجوم كرة القدم.",
+                activationSteps: [
+                    "1) قم بتسجيل الدخول إلى حسابك على meplay Redeem (https://redeem.meplay.com/game/eafc/#redeemCode). إذا لم تقم بتسجيل الدخول من قبل، يرجى التسجيل باستخدام معرف لاعب Fifa Mobile الموجود في اللعبة.",
+                    "2) ادخل إلى صفحة رمز الاسترداد، وأدخل رمز الاسترداد الذي حصلت عليه من شرائك لنقاط فيفا."
+                ]
+            },
+            {
+                name: "بابجي موبايل (PUBG Mobile)", badge: "شحن شدات UC فوري", icon: "🪖",
+                packages: [
+                    { label: "60 يو سي", rawPrice: 67.20 },
+                    { label: "300 يو سي + 25 يو سي مجاناً", rawPrice: 339.15 },
+                    { label: "600 يو سي + 60 يو سي مجاناً", rawPrice: 679.35 },
+                    { label: "1,500 يو سي + 300 يو سي مجاناً", rawPrice: 1697.85 },
+                    { label: "3,000 يو سي + 850 يو سي مجاناً", rawPrice: 3396.75 },
+                    { label: "6,000 يو سي + 2,100 يو سي مجاناً", rawPrice: 6793.50 },
+                    { label: "12,000 يو سي + 4,200 يو سي مجاناً", rawPrice: 13588.05 },
+                    { label: "18,000 يو سي + 6,300 يو سي مجاناً", rawPrice: 20381.55 }
+                ]
+            },
+            {
+                name: "فري فاير (Free Fire)", badge: "شحن جواهر Diamonds", icon: "🔥",
+                packages: [
+                    { label: "100 Diamonds", rawPrice: 69.37 },
+                    { label: "220 Diamonds", rawPrice: 138.74 },
+                    { label: "530 Diamonds", rawPrice: 346.85 },
+                    { label: "1080 Diamonds", rawPrice: 693.69 },
+                    { label: "2200 Diamonds", rawPrice: 1387.39 }
+                ]
+            },
+            {
+                name: "موبايل ليجندز (Mobile Legends)", badge: "شحن دايموند رسمي", icon: "⚔️",
+                packages: [
+                    { label: "56 Diamonds", rawPrice: 88.45 },
+                    { label: "278 Diamonds", rawPrice: 176.90 },
+                    { label: "571 Diamonds", rawPrice: 354.94 }
+                ]
+            },
+            {
+                name: "سيلك رود (Joymax Silkroad)", badge: "بطاقات Silk الرسمية", icon: "🐉",
+                packages: [
+                    { label: "10 Silk", rawPrice: 63.00 },
+                    { label: "50 Silk", rawPrice: 311.85 },
+                    { label: "100 Silk", rawPrice: 622.65 },
+                    { label: "300 Silk", rawPrice: 1867.95 },
+                    { label: "500 Silk + 25 Silk Free", rawPrice: 3113.25 },
+                    { label: "700 Silk + 50 Silk Free", rawPrice: 4358.55 },
+                    { label: "1000 Silk + 100 Silk Free", rawPrice: 6225.45 }
+                ]
+            },
+            {
+                name: "كروس فاير (CrossFire)", badge: "نقاط ZP فورية", icon: "🎯",
+                packages: [
+                    { label: "5,000 ZP", rawPrice: 131.25 },
+                    { label: "10,000 ZP", rawPrice: 261.45 },
+                    { label: "20,000 ZP", rawPrice: 508.20 },
+                    { label: "100,000 ZP", rawPrice: 2495.85 }
+                ]
+            }
+        ];
+        var filteredGames = allGames.slice();
+
+        function renderGames() {
+            var container = document.getElementById('gamesCardsContainer');
+            if (!container) return;
+            var html = '';
+            for (var i = 0; i < filteredGames.length; i++) {
+                var game = filteredGames[i];
+                var pkgHtml = '';
+                for (var j = 0; j < game.packages.length; j++) {
+                    var pkg = game.packages[j];
+                    var priceObj = formatPriceWithDiscount(pkg.rawPrice);
+                    var couponText = activeCouponCode ? (' (بعد كود الخصم ' + activeCouponCode + ')') : '';
+                    var waUrl = 'https://wa.me/201060934020?text=' + encodeURIComponent('السلام عليكم، أريد شحن لعبة ' + game.name + ' - باقة (' + pkg.label + ') بسعر ' + priceObj.finalText + couponText);
+                    var oldSpan = priceObj.hasDiscount ? '<span class="text-[10px] text-zinc-500 line-through font-mono">' + priceObj.oldText + '</span>' : '';
+                    pkgHtml += '<div class="flex items-center justify-between p-2.5 rounded-xl bg-[#0b0811] border border-[#382854]">' +
+                               '<span class="text-xs sm:text-sm font-bold text-zinc-100">' + pkg.label + '</span>' +
+                               '<div class="flex items-center gap-2 shrink-0">' +
+                               oldSpan +
+                               '<span class="text-xs sm:text-sm font-extrabold text-amber-400 font-mono">' + priceObj.finalText + '</span>' +
+                               '<a href="' + waUrl + '" target="_blank" class="rose-btn font-bold text-[11px] px-2.5 py-1 rounded-lg">اشحن الآن</a>' +
+                               '</div></div>';
+                }
+
+                var extraInfoHtml = '';
+                if (game.details || game.activationSteps) {
+                    var stepsHtml = '';
+                    if (game.activationSteps) {
+                        for (var k = 0; k < game.activationSteps.length; k++) {
+                            stepsHtml += '<p class="text-[11px] text-zinc-300 leading-relaxed mb-1">' + game.activationSteps[k] + '</p>';
+                        }
+                    }
+                    extraInfoHtml = '<div class="px-4 pb-4 pt-1">' +
+                        '<details class="bg-[#0b0811] border border-[#382854] rounded-xl p-3 text-right">' +
+                        '<summary class="text-xs font-bold text-rose-400 cursor-pointer flex justify-between items-center">' +
+                        '<span>ℹ️ تفاصيل بطاقة الهدايا وطريقة التفعيل</span><span>⌄</span>' +
+                        '</summary>' +
+                        '<div class="mt-2 pt-2 border-t border-[#382854]/60 space-y-1.5">' +
+                        (game.details ? '<p class="text-[11px] text-amber-300 font-medium">' + game.details + '</p>' : '') +
+                        stepsHtml +
+                        '</div></details></div>';
+                }
+
+                html += '<div class="rose-card border rounded-2xl overflow-hidden flex flex-col justify-between">' +
+                        '<div>' +
+                        '<div class="bg-[#0b0811] border-b border-[#382854] p-4 flex items-center justify-between gap-3">' +
+                        '<div class="flex items-center gap-3">' +
+                        '<span class="text-2xl">' + game.icon + '</span>' +
+                        '<div><h3 class="font-extrabold text-base text-white">' + game.name + '</h3><span class="text-[11px] text-rose-400 font-bold">' + game.badge + '</span></div>' +
+                        '</div>' +
+                        (activeCouponCode ? '<span class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[10px] font-bold px-2 py-0.5 rounded-full">خصم 15% مفعل</span>' : '') +
+                        '</div>' +
+                        '<div class="p-4 space-y-2 max-h-80 overflow-y-auto custom-scrollbar">' + pkgHtml + '</div>' +
+                        '</div>' +
+                        extraInfoHtml +
+                        '</div>';
+            }
+            container.innerHTML = html;
+        }
+
+        function handleGameSearch() {
+            var q = document.getElementById('gameSearchInput').value.toLowerCase().trim();
+            filteredGames = [];
+            for (var i = 0; i < allGames.length; i++) {
+                var g = allGames[i];
+                var match = g.name.toLowerCase().indexOf(q) !== -1;
+                if (!match) {
+                    for (var j = 0; j < g.packages.length; j++) {
+                        if (g.packages[j].label.toLowerCase().indexOf(q) !== -1) { match = true; break; }
+                    }
+                }
+                if (match) filteredGames.push(g);
+            }
+            renderGames();
+        }
+
+        /* 6. API MODELS & CALCULATOR */
+        var allModels = [
+            { name: "Claude Opus 5.5", provider: "Anthropic", context: "1M Token", inPrice: "60 ج.م", outPrice: "300 ج.م", discount: "-70%", inVal: 60, outVal: 300 },
+            { name: "GPT-5.6 Sol", provider: "OpenAI", context: "400K Token", inPrice: "60 ج.م", outPrice: "300 ج.م", discount: "-70%", inVal: 60, outVal: 300 },
+            { name: "Gemini 3.1 Pro", provider: "Google", context: "1M Token", inPrice: "30 ج.م", outPrice: "180 ج.م", discount: "-70%", inVal: 30, outVal: 180 },
+            { name: "Claude Sonnet 5.5", provider: "Anthropic", context: "1M Token", inPrice: "30 ج.م", outPrice: "150 ج.م", discount: "-70%", inVal: 30, outVal: 150 },
+            { name: "DeepSeek R2 Pro", provider: "DeepSeek", context: "256K Token", inPrice: "15 ج.م", outPrice: "45 ج.م", discount: "-75%", inVal: 15, outVal: 45 },
+            { name: "Midjourney v6.1", provider: "Midjourney", context: "صورة", inPrice: "10 ج.م / صورة", outPrice: "شامل التعديل", discount: "-66%", inVal: 10, outVal: 0 }
+        ];
+        var filteredModels = allModels.slice();
+
+        function initCalculatorSelect() {
+            var select = document.getElementById('calcModelSelect');
+            if (!select) return;
+            var html = '';
+            for (var i = 0; i < allModels.length; i++) {
+                html += '<option value="' + i + '">' + allModels[i].name + ' (' + allModels[i].inPrice + ')</option>';
+            }
+            select.innerHTML = html;
+            calculateCost();
+        }
+
+        function calculateCost() {
+            var select = document.getElementById('calcModelSelect');
+            if (!select) return;
+            var idx = parseInt(select.value, 10) || 0;
+            var model = allModels[idx] || allModels[0];
+            var inCount = Math.max(0, parseFloat(document.getElementById('calcInputCount').value) || 0);
+            var outCount = Math.max(0, parseFloat(document.getElementById('calcOutputCount').value) || 0);
+            var inCost = model.inVal * inCount;
+            var outCost = model.outVal * outCount;
+            document.getElementById('calcInputRes').innerText = inCost.toLocaleString() + ' ج.م';
+            document.getElementById('calcOutputRes').innerText = outCost.toLocaleString() + ' ج.م';
+            document.getElementById('calcTotalRes').innerText = (inCost + outCost).toLocaleString() + ' ج.م';
+        }
+
+        function renderTable() {
+            var tableBody = document.getElementById('modelsTable');
+            if (!tableBody) return;
+            var html = '';
+            for (var i = 0; i < filteredModels.length; i++) {
+                var m = filteredModels[i];
+                html += '<tr class="hover:bg-white/5 transition">' +
+                        '<td class="p-3 font-bold text-white">' + m.name + '</td>' +
+                        '<td class="p-3 text-zinc-400 text-xs">' + m.provider + '</td>' +
+                        '<td class="p-3 text-zinc-400 text-xs">' + m.context + '</td>' +
+                        '<td class="p-3 text-amber-400 font-bold text-xs">' + m.inPrice + '</td>' +
+                        '<td class="p-3 text-amber-400 font-bold text-xs">' + m.outPrice + '</td>' +
+                        '<td class="p-3"><span class="px-2 py-0.5 bg-[#0b0811] text-rose-400 text-xs rounded-lg font-bold">' + m.discount + '</span></td>' +
+                        '</tr>';
+            }
+            tableBody.innerHTML = html;
+        }
+
+        function handleSearch() {
+            var q = document.getElementById('searchInput').value.toLowerCase().trim();
+            filteredModels = [];
+            for (var i = 0; i < allModels.length; i++) {
+                if (allModels[i].name.toLowerCase().indexOf(q) !== -1 || allModels[i].provider.toLowerCase().indexOf(q) !== -1) {
+                    filteredModels.push(allModels[i]);
+                }
+            }
+            renderTable();
+        }
+
+        /* 7. VERIFIED CUSTOMER REVIEWS (12 REVIEWS WITH BLUE BADGE) */
+        var verifiedReviews = [
+            { name: "أحمد عبد الرحمن", service: "تفعيل Claude Max 5x", text: "التفعيل تم على إيميلي الشخصي في أقل من نص ساعة بدون باسورد، خدمة محترمة جداً.", date: "أكتوبر 2026" },
+            { name: "محمد طارق", service: "مشاهدات بث مباشر فيسبوك", text: "البث المباشر وصلت مشاهداته في نفس الدقيقة واستقرار ممتاز طول اللايف.", date: "أكتوبر 2026" },
+            { name: "كريم وائل", service: "عرض Gemini Jio 18 شهر", text: "عرض الـ 18 شهر بـ 75 جنيه لقطة بجد واتفعّل فوراً على حسابي.", date: "أكتوبر 2026" },
+            { name: "سارة محمود", service: "متابعين ولايكات تيك توك", text: "العدد وصل كامل وبسرعة رهيبة ومعاه ضمان تعويض، أكيد مش آخر تعامل.", date: "أكتوبر 2026" },
+            { name: "يوسف الشناوي", service: "شحن شدات بابجي UC", text: "أرخص سعر لقيته والشدات وصلت في الحساب في أقل من 3 دقايق.", date: "أكتوبر 2026" },
+            { name: "مروان عادل", service: "باقة مطورين API", text: "مفتاح الـ API شغال بسرعة ممتازة مع Claude و GPT والتوكنز بتفاصيل دقيقة.", date: "أكتوبر 2026" },
+            { name: "ندى حسن", service: "تفعيل Canva Pro سنوي", text: "تم تفعيل كانفا برو على إيميلي الرسمي وكل القوالب شغالة، شكراً للدعم المحترم.", date: "أكتوبر 2026" },
+            { name: "عمر الجندي", service: "أعضاء قناة واتساب", text: "زودت القناة بـ 5000 عضو حقيقي والتفاعل بقى ممتاز جداً.", date: "أكتوبر 2026" },
+            { name: "مصطفى كامل", service: "تفعيل Claude Max 20x", text: "أحسن معاملة وسرعة في الرد على الواتساب، الباقة شغالة معايا طوال اليوم بدون حدود.", date: "أكتوبر 2026" },
+            { name: "خالد المنسي", service: "جواهر فري فاير", text: "شحن فوري وأمان تام بالـ ID بس، تسلم إيدكم.", date: "أكتوبر 2026" },
+            { name: "هدير سامي", service: "خدمات انستقرام", text: "المتابعين بجودة عالية جداً ومفيش أي نقصان، موقع موثوق فعلاً.", date: "أكتوبر 2026" },
+            { name: "زياد شريف", service: "تفعيل ChatGPT Plus", text: "اتفعّل على حسابي الرسمي بسرعة ومن غير فيزا دولية.", date: "أكتوبر 2026" }
+        ];
+
+        function renderReviews() {
+            var container = document.getElementById('reviewsContainer');
+            if (!container) return;
+            var html = '';
+            for (var i = 0; i < verifiedReviews.length; i++) {
+                var r = verifiedReviews[i];
+                html += '<div class="rose-card border p-3.5 rounded-2xl flex flex-col justify-between">' +
+                        '<div>' +
+                        '<div class="flex items-center justify-between mb-2">' +
+                        '<div class="flex items-center gap-1.5">' +
+                        '<div class="w-6 h-6 rounded-full rose-btn font-bold text-xs flex items-center justify-center">' + r.name.charAt(0) + '</div>' +
+                        '<span class="font-bold text-xs text-white">' + r.name + '</span>' +
+                        '<span class="inline-flex items-center gap-0.5 bg-sky-500/20 border border-sky-400/40 text-sky-400 text-[9px] font-bold px-1.5 py-0.5 rounded-full">✓ موثق</span>' +
+                        '</div>' +
+                        '<span class="text-amber-400 text-[10px]">★★★★★</span>' +
+                        '</div>' +
+                        '<p class="text-[11px] text-zinc-200 leading-relaxed mb-2.5">"' + r.text + '"</p>' +
+                        '</div>' +
+                        '<div class="pt-2 border-t border-[#382854] flex items-center justify-between text-[10px] text-zinc-400">' +
+                        '<span class="text-amber-400 font-medium">✓ ' + r.service + '</span>' +
+                        '<span>' + r.date + '</span>' +
+                        '</div></div>';
+            }
+            container.innerHTML = html;
+        }
+
+        /* 8. AUTHENTICATION & ADMIN CSV EXPORT */
+        var ADMIN_EMAIL = "sahermohamed123456@gmail.com";
+        var USERS_STORAGE_KEY = 'migo_registered_users_v2';
+        var SESSION_STORAGE_KEY = 'migo_active_member_v2';
+
+        function getRegisteredUsers() {
+            try { return JSON.parse(localStorage.getItem(USERS_STORAGE_KEY)) || []; } catch (e) { return []; }
+        }
+        function saveRegisteredUsers(users) {
+            localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
+        }
+        function encodePass(str) {
+            return btoa(unescape(encodeURIComponent('migo_salt_' + str)));
+        }
+        function openAuthModal(mode) {
+            var modal = document.getElementById('authModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            switchAuthTab(mode || 'login');
+        }
+        function closeAuthModal() {
+            var modal = document.getElementById('authModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+        function switchAuthTab(mode) {
+            document.getElementById('loginForm').classList.toggle('hidden', mode !== 'login');
+            document.getElementById('registerForm').classList.toggle('hidden', mode === 'login');
+            document.getElementById('tabLoginBtn').className = (mode === 'login') ? 'py-2 text-xs font-bold rounded-lg transition rose-btn' : 'py-2 text-xs font-bold rounded-lg transition text-zinc-400';
+            document.getElementById('tabRegisterBtn').className = (mode !== 'login') ? 'py-2 text-xs font-bold rounded-lg transition rose-btn' : 'py-2 text-xs font-bold rounded-lg transition text-zinc-400';
+        }
+        function handleRegister(e) {
+            e.preventDefault();
+            var name = document.getElementById('regName').value.trim();
+            var email = document.getElementById('regEmail').value.trim().toLowerCase();
+            var phone = document.getElementById('regPhone').value.trim();
+            var pass = document.getElementById('regPassword').value;
+            var users = getRegisteredUsers();
+            for (var i = 0; i < users.length; i++) {
+                if (users[i].email === email) { alert('هذا البريد مسجل بالفعل!'); return; }
+            }
+            users.push({ name: name, email: email, phone: phone, passwordHash: encodePass(pass), createdAt: new Date().toLocaleString('ar-EG') });
+            saveRegisteredUsers(users);
+            localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify({ name: name, email: email, phone: phone }));
+            updateNavbarAuthUI();
+            closeAuthModal();
+        }
+        function handleLogin(e) {
+            e.preventDefault();
+            var email = document.getElementById('loginEmail').value.trim().toLowerCase();
+            var pass = document.getElementById('loginPassword').value;
+            var users = getRegisteredUsers();
+            var found = null;
+            for (var i = 0; i < users.length; i++) {
+                if (users[i].email === email) { found = users[i]; break; }
+            }
+            if (!found || found.passwordHash !== encodePass(pass)) { alert('بيانات الدخول غير صحيحة!'); return; }
+            localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify({ name: found.name, email: found.email, phone: found.phone }));
+            updateNavbarAuthUI();
+            closeAuthModal();
+        }
+        function handleLogout() {
+            localStorage.removeItem(SESSION_STORAGE_KEY);
+            updateNavbarAuthUI();
+        }
+        function exportDatabaseToCSV() {
+            var users = getRegisteredUsers();
+            if (users.length === 0) return alert('لا توجد حسابات مسجلة حتى الآن.');
+            var csvContent = "\uFEFFالاسم الكامل,البريد الإلكتروني,رقم الهاتف,الرقم السري المشفر,تاريخ التسجيل\n";
+            for (var i = 0; i < users.length; i++) {
+                var u = users[i];
+                csvContent += '"' + u.name + '","' + u.email + '","' + (u.phone || '-') + '","' + u.passwordHash + '","' + u.createdAt + '"\n';
+            }
+            var blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            var a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'Migo_AI_Clients_Backup.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+        function updateNavbarAuthUI() {
+            var session = null;
+            try { session = JSON.parse(localStorage.getItem(SESSION_STORAGE_KEY)); } catch (e) {}
+            var loginBtn = document.getElementById('navLoginBtn');
+            var userBadge = document.getElementById('navUserBadge');
+            var userNameEl = document.getElementById('navUserName');
+            if (session && session.email) {
+                loginBtn.classList.add('hidden');
+                userBadge.classList.remove('hidden');
+                userBadge.classList.add('flex');
+                userNameEl.innerText = session.name || session.email;
+                var adminBtn = document.getElementById('adminExportCSVBtn');
+                if (session.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
+                    if (!adminBtn) {
+                        adminBtn = document.createElement('button');
+                        adminBtn.id = 'adminExportCSVBtn';
+                        adminBtn.onclick = exportDatabaseToCSV;
+                        adminBtn.className = 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[10px] font-bold px-2 py-1 rounded-lg';
+                        adminBtn.innerText = '📥 تصدير';
+                        userBadge.insertBefore(adminBtn, userBadge.lastElementChild);
+                    }
+                } else if (adminBtn) { adminBtn.remove(); }
+            } else {
+                loginBtn.classList.remove('hidden');
+                userBadge.classList.add('hidden');
+                userBadge.classList.remove('flex');
+            }
+        }
+
+        function copyToClipboard(text, msg) {
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(function() { alert(msg); });
+            } else {
+                alert(msg + ': ' + text);
+            }
+        }
+
+        /* INIT ALL ON LOAD */
+        updateNavbarAuthUI();
+        selectSMMPlatform('tiktok');
+        renderApps();
+        renderGames();
+        initCalculatorSelect();
+        renderTable();
+        renderReviews();
+  </script>
+ </body>
+</html>
