@@ -26,7 +26,6 @@ Deno.serve(async (req: Request): Promise<Response> => {
     let name = "";
 
     if (g === "pubg") {
-      // فحص ببجي عبر نقطة Midasbuy الرسمية الموثقة
       const res = await fetch("https://www.midasbuy.com/interface/getGUserInfo", {
         method: "POST",
         headers: {
@@ -35,11 +34,13 @@ Deno.serve(async (req: Request): Promise<Response> => {
           "Origin": "https://www.midasbuy.com",
           "Referer": "https://www.midasbuy.com/midasbuy/ot/buy/pubgm",
           "Accept": "application/json, text/plain, */*",
+          "Cookie": "country=eg; lang=ar; zone=GLOBAL;",
         },
         body: JSON.stringify({
           appid: "1450015065",
           currency_type: "USD",
           openid: id,
+          pf: "mds_games_pc-outer-game_1450015065-android",
         }),
       });
 
@@ -47,16 +48,18 @@ Deno.serve(async (req: Request): Promise<Response> => {
       let d: any = null;
       try {
         d = JSON.parse(raw);
-      } catch (_) {
-        // في حال كان الرد نصياً غير مهيأ
-      }
+      } catch (_) {}
 
       if (d?.charac_name) {
         name = decodeURIComponent(d.charac_name);
       } else if (d?.msg && d.msg !== "SUCCESS") {
-        throw new Error(d.msg);
+        throw new Error(`رد ببجي: ${d.msg}`);
+      } else if (d?.ret !== undefined && d.ret !== 0) {
+        throw new Error(`خطأ سيرفر ببجي (${d.ret}): ${d.msg || "الحساب غير متاح"}`);
+      } else if (!d && raw.includes("<html")) {
+        throw new Error("سيرفر ببجي حظر الطلب السحابي مؤقتاً");
       } else {
-        throw new Error("لم يتم العثور على اسم اللاعب، تأكد من صحة رقم الـ ID");
+        throw new Error("لم يتم العثور على اسم اللاعب، تأكد من صحة الـ ID");
       }
 
     } else if (g === "freefire") {
