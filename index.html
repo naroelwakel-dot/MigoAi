@@ -401,7 +401,7 @@
     </div>
    </section>
 
-   <!-- SECTION 2: LIVE APPS (NEW) -->
+   <!-- SECTION 2: LIVE APPS (UPDATED WITH REAL PACKAGES) -->
    <section id="sec-liveapps" class="sky-surface border rounded-3xl p-4 sm:p-8 shadow-2xl scroll-mt-24">
     <div class="mb-6">
       <span class="px-3 py-1 sky-card border text-pink-400 text-xs font-bold rounded-full">شحن فوري بالتطبيق</span>
@@ -875,15 +875,72 @@
             document.getElementById('smmLinkInput').value = '';
         }
 
-        // --- 9. LIVE APPS DATA (NEW SECTION - Base Prices + 10%) ---
+        // --- 9. LIVE APPS DATA (Real Packages + 10% Markup) ---
         const allLiveApps = [
-            { name: "BIGO Live", icon: "📹", pkgs: [{l: "باقة أساسية", p: 121}, {l: "باقة متوسطة", p: 242}] },
-            { name: "Chamet", icon: "💬", pkgs: [{l: "باقة صغيرة", p: 121}, {l: "باقة كبيرة", p: 242}] },
-            { name: "SUGO", icon: "💜", pkgs: [{l: "باقة أساسية", p: 121}, {l: "باقة مميزة", p: 242}] },
-            { name: "MeYo", icon: "💬", pkgs: [{l: "باقة أساسية", p: 121}, {l: "باقة مميزة", p: 242}] },
-            { name: "Yalla Ludo", icon: "🎲", pkgs: [{l: "باقة صغيرة", p: 121}, {l: "باقة متوسطة", p: 242}] },
-            { name: "Poppo Live", icon: "🎤", pkgs: [{l: "باقة أساسية", p: 121}, {l: "باقة مميزة", p: 242}] }
+            { 
+                name: "BIGO Live", 
+                icon: "📹", 
+                pkgs: [
+                    {l: "42 Diamonds", p: 55}, 
+                    {l: "297 Diamonds", p: 385}, 
+                    {l: "848 Diamonds", p: 1100}, 
+                    {l: "3818 Diamonds", p: 4950}
+                ] 
+            },
+            { 
+                name: "Chamet", 
+                icon: "💬", 
+                pkgs: [
+                    {l: "4500 Diamonds", p: 55}, 
+                    {l: "9000 Diamonds", p: 110}, 
+                    {l: "22500 Diamonds", p: 275}, 
+                    {l: "45000 Diamonds", p: 550}
+                ] 
+            },
+            { 
+                name: "SUGO", 
+                icon: "💜", 
+                pkgs: [
+                    {l: "42 Coins", p: 55}, 
+                    {l: "297 Coins", p: 385}, 
+                    {l: "848 Coins", p: 1100}, 
+                    {l: "3818 Coins", p: 4950}
+                ] 
+            },
+            { 
+                name: "MeYo", 
+                icon: "💬", 
+                pkgs: [
+                    {l: "42 Coins", p: 55}, 
+                    {l: "297 Coins", p: 385}, 
+                    {l: "848 Coins", p: 1100}, 
+                    {l: "3818 Coins", p: 4950}
+                ] 
+            },
+            { 
+                name: "Yalla Ludo", 
+                icon: "🎲", 
+                pkgs: [
+                    {l: "50 Diamonds", p: 55}, 
+                    {l: "250 Diamonds", p: 275}, 
+                    {l: "500 Diamonds", p: 550}, 
+                    {l: "1000 Diamonds", p: 1100}, 
+                    {l: "2500 Diamonds", p: 2750}
+                ] 
+            },
+            { 
+                name: "Poppo Live", 
+                icon: "🎤", 
+                pkgs: [
+                    {l: "7000 Coins", p: 55}, 
+                    {l: "14000 Coins", p: 110}, 
+                    {l: "35000 Coins", p: 275}, 
+                    {l: "70000 Coins", p: 550},
+                    {l: "140000 Coins", p: 1100}
+                ] 
+            }
         ];
+
         function renderLiveApps() {
             document.getElementById('liveAppsCardsContainer').innerHTML = allLiveApps.map((g, i) => `<div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between"><div class="bg-slate-950 border-b border-slate-600 p-4 flex items-center gap-3"><span class="text-2xl">${g.icon}</span><h3 class="font-extrabold text-base text-pink-400">${g.name}</h3></div><div class="p-4 space-y-2">${g.pkgs.map((pkg, j) => `<div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-950 border border-slate-600"><span class="text-sm font-bold text-gray-100">${pkg.l}</span><div class="flex items-center gap-2"><span class="text-sm font-extrabold text-amber-400 font-mono">${pkg.p} ج.م</span><button onclick="addToCart({id: 'live_${i}_${j}', name: '${g.name} - ${pkg.l}', type: 'live', price: ${pkg.p}, details: 'شحن فوري بالـ ID'})" class="sky-btn font-bold text-[11px] px-2.5 py-1.5 rounded-lg">أضف 🛒</button></div></div>`).join('')}</div></div>`).join('');
         }
