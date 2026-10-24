@@ -642,8 +642,8 @@
         const CART_STORAGE_KEY = 'migo_cart_v2';
         const ADMIN_EMAIL = "sahermohamed123456@gmail.com";
         
-        // Correct Standard Deno URL (without sub-subdomain SSL conflict)
-        const DENO_API_URL = "https://busy-rook-1889.deno.dev";
+        // Exact active Deno Deploy endpoint:
+        const DENO_API_URL = "https://busy-rook-1889.naroelwakel-dot.deno.net";
 
         // SVG LOGOS DICTIONARY
         const SVG_LOGOS = {
@@ -883,7 +883,6 @@
         let currentModalItem = null;
         let isExpressModal = false;
 
-        // Supported Games Registry
         const GAMES_REGISTRY = [
             { key: 'pubg', label: 'بابجي موبايل (PUBG Mobile)', hasZone: false },
             { key: 'freefire', label: 'فري فاير (Free Fire)', hasZone: false },
@@ -985,7 +984,8 @@
             statusBox.classList.add('bg-sky-500/15', 'border-sky-500/40', 'text-sky-300');
             statusBox.innerText = "⏳ جاري الاستعلام السريع من سيرفرات اللعبة...";
 
-            let query = `?game=${encodeURIComponent(game)}&id=${encodeURIComponent(uid)}`;
+            // Ensure proper endpoint routing with slash
+            let query = `/?game=${encodeURIComponent(game)}&id=${encodeURIComponent(uid)}`;
             if (zoneId) query += `&zoneId=${encodeURIComponent(zoneId)}`;
 
             try {
@@ -1014,7 +1014,6 @@
             const playerId = document.getElementById('modalInputPlayerId').value.trim();
             const playerName = document.getElementById('modalInputPlayerName').value.trim();
             const zoneId = document.getElementById('modalInputZoneId').value.trim();
-            const selectedGame = document.getElementById('modalSelectGame').value;
 
             if (!playerId) {
                 return showToast('يرجى إدخال معرف اللاعب (Player ID) أولاً!', 'error');
