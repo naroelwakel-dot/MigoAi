@@ -26,62 +26,104 @@ Deno.serve(async (req: Request): Promise<Response> => {
     let name = "";
 
     if (g === "pubg") {
-      const res = await fetch("https://www.midasbuy.com/interface/getGUserInfo", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
-          "Origin": "https://www.midasbuy.com",
-          "Referer": "https://www.midasbuy.com/midasbuy/ot/buy/pubgm",
-          "Accept": "application/json, text/plain, */*",
-          "Cookie": "country=eg; lang=ar; zone=GLOBAL;",
-        },
-        body: JSON.stringify({
-          appid: "1450015065",
-          currency_type: "USD",
-          openid: id,
-          pf: "mds_games_pc-outer-game_1450015065-android",
-        }),
-      });
-
-      const raw = await res.text();
-      let d: any = null;
+      // 1. المحاولة الأولى: الفحص عبر خادم استعلام متخصص غير محظور
       try {
-        d = JSON.parse(raw);
+        const resIsan = await fetch(`https://api.isan.eu.org/nickname/pubg?id=${encodeURIComponent(id)}`, {
+          headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)" },
+          signal: AbortSignal.timeout(6000),
+        });
+        if (resIsan.ok) {
+          const dIsan = await resIsan.json();
+          if (dIsan?.name) {
+            name = dIsan.name;
+          }
+        }
       } catch (_) {}
 
-      if (d?.charac_name) {
-        name = decodeURIComponent(d.charac_name);
-      } else if (d?.msg && d.msg !== "SUCCESS") {
-        throw new Error(`رد ببجي: ${d.msg}`);
-      } else if (d?.ret !== undefined && d.ret !== 0) {
-        throw new Error(`خطأ سيرفر ببجي (${d.ret}): ${d.msg || "الحساب غير متاح"}`);
-      } else if (!d && raw.includes("<html")) {
-        throw new Error("سيرفر ببجي حظر الطلب السحابي مؤقتاً");
-      } else {
-        throw new Error("لم يتم العثور على اسم اللاعب، تأكد من صحة الـ ID");
+      // 2. المحاولة الثانية: الفحص المباشر عبر Midasbuy في حال توفره
+      if (!name) {
+        try {
+          const resMidas = await fetch("https://www.midasbuy.com/interface/getGUserInfo", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+              "Origin": "https://www.midasbuy.com",
+              "Referer": "https://www.midasbuy.com/midasbuy/ot/buy/pubgm",
+            },
+            body: JSON.stringify({
+              appid: "1450015065",
+              currency_type: "USD",
+              openid: id,
+              pf: "mds_games_pc-outer-game_1450015065-android",
+            }),
+            signal: AbortSignal.timeout(5000),
+          });
+          const raw = await resMidas.text();
+          try {
+            const d = JSON.parse(raw);
+            if (d?.charac_name) {
+              name = decodeURIComponent(d.charac_name);
+            }
+          } catch (_) {}
+        } catch (_) {}
+      }
+
+      if (!name) {
+        throw new Error("لم يتم العثور على اسم اللاعب، تأكد من صحة رقم الـ ID أو اكتب الاسم يدوياً");
       }
 
     } else if (g === "freefire") {
-      const res = await fetch(`https://www.smile.one/merchant/freefire/checkrole?user_id=${encodeURIComponent(id)}`, {
-        headers: { "User-Agent": "Mozilla/5.0" }
-      });
-      const d = await res.json();
-      if (d?.username) name = decodeURIComponent(d.username);
-      else throw new Error("رقم معرف فري فاير غير صحيح");
+      try {
+        const resSmile = await fetch(`https://www.smile.one/merchant/freefire/checkrole?user_id=${encodeURIComponent(id)}`, {
+          headers: { "User-Agent": "Mozilla/5.0" },
+          signal: AbortSignal.timeout(6000),
+        });
+        const d = await resSmile.json();
+        if (d?.username) name = decodeURIComponent(d.username);
+      } catch (_) {}
+
+      if (!name) {
+        try {
+          const resIsan = await fetch(`https://api.isan.eu.org/nickname/freefire?id=${encodeURIComponent(id)}`, {
+            headers: { "User-Agent": "Mozilla/5.0" },
+            signal: AbortSignal.timeout(6000),
+          });
+          const d = await resIsan.json();
+          if (d?.name) name = d.name;
+        } catch (_) {}
+      }
+
+      if (!name) throw new Error("رقم معرف فري فاير غير صحيح");
 
     } else if (g === "mlbb") {
       if (!z) throw new Error("مطلوب إدخال Zone ID");
-      const res = await fetch(`https://www.smile.one/merchant/mobilelegends/checkrole?user_id=${encodeURIComponent(id)}&zone_id=${encodeURIComponent(z)}`, {
-        headers: { "User-Agent": "Mozilla/5.0" }
-      });
-      const d = await res.json();
-      if (d?.username) name = decodeURIComponent(d.username);
-      else throw new Error("بيانات حساب Mobile Legends غير صحيحة");
+      try {
+        const resSmile = await fetch(`https://www.smile.one/merchant/mobilelegends/checkrole?user_id=${encodeURIComponent(id)}&zone_id=${encodeURIComponent(z)}`, {
+          headers: { "User-Agent": "Mozilla/5.0" },
+          signal: AbortSignal.timeout(6000),
+        });
+        const d = await resSmile.json();
+        if (d?.username) name = decodeURIComponent(d.username);
+      } catch (_) {}
+
+      if (!name) {
+        try {
+          const resIsan = await fetch(`https://api.isan.eu.org/nickname/ml?id=${encodeURIComponent(id)}&zone=${encodeURIComponent(z)}`, {
+            headers: { "User-Agent": "Mozilla/5.0" },
+            signal: AbortSignal.timeout(6000),
+          });
+          const d = await resIsan.json();
+          if (d?.name) name = d.name;
+        } catch (_) {}
+      }
+
+      if (!name) throw new Error("بيانات حساب Mobile Legends غير صحيحة");
 
     } else if (g === "fifa" || g === "fcmobile") {
       const res = await fetch(`https://www.smile.one/merchant/fcmobile/checkrole?user_id=${encodeURIComponent(id)}`, {
-        headers: { "User-Agent": "Mozilla/5.0" }
+        headers: { "User-Agent": "Mozilla/5.0" },
+        signal: AbortSignal.timeout(6000),
       });
       const d = await res.json();
       if (d?.username) name = decodeURIComponent(d.username);
