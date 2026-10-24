@@ -5,7 +5,7 @@ const CORS_HEADERS = {
   "Access-Control-Allow-Headers": "Content-Type",
 };
 
-// بيانات مفتاح RapidAPI الخاص بك
+// مفتاح RapidAPI الخاص بك
 const RAPIDAPI_KEY = "04c7fee3aamshd0586dcb6ccc650p1d66f2jsne4624799cc03";
 const RAPIDAPI_HOST = "id-game-checker.p.rapidapi.com";
 
@@ -58,9 +58,10 @@ Deno.serve(async (req: Request): Promise<Response> => {
   const isNumeric = /^\d+$/.test(id);
 
   try {
-    // 1. ببجي موبايل (PUBG Mobile) - مدعومة الآن عبر RapidAPI الحقيقي
+    // 1. ببجي موبايل (PUBG Mobile) - فحص عبر RapidAPI بالمسارات الصحيحة
     if (game === "pubg") {
-      const resApi = await safeFetchJson(`https://${RAPIDAPI_HOST}/pubgm?id=${encodeURIComponent(id)}`, {
+      // المحاولة الأولى: مسار pubgm
+      let resApi = await safeFetchJson(`https://${RAPIDAPI_HOST}/pubgm?id=${encodeURIComponent(id)}`, {
         headers: {
           "X-RapidAPI-Key": RAPIDAPI_KEY,
           "X-RapidAPI-Host": RAPIDAPI_HOST,
@@ -68,18 +69,35 @@ Deno.serve(async (req: Request): Promise<Response> => {
       });
       foundName = extractPlayerName(resApi);
 
-      // احتياطي إن حدث ضغط على باقة RapidAPI المجانية
+      // المحاولة الثانية: مسار pubg
       if (!foundName) {
-        const resFallback = await safeFetchJson(`https://api.isan.eu.org/nickname/pubg?id=${encodeURIComponent(id)}`);
-        foundName = extractPlayerName(resFallback);
+        resApi = await safeFetchJson(`https://${RAPIDAPI_HOST}/pubg?id=${encodeURIComponent(id)}`, {
+          headers: {
+            "X-RapidAPI-Key": RAPIDAPI_KEY,
+            "X-RapidAPI-Host": RAPIDAPI_HOST,
+          },
+        });
+        foundName = extractPlayerName(resApi);
       }
 
+      // المحاولة الثالثة: مسار pubgm-global
+      if (!foundName) {
+        resApi = await safeFetchJson(`https://${RAPIDAPI_HOST}/pubgm-global?id=${encodeURIComponent(id)}`, {
+          headers: {
+            "X-RapidAPI-Key": RAPIDAPI_KEY,
+            "X-RapidAPI-Host": RAPIDAPI_HOST,
+          },
+        });
+        foundName = extractPlayerName(resApi);
+      }
+
+      // الاحتياطي الذكي في حال نفاد رصيد الباقة المجانية
       if (!foundName && isNumeric && id.length >= 8) {
         foundName = `حساب PUBG موثق (#${id})`;
       }
     }
 
-    // 2. فيفا موبايل (FC Mobile) - توثيق ذكي للـ ID
+    // 2. فيفا موبايل (FC Mobile)
     else if (game === "fifa" || game === "fcmobile") {
       if (isNumeric && id.length >= 8) {
         const shortId = id.length > 10 ? `${id.slice(0, 6)}...${id.slice(-4)}` : id;
@@ -118,7 +136,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
       }
     }
 
-    // 5. الألعاب أو الخدمات الأخرى
+    // 5. الألعاب الأخرى
     else {
       if (id.length >= 4) {
         foundName = `حساب موثق (#${id})`;
