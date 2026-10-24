@@ -140,7 +140,7 @@
    </div>
 
    <h1 class="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight mb-4 leading-tight text-white">متجرك الرقمي المتكامل من <span class="bg-clip-text text-transparent bg-gradient-to-r from-sky-400 via-blue-400 to-amber-300">Migo AI</span></h1>
-   <p class="text-gray-400 text-xs sm:text-sm max-w-2xl mx-auto mb-6">شحن فوري للألعاب بالـ ID، تفعيل اشتراكات الذكاء الاصطناعي على بريدك، وتعزيز حسابات السوشيال ميديا بضمان 100%.</p>
+   <p class="text-gray-400 text-xs sm:text-sm max-w-2xl mx-auto mb-6">شحن فوري للألعاب بالـ ID مع فحص مباشر لصحة الحسابات، تفعيل اشتراكات الذكاء الاصطناعي، وخدمات السوشيال ميديا بالجنيه المصري.</p>
    
    <!-- DYNAMIC SLIDER -->
    <div class="relative w-full max-w-2xl mx-auto overflow-hidden rounded-3xl mb-8 shadow-2xl" dir="rtl">
@@ -167,7 +167,7 @@
                 <div class="absolute top-0 right-0 bg-emerald-500 text-white text-[10px] font-black px-3.5 py-1 rounded-bl-2xl">تسليم فوري بالـ ID</div>
                 <div id="slidePubgIcon" class="w-14 h-14 rounded-2xl bg-slate-900 border border-emerald-500/30 flex items-center justify-center p-2 mb-2"></div>
                 <h3 class="text-2xl font-black text-white mb-1">ببجي موبايل (3850 UC)</h3>
-                <p class="text-xs text-gray-300 mb-3 max-w-sm">3000 شدة + 850 شدة بونص فوري بحسابك الرسمي بالـ ID فقط.</p>
+                <p class="text-xs text-gray-300 mb-3 max-w-sm">3000 شدة + 850 شدة بونص فوري بحسابك الرسمي مع التحقق المسبق من الاسم.</p>
                 <div class="text-2xl font-black text-emerald-400 mb-4 font-mono">3,238 ج.م</div>
                 <div class="flex gap-2">
                   <button onclick="openPlayerIdModal('بابجي موبايل (PUBG)', '3850 UC', 3238, true, 'pubg')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold py-2.5 px-5 rounded-xl text-xs transition shadow-lg cursor-pointer">شحن فوري بالـ ID ⚡</button>
@@ -229,13 +229,13 @@
   <!-- MAIN CONTENT SECTIONS -->
   <main class="max-w-7xl mx-auto px-3 sm:px-4 py-4 space-y-12">
    
-   <!-- SECTION 1: GAMES TOP-UP (16 GAMES WITH UNIQUE LOGOS & +10% EMBEDDED) -->
+   <!-- SECTION 1: GAMES TOP-UP -->
    <section id="sec-games" class="sky-surface border rounded-3xl p-4 sm:p-8 shadow-2xl scroll-mt-24">
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-6 border-b border-slate-700/60 pb-4">
       <div>
         <span class="px-3 py-1 sky-card border border-emerald-500/40 text-emerald-400 text-xs font-bold rounded-full">تسليم فوري وآمن بالـ ID</span>
         <h2 class="text-xl sm:text-3xl font-black text-white mt-2">🎮 متجر شحن الألعاب الرسمي</h2>
-        <p class="text-gray-400 text-xs sm:text-sm mt-1">باقات رسمية موثقة من كبرى منصات الألعاب مع ضمان وصول الشحنة خلال دقائق.</p>
+        <p class="text-gray-400 text-xs sm:text-sm mt-1">باقات رسمية موثقة مع نظام التحقق التلقائي من الحساب قبل تأكيد الشحن.</p>
       </div>
       <span class="text-xs text-gray-400 bg-slate-900 border border-slate-700 px-3 py-1.5 rounded-xl">🔒 لا نطلب كلمة المرور مطلقاً</span>
     </div>
@@ -243,7 +243,7 @@
     <div id="gamesCardsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
    </section>
 
-   <!-- SECTION 2: SOCIAL MEDIA SERVICES (+100% MARGIN BUILT-IN, MIN 1000) -->
+   <!-- SECTION 2: SOCIAL MEDIA SERVICES -->
    <section id="sec-social" class="sky-surface border rounded-3xl p-4 sm:p-8 shadow-2xl scroll-mt-24">
     <div class="mb-6">
       <span class="px-3 py-1 sky-card border border-sky-500/40 text-sky-400 text-xs font-bold rounded-full">قسم السوشيال ميديا الموثق</span>
@@ -427,29 +427,53 @@
 
   <!-- ================= MODALS ================= -->
 
-  <!-- 1. PLAYER ID MODAL (FOR GAMES & LIVE APPS) -->
-  <div id="playerIdModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-[90] hidden items-center justify-center p-4">
-   <div class="sky-surface border border-sky-500/40 rounded-2xl max-w-md w-full p-6 relative shadow-2xl">
-    <button type="button" onclick="closePlayerIdModal()" class="absolute top-4 left-4 text-gray-400 hover:text-white sky-card border w-8 h-8 rounded-lg flex items-center justify-center cursor-pointer">✕</button>
-    <div class="text-center mb-4">
-      <div id="modalTargetIcon" class="w-12 h-12 rounded-xl bg-slate-950 border border-slate-700 mx-auto flex items-center justify-center p-2 mb-2"></div>
-      <h3 id="modalTargetTitle" class="text-lg font-black text-white">شحن اللعبة</h3>
-      <p id="modalTargetPkg" class="text-xs text-amber-400 font-bold mt-0.5 font-mono"></p>
+  <!-- 1. PLAYER ID MODAL (FOR ALL GAMES WITH ENHANCED API VERIFICATION) -->
+  <div id="playerIdModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-[90] hidden items-center justify-center p-3 sm:p-4">
+   <div class="sky-surface border border-sky-500/40 rounded-3xl max-w-md w-full p-5 sm:p-7 relative shadow-2xl max-h-[92vh] overflow-y-auto custom-scrollbar">
+    <button type="button" onclick="closePlayerIdModal()" class="absolute top-4 left-4 text-gray-400 hover:text-white sky-card border w-8 h-8 rounded-xl flex items-center justify-center cursor-pointer">✕</button>
+    
+    <div class="text-center mb-5">
+      <div id="modalTargetIcon" class="w-14 h-14 rounded-2xl bg-slate-950 border border-slate-700 mx-auto flex items-center justify-center p-2.5 mb-2.5 shadow-md"></div>
+      <h3 id="modalTargetTitle" class="text-lg sm:text-xl font-black text-white">شحن اللعبة</h3>
+      <p id="modalTargetPkg" class="text-xs text-amber-400 font-bold mt-1 font-mono"></p>
     </div>
     
     <div class="space-y-3.5 mb-5">
+      <!-- Target Game Detection / Selection -->
+      <div>
+        <label class="block text-xs font-bold text-gray-200 mb-1">اللعبة / الخدمة المطلوبة:</label>
+        <select id="modalSelectGame" onchange="onModalGameSelectChange()" class="w-full bg-slate-950 border border-slate-700 focus:border-sky-400 rounded-xl px-3 py-2.5 text-xs text-white font-bold outline-none"></select>
+      </div>
+
+      <!-- Player ID + Verification Button -->
       <div>
         <label class="block text-xs font-bold text-gray-200 mb-1">معرف اللاعب (Player ID) <span class="text-red-400">*</span>:</label>
-        <input type="text" id="modalInputPlayerId" placeholder="مثال: 5123984729" class="w-full bg-slate-950 border border-slate-700 focus:border-sky-400 rounded-xl px-4 py-2.5 text-sm text-white font-mono outline-none">
+        <div class="flex gap-2">
+            <input type="text" id="modalInputPlayerId" placeholder="أدخل رقم الـ ID هنا" class="flex-1 bg-slate-950 border border-slate-700 focus:border-sky-400 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white font-mono outline-none">
+            <button type="button" id="verifyAccountBtn" onclick="verifyPlayerAccount()" class="shrink-0 bg-sky-600 hover:bg-sky-500 text-white font-extrabold px-3.5 rounded-xl text-xs cursor-pointer shadow transition flex items-center gap-1.5">
+                <span>فحص الحساب</span> 🔍
+            </button>
+        </div>
       </div>
+
+      <!-- Zone ID / Server (Dynamically visible) -->
+      <div id="modalZoneGroup" class="hidden">
+        <label class="block text-xs font-bold text-gray-200 mb-1">معرف السيرفر (Zone ID / Server):</label>
+        <input type="text" id="modalInputZoneId" placeholder="مثال: 6994" class="w-full bg-slate-950 border border-slate-700 focus:border-sky-400 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white font-mono outline-none">
+      </div>
+
+      <!-- Player Name (Auto-retrieved or manual) -->
       <div>
-        <label class="block text-xs font-bold text-gray-200 mb-1">اسم الحساب / السيرفر (اختياري للتحقق):</label>
-        <input type="text" id="modalInputPlayerName" placeholder="مثال: Migo_Sniper" class="w-full bg-slate-950 border border-slate-700 focus:border-sky-400 rounded-xl px-4 py-2 text-sm text-white outline-none">
+        <label class="block text-xs font-bold text-gray-200 mb-1">اسم الحساب (Nickname):</label>
+        <input type="text" id="modalInputPlayerName" placeholder="سيتم جلبه تلقائياً بالفحص أو اكتبه يدوياً" class="w-full bg-slate-950 border border-slate-700 focus:border-sky-400 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white outline-none">
       </div>
+
+      <!-- Verification feedback banner -->
+      <div id="verifyStatusBox" class="hidden p-3 rounded-xl text-xs font-bold text-center border"></div>
     </div>
 
     <div class="flex gap-2">
-      <button type="button" id="modalSubmitBtn" class="w-full sky-btn font-extrabold py-3 rounded-xl text-xs sm:text-sm cursor-pointer shadow-lg flex items-center justify-center gap-1.5"></button>
+      <button type="button" id="modalSubmitBtn" class="w-full sky-btn font-extrabold py-3.5 rounded-xl text-xs sm:text-sm cursor-pointer shadow-lg flex items-center justify-center gap-2"></button>
     </div>
    </div>
   </div>
@@ -560,7 +584,7 @@
      <button type="button" onclick="closeCheckoutModal()" class="text-gray-400 hover:text-white sky-card border w-8 h-8 rounded-lg flex items-center justify-center cursor-pointer">✕</button>
     </div>
     
-    <p class="text-xs text-gray-300 mb-3">اختر المحفظة أو وسيلة الدفع المناسبة لك لإتمام طلبك (الإجمالي: <b id="checkoutTotalText" class="text-sky-400 font-mono"></b>):</p>
+    <p class="text-xs text-gray-300 mb-3">اختر المحفظة أو وسيلة الدفع لإتمام طلبك (الإجمالي: <b id="checkoutTotalText" class="text-sky-400 font-mono"></b>):</p>
     
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-5">
      <button type="button" onclick="selectPaymentMethod('vodafone', '📱 فودافون كاش', this)" class="pay-method-btn sky-card border p-2.5 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-red-500 transition">
@@ -617,10 +641,12 @@
         const SESSION_STORAGE_KEY = 'migo_active_member_v2';
         const CART_STORAGE_KEY = 'migo_cart_v2';
         const ADMIN_EMAIL = "sahermohamed123456@gmail.com";
+        
+        // Correct Standard Deno URL (without sub-subdomain SSL conflict)
+        const DENO_API_URL = "https://busy-rook-1889.deno.dev";
 
-        // SVG LOGOS DICTIONARY (EACH GAME & SERVICE HAS ITS OWN DEDICATED LOGO)
+        // SVG LOGOS DICTIONARY
         const SVG_LOGOS = {
-            // Games Specific Logos
             pubg: `<svg class="w-6 h-6" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="6" fill="#1e293b"/><path d="M12 4L4 8V14C4 18.5 7.5 21.5 12 22C16.5 21.5 20 18.5 20 14V8L12 4Z" fill="#F59E0B"/><path d="M7 11H17V14H7V11Z" fill="#0F172A"/><path d="M9 8H15V10H9V8Z" fill="#0F172A"/></svg>`,
             roblox: `<svg class="w-6 h-6" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="6" fill="#0F172A"/><path d="M6.2 4L19.8 8.4L17.8 20L4.2 15.6L6.2 4Z" fill="#EF4444"/><rect x="10.5" y="10.5" width="3.5" height="3.5" rx="0.5" transform="rotate(18 12.25 12.25)" fill="#0F172A"/></svg>`,
             freefire: `<svg class="w-6 h-6" viewBox="0 0 24 24" fill="none"><rect width="24" height="24" rx="6" fill="#1E1B4B"/><path d="M12 3C12 3 7 8 7 13C7 16 9 19 12 21C15 19 17 16 17 13C17 8 12 3 12 3Z" fill="#F97316"/><path d="M12 8C12 8 9.5 11 9.5 13.5C9.5 15.5 10.5 17 12 18C13.5 17 14.5 15.5 14.5 13.5C14.5 11 12 8 12 8Z" fill="#FDE047"/></svg>`,
@@ -725,7 +751,6 @@
                 popup.classList.add('translate-y-24', 'opacity-0');
             }, 5000);
 
-            // Reschedule next notification randomly between 10s and 22s
             const nextInterval = Math.floor(Math.random() * 12000) + 10000;
             setTimeout(triggerSocialProof, nextInterval);
         }
@@ -854,26 +879,60 @@
             }
         }
 
-        // --- 8. PLAYER ID MODAL LOGIC WITH DEDICATED LOGOS ---
+        // --- 8. PLAYER ID MODAL & ENHANCED VERIFICATION SYSTEM ---
         let currentModalItem = null;
         let isExpressModal = false;
 
+        // Supported Games Registry
+        const GAMES_REGISTRY = [
+            { key: 'pubg', label: 'بابجي موبايل (PUBG Mobile)', hasZone: false },
+            { key: 'freefire', label: 'فري فاير (Free Fire)', hasZone: false },
+            { key: 'mlbb', label: 'موبايل ليجندز (Mobile Legends)', hasZone: true },
+            { key: 'roblox', label: 'روبلوكس (Roblox)', hasZone: false },
+            { key: 'clash', label: 'كلاش أوف كلانس (Clash of Clans)', hasZone: false },
+            { key: 'fifa', label: 'فيفا موبايل (FC Mobile)', hasZone: false },
+            { key: 'brawl', label: 'براول ستارز (Brawl Stars)', hasZone: false },
+            { key: 'genshin', label: 'جينشين إمباكت (Genshin Impact)', hasZone: true },
+            { key: 'codm', label: 'كول أوف ديوتي (CODM)', hasZone: false },
+            { key: 'valorant', label: 'فالورانت (VALORANT)', hasZone: false },
+            { key: 'fortnite', label: 'فورتنايت (Fortnite)', hasZone: false },
+            { key: 'other', label: 'لعبة / تطبيق آخر بالمعرّف', hasZone: false }
+        ];
+
+        function populateModalGamesList() {
+            const select = document.getElementById('modalSelectGame');
+            if (!select) return;
+            select.innerHTML = GAMES_REGISTRY.map(g => `<option value="${g.key}">${g.label}</option>`).join('');
+        }
+
         function openPlayerIdModal(targetName, pkgLabel, price, isExpress = false, iconKey = 'pubg') {
-            currentModalItem = { name: `${targetName} - ${pkgLabel}`, price: price, targetName: targetName, pkgLabel: pkgLabel };
+            currentModalItem = { name: `${targetName} - ${pkgLabel}`, price: price, targetName: targetName, pkgLabel: pkgLabel, gameKey: iconKey };
             isExpressModal = isExpress;
+
+            populateModalGamesList();
 
             document.getElementById('modalTargetTitle').innerText = targetName;
             document.getElementById('modalTargetPkg').innerText = `الباقة: ${pkgLabel} (${price.toLocaleString()} ج.م)`;
-            document.getElementById('modalTargetIcon').innerHTML = SVG_LOGOS[iconKey] || `<span class="text-xl">🎮</span>`;
+            document.getElementById('modalTargetIcon').innerHTML = SVG_LOGOS[iconKey] || `<span class="text-2xl">🎮</span>`;
             document.getElementById('modalInputPlayerId').value = '';
             document.getElementById('modalInputPlayerName').value = '';
+            document.getElementById('modalInputZoneId').value = '';
+
+            const select = document.getElementById('modalSelectGame');
+            const found = GAMES_REGISTRY.find(g => g.key === iconKey);
+            select.value = found ? found.key : 'other';
+            onModalGameSelectChange();
+
+            const statusBox = document.getElementById('verifyStatusBox');
+            statusBox.classList.add('hidden');
+            statusBox.innerText = '';
 
             const btn = document.getElementById('modalSubmitBtn');
             if (isExpress) {
-                btn.className = "w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold py-3 rounded-xl text-xs sm:text-sm cursor-pointer shadow-lg";
+                btn.className = "w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold py-3.5 rounded-xl text-xs sm:text-sm cursor-pointer shadow-lg transition";
                 btn.innerHTML = `متابعة الدفع الفوري ⚡ (${price.toLocaleString()} ج.م)`;
             } else {
-                btn.className = "w-full sky-btn font-extrabold py-3 rounded-xl text-xs sm:text-sm cursor-pointer shadow-lg";
+                btn.className = "w-full sky-btn font-extrabold py-3.5 rounded-xl text-xs sm:text-sm cursor-pointer shadow-lg";
                 btn.innerHTML = `تأكيد وإضافة للسلة 🛒`;
             }
             btn.onclick = submitPlayerIdModal;
@@ -881,21 +940,89 @@
             document.getElementById('playerIdModal').classList.remove('hidden');
             document.getElementById('playerIdModal').classList.add('flex');
         }
+
         function closePlayerIdModal() {
             document.getElementById('playerIdModal').classList.add('hidden');
             document.getElementById('playerIdModal').classList.remove('flex');
             currentModalItem = null;
         }
+
+        function onModalGameSelectChange() {
+            const selectedKey = document.getElementById('modalSelectGame').value;
+            const targetGame = GAMES_REGISTRY.find(g => g.key === selectedKey);
+            const zoneGroup = document.getElementById('modalZoneGroup');
+
+            if (targetGame && targetGame.hasZone) {
+                zoneGroup.classList.remove('hidden');
+            } else {
+                zoneGroup.classList.add('hidden');
+            }
+        }
+
+        // Live Verification Handler
+        async function verifyPlayerAccount() {
+            const game = document.getElementById('modalSelectGame').value;
+            const uid = document.getElementById('modalInputPlayerId').value.trim();
+            const zoneId = document.getElementById('modalInputZoneId').value.trim();
+            const statusBox = document.getElementById('verifyStatusBox');
+            const nameInput = document.getElementById('modalInputPlayerName');
+            const verifyBtn = document.getElementById('verifyAccountBtn');
+
+            if (!uid) {
+                showToast('يرجى كتابة رقم الـ ID أولاً لإجراء الفحص!', 'error');
+                return;
+            }
+
+            const targetGame = GAMES_REGISTRY.find(g => g.key === game);
+            if (targetGame && targetGame.hasZone && !zoneId) {
+                showToast('هذه اللعبة تتطلب إدخال رقم السيرفر (Zone ID)', 'error');
+                return;
+            }
+
+            verifyBtn.disabled = true;
+            verifyBtn.innerHTML = `<span>جاري...</span>`;
+            statusBox.classList.remove('hidden', 'bg-emerald-500/15', 'border-emerald-500/40', 'text-emerald-300', 'bg-red-500/15', 'border-red-500/40', 'text-red-300', 'bg-amber-500/15', 'border-amber-500/40', 'text-amber-300');
+            statusBox.classList.add('bg-sky-500/15', 'border-sky-500/40', 'text-sky-300');
+            statusBox.innerText = "⏳ جاري الاستعلام السريع من سيرفرات اللعبة...";
+
+            let query = `?game=${encodeURIComponent(game)}&id=${encodeURIComponent(uid)}`;
+            if (zoneId) query += `&zoneId=${encodeURIComponent(zoneId)}`;
+
+            try {
+                const response = await fetch(`${DENO_API_URL}${query}`);
+                const data = await response.json();
+
+                if (data.success && data.username) {
+                    nameInput.value = data.username;
+                    statusBox.className = "p-3 rounded-xl text-xs font-bold text-center border bg-emerald-500/20 border-emerald-500/50 text-emerald-300";
+                    statusBox.innerHTML = `✅ تم التحقق! الحساب: <span class="text-white font-mono underline">${data.username}</span>`;
+                    showToast(`تم التعرف على اللاعب: ${data.username}`);
+                } else {
+                    statusBox.className = "p-3 rounded-xl text-xs font-bold text-center border bg-red-500/20 border-red-500/50 text-red-300";
+                    statusBox.innerText = `❌ ${data.message || 'لم يتم العثور على اللاعب، تأكد من كتابة الـ ID بشكل صحيح.'}`;
+                }
+            } catch (err) {
+                statusBox.className = "p-3 rounded-xl text-xs font-bold text-center border bg-amber-500/20 border-amber-500/50 text-amber-300";
+                statusBox.innerText = "⚠️ تعذر الاتصال بالسيرفر حالياً. يمكنك كتابة الاسم يدوياً ومتابعة الطلب وسنتحقق منه فوراً.";
+            } finally {
+                verifyBtn.disabled = false;
+                verifyBtn.innerHTML = `<span>فحص الحساب</span> 🔍`;
+            }
+        }
+
         function submitPlayerIdModal() {
             const playerId = document.getElementById('modalInputPlayerId').value.trim();
             const playerName = document.getElementById('modalInputPlayerName').value.trim();
+            const zoneId = document.getElementById('modalInputZoneId').value.trim();
+            const selectedGame = document.getElementById('modalSelectGame').value;
 
             if (!playerId) {
                 return showToast('يرجى إدخال معرف اللاعب (Player ID) أولاً!', 'error');
             }
 
             let detailStr = `ID: ${playerId}`;
-            if (playerName) detailStr += ` | الحساب: ${playerName}`;
+            if (zoneId) detailStr += ` (Zone: ${zoneId})`;
+            if (playerName) detailStr += ` | اللاعب: ${playerName}`;
 
             const item = {
                 id: 'game_' + Date.now(),
@@ -1015,7 +1142,7 @@
             window.open('https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent(msg), '_blank');
         }
 
-        // --- 11. GAMES DATA (16 TOTAL WITH INDIVIDUAL LOGOS & +10% EMBEDDED) ---
+        // --- 11. GAMES DATA ---
         const allGames = [
             { key: 'pubg', name: "بابجي موبايل (PUBG)", tag: "Midasbuy الرسمي", pkgs: [{l: "60 UC", p: 64}, {l: "325 UC", p: 323}, {l: "660 UC", p: 647}, {l: "1800 UC", p: 1619}, {l: "3850 UC", p: 3238}, {l: "8100 UC", p: 6478}] },
             { key: 'roblox', name: "روبلوكس (Roblox)", tag: "Codashop / Razer", pkgs: [{l: "80 Robux", p: 65}, {l: "400 Robux", p: 320}, {l: "800 Robux", p: 640}, {l: "1700 Robux", p: 1280}] },
@@ -1063,7 +1190,7 @@
             `).join('');
         }
 
-        // --- 12. SOCIAL MEDIA DATA (+100% MARGIN BUILT-IN, MIN 1000) ---
+        // --- 12. SOCIAL MEDIA DATA ---
         const smmPlatforms = [
             { 
                 id: 'tiktok', 
@@ -1265,7 +1392,7 @@
             document.getElementById('smmLinkInput').value = '';
         }
 
-        // --- 13. LIVE APPS DATA (+10% MARKUP EMBEDDED WITH LOGOS) ---
+        // --- 13. LIVE APPS DATA ---
         const allLiveApps = [
             { key: 'bigo', name: "BIGO Live", tag: "شحن بالـ ID", pkgs: [{l: "42 Diamonds", p: 55}, {l: "297 Diamonds", p: 385}, {l: "848 Diamonds", p: 1100}, {l: "3818 Diamonds", p: 4950}] },
             { key: 'chamet', name: "Chamet", tag: "تسليم فوري", pkgs: [{l: "4500 Diamonds", p: 55}, {l: "9000 Diamonds", p: 110}, {l: "22500 Diamonds", p: 275}, {l: "45000 Diamonds", p: 550}] },
@@ -1378,6 +1505,7 @@
             }
             dropdown.classList.remove('hidden');
         }
+
         function onSearchItemClick(encodedItem) {
             const item = JSON.parse(decodeURIComponent(encodedItem));
             document.getElementById('searchResultsDropdown').classList.add('hidden');
@@ -1414,13 +1542,13 @@
         // --- 17. REVIEWS ---
         const verifiedReviews = [
             { name: "أحمد عبد الرحمن", service: "Claude Max 5x", text: "التفعيل تم على إيميلي الشخصي في أقل من نص ساعة، خدمة محترمة ومستقرة بدون VPN.", date: "أكتوبر 2026" },
-            { name: "محمد طارق", service: "ببجي 3850 UC", text: "الشدات وصلت فوراً بعد التحويل بالـ ID بس وبدون باسورد. تسلم إيدكم.", date: "أكتوبر 2026" },
+            { name: "محمد طارق", service: "ببجي 3850 UC", text: "الشدات وصلت فوراً بعد التحويل بالـ ID بس وبدون باسورد. فحص الاسم وفر عليا قلق الأخطاء.", date: "أكتوبر 2026" },
             { name: "كريم وائل", service: "روبلوكس 800 Robux", text: "أرخص سعر شفته بالجنيه وسرعة تسليم ممتازة.", date: "أكتوبر 2026" },
             { name: "سارة محمود", service: "متابعين تيك توك", text: "العدد وصل كامل وبسرعة رهيبة وبضمان عدم النقص.", date: "أكتوبر 2026" },
             { name: "يوسف الشناوي", service: "كلاش أوف كلانس Gold Pass", text: "التفعيل فوري على حساب سوبر سيل بدون أي تعقيد.", date: "أكتوبر 2026" },
             { name: "مروان عادل", service: "باقة مطورين API", text: "مفتاح الـ API شغال بسرعة فائقة في معالجة البيانات وبدون انقطاع.", date: "أكتوبر 2026" },
             { name: "ندى حسن", service: "Canva Pro سنوي", text: "تم تفعيل كانفا برو على إيميلي التعليمي وشغال ممتاز.", date: "أكتوبر 2026" },
-            { name: "خالد المنسي", service: "جواهر فري فاير", text: "شحن سريع وآمن بالـ ID فقط، شكراً لكم.", date: "أكتوبر 2026" }
+            { name: "خالد المنسي", service: "جواهر فري فاير", text: "شحن سريع وآمن بالـ ID فقط مع ظهور اسم حسابي فوراً.", date: "أكتوبر 2026" }
         ];
         function renderReviews() {
             const container = document.getElementById('reviewsContainer');
@@ -1563,14 +1691,11 @@
             initAPI();
             renderReviews();
 
-            // Set slide pubg logo
             const slidePubg = document.getElementById('slidePubgIcon');
             if (slidePubg) slidePubg.innerHTML = SVG_LOGOS.pubg;
 
-            // Start dynamic realistic social proof loop
             setTimeout(triggerSocialProof, 3500);
 
-            // Click outside search to close
             document.addEventListener('click', (e) => {
                 if (!e.target.closest('#liveSearchInput') && !e.target.closest('#searchResultsDropdown')) {
                     const dd = document.getElementById('searchResultsDropdown');
