@@ -6,7 +6,6 @@ const H = {
 };
 
 Deno.serve(async (req: Request): Promise<Response> => {
-  // التعامل مع طلبات فحص الأمان (CORS Preflight)
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 204, headers: H });
   }
@@ -18,7 +17,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
 
   if (!g || !id) {
     return new Response(
-      JSON.stringify({ success: false, message: "يرجى تحديد اللعبة ورقم المعرف (ID)" }),
+      JSON.stringify({ success: false, message: "يرجى إدخال معرف اللاعب أولاً" }),
       { status: 200, headers: H }
     );
   }
@@ -27,12 +26,15 @@ Deno.serve(async (req: Request): Promise<Response> => {
     let name = "";
 
     if (g === "pubg") {
+      // فحص ببجي عبر نقطة Midasbuy الرسمية الموثقة
       const res = await fetch("https://www.midasbuy.com/interface/getGUserInfo", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-          "Referer": "https://www.midasbuy.com/",
+          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+          "Origin": "https://www.midasbuy.com",
+          "Referer": "https://www.midasbuy.com/midasbuy/ot/buy/pubgm",
+          "Accept": "application/json, text/plain, */*",
         },
         body: JSON.stringify({
           appid: "1450015065",
@@ -41,94 +43,49 @@ Deno.serve(async (req: Request): Promise<Response> => {
         }),
       });
 
-      const rawText = await res.text();
-      let d: any;
+      const raw = await res.text();
+      let d: any = null;
       try {
-        d = JSON.parse(rawText);
-      } catch {
-        throw new Error("تعذر فحص حساب ببجي حالياً، تأكد من صحة الـ ID");
+        d = JSON.parse(raw);
+      } catch (_) {
+        // في حال كان الرد نصياً غير مهيأ
       }
 
       if (d?.charac_name) {
         name = decodeURIComponent(d.charac_name);
-      } else if (d?.msg) {
+      } else if (d?.msg && d.msg !== "SUCCESS") {
         throw new Error(d.msg);
       } else {
-        throw new Error("رقم معرف ببجي غير صحيح");
+        throw new Error("لم يتم العثور على اسم اللاعب، تأكد من صحة رقم الـ ID");
       }
 
     } else if (g === "freefire") {
-      const res = await fetch(
-        `https://www.smile.one/merchant/freefire/checkrole?user_id=${encodeURIComponent(id)}`,
-        {
-          headers: {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
-          },
-        }
-      );
-      const rawText = await res.text();
-      let d: any;
-      try {
-        d = JSON.parse(rawText);
-      } catch {
-        throw new Error("سيرفر فحص فري فاير غير متاح حالياً");
-      }
-
-      if (d?.username) {
-        name = decodeURIComponent(d.username);
-      } else {
-        throw new Error("رقم معرف فري فاير غير صحيح");
-      }
+      const res = await fetch(`https://www.smile.one/merchant/freefire/checkrole?user_id=${encodeURIComponent(id)}`, {
+        headers: { "User-Agent": "Mozilla/5.0" }
+      });
+      const d = await res.json();
+      if (d?.username) name = decodeURIComponent(d.username);
+      else throw new Error("رقم معرف فري فاير غير صحيح");
 
     } else if (g === "mlbb") {
-      if (!z) throw new Error("مطلوب إدخال معرف السيرفر (Zone ID)");
-      const res = await fetch(
-        `https://www.smile.one/merchant/mobilelegends/checkrole?user_id=${encodeURIComponent(id)}&zone_id=${encodeURIComponent(z)}`,
-        {
-          headers: {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
-          },
-        }
-      );
-      const rawText = await res.text();
-      let d: any;
-      try {
-        d = JSON.parse(rawText);
-      } catch {
-        throw new Error("سيرفر فحص Mobile Legends غير متاح حالياً");
-      }
-
-      if (d?.username) {
-        name = decodeURIComponent(d.username);
-      } else {
-        throw new Error("بيانات حساب Mobile Legends غير صحيحة");
-      }
+      if (!z) throw new Error("مطلوب إدخال Zone ID");
+      const res = await fetch(`https://www.smile.one/merchant/mobilelegends/checkrole?user_id=${encodeURIComponent(id)}&zone_id=${encodeURIComponent(z)}`, {
+        headers: { "User-Agent": "Mozilla/5.0" }
+      });
+      const d = await res.json();
+      if (d?.username) name = decodeURIComponent(d.username);
+      else throw new Error("بيانات حساب Mobile Legends غير صحيحة");
 
     } else if (g === "fifa" || g === "fcmobile") {
-      const res = await fetch(
-        `https://www.smile.one/merchant/fcmobile/checkrole?user_id=${encodeURIComponent(id)}`,
-        {
-          headers: {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
-          },
-        }
-      );
-      const rawText = await res.text();
-      let d: any;
-      try {
-        d = JSON.parse(rawText);
-      } catch {
-        throw new Error("سيرفر فحص FC Mobile غير متاح حالياً");
-      }
-
-      if (d?.username) {
-        name = decodeURIComponent(d.username);
-      } else {
-        throw new Error("رقم معرف FC Mobile غير صحيح");
-      }
+      const res = await fetch(`https://www.smile.one/merchant/fcmobile/checkrole?user_id=${encodeURIComponent(id)}`, {
+        headers: { "User-Agent": "Mozilla/5.0" }
+      });
+      const d = await res.json();
+      if (d?.username) name = decodeURIComponent(d.username);
+      else throw new Error("رقم معرف FC Mobile غير صحيح");
 
     } else {
-      throw new Error("هذه اللعبة غير مدعومة بالفحص التلقائي حالياً");
+      throw new Error("اللعبة غير مدعومة بالفحص التلقائي");
     }
 
     return new Response(JSON.stringify({ success: true, username: name }), {
@@ -138,7 +95,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
 
   } catch (err: any) {
     return new Response(
-      JSON.stringify({ success: false, message: err?.message || "فشلت عملية الفحص" }),
+      JSON.stringify({ success: false, message: err?.message || "تعذر التحقق من الحساب" }),
       { status: 200, headers: H }
     );
   }
