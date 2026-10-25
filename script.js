@@ -59,16 +59,13 @@ function initCountdown() {
 const egyptianNames = ["أحمد م.", "محمد س.", "كريم ع.", "يوسف ط.", "عمر ح.", "سارة م.", "محمود خ.", "زياد ف.", "مصطفى ن.", "نور د.", "طارق ش.", "إسلام ع.", "علي ر.", "مروان ك.", "حازم ب."];
 const purchaseTemplates = [
     { act: "شحن 3850 UC ببجي موبايل", icon: 'pubg' },
-    { act: "شحن 800 Robux روبلوكس", icon: 'roblox' },
+    { act: "طلب بطاقة افتراضية VCC (50$)", icon: 'app_generic' },
     { act: "تفعيل اشتراك Claude Max 5x", icon: 'app_generic' },
     { act: "شحن 1188 جوهرة فري فاير", icon: 'freefire' },
-    { act: "شحن تذكرة Gold Pass كلاش أوف كلانس", icon: 'clash' },
+    { act: "تفعيل حساب نتفلكس بريميوم", icon: 'app_generic' },
     { act: "طلب 2,500 متابع تيك توك موثق", icon: 'tiktok' },
     { act: "شحن 70,000 Coins Poppo Live", icon: 'poppo' },
-    { act: "شحن 1000 V-Bucks فورتنايت", icon: 'fortnite' },
-    { act: "شحن 1000 VP فالورانت", icon: 'valorant' },
-    { act: "تفعيل Canva Pro رسمي لسنة", icon: 'app_generic' },
-    { act: "شحن 500 Diamonds يلا لودو", icon: 'yalla' }
+    { act: "شحن 1000 V-Bucks فورتنايت", icon: 'fortnite' }
 ];
 
 let lastProofIndex = -1;
@@ -83,23 +80,19 @@ function triggerSocialProof() {
     const secondsAgo = Math.floor(Math.random() * 55) + 5;
     const timeStr = secondsAgo < 20 ? "الآن مباشرة ⚡" : `منذ ${secondsAgo} ثانية`;
 
-    // عرض الاسم والخدمة فقط بدون المدينة
     document.getElementById('proofUser').innerText = name;
     document.getElementById('proofAction').innerText = tpl.act;
     document.getElementById('proofTime').innerText = timeStr;
     const iconContainer = document.getElementById('proofIcon');
-    if (tpl.icon === 'app_generic') {
-        iconContainer.innerHTML = `<span class="text-lg">⚡</span>`;
-    } else {
-        iconContainer.innerHTML = SVG_LOGOS[tpl.icon] || `<span class="text-lg">🎮</span>`;
-    }
+    iconContainer.innerHTML = `<span class="text-lg">⚡</span>`;
+    
     popup.classList.remove('translate-y-24', 'opacity-0');
     setTimeout(() => { popup.classList.add('translate-y-24', 'opacity-0'); }, 5000);
     setTimeout(triggerSocialProof, Math.floor(Math.random() * 12000) + 10000);
 }
 
 let currentSlide = 0;
-const totalSlides = 4;
+const totalSlides = 3;
 function updateSlider() {
     const track = document.getElementById('sliderTrack');
     if (track) track.style.transform = `translateX(${currentSlide * 100}%)`;
@@ -123,10 +116,10 @@ function showToast(msg, type = 'success') {
 }
 
 function initVisitorCounter() {
-    let count = localStorage.getItem('migo_visitors_v3');
-    if (!count) count = 1240 + Math.floor(Math.random() * 20);
+    let count = localStorage.getItem('migo_visitors_v4');
+    if (!count) count = 1350 + Math.floor(Math.random() * 20);
     else count = parseInt(count) + 1;
-    localStorage.setItem('migo_visitors_v3', count);
+    localStorage.setItem('migo_visitors_v4', count);
     const counterEl = document.getElementById('visitorCount');
     if (counterEl) counterEl.innerText = Number(count).toLocaleString();
 }
@@ -152,16 +145,6 @@ function addToCart(item) {
     cart.push({ ...item, cartId: Date.now() + Math.random() });
     saveCartToStorage();
     showToast(`تمت إضافة "${item.name}" إلى السلة 🛒`);
-}
-function addSubscriptionToSiteCart(item, variant) {
-    const cartItem = {
-        id: item.id + '_' + variant.label,
-        name: `${item.name} (${variant.label})`,
-        type: 'sub',
-        price: variant.price,
-        details: item.desc
-    };
-    addToCart(cartItem);
 }
 function removeFromCart(cartId) {
     cart = cart.filter(i => i.cartId !== cartId);
@@ -225,6 +208,108 @@ function calculateCartTotal() {
         document.getElementById('cartDiscountRow').classList.add('hidden');
         document.getElementById('cartTotal').innerText = subtotal.toLocaleString() + ' ج.م';
     }
+}
+
+// VCC Logic
+const vccCatalog = [
+    { id: 'vcc_10', usd: 10, name: 'بطاقة افتراضية (10 دولار)', price: 700, tag: 'تفعيل سريع' },
+    { id: 'vcc_25', usd: 25, name: 'بطاقة افتراضية (25 دولار)', price: 1650, tag: 'الأكثر طلباً' },
+    { id: 'vcc_50', usd: 50, name: 'بطاقة افتراضية (50 دولار)', price: 3250, tag: 'قيمة ممتازة' },
+    { id: 'vcc_100', usd: 100, name: 'بطاقة افتراضية (100 دولار)', price: 6400, tag: 'للإعلانات والشركات' }
+];
+
+let selectedVccItem = null;
+
+function renderVccCards() {
+    const container = document.getElementById('vccCardsContainer');
+    if (!container) return;
+    container.innerHTML = vccCatalog.map(v => `
+        <div class="sky-card border p-4 rounded-2xl flex flex-col justify-between h-full relative">
+            <span class="absolute top-3 left-3 bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[9px] font-bold px-2 py-0.5 rounded-full">${v.tag}</span>
+            <div>
+                <div class="text-3xl mb-2">💳</div>
+                <h3 class="font-bold text-base text-white mb-1">${v.name}</h3>
+                <p class="text-[11px] text-gray-400 mb-4">صالحة للمواقع العالمية والإعلانات ومستودعات التوكنز.</p>
+            </div>
+            <div class="pt-3 border-t border-slate-700 flex items-center justify-between">
+                <span class="text-base font-extrabold text-amber-400 block font-mono">${v.price.toLocaleString()} ج.م</span>
+                <div class="flex gap-1.5">
+                    <button onclick="openVccModal('${v.id}')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs px-3 py-1.5 rounded-xl cursor-pointer">اطلب الآن ⚡</button>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function openVccModal(vccId) {
+    selectedVccItem = vccCatalog.find(x => x.id === vccId);
+    if (!selectedVccItem) return;
+    document.getElementById('vccModalTitle').innerText = selectedVccItem.name;
+    document.getElementById('vccModalPrice').innerText = `السعر الإجمالي: ${selectedVccItem.price.toLocaleString()} ج.م`;
+    document.getElementById('vccEmailInput').value = '';
+    document.getElementById('vccPurposeInput').value = '';
+    document.getElementById('vccModal').classList.remove('hidden');
+    document.getElementById('vccModal').classList.add('flex');
+}
+
+function closeVccModal() {
+    document.getElementById('vccModal').classList.add('hidden');
+    document.getElementById('vccModal').classList.remove('flex');
+    selectedVccItem = null;
+}
+
+function submitVccModal(isExpress) {
+    const email = document.getElementById('vccEmailInput').value.trim();
+    const purpose = document.getElementById('vccPurposeInput').value.trim();
+    if (!email) return showToast('يرجى إدخال البريد الإلكتروني لاستلام بيانات البطاقة!', 'error');
+
+    const detailStr = `الإيميل: ${email} ${purpose ? '| الغرض: ' + purpose : ''}`;
+    const cartItem = {
+        id: selectedVccItem.id + '_' + Date.now(),
+        name: selectedVccItem.name,
+        type: 'vcc',
+        price: selectedVccItem.price,
+        details: detailStr
+    };
+
+    closeVccModal();
+    if (isExpress) {
+        expressCheckout(cartItem);
+    } else {
+        addToCart(cartItem);
+    }
+}
+
+// Entertainment & Streaming Catalog
+const entertainmentCatalog = [
+    { id: 'sub_netflix', name: 'Netflix Premium', category: 'entertainment', icon: 'fa-film', desc: 'حساب كامل برمز خاص وضمان كامل', price: 310, label: 'حساب كامل' },
+    { id: 'sub_shahid', name: 'شاهد VIP', category: 'entertainment', icon: 'fa-tv', desc: 'متابعة أحدث المسلسلات والأفلام', price: 205, label: 'شهر واحد' },
+    { id: 'sub_youtube', name: 'YouTube Premium', category: 'entertainment', icon: 'fa-play', desc: 'بدون إعلانات مع التشغيل بالخلفية', price: 115, label: 'شهر واحد' },
+    { id: 'sub_spotify', name: 'Spotify Premium', category: 'entertainment', icon: 'fa-music', desc: 'موسيقى بلا حدود بدون إعلانات', price: 95, label: 'شهر واحد' }
+];
+
+function renderEntertainment() {
+    const container = document.getElementById('entertainmentCardsContainer');
+    if (!container) return;
+    container.innerHTML = entertainmentCatalog.map(item => `
+        <div class="sky-card border p-4 rounded-2xl flex flex-col justify-between h-full">
+            <div>
+                <div class="flex justify-between items-start mb-2">
+                    <span class="text-2xl text-purple-400"><i class="fa-solid ${item.icon}"></i></span>
+                    <span class="bg-slate-950 text-purple-300 border border-purple-500/30 text-[10px] font-bold px-2 py-0.5 rounded-full">${item.label}</span>
+                </div>
+                <h3 class="font-bold text-base text-white mb-1">${item.name}</h3>
+                <p class="text-xs text-gray-400 mb-3">${item.desc}</p>
+            </div>
+            <div class="pt-3 border-t border-slate-700 flex items-center justify-between">
+                <span class="text-base font-extrabold text-amber-400 block font-mono">${item.price.toLocaleString()} ج.م</span>
+                <div class="flex gap-1.5">
+                    <button onclick="expressCheckout({id: '${item.id}', name: '${item.name} (${item.label})', type: 'sub', price: ${item.price}, details: '${item.desc}'})" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs px-2.5 py-1.5 rounded-xl cursor-pointer">⚡</button>
+                    <button onclick="addToCart({id: '${item.id}', name: '${item.name} (${item.label})', type: 'sub', price: ${item.price}, details: '${item.desc}'})" class="sky-btn font-bold text-xs px-2.5 py-1.5 rounded-xl cursor-pointer">🛒</button>
+                </div>
+            </div>
+        </div>
+    `).join('');
 }
 
 let currentModalItem = null;
@@ -673,7 +758,7 @@ function renderApps() {
     `).join('');
 }
 
-// دالة البحث الفوري الشاملة لجميع أقسام وخدمات الموقع
+// Comprehensive Live Search including VCC and Entertainment
 function handleLiveSearch(query) {
     const dropdown = document.getElementById('searchResultsDropdown');
     query = query.trim().toLowerCase();
@@ -683,6 +768,20 @@ function handleLiveSearch(query) {
     }
 
     let results = [];
+
+    // VCC Search
+    vccCatalog.forEach(v => {
+        if (v.name.toLowerCase().includes(query) || 'فيزا بطاقة vcc'.includes(query)) {
+            results.push({ name: v.name, price: v.price, type: 'vcc_search', vccId: v.id });
+        }
+    });
+
+    // Entertainment Search
+    entertainmentCatalog.forEach(e => {
+        if (e.name.toLowerCase().includes(query) || e.desc.toLowerCase().includes(query)) {
+            results.push({ name: `${e.name} (${e.label})`, price: e.price, type: 'sub_direct', item: e });
+        }
+    });
 
     if (typeof allGames !== 'undefined') {
         allGames.forEach(g => {
@@ -700,25 +799,10 @@ function handleLiveSearch(query) {
         });
     }
 
-    if (typeof newSubscriptionsCatalog !== 'undefined') {
-        newSubscriptionsCatalog.forEach(sub => {
-            if (sub.name.toLowerCase().includes(query) || sub.desc.toLowerCase().includes(query) || (sub.keywords && sub.keywords.toLowerCase().includes(query))) {
-                sub.variants.forEach(v => {
-                    results.push({ name: `${sub.name} (${v.label})`, price: v.price, type: 'sub', rawSub: sub, variant: v });
-                });
-            }
-        });
-    }
-
-    if (typeof smmPlatforms !== 'undefined') {
-        smmPlatforms.forEach(p => {
-            if (p.name.toLowerCase().includes(query)) {
-                p.categories.forEach(cat => {
-                    cat.services.forEach(srv => {
-                        const priceEGP = (srv.baseUSD * 2.0 * USD_TO_EGP).toFixed(0);
-                        results.push({ name: `${p.name} - ${srv.title}`, price: parseFloat(priceEGP), type: 'smm_direct', platform: p, service: srv });
-                    });
-                });
+    if (typeof allApps !== 'undefined') {
+        allApps.forEach(app => {
+            if (app.name.toLowerCase().includes(query) || app.tag.toLowerCase().includes(query)) {
+                results.push({ name: app.name, price: app.price, type: 'app_direct', app: app });
             }
         });
     }
@@ -736,7 +820,6 @@ function handleLiveSearch(query) {
             </div>
         `).join('');
     }
-    dropdown.classList.add('hidden'); // تصحيح الخطأ لكي يظهر الدروبداون عندما يكون هناك نتائج
     dropdown.classList.remove('hidden');
 }
 
@@ -745,49 +828,29 @@ function onGlobalSearchClick(encodedItem) {
     document.getElementById('searchResultsDropdown').classList.add('hidden');
     document.getElementById('liveSearchInput').value = '';
     
-    if (item.type === 'game' || item.type === 'live') {
+    if (item.type === 'vcc_search') {
+        openVccModal(item.vccId);
+    } else if (item.type === 'sub_direct') {
+        expressCheckout({ id: item.item.id, name: `${item.item.name} (${item.item.label})`, type: 'sub', price: item.item.price, details: item.item.desc });
+    } else if (item.type === 'game' || item.type === 'live') {
         const target = item.rawGame || item.rawLive;
         openPlayerIdModal(target.name, item.pkg.l, item.price, true, target.key);
-    } else if (item.type === 'sub') {
-        addSubscriptionToSiteCart(item.rawSub, item.variant);
-        openCartModal();
-    } else if (item.type === 'app') {
-        expressCheckout({ id: item.rawApp.id, name: item.rawApp.name, type: 'app', price: item.price, details: item.rawApp.tag });
+    } else if (item.type === 'app_direct') {
+        expressCheckout({ id: item.app.id, name: item.app.name, type: 'app', price: item.app.price, details: item.app.tag });
     } else {
         const targetSec = document.getElementById('sec-social');
         if (targetSec) targetSec.scrollIntoView({ behavior: 'smooth' });
     }
 }
 
-const apiModels = [
-    { name: "Claude Opus 5.5", inVal: 74.4, outVal: 372 }, 
-    { name: "GPT-5.6 Sol", inVal: 74.4, outVal: 372 }, 
-    { name: "Gemini 3.1 Pro", inVal: 37.2, outVal: 223.2 }, 
-    { name: "DeepSeek R2 Pro", inVal: 18.6, outVal: 55.8 }
-];
-function initAPI() {
-    document.getElementById('calcModelSelect').innerHTML = apiModels.map((m, i) => `<option value="${i}">${m.name} (إدخال: ${m.inVal} ج / إخراج: ${m.outVal} ج)</option>`).join('');
-    calculateCost();
-}
-function calculateCost() {
-    const idx = document.getElementById('calcModelSelect').value || 0;
-    const inCount = Math.max(0, parseFloat(document.getElementById('calcInputCount').value) || 0);
-    const outCount = Math.max(0, parseFloat(document.getElementById('calcOutputCount').value) || 0);
-    document.getElementById('calcInputRes').innerText = (apiModels[idx].inVal * inCount).toLocaleString() + ' ج.م';
-    document.getElementById('calcOutputRes').innerText = (apiModels[idx].outVal * outCount).toLocaleString() + ' ج.م';
-    document.getElementById('calcTotalRes').innerText = ((apiModels[idx].inVal * inCount) + (apiModels[idx].outVal * outCount)).toLocaleString() + ' ج.م';
-}
-
 const verifiedReviews = [
     { name: "أحمد عبد الرحمن", service: "Claude Max 5x", text: "التفعيل تم على إيميلي الشخصي في أقل من نص ساعة، خدمة محترمة ومستقرة بدون VPN.", date: "أكتوبر 2026" },
     { name: "محمد طارق", service: "ببجي 3850 UC", text: "الشدات وصلت فوراً بعد التحويل بالـ ID بس وبدون باسورد. فحص الاسم وفر عليا قلق الأخطاء.", date: "أكتوبر 2026" },
-    { name: "كريم وائل", service: "روبلوكس 800 Robux", text: "أرخص سعر شفته بالجنيه وسرعة تسليم ممتازة.", date: "أكتوبر 2026" },
+    { name: "محمود إبراهيم", service: "بطاقة افتراضية (50$)", text: "تم استلام بيانات الفيزا خلال دقائق واشتغلت معايا في ربط الإعلانات ممتاز جداً.", date: "أكتوبر 2026" },
     { name: "سارة محمود", service: "متابعين تيك توك", text: "العدد وصل كامل وبسرعة رهيبة وبضمان عدم النقص.", date: "أكتوبر 2026" },
-    { name: "يوسف الشناوي", service: "كلاش أوف كلانس Gold Pass", text: "التفعيل فوري على حساب سوبر سيل بدون أي تعقيد.", date: "أكتوبر 2026" },
-    { name: "مروان عادل", service: "باقة مطورين API", text: "مفتاح الـ API شغال بسرعة فائقة في معالجة البيانات وبدون انقطاع.", date: "أكتوبر 2026" },
-    { name: "ندى حسن", service: "Canva Pro سنوي", text: "تم تفعيل كانفا برو على إيميلي التعليمي وشغال ممتاز.", date: "أكتوبر 2026" },
-    { name: "خالد المنسي", service: "جواهر فري فاير", text: "شحن سريع وآمن بالـ ID فقط مع ظهور اسم حسابي فوراً.", date: "أكتوبر 2026" }
+    { name: "يوسف الشناوي", service: "Netflix Premium", text: "حساب نتفلكس شغال بأعلى جودة وبدون أي مشاكل.", date: "أكتوبر 2026" }
 ];
+
 function renderReviews() {
     const container = document.getElementById('reviewsContainer');
     if (!container) return;
@@ -866,19 +929,6 @@ function handleLogout() {
     updateNavbarAuthUI();
     showToast('تم تسجيل الخروج');
 }
-function exportDatabaseToCSV() {
-    const users = getRegisteredUsers();
-    if (users.length === 0) return showToast('لا توجد حسابات مسجلة حتى الآن.', 'error');
-    let csvContent = "\uFEFFالاسم الكامل,البريد الإلكتروني,رقم الهاتف,تاريخ التسجيل\n";
-    users.forEach(u => { csvContent += `"${u.name}","${u.email}","${u.phone || '-'}","${u.createdAt}"\n`; });
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'Migo_AI_Clients_Backup.csv';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-}
 function updateNavbarAuthUI() {
     let session = null;
     try { session = JSON.parse(localStorage.getItem(SESSION_STORAGE_KEY)); } catch (e) {}
@@ -889,17 +939,6 @@ function updateNavbarAuthUI() {
         userBadge.classList.remove('hidden');
         userBadge.classList.add('flex');
         document.getElementById('navUserName').innerText = session.name.split(' ')[0];
-        let adminBtn = document.getElementById('adminExportCSVBtn');
-        if (session.email.toLowerCase() === ADMIN_EMAIL.toLowerCase()) {
-            if (!adminBtn) {
-                adminBtn = document.createElement('button');
-                adminBtn.id = 'adminExportCSVBtn';
-                adminBtn.onclick = exportDatabaseToCSV;
-                adminBtn.className = 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 text-[10px] font-bold px-2 py-1 rounded-lg mr-1 cursor-pointer';
-                adminBtn.innerText = '📥 CSV';
-                userBadge.insertBefore(adminBtn, userBadge.lastElementChild);
-            }
-        } else if (adminBtn) { adminBtn.remove(); }
     } else {
         loginBtn.classList.remove('hidden');
         userBadge.classList.add('hidden');
@@ -909,134 +948,19 @@ function updateNavbarAuthUI() {
 
 function toggleSidebar() { document.getElementById('sidebarContainer').classList.toggle('hidden'); }
 
-const newSubscriptionsCatalog = [
-    { id: 'sub_chatgpt', category: 'ai', icon: 'fa-robot', name: 'ChatGPT Plus', keywords: 'شات جي بي تي ذكاء اصطناعي اوبن اي chatgpt plus openai', desc: 'حساب رسمي تفعيل فوري', variants: [{ label: 'شهر واحد', price: 820 }] },
-    { id: 'sub_gemini', category: 'ai', icon: 'fa-wand-magic-sparkles', name: 'Google Gemini Pro', keywords: 'جوجل جيميني برو ذكاء اصطناعي google gemini pro', desc: 'اشتراك رسمي متكامل', variants: [{ label: '18 شهر', price: 245 }] },
-    { id: 'sub_capcut', category: 'ai', icon: 'fa-video', name: 'CapCut Pro', keywords: 'كاب كات برو مونتاج فيديو capcut pro', desc: 'مونتاج احترافي وأدوات ذكاء اصطناعي', variants: [{ label: 'شهر واحد', price: 200 }] },
-    { 
-        id: 'sub_adobe_cc', category: 'design', icon: 'fa-palette', name: 'Adobe Creative Cloud', 
-        keywords: 'ادوبي كريتيف كلاود فوتوشوب illustrator premiere photoshop adobe creative cloud', 
-        desc: 'اشتراك رسمي 100% مع 100GB Storage و 1000 AI Credits', 
-        variants: [
-            { label: 'اشتراك خاص - 1 شهر', price: 699 },
-            { label: 'اشتراك خاص - 3 شهور', price: 1099 },
-            { label: 'اشتراك خاص - 4 شهور', price: 1399 },
-            { label: 'اشتراك خاص - 5 شهور', price: 1799 },
-            { label: 'اشتراك خاص - 6 شهور', price: 2199 },
-            { label: 'اشتراك Shared (جهاز واحد) - 4 شهور', price: 899 }
-        ] 
-    },
-    { id: 'sub_canva', category: 'design', icon: 'fa-paintbrush', name: 'Canva Pro', keywords: 'كانفا برو تصميم canva pro', desc: 'جميع قوالب ومميزات كانفا برو', variants: [{ label: 'سنة كاملة', price: 130 }] },
-    { id: 'sub_shahid', category: 'entertainment', icon: 'fa-tv', name: 'شاهد VIP', keywords: 'شاهد في اي بي مسلسلات افلام shahid vip', desc: 'مشاهدة المسلسلات والأفلام بجودة عالية', variants: [{ label: 'شهر واحد', price: 205 }] },
-    { id: 'sub_youtube', category: 'entertainment', icon: 'fa-play', name: 'YouTube Premium', keywords: 'يوتيوب بريميوم بدون اعلانات youtube premium', desc: 'مشاهدة بدون إعلانات وتشغيل بالخلفية', variants: [{ label: 'شهر واحد', price: 115 }] },
-    { id: 'sub_netflix', category: 'entertainment', icon: 'fa-film', name: 'Netflix Premium', keywords: 'نتفلكس بريميوم افلام مسلسلات netflix premium', desc: 'حساب كامل بضمان كامل', variants: [{ label: 'حساب كامل', price: 310 }] }
-];
-
-function optimizeHeaderLayout() {
-    const header = document.querySelector('header');
-    if (!header) return;
-    const fbElement = header.querySelector('a[href*="facebook"]');
-    if (fbElement) fbElement.style.display = 'none';
-}
-
-function injectSubscriptionsSection() {
-    if (document.getElementById('smart-subscriptions-wrapper')) return;
-    const wrapper = document.createElement('section');
-    wrapper.id = 'smart-subscriptions-wrapper';
-    wrapper.className = 'container mx-auto px-4 my-8 space-y-5 scroll-mt-24';
-    wrapper.innerHTML = `
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-800 pb-4">
-            <div>
-                <span class="px-3 py-1 sky-card border border-indigo-500/40 text-indigo-400 text-xs font-bold rounded-full">اشتراكات رسمية ومضمونة</span>
-                <h2 class="text-xl sm:text-3xl font-black text-white mt-2 flex items-center gap-2">
-                    <i class="fa-solid fa-layer-group text-indigo-400"></i> قسم البرامج والاشتراكات الرقمية
-                </h2>
-                <p class="text-xs text-gray-400 mt-1">اختر الفئة وحدد مدة الاشتراك المناسبة لك من القائمة</p>
-            </div>
-            <div class="flex flex-wrap gap-2" id="sub-category-tabs">
-                <button type="button" class="sub-cat-tab active" data-cat="all">الكل</button>
-                <button type="button" class="sub-cat-tab" data-cat="ai">الذكاء الاصطناعي</button>
-                <button type="button" class="sub-cat-tab" data-cat="design">التصميم والإنتاجية</button>
-                <button type="button" class="sub-cat-tab" data-cat="entertainment">الترفيه والبث</button>
-            </div>
-        </div>
-        <div id="smart-subs-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-    `;
-    const mainContainer = document.querySelector('main');
-    if (mainContainer) mainContainer.appendChild(wrapper);
-
-    wrapper.querySelectorAll('.sub-cat-tab').forEach(btn => {
-        btn.addEventListener('click', function() {
-            wrapper.querySelectorAll('.sub-cat-tab').forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            renderSubCards(this.getAttribute('data-cat'));
-        });
-    });
-    renderSubCards('all');
-}
-
-function renderSubCards(category) {
-    const grid = document.getElementById('smart-subs-grid');
-    if (!grid) return;
-    grid.innerHTML = '';
-    const items = category === 'all' ? newSubscriptionsCatalog : newSubscriptionsCatalog.filter(i => i.category === category);
-
-    items.forEach(item => {
-        const options = item.variants.map((v, idx) => `<option value="${idx}">${v.label} — ${v.price} ج.م</option>`).join('');
-        const card = document.createElement('div');
-        card.className = 'sub-item-card';
-        card.id = `card-${item.id}`;
-        card.innerHTML = `
-            <div class="flex items-start justify-between gap-3">
-                <div>
-                    <h3 class="font-bold text-white text-base flex items-center gap-2">
-                        <i class="fa-solid ${item.icon} text-indigo-400"></i>
-                        <span>${item.name}</span>
-                    </h3>
-                    <p class="text-xs text-gray-400 mt-1 leading-relaxed">${item.desc}</p>
-                </div>
-                <span id="price-badge-${item.id}" class="bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 px-2.5 py-1 rounded-lg text-xs font-bold whitespace-nowrap">
-                    ${item.variants[0].price} ج.م
-                </span>
-            </div>
-            <div class="space-y-2 pt-2 border-t border-gray-800/80">
-                <label class="block text-xs text-gray-300 font-medium" for="select-${item.id}">اختر خطة ومدة الاشتراك:</label>
-                <select id="select-${item.id}" class="w-full bg-gray-900/90 border border-gray-700 text-white rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-indigo-500">
-                    ${options}
-                </select>
-                <button type="button" data-sub-id="${item.id}" class="add-sub-btn w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2.5 rounded-xl text-xs transition flex items-center justify-center gap-2 mt-2 cursor-pointer">
-                    <i class="fa-solid fa-cart-plus"></i> إضافة إلى السلة
-                </button>
-            </div>
-        `;
-        const selectEl = card.querySelector(`#select-${item.id}`);
-        const badgeEl = card.querySelector(`#price-badge-${item.id}`);
-        selectEl.addEventListener('change', function() {
-            const selectedVar = item.variants[this.value];
-            if (selectedVar) badgeEl.textContent = `${selectedVar.price} ج.م`;
-        });
-        card.querySelector('.add-sub-btn').addEventListener('click', function() {
-            const selectedVar = item.variants[selectEl.value];
-            addSubscriptionToSiteCart(item, selectedVar);
-        });
-        grid.appendChild(card);
-    });
-}
-
 window.onload = function() {
     updateNavbarAuthUI();
     initVisitorCounter();
     initCountdown();
     loadCartFromStorage();
+    renderVccCards();
     renderGames();
     renderSMMPlatforms();
     selectSMMPlatform('tiktok');
     renderLiveApps();
+    renderEntertainment();
     renderApps();
-    initAPI();
     renderReviews();
-    optimizeHeaderLayout();
-    injectSubscriptionsSection();
 
     const slidePubg = document.getElementById('slidePubgIcon');
     if (slidePubg) slidePubg.innerHTML = SVG_LOGOS.pubg;
