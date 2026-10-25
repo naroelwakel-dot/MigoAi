@@ -8,7 +8,6 @@
   
   <title>Migo AI Solution | متجر الألعاب، برامج اللايف، واشتراكات الذكاء الاصطناعي</title>
   
-  <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-TRJHFVNBF5"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -56,12 +55,6 @@
           50% { opacity: 0.92; transform: scale(1.02); }
         }
         .pulse-badge { animation: pulse-subtle 2s infinite ease-in-out; }
-        
-        .sub-cat-tab { padding: 8px 16px; border-radius: 12px; font-size: 0.85rem; font-weight: 700; cursor: pointer; transition: all 0.25s ease; background: rgba(30, 41, 59, 0.8); color: #94a3b8; border: 1px solid rgba(255, 255, 255, 0.08); }
-        .sub-cat-tab.active { background: linear-gradient(135deg, #4f46e5, #7c3aed); color: #ffffff; box-shadow: 0 4px 15px rgba(79, 70, 229, 0.35); border-color: transparent; }
-        .sub-item-card { background: rgba(17, 24, 39, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 18px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; gap: 12px; transition: all 0.3s ease; }
-        .sub-item-card:hover { transform: translateY(-3px); border-color: rgba(99, 102, 241, 0.5); }
-        .sub-highlight-pulse { border-color: #6366f1 !important; box-shadow: 0 0 25px rgba(99, 102, 241, 0.6) !important; transform: scale(1.02); }
   </style>
  </head>
  <body class="min-h-screen selection:bg-sky-500 selection:text-white pb-24">
@@ -83,7 +76,6 @@
 
   <header class="border-b sky-surface sticky top-0 z-50 backdrop-blur-md bg-[#131d31]/95 shadow-xl">
    <div class="max-w-7xl mx-auto px-3 sm:px-4 py-3 flex justify-between items-center gap-2">
-    
     <div class="flex items-center gap-2.5 min-w-0">
      <button type="button" onclick="toggleSidebar()" aria-label="القائمة الرئيسية" class="w-10 h-10 shrink-0 rounded-xl sky-card border flex flex-col items-center justify-center gap-1.5 cursor-pointer hover:border-sky-400">
       <span class="w-5 h-0.5 bg-gray-200 rounded-full"></span>
@@ -102,12 +94,12 @@
 
     <nav class="hidden lg:flex items-center gap-1.5 sky-card border p-1 rounded-xl text-xs font-bold">
      <a href="#sec-offers" class="px-3 py-1.5 rounded-lg transition text-sky-400 hover:text-sky-300">🔥 العروض</a>
+     <a href="#sec-vcc" class="px-3 py-1.5 rounded-lg transition text-amber-400 hover:text-amber-300">💳 البطاقات الافتراضية</a>
      <a href="#sec-games" class="px-3 py-1.5 rounded-lg transition text-emerald-400 hover:text-emerald-300">🎮 شحن الألعاب</a>
      <a href="#sec-social" class="px-3 py-1.5 rounded-lg transition text-gray-300 hover:text-white">📱 السوشيال ميديا</a>
      <a href="#sec-liveapps" class="px-3 py-1.5 rounded-lg transition text-pink-400 hover:text-pink-300">🔴 برامج لايف</a>
+     <a href="#sec-entertainment" class="px-3 py-1.5 rounded-lg transition text-purple-400 hover:text-purple-300">🎬 الترفيه والبث</a>
      <a href="#sec-apps" class="px-3 py-1.5 rounded-lg transition text-gray-300 hover:text-white">🧠 الذكاء الاصطناعي</a>
-     <a href="#smart-subscriptions-wrapper" class="px-3 py-1.5 rounded-lg transition text-indigo-400 hover:text-indigo-300">📦 الاشتراكات الرقمية</a>
-     <a href="#sec-api" class="px-3 py-1.5 rounded-lg transition text-gray-300 hover:text-white">⚡ API</a>
     </nav>
 
     <div class="flex items-center gap-2 shrink-0">
@@ -132,11 +124,10 @@
    </div>
   </header>
 
-  <!-- شريط البحث الفوري المحدث مع oninput المباشر -->
   <div class="max-w-4xl mx-auto px-4 mt-5">
     <div class="relative">
       <label for="liveSearchInput" class="sr-only">بحث في المتجر</label>
-      <input type="text" id="liveSearchInput" oninput="handleLiveSearch(this.value)" placeholder="🔍 ابحث عن لعبتك، خدمتك، أو برنامجك (مثال: ببجي، روبلوكس، تيك توك، أدوبي)..." class="w-full bg-[#131d31] border border-slate-600 focus:border-sky-400 rounded-2xl px-5 py-3 text-sm text-white outline-none shadow-xl transition">
+      <input type="text" id="liveSearchInput" oninput="handleLiveSearch(this.value)" placeholder="🔍 ابحث عن بطاقة فيزا، نتفلكس، ببجي، تيك توك، أدوبي..." class="w-full bg-[#131d31] border border-slate-600 focus:border-sky-400 rounded-2xl px-5 py-3 text-sm text-white outline-none shadow-xl transition">
       <div id="searchResultsDropdown" class="hidden absolute top-full left-0 right-0 mt-2 bg-[#131d31] border border-sky-500/40 rounded-2xl p-2 shadow-2xl z-40 max-h-80 overflow-y-auto custom-scrollbar"></div>
     </div>
   </div>
@@ -149,25 +140,41 @@
    </div>
 
    <h1 class="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight mb-4 leading-tight text-white">متجرك الرقمي المتكامل من <span class="bg-clip-text text-transparent bg-gradient-to-r from-sky-400 via-blue-400 to-amber-300">Migo AI</span></h1>
-   <p class="text-gray-400 text-xs sm:text-sm max-w-2xl mx-auto mb-6">شحن فوري للألعاب بالـ ID مع فحص مباشر لصحة الحسابات، تفعيل اشتراكات الذكاء الاصطناعي، وخدمات السوشيال ميديا بالجنيه المصري.</p>
+   <p class="text-gray-400 text-xs sm:text-sm max-w-2xl mx-auto mb-6">شحن فوري للألعاب، توفير البطاقات الافتراضية للدفع الدولي، واشتراكات الذكاء الاصطناعي والسوشيال ميديا بالجنيه المصري.</p>
    
    <div class="relative w-full max-w-2xl mx-auto overflow-hidden rounded-3xl mb-8 shadow-2xl" dir="rtl">
     <div id="sliderTrack" class="flex transition-transform duration-500 ease-in-out" style="transform: translateX(0%);">
         
+        <!-- Slide 1: VCC Banner -->
         <div class="w-full shrink-0 p-1">
             <div class="bg-gradient-to-br from-[#1e293b] to-[#0f172a] border border-amber-500/40 p-6 rounded-3xl relative h-full flex flex-col justify-center items-center text-center">
-                <div class="absolute top-0 right-0 bg-amber-500 text-slate-950 text-[10px] font-black px-3.5 py-1 rounded-bl-2xl">الأكثر طلباً 🔥</div>
-                <div class="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-3xl mb-2">⚡</div>
+                <div class="absolute top-0 right-0 bg-amber-500 text-slate-950 text-[10px] font-black px-3.5 py-1 rounded-bl-2xl">خدمة جديدة 💳</div>
+                <div class="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-3xl mb-2">🌐</div>
+                <h3 class="text-2xl font-black text-white mb-1">البطاقات الافتراضية الدولية (VCC)</h3>
+                <p class="text-xs text-gray-300 mb-3 max-w-sm">اشترِ من أي موقع عالمي، اربط إعلاناتك، وفعّل اشتراكاتك بدون فيزا بنكية.</p>
+                <div class="text-xl font-black text-amber-400 mb-4 font-mono">تبدأ من 700 ج.م فقط</div>
+                <div class="flex gap-2">
+                  <a href="#sec-vcc" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold py-2.5 px-5 rounded-xl text-xs transition shadow-lg cursor-pointer inline-flex items-center">احصل على بطاقتك 💳</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 2: Claude Max -->
+        <div class="w-full shrink-0 p-1">
+            <div class="bg-gradient-to-br from-[#1e293b] to-[#0f172a] border border-sky-500/40 p-6 rounded-3xl relative h-full flex flex-col justify-center items-center text-center">
+                <div class="absolute top-0 right-0 bg-sky-500 text-slate-950 text-[10px] font-black px-3.5 py-1 rounded-bl-2xl">الأكثر طلباً 🔥</div>
+                <div class="w-14 h-14 rounded-2xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-3xl mb-2">⚡</div>
                 <h3 class="text-2xl font-black text-white mb-1">باقة Claude Max 5x</h3>
                 <p class="text-xs text-gray-300 mb-3 max-w-sm">حدود استخدام 5 أضعاف اشتراك Pro العادي على بريدك الشخصي وبدون VPN.</p>
-                <div class="text-2xl font-black text-amber-400 mb-4 font-mono">4,340 ج.م</div>
+                <div class="text-2xl font-black text-sky-400 mb-4 font-mono">4,340 ج.م</div>
                 <div class="flex gap-2">
-                  <button onclick="expressCheckout({id: 'app_max5', name: 'Claude Max 5x', type: 'app', price: 4340, details: 'تفعيل 5 أضعاف حدود الاستخدام'})" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold py-2.5 px-5 rounded-xl text-xs transition shadow-lg cursor-pointer">شراء فوري ⚡</button>
+                  <button onclick="expressCheckout({id: 'app_max5', name: 'Claude Max 5x', type: 'app', price: 4340, details: 'تفعيل 5 أضعاف حدود الاستخدام'})" class="bg-sky-600 hover:bg-sky-500 text-white font-extrabold py-2.5 px-5 rounded-xl text-xs transition shadow-lg cursor-pointer">شراء فوري ⚡</button>
                   <button onclick="addToCart({id: 'app_max5', name: 'Claude Max 5x', type: 'app', price: 4340, details: 'تفعيل 5 أضعاف حدود الاستخدام'})" class="sky-card border text-white font-bold py-2.5 px-4 rounded-xl text-xs transition cursor-pointer">أضف للسلة 🛒</button>
                 </div>
             </div>
         </div>
 
+        <!-- Slide 3: PUBG 3850 UC -->
         <div class="w-full shrink-0 p-1">
             <div class="bg-gradient-to-br from-[#1e293b] to-[#0f172a] border border-emerald-500/40 p-6 rounded-3xl relative h-full flex flex-col justify-center items-center text-center">
                 <div class="absolute top-0 right-0 bg-emerald-500 text-white text-[10px] font-black px-3.5 py-1 rounded-bl-2xl">تسليم فوري بالـ ID</div>
@@ -182,70 +189,59 @@
             </div>
         </div>
 
-        <div class="w-full shrink-0 p-1">
-            <div class="bg-gradient-to-br from-[#1e293b] to-[#0f172a] border border-indigo-500/40 p-6 rounded-3xl relative h-full flex flex-col justify-center items-center text-center">
-                <div class="absolute top-0 right-0 bg-indigo-500 text-white text-[10px] font-black px-3.5 py-1 rounded-bl-2xl">تفعيل فوري 🤖</div>
-                <div class="w-14 h-14 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-3xl mb-2">💬</div>
-                <h3 class="text-2xl font-black text-white mb-1">ChatGPT Plus</h3>
-                <p class="text-xs text-gray-300 mb-3 max-w-sm">حساب رسمي برمز مرور وتفعيل مباشر على إيميلك الشخصي.</p>
-                <div class="text-2xl font-black text-indigo-400 mb-4 font-mono">820 ج.م</div>
-                <div class="flex gap-2">
-                  <button onclick="expressCheckout({id: 'sub_chatgpt', name: 'ChatGPT Plus', type: 'app', price: 820, details: 'حساب رسمي تفعيل فوري'})" class="bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold py-2.5 px-5 rounded-xl text-xs transition shadow-lg cursor-pointer">شراء فوري ⚡</button>
-                  <button onclick="addToCart({id: 'sub_chatgpt', name: 'ChatGPT Plus', type: 'app', price: 820, details: 'حساب رسمي تفعيل فوري'})" class="sky-card border text-white font-bold py-2.5 px-4 rounded-xl text-xs transition cursor-pointer">أضف للسلة 🛒</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="w-full shrink-0 p-1">
-            <div class="bg-gradient-to-br from-[#1e293b] to-[#0f172a] border border-pink-500/40 p-6 rounded-3xl relative h-full flex flex-col justify-center items-center text-center">
-                <div class="absolute top-0 right-0 bg-pink-500 text-white text-[10px] font-black px-3.5 py-1 rounded-bl-2xl">تصميم احترافي 🎨</div>
-                <div class="w-14 h-14 rounded-2xl bg-pink-500/10 border border-pink-500/30 flex items-center justify-center text-3xl mb-2">✨</div>
-                <h3 class="text-2xl font-black text-white mb-1">Canva Pro (سنة كاملة)</h3>
-                <p class="text-xs text-gray-300 mb-3 max-w-sm">جميع قوالب ومميزات كانفا برو المتقدمة بضمان كامل مدة الاشتراك.</p>
-                <div class="text-2xl font-black text-pink-400 mb-4 font-mono">130 ج.م</div>
-                <div class="flex gap-2">
-                  <button onclick="expressCheckout({id: 'sub_canva', name: 'Canva Pro (سنة كاملة)', type: 'app', price: 130, details: 'جميع قوالب ومميزات كانفا برو'})" class="bg-pink-600 hover:bg-pink-500 text-white font-extrabold py-2.5 px-5 rounded-xl text-xs transition shadow-lg cursor-pointer">شراء فوري ⚡</button>
-                  <button onclick="addToCart({id: 'sub_canva', name: 'Canva Pro (سنة كاملة)', type: 'app', price: 130, details: 'جميع قوالب ومميزات كانفا برو'})" class="sky-card border text-white font-bold py-2.5 px-4 rounded-xl text-xs transition cursor-pointer">أضف للسلة 🛒</button>
-                </div>
-            </div>
-        </div>
-
     </div>
 
     <div class="flex justify-center gap-2 mt-3 pb-1" id="sliderDots">
         <span class="dot active" onclick="goToSlide(0)"></span>
         <span class="dot" onclick="goToSlide(1)"></span>
         <span class="dot" onclick="goToSlide(2)"></span>
-        <span class="dot" onclick="goToSlide(3)"></span>
     </div>
    </div>
 
-   <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 max-w-5xl mx-auto">
-    <a href="#sec-games" class="p-3.5 rounded-2xl sky-card border text-right transition flex items-center justify-between hover:border-emerald-400 group"> 
-     <div><div class="font-black text-sm text-white">شحن الألعاب</div><div class="text-[10px] text-emerald-400">16 لعبة معتمدة</div></div> 
-     <span class="text-2xl group-hover:scale-110 transition">🎮</span>
+   <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2.5 max-w-5xl mx-auto">
+    <a href="#sec-vcc" class="p-3 rounded-2xl sky-card border text-right transition flex items-center justify-between hover:border-amber-400 group"> 
+     <div><div class="font-black text-xs text-white">بطاقات فيزا</div><div class="text-[9px] text-amber-400">الدفع الدولي</div></div> 
+     <span class="text-xl group-hover:scale-110 transition">💳</span>
     </a>
-    <a href="#sec-social" class="p-3.5 rounded-2xl sky-card border text-right transition flex items-center justify-between hover:border-sky-400 group"> 
-     <div><div class="font-black text-sm text-white">السوشيال ميديا</div><div class="text-[10px] text-sky-400">18 منصة رقمية</div></div> 
-     <span class="text-2xl group-hover:scale-110 transition">📱</span>
+    <a href="#sec-games" class="p-3 rounded-2xl sky-card border text-right transition flex items-center justify-between hover:border-emerald-400 group"> 
+     <div><div class="font-black text-xs text-white">شحن الألعاب</div><div class="text-[9px] text-emerald-400">16 لعبة</div></div> 
+     <span class="text-xl group-hover:scale-110 transition">🎮</span>
     </a>
-    <a href="#sec-liveapps" class="p-3.5 rounded-2xl sky-card border text-right transition flex items-center justify-between hover:border-pink-400 group"> 
-     <div><div class="font-black text-sm text-white">برامج لايف</div><div class="text-[10px] text-pink-400">شحن فوري بالـ ID</div></div> 
-     <span class="text-2xl group-hover:scale-110 transition">🔴</span>
+    <a href="#sec-social" class="p-3 rounded-2xl sky-card border text-right transition flex items-center justify-between hover:border-sky-400 group"> 
+     <div><div class="font-black text-xs text-white">السوشيال</div><div class="text-[9px] text-sky-400">18 منصة</div></div> 
+     <span class="text-xl group-hover:scale-110 transition">📱</span>
     </a>
-    <a href="#sec-apps" class="p-3.5 rounded-2xl sky-card border text-right transition flex items-center justify-between hover:border-amber-400 group"> 
-     <div><div class="font-black text-sm text-white">البرامج والذكاء</div><div class="text-[10px] text-amber-400">تفعيل رسمي</div></div> 
-     <span class="text-2xl group-hover:scale-110 transition">🧠</span>
+    <a href="#sec-liveapps" class="p-3 rounded-2xl sky-card border text-right transition flex items-center justify-between hover:border-pink-400 group"> 
+     <div><div class="font-black text-xs text-white">برامج لايف</div><div class="text-[9px] text-pink-400">شحن فوري</div></div> 
+     <span class="text-xl group-hover:scale-110 transition">🔴</span>
     </a>
-    <a href="#sec-api" class="p-3.5 rounded-2xl sky-card border text-right transition flex items-center justify-between hover:border-blue-400 group"> 
-     <div><div class="font-black text-sm text-white">نماذج API</div><div class="text-[10px] text-blue-400">حاسبة التوكنز</div></div> 
-     <span class="text-2xl group-hover:scale-110 transition">⚡</span>
+    <a href="#sec-entertainment" class="p-3 rounded-2xl sky-card border text-right transition flex items-center justify-between hover:border-purple-400 group"> 
+     <div><div class="font-black text-xs text-white">الترفيه والبث</div><div class="text-[9px] text-purple-400">نتفلكس وشاهد</div></div> 
+     <span class="text-xl group-hover:scale-110 transition">🎬</span>
+    </a>
+    <a href="#sec-apps" class="p-3 rounded-2xl sky-card border text-right transition flex items-center justify-between hover:border-indigo-400 group"> 
+     <div><div class="font-black text-xs text-white">الذكاء الاصطناعي</div><div class="text-[9px] text-indigo-400">تفعيل رسمي</div></div> 
+     <span class="text-xl group-hover:scale-110 transition">🧠</span>
     </a>
    </div>
   </section>
 
   <main class="max-w-7xl mx-auto px-3 sm:px-4 py-4 space-y-12">
    
+   <!-- SECTION: VCC Virtual Cards -->
+   <section id="sec-vcc" class="sky-surface border rounded-3xl p-4 sm:p-8 shadow-2xl scroll-mt-24">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-6 border-b border-slate-700/60 pb-4">
+      <div>
+        <span class="px-3 py-1 sky-card border border-amber-500/40 text-amber-400 text-xs font-bold rounded-full">حل نهائي للدفع الدولي بالجنيه</span>
+        <h2 class="text-xl sm:text-3xl font-black text-white mt-2">💳 البطاقات الافتراضية الدولية مسبقة الدفع (VCC)</h2>
+        <p class="text-gray-400 text-xs sm:text-sm mt-1">اشترِ من أي موقع عالمي، اربط حساباتك الإعلانية، وفعّل اشتراكاتك الخارجية فوراً بدون فيزا.</p>
+      </div>
+      <span class="text-xs text-gray-400 bg-slate-900 border border-slate-700 px-3 py-1.5 rounded-xl">⚡ تسليم سريع عبر الواتساب</span>
+    </div>
+    <div id="vccCardsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"></div>
+   </section>
+
+   <!-- SECTION: Games -->
    <section id="sec-games" class="sky-surface border rounded-3xl p-4 sm:p-8 shadow-2xl scroll-mt-24">
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-6 border-b border-slate-700/60 pb-4">
       <div>
@@ -255,10 +251,10 @@
       </div>
       <span class="text-xs text-gray-400 bg-slate-900 border border-slate-700 px-3 py-1.5 rounded-xl">🔒 لا نطلب كلمة المرور مطلقاً</span>
     </div>
-    
     <div id="gamesCardsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
    </section>
 
+   <!-- SECTION: Social Media -->
    <section id="sec-social" class="sky-surface border rounded-3xl p-4 sm:p-8 shadow-2xl scroll-mt-24">
     <div class="mb-6">
       <span class="px-3 py-1 sky-card border border-sky-500/40 text-sky-400 text-xs font-bold rounded-full">قسم السوشيال ميديا الموثق</span>
@@ -323,6 +319,7 @@
     </div>
    </section>
 
+   <!-- SECTION: Live Apps -->
    <section id="sec-liveapps" class="sky-surface border rounded-3xl p-4 sm:p-8 shadow-2xl scroll-mt-24">
     <div class="mb-6">
       <span class="px-3 py-1 sky-card border border-pink-500/40 text-pink-400 text-xs font-bold rounded-full">شحن فوري بالمعرّف ID</span>
@@ -332,68 +329,24 @@
     <div id="liveAppsCardsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
    </section>
 
+   <!-- SECTION: Entertainment & Streaming -->
+   <section id="sec-entertainment" class="sky-surface border rounded-3xl p-4 sm:p-8 shadow-2xl scroll-mt-24">
+    <div class="mb-6">
+      <span class="px-3 py-1 sky-card border border-purple-500/40 text-purple-400 text-xs font-bold rounded-full">حسابات أصلية ومضمونة</span>
+      <h2 class="text-xl sm:text-3xl font-black text-white mt-2">🎬 الاشتراكات الترفيهية ومنصات البث</h2>
+      <p class="text-gray-400 text-xs sm:text-sm mt-1">استمتع بأفضل المسلسلات والأفلام والموسيقى بدون إعلانات وبأفضل الأسعار بالجنيه.</p>
+    </div>
+    <div id="entertainmentCardsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+   </section>
+
+   <!-- SECTION: AI & Design Apps -->
    <section id="sec-apps" class="sky-surface border rounded-3xl p-4 sm:p-8 shadow-2xl scroll-mt-24">
     <div class="mb-6">
-      <span class="px-3 py-1 sky-card border border-amber-500/40 text-amber-400 text-xs font-bold rounded-full">تفعيل رسمي ومباشر</span>
+      <span class="px-3 py-1 sky-card border border-indigo-500/40 text-indigo-400 text-xs font-bold rounded-full">تفعيل رسمي ومباشر</span>
       <h2 class="text-xl sm:text-3xl font-black text-white mt-2">🧠 برامج التصميم والذكاء الاصطناعي</h2>
       <p class="text-gray-400 text-xs sm:text-sm mt-1">تفعيل أصلي على إيميلك الخاص مع ضمان كامل طوال فترة الاشتراك.</p>
     </div>
     <div id="appCardsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
-   </section>
-
-   <section id="sec-api" class="sky-surface border rounded-3xl p-4 sm:p-8 shadow-2xl scroll-mt-24">
-    <div class="mb-6">
-      <span class="px-3 py-1 sky-card border text-sky-400 text-xs font-bold rounded-full">مفاتيح API للمطورين</span>
-      <h2 class="text-xl sm:text-3xl font-black text-white mt-2">⚡ نماذج الذكاء الاصطناعي وباقات الرصيد</h2>
-    </div>
-    
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-4">
-     <div class="sky-card border rounded-2xl p-5 space-y-4">
-      <h3 class="font-extrabold text-white text-base">🧮 حاسبة تكلفة التوكنز (لكل مليون Token)</h3>
-      <div>
-       <label for="calcModelSelect" class="sr-only">اختر النموذج</label>
-       <select id="calcModelSelect" onchange="calculateCost()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs sm:text-sm text-white font-bold outline-none"></select>
-      </div>
-      <div class="grid grid-cols-2 gap-3">
-       <div>
-        <label class="block text-xs font-bold text-gray-300 mb-1.5" for="calcInputCount">توكنز الإدخال (M):</label>
-        <input type="number" id="calcInputCount" value="1" min="0" oninput="calculateCost()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white font-mono font-bold outline-none">
-       </div>
-       <div>
-        <label class="block text-xs font-bold text-gray-300 mb-1.5" for="calcOutputCount">توكنز الإخراج (M):</label>
-        <input type="number" id="calcOutputCount" value="1" min="0" oninput="calculateCost()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white font-mono font-bold outline-none">
-       </div>
-      </div>
-      <div class="bg-slate-950 border border-slate-700 rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-right">
-       <div>
-        <div class="text-[11px] text-gray-400">إدخال: <span id="calcInputRes" class="text-sky-300"></span></div>
-        <div class="text-[11px] text-gray-400">إخراج: <span id="calcOutputRes" class="text-sky-300"></span></div>
-       </div>
-       <div>
-        <span class="text-xs text-gray-400 block">التكلفة التقديرية:</span>
-        <span id="calcTotalRes" class="text-xl font-black text-sky-400">0 ج.م</span>
-       </div>
-      </div>
-     </div>
-
-     <div class="sky-card border rounded-2xl p-5">
-      <h3 class="font-extrabold text-white text-base mb-3">💎 باقات شحن رصيد الـ API</h3>
-      <div class="space-y-3">
-       <div class="bg-slate-950 border border-slate-700 p-3.5 rounded-xl flex justify-between items-center">
-        <div><div class="font-extrabold text-white text-sm">باقة المطور (10$)</div><div class="text-[10px] text-gray-400">صلاحية دائمة بدون تاريخ انتهاء</div></div>
-        <button onclick="expressCheckout({id: 'api_dev', name: 'باقة API المطور (10$)', type: 'api', price: 650, details: 'صلاحية مدى الحياة'})" class="sky-btn font-bold px-3 py-1.5 rounded-xl text-xs cursor-pointer">650 ج.م | ⚡</button>
-       </div>
-       <div class="bg-slate-950 border border-sky-500/50 p-3.5 rounded-xl flex justify-between items-center">
-        <div><div class="font-extrabold text-white text-sm">باقة المحترفين (30$)</div><div class="text-[10px] text-emerald-400">+5$ رصيد إضافي مجاني</div></div>
-        <button onclick="expressCheckout({id: 'api_pro', name: 'باقة API المحترفين (30$)', type: 'api', price: 1950, details: 'بونص 5$'})" class="sky-btn font-bold px-3 py-1.5 rounded-xl text-xs cursor-pointer">1,950 ج.م | ⚡</button>
-       </div>
-       <div class="bg-slate-950 border border-slate-700 p-3.5 rounded-xl flex justify-between items-center">
-        <div><div class="font-extrabold text-white text-sm">باقة الشركات (125$)</div><div class="text-[10px] text-emerald-400">+25$ رصيد إضافي مجاني</div></div>
-        <button onclick="expressCheckout({id: 'api_corp', name: 'باقة API الشركات (125$)', type: 'api', price: 8125, details: 'بونص 25$'})" class="sky-btn font-bold px-3 py-1.5 rounded-xl text-xs cursor-pointer">8,125 ج.م | ⚡</button>
-       </div>
-      </div>
-     </div>
-    </div>
    </section>
 
    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -432,6 +385,36 @@
    <p>جميع الحقوق محفوظة © 2026 <b class="text-white">Migo AI Solution</b> - منصة الخدمات الرقمية والألعاب بالجنيه المصري</p>
   </footer>
 
+  <!-- Modal for VCC Order Details -->
+  <div id="vccModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-[90] hidden items-center justify-center p-3 sm:p-4">
+   <div class="sky-surface border border-amber-500/40 rounded-3xl max-w-md w-full p-5 sm:p-7 relative shadow-2xl">
+    <button type="button" onclick="closeVccModal()" aria-label="إغلاق" class="absolute top-4 left-4 text-gray-400 hover:text-white sky-card border w-8 h-8 rounded-xl flex items-center justify-center cursor-pointer">✕</button>
+    
+    <div class="text-center mb-5">
+      <div class="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 mx-auto flex items-center justify-center text-2xl mb-2.5 shadow-md">💳</div>
+      <h3 id="vccModalTitle" class="text-lg sm:text-xl font-black text-white">طلب بطاقة افتراضية (VCC)</h3>
+      <p id="vccModalPrice" class="text-xs text-amber-400 font-bold mt-1 font-mono"></p>
+    </div>
+    
+    <div class="space-y-3.5 mb-5">
+      <div>
+        <label class="block text-xs font-bold text-gray-200 mb-1" for="vccEmailInput">البريد الإلكتروني (لاستلام بيانات البطاقة) <span class="text-red-400">*</span>:</label>
+        <input type="email" id="vccEmailInput" placeholder="example@gmail.com" class="w-full bg-slate-950 border border-slate-700 focus:border-amber-400 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white font-mono outline-none">
+      </div>
+      <div>
+        <label class="block text-xs font-bold text-gray-200 mb-1" for="vccPurposeInput">الغرض من استخدام البطاقة (اختياري):</label>
+        <input type="text" id="vccPurposeInput" placeholder="مثال: إعلانات ممولة، تفعيل شات جي بي تي، شوبيفาย..." class="w-full bg-slate-950 border border-slate-700 focus:border-amber-400 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white outline-none">
+      </div>
+    </div>
+
+    <div class="flex gap-2">
+      <button type="button" onclick="submitVccModal(true)" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold py-3.5 rounded-xl text-xs sm:text-sm cursor-pointer shadow-lg transition">شراء فوري ⚡</button>
+      <button type="button" onclick="submitVccModal(false)" class="sky-card border text-white font-bold py-3.5 px-4 rounded-xl text-xs sm:text-sm cursor-pointer transition">أضف للسلة 🛒</button>
+    </div>
+   </div>
+  </div>
+
+  <!-- Modal for Game/App ID -->
   <div id="playerIdModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-[90] hidden items-center justify-center p-3 sm:p-4">
    <div class="sky-surface border border-sky-500/40 rounded-3xl max-w-md w-full p-5 sm:p-7 relative shadow-2xl max-h-[92vh] overflow-y-auto custom-scrollbar">
     <button type="button" onclick="closePlayerIdModal()" aria-label="إغلاق" class="absolute top-4 left-4 text-gray-400 hover:text-white sky-card border w-8 h-8 rounded-xl flex items-center justify-center cursor-pointer">✕</button>
@@ -491,12 +474,12 @@
      
      <div class="mt-4 space-y-2">
       <a href="#sec-offers" onclick="toggleSidebar()" class="w-full px-3 py-2.5 rounded-xl sky-card border text-gray-100 text-xs font-bold flex items-center justify-between hover:bg-slate-700"> <span>🔥 العروض الحصرية</span> </a>
+      <a href="#sec-vcc" onclick="toggleSidebar()" class="w-full px-3 py-2.5 rounded-xl sky-card border text-amber-400 text-xs font-bold flex items-center justify-between hover:bg-slate-700"> <span>💳 البطاقات الافتراضية (VCC)</span> </a>
       <a href="#sec-games" onclick="toggleSidebar()" class="w-full px-3 py-2.5 rounded-xl sky-card border text-emerald-400 text-xs font-bold flex items-center justify-between hover:bg-slate-700"> <span>🎮 شحن الألعاب</span> <span class="text-[10px] text-emerald-300">16 لعبة</span></a>
       <a href="#sec-social" onclick="toggleSidebar()" class="w-full px-3 py-2.5 rounded-xl sky-card border text-gray-100 text-xs font-bold flex items-center justify-between hover:bg-slate-700"> <span>📱 خدمات السوشيال ميديا</span> <span class="text-[10px] text-sky-400">18 منصة</span></a>
       <a href="#sec-liveapps" onclick="toggleSidebar()" class="w-full px-3 py-2.5 rounded-xl sky-card border text-pink-400 text-xs font-bold flex items-center justify-between hover:bg-slate-700"> <span>🔴 برامج لايف</span> </a>
+      <a href="#sec-entertainment" onclick="toggleSidebar()" class="w-full px-3 py-2.5 rounded-xl sky-card border text-purple-400 text-xs font-bold flex items-center justify-between hover:bg-slate-700"> <span>🎬 الترفيه والبث (نتفلكس وشاهد)</span> </a>
       <a href="#sec-apps" onclick="toggleSidebar()" class="w-full px-3 py-2.5 rounded-xl sky-card border text-gray-100 text-xs font-bold flex items-center justify-between hover:bg-slate-700"> <span>🧠 الذكاء الاصطناعي</span> </a>
-      <a href="#smart-subscriptions-wrapper" onclick="toggleSidebar()" class="w-full px-3 py-2.5 rounded-xl sky-card border text-indigo-400 text-xs font-bold flex items-center justify-between hover:bg-slate-700"> <span>📦 البرامج والاشتراكات الرقمية</span> </a>
-      <a href="#sec-api" onclick="toggleSidebar()" class="w-full px-3 py-2.5 rounded-xl sky-card border text-gray-100 text-xs font-bold flex items-center justify-between hover:bg-slate-700"> <span>⚡ نماذج API</span> </a>
      </div>
 
      <div class="mt-5 pt-4 border-t border-slate-700 space-y-1.5">
@@ -504,7 +487,6 @@
       <a href="https://www.facebook.com/share/1DhxrQU1nY/" target="_blank" class="block px-3 py-2 rounded-xl text-blue-400 hover:bg-blue-900/30 text-xs font-medium">📘 تواصل معنا على فيسبوك</a>
       <a href="#why-us" onclick="toggleSidebar()" class="block px-3 py-2 rounded-xl hover:bg-white/5 text-gray-300 text-xs font-medium">🛡️ الضمان والأمان</a>
       <a href="#faq" onclick="toggleSidebar()" class="block px-3 py-2 rounded-xl hover:bg-white/5 text-gray-300 text-xs font-medium">❓ الأسئلة الشائعة</a>
-      <a href="#reviews" onclick="toggleSidebar()" class="block px-3 py-2 rounded-xl hover:bg-white/5 text-gray-300 text-xs font-medium">⭐ آراء العملاء</a>
      </div>
     </div>
     
