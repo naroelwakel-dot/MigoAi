@@ -57,7 +57,6 @@ function initCountdown() {
 }
 
 const egyptianNames = ["أحمد م.", "محمد س.", "كريم ع.", "يوسف ط.", "عمر ح.", "سارة م.", "محمود خ.", "زياد ف.", "مصطفى ن.", "نور د.", "طارق ش.", "إسلام ع.", "علي ر.", "مروان ك.", "حازم ب."];
-const egyptianCities = ["القاهرة - المعادي", "الجيزة - الدقي", "مدينة نصر", "الإسكندرية - سموحة", "المنصورة", "الشيخ زايد", "طنطا", "الزقازيق", "بورسعيد", "أسيوط", "المهندسين", "دمياط", "كفر الشيخ"];
 const purchaseTemplates = [
     { act: "شحن 3850 UC ببجي موبايل", icon: 'pubg' },
     { act: "شحن 800 Robux روبلوكس", icon: 'roblox' },
@@ -81,11 +80,11 @@ function triggerSocialProof() {
     lastProofIndex = randIdx;
     const tpl = purchaseTemplates[randIdx];
     const name = egyptianNames[Math.floor(Math.random() * egyptianNames.length)];
-    const city = egyptianCities[Math.floor(Math.random() * egyptianCities.length)];
     const secondsAgo = Math.floor(Math.random() * 55) + 5;
     const timeStr = secondsAgo < 20 ? "الآن مباشرة ⚡" : `منذ ${secondsAgo} ثانية`;
 
-    document.getElementById('proofUser').innerText = `${name} (${city})`;
+    // إزالة المدينة وعرض الاسم فقط بناءً على طلبك
+    document.getElementById('proofUser').innerText = name;
     document.getElementById('proofAction').innerText = tpl.act;
     document.getElementById('proofTime').innerText = timeStr;
     const iconContainer = document.getElementById('proofIcon');
@@ -674,47 +673,88 @@ function renderApps() {
     `).join('');
 }
 
+// دالة البحث الفوري الشاملة لجميع أقسام وخدمات الموقع
 function handleLiveSearch(query) {
     const dropdown = document.getElementById('searchResultsDropdown');
     query = query.trim().toLowerCase();
-    if (!query) { dropdown.classList.add('hidden'); return; }
+    if (!query) {
+        dropdown.classList.add('hidden');
+        return;
+    }
 
     let results = [];
-    allGames.forEach(g => {
-        if (g.name.toLowerCase().includes(query)) g.pkgs.forEach(pkg => results.push({ name: `${g.name} (${pkg.l})`, price: pkg.p, type: 'game', rawGame: g, pkg: pkg }));
-    });
-    allApps.forEach(a => {
-        if (a.name.toLowerCase().includes(query) || a.tag.toLowerCase().includes(query)) results.push({ name: a.name, price: a.price, type: 'app', rawApp: a });
-    });
-    allLiveApps.forEach(la => {
-        if (la.name.toLowerCase().includes(query)) la.pkgs.forEach(pkg => results.push({ name: `${la.name} - ${pkg.l}`, price: pkg.p, type: 'live', rawLive: la, pkg: pkg }));
-    });
+
+    if (typeof allGames !== 'undefined') {
+        allGames.forEach(g => {
+            if (g.name.toLowerCase().includes(query)) {
+                g.pkgs.forEach(pkg => results.push({ name: `${g.name} (${pkg.l})`, price: pkg.p, type: 'game', rawGame: g, pkg: pkg }));
+            }
+        });
+    }
+
+    if (typeof allLiveApps !== 'undefined') {
+        allLiveApps.forEach(la => {
+            if (la.name.toLowerCase().includes(query)) {
+                la.pkgs.forEach(pkg => results.push({ name: `${la.name} - ${pkg.l}`, price: pkg.p, type: 'live', rawLive: la, pkg: pkg }));
+            }
+        });
+    }
+
+    if (typeof newSubscriptionsCatalog !== 'undefined') {
+        newSubscriptionsCatalog.forEach(sub => {
+            if (sub.name.toLowerCase().includes(query) || sub.desc.toLowerCase().includes(query) || (sub.keywords && sub.keywords.toLowerCase().includes(query))) {
+                sub.variants.forEach(v => {
+                    results.push({ name: `${sub.name} (${v.label})`, price: v.price, type: 'sub', rawSub: sub, variant: v });
+                });
+            }
+        });
+    }
+
+    if (typeof smmPlatforms !== 'undefined') {
+        smmPlatforms.forEach(p => {
+            if (p.name.toLowerCase().includes(query)) {
+                p.categories.forEach(cat => {
+                    cat.services.forEach(srv => {
+                        const priceEGP = (srv.baseUSD * 2.0 * USD_TO_EGP).toFixed(0);
+                        results.push({ name: `${p.name} - ${srv.title}`, price: parseFloat(priceEGP), type: 'smm_direct', platform: p, service: srv });
+                    });
+                });
+            }
+        });
+    }
 
     if (results.length === 0) {
         dropdown.innerHTML = '<div class="text-center py-4 text-xs text-gray-400">لا توجد نتائج مطابقة لبحثك</div>';
     } else {
-        dropdown.innerHTML = results.slice(0, 7).map(res => `
+        dropdown.innerHTML = results.slice(0, 8).map(res => `
             <div class="p-2.5 hover:bg-slate-800 rounded-xl flex items-center justify-between text-xs transition border-b border-slate-700/50 last:border-0">
                 <div class="text-right">
                     <span class="font-bold text-white block">${res.name}</span>
-                    <span class="text-amber-400 font-mono font-bold">${res.price.toLocaleString()} ج.م</span>
+                    <span class="text-amber-400 font-mono font-bold">${Number(res.price).toLocaleString()} ج.م</span>
                 </div>
-                <button onclick="onSearchItemClick('${encodeURIComponent(JSON.stringify(res))}')" class="sky-btn text-[11px] font-bold px-3 py-1.5 rounded-lg cursor-pointer">طلب الآن ⚡</button>
+                <button onclick="onGlobalSearchClick('${encodeURIComponent(JSON.stringify(res))}')" class="sky-btn text-[11px] font-bold px-3 py-1.5 rounded-lg cursor-pointer">طلب الآن ⚡</button>
             </div>
         `).join('');
     }
     dropdown.classList.remove('hidden');
 }
 
-function onSearchItemClick(encodedItem) {
+function onGlobalSearchClick(encodedItem) {
     const item = JSON.parse(decodeURIComponent(encodedItem));
     document.getElementById('searchResultsDropdown').classList.add('hidden');
     document.getElementById('liveSearchInput').value = '';
+    
     if (item.type === 'game' || item.type === 'live') {
         const target = item.rawGame || item.rawLive;
         openPlayerIdModal(target.name, item.pkg.l, item.price, true, target.key);
-    } else {
+    } else if (item.type === 'sub') {
+        addSubscriptionToSiteCart(item.rawSub, item.variant);
+        openCartModal();
+    } else if (item.type === 'app') {
         expressCheckout({ id: item.rawApp.id, name: item.rawApp.name, type: 'app', price: item.price, details: item.rawApp.tag });
+    } else {
+        const targetSec = document.getElementById('sec-social');
+        if (targetSec) targetSec.scrollIntoView({ behavior: 'smooth' });
     }
 }
 
@@ -868,7 +908,6 @@ function updateNavbarAuthUI() {
 
 function toggleSidebar() { document.getElementById('sidebarContainer').classList.toggle('hidden'); }
 
-// Full Subscriptions Catalog including complete Adobe Creative Cloud pricing variants
 const newSubscriptionsCatalog = [
     { id: 'sub_chatgpt', category: 'ai', icon: 'fa-robot', name: 'ChatGPT Plus', keywords: 'شات جي بي تي ذكاء اصطناعي اوبن اي chatgpt plus openai', desc: 'حساب رسمي تفعيل فوري', variants: [{ label: 'شهر واحد', price: 820 }] },
     { id: 'sub_gemini', category: 'ai', icon: 'fa-wand-magic-sparkles', name: 'Google Gemini Pro', keywords: 'جوجل جيميني برو ذكاء اصطناعي google gemini pro', desc: 'اشتراك رسمي متكامل', variants: [{ label: '18 شهر', price: 245 }] },
@@ -989,52 +1028,7 @@ function integrateLiveSearch() {
     if (!searchInput || !dropdown) return;
 
     searchInput.addEventListener('input', function() {
-        const query = this.value.trim().toLowerCase();
-        dropdown.querySelectorAll('.sub-live-search-item').forEach(el => el.remove());
-        if (query.length < 1) return;
-
-        const matchedSubs = newSubscriptionsCatalog.filter(item =>
-            item.name.toLowerCase().includes(query) ||
-            item.desc.toLowerCase().includes(query) ||
-            (item.keywords && item.keywords.toLowerCase().includes(query))
-        );
-
-        if (matchedSubs.length > 0) {
-            dropdown.classList.remove('hidden');
-            matchedSubs.forEach(item => {
-                const row = document.createElement('div');
-                row.className = 'sub-live-search-item p-3 hover:bg-gray-800/90 cursor-pointer flex items-center justify-between border-b border-gray-800 transition';
-                row.innerHTML = `
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-lg bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
-                            <i class="fa-solid ${item.icon}"></i>
-                        </div>
-                        <div>
-                            <div class="text-sm font-bold text-white">${item.name}</div>
-                            <div class="text-xs text-gray-400">${item.desc}</div>
-                        </div>
-                    </div>
-                    <span class="text-xs font-bold text-indigo-300 bg-indigo-500/10 px-2.5 py-1 rounded-lg border border-indigo-500/20 whitespace-nowrap">
-                        يبدأ من ${item.variants[0].price} ج.م
-                    </span>
-                `;
-                row.addEventListener('click', function() {
-                    dropdown.classList.add('hidden');
-                    searchInput.value = '';
-                    const allTab = document.querySelector('.sub-cat-tab[data-cat="all"]');
-                    if (allTab) allTab.click();
-                    setTimeout(() => {
-                        const targetCard = document.getElementById(`card-${item.id}`);
-                        if (targetCard) {
-                            targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                            targetCard.classList.add('sub-highlight-pulse');
-                            setTimeout(() => targetCard.classList.remove('sub-highlight-pulse'), 2000);
-                        }
-                    }, 100);
-                });
-                dropdown.appendChild(row);
-            });
-        }
+        handleLiveSearch(this.value);
     });
 }
 
