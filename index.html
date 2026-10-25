@@ -132,10 +132,11 @@
    </div>
   </header>
 
+  <!-- شريط البحث الفوري المحدث مع oninput المباشر -->
   <div class="max-w-4xl mx-auto px-4 mt-5">
     <div class="relative">
       <label for="liveSearchInput" class="sr-only">بحث في المتجر</label>
-      <input type="text" id="liveSearchInput" placeholder="🔍 ابحث عن لعبتك، خدمتك، أو برنامجك (مثال: ببجي، روبلوكس، تيك توك، أدوبي)..." class="w-full bg-[#131d31] border border-slate-600 focus:border-sky-400 rounded-2xl px-5 py-3 text-sm text-white outline-none shadow-xl transition">
+      <input type="text" id="liveSearchInput" oninput="handleLiveSearch(this.value)" placeholder="🔍 ابحث عن لعبتك، خدمتك، أو برنامجك (مثال: ببجي، روبلوكس، تيك توك، أدوبي)..." class="w-full bg-[#131d31] border border-slate-600 focus:border-sky-400 rounded-2xl px-5 py-3 text-sm text-white outline-none shadow-xl transition">
       <div id="searchResultsDropdown" class="hidden absolute top-full left-0 right-0 mt-2 bg-[#131d31] border border-sky-500/40 rounded-2xl p-2 shadow-2xl z-40 max-h-80 overflow-y-auto custom-scrollbar"></div>
     </div>
   </div>
@@ -153,7 +154,6 @@
    <div class="relative w-full max-w-2xl mx-auto overflow-hidden rounded-3xl mb-8 shadow-2xl" dir="rtl">
     <div id="sliderTrack" class="flex transition-transform duration-500 ease-in-out" style="transform: translateX(0%);">
         
-        <!-- Slide 1: Claude Max -->
         <div class="w-full shrink-0 p-1">
             <div class="bg-gradient-to-br from-[#1e293b] to-[#0f172a] border border-amber-500/40 p-6 rounded-3xl relative h-full flex flex-col justify-center items-center text-center">
                 <div class="absolute top-0 right-0 bg-amber-500 text-slate-950 text-[10px] font-black px-3.5 py-1 rounded-bl-2xl">الأكثر طلباً 🔥</div>
@@ -168,7 +168,6 @@
             </div>
         </div>
 
-        <!-- Slide 2: PUBG 3850 UC -->
         <div class="w-full shrink-0 p-1">
             <div class="bg-gradient-to-br from-[#1e293b] to-[#0f172a] border border-emerald-500/40 p-6 rounded-3xl relative h-full flex flex-col justify-center items-center text-center">
                 <div class="absolute top-0 right-0 bg-emerald-500 text-white text-[10px] font-black px-3.5 py-1 rounded-bl-2xl">تسليم فوري بالـ ID</div>
@@ -183,7 +182,6 @@
             </div>
         </div>
 
-        <!-- Slide 3: ChatGPT Plus -->
         <div class="w-full shrink-0 p-1">
             <div class="bg-gradient-to-br from-[#1e293b] to-[#0f172a] border border-indigo-500/40 p-6 rounded-3xl relative h-full flex flex-col justify-center items-center text-center">
                 <div class="absolute top-0 right-0 bg-indigo-500 text-white text-[10px] font-black px-3.5 py-1 rounded-bl-2xl">تفعيل فوري 🤖</div>
@@ -198,7 +196,6 @@
             </div>
         </div>
 
-        <!-- Slide 4: Canva Pro -->
         <div class="w-full shrink-0 p-1">
             <div class="bg-gradient-to-br from-[#1e293b] to-[#0f172a] border border-pink-500/40 p-6 rounded-3xl relative h-full flex flex-col justify-center items-center text-center">
                 <div class="absolute top-0 right-0 bg-pink-500 text-white text-[10px] font-black px-3.5 py-1 rounded-bl-2xl">تصميم احترافي 🎨</div>
