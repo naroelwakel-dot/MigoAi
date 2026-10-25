@@ -100,7 +100,7 @@ function triggerSocialProof() {
 }
 
 let currentSlide = 0;
-const totalSlides = 4; // تم ضبطها لـ 4 شرائح في السلايدر
+const totalSlides = 4;
 function updateSlider() {
     const track = document.getElementById('sliderTrack');
     if (track) track.style.transform = `translateX(${currentSlide * 100}%)`;
@@ -868,11 +868,24 @@ function updateNavbarAuthUI() {
 
 function toggleSidebar() { document.getElementById('sidebarContainer').classList.toggle('hidden'); }
 
+// Full Subscriptions Catalog including complete Adobe Creative Cloud pricing variants
 const newSubscriptionsCatalog = [
     { id: 'sub_chatgpt', category: 'ai', icon: 'fa-robot', name: 'ChatGPT Plus', keywords: 'شات جي بي تي ذكاء اصطناعي اوبن اي chatgpt plus openai', desc: 'حساب رسمي تفعيل فوري', variants: [{ label: 'شهر واحد', price: 820 }] },
     { id: 'sub_gemini', category: 'ai', icon: 'fa-wand-magic-sparkles', name: 'Google Gemini Pro', keywords: 'جوجل جيميني برو ذكاء اصطناعي google gemini pro', desc: 'اشتراك رسمي متكامل', variants: [{ label: '18 شهر', price: 245 }] },
     { id: 'sub_capcut', category: 'ai', icon: 'fa-video', name: 'CapCut Pro', keywords: 'كاب كات برو مونتاج فيديو capcut pro', desc: 'مونتاج احترافي وأدوات ذكاء اصطناعي', variants: [{ label: 'شهر واحد', price: 200 }] },
-    { id: 'sub_adobe_cc', category: 'design', icon: 'fa-palette', name: 'Adobe Creative Cloud', keywords: 'ادوبي كريتيف كلاود فوتوشوب adobe creative cloud photoshop', desc: 'جميع برامج أدوبي الرسمية', variants: [{ label: 'شهر واحد', price: 770 }] },
+    { 
+        id: 'sub_adobe_cc', category: 'design', icon: 'fa-palette', name: 'Adobe Creative Cloud', 
+        keywords: 'ادوبي كريتيف كلاود فوتوشوب illustrator premiere photoshop adobe creative cloud', 
+        desc: 'اشتراك رسمي 100% مع 100GB Storage و 1000 AI Credits', 
+        variants: [
+            { label: 'اشتراك خاص - 1 شهر', price: 699 },
+            { label: 'اشتراك خاص - 3 شهور', price: 1099 },
+            { label: 'اشتراك خاص - 4 شهور', price: 1399 },
+            { label: 'اشتراك خاص - 5 شهور', price: 1799 },
+            { label: 'اشتراك خاص - 6 شهور', price: 2199 },
+            { label: 'اشتراك Shared (جهاز واحد) - 4 شهور', price: 899 }
+        ] 
+    },
     { id: 'sub_canva', category: 'design', icon: 'fa-paintbrush', name: 'Canva Pro', keywords: 'كانفا برو تصميم canva pro', desc: 'جميع قوالب ومميزات كانفا برو', variants: [{ label: 'سنة كاملة', price: 130 }] },
     { id: 'sub_shahid', category: 'entertainment', icon: 'fa-tv', name: 'شاهد VIP', keywords: 'شاهد في اي بي مسلسلات افلام shahid vip', desc: 'مشاهدة المسلسلات والأفلام بجودة عالية', variants: [{ label: 'شهر واحد', price: 205 }] },
     { id: 'sub_youtube', category: 'entertainment', icon: 'fa-play', name: 'YouTube Premium', keywords: 'يوتيوب بريميوم بدون اعلانات youtube premium', desc: 'مشاهدة بدون إعلانات وتشغيل بالخلفية', variants: [{ label: 'شهر واحد', price: 115 }] },
@@ -890,11 +903,12 @@ function injectSubscriptionsSection() {
     if (document.getElementById('smart-subscriptions-wrapper')) return;
     const wrapper = document.createElement('section');
     wrapper.id = 'smart-subscriptions-wrapper';
-    wrapper.className = 'container mx-auto px-4 my-8 space-y-5';
+    wrapper.className = 'container mx-auto px-4 my-8 space-y-5 scroll-mt-24';
     wrapper.innerHTML = `
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-800 pb-4">
             <div>
-                <h2 class="text-xl font-bold text-white flex items-center gap-2">
+                <span class="px-3 py-1 sky-card border border-indigo-500/40 text-indigo-400 text-xs font-bold rounded-full">اشتراكات رسمية ومضمونة</span>
+                <h2 class="text-xl sm:text-3xl font-black text-white mt-2 flex items-center gap-2">
                     <i class="fa-solid fa-layer-group text-indigo-400"></i> قسم البرامج والاشتراكات الرقمية
                 </h2>
                 <p class="text-xs text-gray-400 mt-1">اختر الفئة وحدد مدة الاشتراك المناسبة لك من القائمة</p>
