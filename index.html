@@ -153,54 +153,74 @@
    <div class="relative w-full max-w-2xl mx-auto overflow-hidden rounded-3xl mb-8 shadow-2xl" dir="rtl">
     <div id="sliderTrack" class="flex transition-transform duration-500 ease-in-out" style="transform: translateX(0%);">
         
+        <!-- Slide 1: Claude Max -->
         <div class="w-full shrink-0 p-1">
             <div class="bg-gradient-to-br from-[#1e293b] to-[#0f172a] border border-amber-500/40 p-6 rounded-3xl relative h-full flex flex-col justify-center items-center text-center">
                 <div class="absolute top-0 right-0 bg-amber-500 text-slate-950 text-[10px] font-black px-3.5 py-1 rounded-bl-2xl">الأكثر طلباً 🔥</div>
                 <div class="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-3xl mb-2">⚡</div>
                 <h3 class="text-2xl font-black text-white mb-1">باقة Claude Max 5x</h3>
                 <p class="text-xs text-gray-300 mb-3 max-w-sm">حدود استخدام 5 أضعاف اشتراك Pro العادي على بريدك الشخصي وبدون VPN.</p>
-                <div class="text-2xl font-black text-amber-400 mb-4 font-mono">4,550 ج.م</div>
+                <div class="text-2xl font-black text-amber-400 mb-4 font-mono">4,340 ج.م</div>
                 <div class="flex gap-2">
-                  <button onclick="expressCheckout({id: 'app_max5', name: 'Claude Max 5x', type: 'app', price: 4550, details: 'تفعيل 5 أضعاف حدود الاستخدام'})" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold py-2.5 px-5 rounded-xl text-xs transition shadow-lg cursor-pointer">شراء فوري ⚡</button>
-                  <button onclick="addToCart({id: 'app_max5', name: 'Claude Max 5x', type: 'app', price: 4550, details: 'تفعيل 5 أضعاف حدود الاستخدام'})" class="sky-card border text-white font-bold py-2.5 px-4 rounded-xl text-xs transition cursor-pointer">أضف للسلة 🛒</button>
+                  <button onclick="expressCheckout({id: 'app_max5', name: 'Claude Max 5x', type: 'app', price: 4340, details: 'تفعيل 5 أضعاف حدود الاستخدام'})" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold py-2.5 px-5 rounded-xl text-xs transition shadow-lg cursor-pointer">شراء فوري ⚡</button>
+                  <button onclick="addToCart({id: 'app_max5', name: 'Claude Max 5x', type: 'app', price: 4340, details: 'تفعيل 5 أضعاف حدود الاستخدام'})" class="sky-card border text-white font-bold py-2.5 px-4 rounded-xl text-xs transition cursor-pointer">أضف للسلة 🛒</button>
                 </div>
             </div>
         </div>
 
+        <!-- Slide 2: PUBG 3850 UC -->
         <div class="w-full shrink-0 p-1">
             <div class="bg-gradient-to-br from-[#1e293b] to-[#0f172a] border border-emerald-500/40 p-6 rounded-3xl relative h-full flex flex-col justify-center items-center text-center">
                 <div class="absolute top-0 right-0 bg-emerald-500 text-white text-[10px] font-black px-3.5 py-1 rounded-bl-2xl">تسليم فوري بالـ ID</div>
                 <div id="slidePubgIcon" class="w-14 h-14 rounded-2xl bg-slate-900 border border-emerald-500/30 flex items-center justify-center p-2 mb-2"></div>
                 <h3 class="text-2xl font-black text-white mb-1">ببجي موبايل (3850 UC)</h3>
                 <p class="text-xs text-gray-300 mb-3 max-w-sm">3000 شدة + 850 شدة بونص فوري بحسابك الرسمي مع التحقق المسبق من الاسم.</p>
-                <div class="text-2xl font-black text-emerald-400 mb-4 font-mono">3,238 ج.م</div>
+                <div class="text-2xl font-black text-emerald-400 mb-4 font-mono">3,100 ج.م</div>
                 <div class="flex gap-2">
-                  <button onclick="openPlayerIdModal('بابجي موبايل (PUBG)', '3850 UC', 3238, true, 'pubg')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold py-2.5 px-5 rounded-xl text-xs transition shadow-lg cursor-pointer">شحن فوري بالـ ID ⚡</button>
-                  <button onclick="openPlayerIdModal('بابجي موبايل (PUBG)', '3850 UC', 3238, false, 'pubg')" class="sky-card border text-white font-bold py-2.5 px-4 rounded-xl text-xs transition cursor-pointer">أضف للسلة 🛒</button>
+                  <button onclick="openPlayerIdModal('بابجي موبايل (PUBG)', '3850 UC', 3100, true, 'pubg')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold py-2.5 px-5 rounded-xl text-xs transition shadow-lg cursor-pointer">شحن فوري بالـ ID ⚡</button>
+                  <button onclick="openPlayerIdModal('بابجي موبايل (PUBG)', '3850 UC', 3100, false, 'pubg')" class="sky-card border text-white font-bold py-2.5 px-4 rounded-xl text-xs transition cursor-pointer">أضف للسلة 🛒</button>
                 </div>
             </div>
         </div>
 
+        <!-- Slide 3: ChatGPT Plus -->
         <div class="w-full shrink-0 p-1">
-            <div class="bg-gradient-to-br from-[#1e293b] to-[#0f172a] border border-sky-500/40 p-6 rounded-3xl relative h-full flex flex-col justify-center items-center text-center">
-                <div class="absolute top-0 right-0 bg-sky-500 text-white text-[10px] font-black px-3.5 py-1 rounded-bl-2xl">للمطورين</div>
-                <div class="w-14 h-14 rounded-2xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-3xl mb-2">⚡</div>
-                <h3 class="text-2xl font-black text-white mb-1">باقة API المحترفين</h3>
-                <p class="text-xs text-gray-300 mb-3 max-w-sm">رصيد 25$ + 5$ هدية إضافية لربط 35 نموذج ذكاء اصطناعي فائق السرعة.</p>
-                <div class="text-2xl font-black text-sky-400 mb-4 font-mono">1,950 ج.م</div>
+            <div class="bg-gradient-to-br from-[#1e293b] to-[#0f172a] border border-indigo-500/40 p-6 rounded-3xl relative h-full flex flex-col justify-center items-center text-center">
+                <div class="absolute top-0 right-0 bg-indigo-500 text-white text-[10px] font-black px-3.5 py-1 rounded-bl-2xl">تفعيل فوري 🤖</div>
+                <div class="w-14 h-14 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center text-3xl mb-2">💬</div>
+                <h3 class="text-2xl font-black text-white mb-1">ChatGPT Plus</h3>
+                <p class="text-xs text-gray-300 mb-3 max-w-sm">حساب رسمي برمز مرور وتفعيل مباشر على إيميلك الشخصي.</p>
+                <div class="text-2xl font-black text-indigo-400 mb-4 font-mono">820 ج.م</div>
                 <div class="flex gap-2">
-                  <button onclick="expressCheckout({id: 'api_pro', name: 'باقة API المحترفين (30$)', type: 'api', price: 1950, details: 'بونص 5$'})" class="sky-btn font-extrabold py-2.5 px-5 rounded-xl text-xs transition shadow-lg cursor-pointer">شراء فوري ⚡</button>
-                  <button onclick="addToCart({id: 'api_pro', name: 'باقة API المحترفين (30$)', type: 'api', price: 1950, details: 'بونص 5$'})" class="sky-card border text-white font-bold py-2.5 px-4 rounded-xl text-xs transition cursor-pointer">أضف للسلة 🛒</button>
+                  <button onclick="expressCheckout({id: 'sub_chatgpt', name: 'ChatGPT Plus', type: 'app', price: 820, details: 'حساب رسمي تفعيل فوري'})" class="bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold py-2.5 px-5 rounded-xl text-xs transition shadow-lg cursor-pointer">شراء فوري ⚡</button>
+                  <button onclick="addToCart({id: 'sub_chatgpt', name: 'ChatGPT Plus', type: 'app', price: 820, details: 'حساب رسمي تفعيل فوري'})" class="sky-card border text-white font-bold py-2.5 px-4 rounded-xl text-xs transition cursor-pointer">أضف للسلة 🛒</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Canva Pro -->
+        <div class="w-full shrink-0 p-1">
+            <div class="bg-gradient-to-br from-[#1e293b] to-[#0f172a] border border-pink-500/40 p-6 rounded-3xl relative h-full flex flex-col justify-center items-center text-center">
+                <div class="absolute top-0 right-0 bg-pink-500 text-white text-[10px] font-black px-3.5 py-1 rounded-bl-2xl">تصميم احترافي 🎨</div>
+                <div class="w-14 h-14 rounded-2xl bg-pink-500/10 border border-pink-500/30 flex items-center justify-center text-3xl mb-2">✨</div>
+                <h3 class="text-2xl font-black text-white mb-1">Canva Pro (سنة كاملة)</h3>
+                <p class="text-xs text-gray-300 mb-3 max-w-sm">جميع قوالب ومميزات كانفا برو المتقدمة بضمان كامل مدة الاشتراك.</p>
+                <div class="text-2xl font-black text-pink-400 mb-4 font-mono">130 ج.م</div>
+                <div class="flex gap-2">
+                  <button onclick="expressCheckout({id: 'sub_canva', name: 'Canva Pro (سنة كاملة)', type: 'app', price: 130, details: 'جميع قوالب ومميزات كانفا برو'})" class="bg-pink-600 hover:bg-pink-500 text-white font-extrabold py-2.5 px-5 rounded-xl text-xs transition shadow-lg cursor-pointer">شراء فوري ⚡</button>
+                  <button onclick="addToCart({id: 'sub_canva', name: 'Canva Pro (سنة كاملة)', type: 'app', price: 130, details: 'جميع قوالب ومميزات كانفا برو'})" class="sky-card border text-white font-bold py-2.5 px-4 rounded-xl text-xs transition cursor-pointer">أضف للسلة 🛒</button>
                 </div>
             </div>
         </div>
 
     </div>
 
+    <!-- Slider Dots -->
     <div class="flex justify-center gap-2 mt-3 pb-1" id="sliderDots">
         <span class="dot active" onclick="goToSlide(0)"></span>
         <span class="dot" onclick="goToSlide(1)"></span>
         <span class="dot" onclick="goToSlide(2)"></span>
+        <span class="dot" onclick="goToSlide(3)"></span>
     </div>
    </div>
 
@@ -612,7 +632,7 @@
    </div>
   </div>
 
-  <!-- استدعاء ملف السكربت الخارجي لتسريع الأداء وتجاوز حدود الـ CDN -->
+  <!-- Script link with lowercase s -->
   <script src="script.js" defer></script>
  </body>
 </html>
