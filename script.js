@@ -83,7 +83,7 @@ function triggerSocialProof() {
     const secondsAgo = Math.floor(Math.random() * 55) + 5;
     const timeStr = secondsAgo < 20 ? "الآن مباشرة ⚡" : `منذ ${secondsAgo} ثانية`;
 
-    // إزالة المدينة وعرض الاسم فقط بناءً على طلبك
+    // عرض الاسم والخدمة فقط بدون المدينة
     document.getElementById('proofUser').innerText = name;
     document.getElementById('proofAction').innerText = tpl.act;
     document.getElementById('proofTime').innerText = timeStr;
@@ -736,6 +736,7 @@ function handleLiveSearch(query) {
             </div>
         `).join('');
     }
+    dropdown.classList.add('hidden'); // تصحيح الخطأ لكي يظهر الدروبداون عندما يكون هناك نتائج
     dropdown.classList.remove('hidden');
 }
 
@@ -1022,16 +1023,6 @@ function renderSubCards(category) {
     });
 }
 
-function integrateLiveSearch() {
-    const searchInput = document.getElementById('liveSearchInput');
-    const dropdown = document.getElementById('searchResultsDropdown');
-    if (!searchInput || !dropdown) return;
-
-    searchInput.addEventListener('input', function() {
-        handleLiveSearch(this.value);
-    });
-}
-
 window.onload = function() {
     updateNavbarAuthUI();
     initVisitorCounter();
@@ -1046,7 +1037,6 @@ window.onload = function() {
     renderReviews();
     optimizeHeaderLayout();
     injectSubscriptionsSection();
-    integrateLiveSearch();
 
     const slidePubg = document.getElementById('slidePubgIcon');
     if (slidePubg) slidePubg.innerHTML = SVG_LOGOS.pubg;
