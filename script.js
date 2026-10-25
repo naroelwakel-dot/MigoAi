@@ -100,7 +100,7 @@ function triggerSocialProof() {
 }
 
 let currentSlide = 0;
-const totalSlides = 3;
+const totalSlides = 4; // تم ضبطها لـ 4 شرائح في السلايدر
 function updateSlider() {
     const track = document.getElementById('sliderTrack');
     if (track) track.style.transform = `translateX(${currentSlide * 100}%)`;
