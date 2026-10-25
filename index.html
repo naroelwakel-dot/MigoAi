@@ -14,13 +14,18 @@
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
-
     gtag('config', 'G-TRJHFVNBF5');
   </script>
+
+  <!-- Performance Preconnect -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.tailwindcss.com">
 
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+  
   <style>
         :root {
             --bg-main: #0b1120;      
@@ -130,6 +135,7 @@
 
   <div class="max-w-4xl mx-auto px-4 mt-5">
     <div class="relative">
+      <label for="liveSearchInput" class="sr-only">بحث في المتجر</label>
       <input type="text" id="liveSearchInput" placeholder="🔍 ابحث عن لعبتك، خدمتك، أو برنامجك (مثال: ببجي، روبلوكس، تيك توك، كانفا)..." class="w-full bg-[#131d31] border border-slate-600 focus:border-sky-400 rounded-2xl px-5 py-3 text-sm text-white outline-none shadow-xl transition">
       <div id="searchResultsDropdown" class="hidden absolute top-full left-0 right-0 mt-2 bg-[#131d31] border border-sky-500/40 rounded-2xl p-2 shadow-2xl z-40 max-h-80 overflow-y-auto custom-scrollbar"></div>
     </div>
@@ -1633,7 +1639,6 @@
 
         function toggleSidebar() { document.getElementById('sidebarContainer').classList.toggle('hidden'); }
 
-        // --- إضافات قسم الاشتراكات الذكية وسكربت البحث المدمج ---
         const newSubscriptionsCatalog = [
             { id: 'sub_chatgpt', category: 'ai', icon: 'fa-robot', name: 'ChatGPT Plus', keywords: 'شات جي بي تي ذكاء اصطناعي اوبن اي chatgpt plus openai', desc: 'حساب رسمي تفعيل فوري', variants: [{ label: 'شهر واحد', price: 820 }] },
             { id: 'sub_gemini', category: 'ai', icon: 'fa-wand-magic-sparkles', name: 'Google Gemini Pro', keywords: 'جوجل جيميني برو ذكاء اصطناعي google gemini pro', desc: 'اشتراك رسمي متكامل', variants: [{ label: '18 شهر', price: 245 }] },
