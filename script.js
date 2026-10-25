@@ -59,7 +59,7 @@ function initCountdown() {
 const egyptianNames = ["أحمد م.", "محمد س.", "كريم ع.", "يوسف ط.", "عمر ح.", "سارة م.", "محمود خ.", "زياد ف.", "مصطفى ن.", "نور د.", "طارق ش.", "إسلام ع.", "علي ر.", "مروان ك.", "حازم ب."];
 const egyptianCities = ["القاهرة - المعادي", "الجيزة - الدقي", "مدينة نصر", "الإسكندرية - سموحة", "المنصورة", "الشيخ زايد", "طنطا", "الزقازيق", "بورسعيد", "أسيوط", "المهندسين", "دمياط", "كفر الشيخ"];
 const purchaseTemplates = [
-    { act: "شحن 660 UC ببجي موبايل", icon: 'pubg' },
+    { act: "شحن 3850 UC ببجي موبايل", icon: 'pubg' },
     { act: "شحن 800 Robux روبلوكس", icon: 'roblox' },
     { act: "تفعيل اشتراك Claude Max 5x", icon: 'app_generic' },
     { act: "شحن 1188 جوهرة فري فاير", icon: 'freefire' },
@@ -644,7 +644,7 @@ function renderLiveApps() {
 const allApps = [
     { id: 'app_max5', name: "Claude Max 5x", tag: "5 أضعاف Pro", price: 4340, icon: "⚡" },
     { id: 'app_max20', name: "Claude Max 20x", tag: "للمبرمجين 20x", price: 8680, icon: "🚀" },
-    { id: 'app_claude', name: "Claude AI Pro", tag: "اشتراك رسمي", price: 1612, icon: "🧠" },
+    { id: 'app_claude', name: "Claude AI Pro", tag: "اشتراك رسمي", price: 1200, icon: "🧠" },
     { id: 'app_gemini', name: "Gemini Pro", tag: "تفعيل مباشر", price: 310, icon: "✨" },
     { id: 'app_canva', name: "Canva Pro", tag: "سنة كاملة", price: 186, icon: "🎨" },
     { id: 'app_capcut', name: "CapCut Pro", tag: "باقة التصميم", price: 235, icon: "🎬" },
