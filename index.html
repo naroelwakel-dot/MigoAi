@@ -1,955 +1,797 @@
-<!doctype html>
-<html lang="ar" dir="rtl">
- <head>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="dark">
+<head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="title" content="Migo AI Solution | منصة الخدمات الرقمية وشحن الألعاب">
-  <meta name="description" content="شحن فوري للألعاب بالـ ID، كوينز تيك توك، برامج اللايف، بطاقات VCC، اشتراكات برامج وأدوات الذكاء الاصطناعي بالجنيه المصري.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Migo AI Solution | متجر الخدمات الرقمية والألعاب والبطاقات</title>
   
-  <title>Migo AI Solution | الحلول الرقمية، الألعاب والاشتراكات</title>
-  
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-TRJHFVNBF5"></script>
+  <!-- خط Cairo والتصميم الأساسي -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+
   <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-TRJHFVNBF5');
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Cairo', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#f0f9ff',
+              100: '#e0f2fe',
+              500: '#0284c7',
+              600: '#0369a1',
+              700: '#075985',
+              900: '#0c4a6e',
+            }
+          }
+        }
+      }
+    }
   </script>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
-  
   <style>
-    :root {
-        --bg-main: #0b1120;      
-        --bg-surface: #131d31;   
-        --bg-card: #1e293b;      
-        --border-color: #334155; 
+    body {
+      font-family: 'Cairo', sans-serif;
+      background-color: #05070d;
+      color: #f8fafc;
+      overflow-x: hidden;
     }
-    * { box-sizing: border-box; }
-    html, body { font-family: 'Tajawal', sans-serif; scroll-behavior: smooth; background-color: var(--bg-main); color: #f8fafc; overflow-x: hidden; margin: 0; padding: 0; }
-    .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
-    .custom-scrollbar::-webkit-scrollbar-track { background: var(--bg-surface); border-radius: 8px; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: #38bdf8; border-radius: 8px; }
-    details > summary { list-style: none; }
-    details > summary::-webkit-details-marker { display: none; }
-    
-    .sky-surface { background-color: var(--bg-surface); border-color: var(--border-color); }
-    .sky-card { background-color: var(--bg-card); border-color: var(--border-color); transition: all 0.25s ease; }
-    .sky-card:hover { border-color: #38bdf8; }
-    .sky-btn { background: linear-gradient(135deg, #0284c7, #2563eb); color: #ffffff; box-shadow: 0 4px 15px rgba(2, 132, 199, 0.3); transition: 0.25s; }
-    .sky-btn:hover { background: linear-gradient(135deg, #38bdf8, #3b82f6); transform: translateY(-1px); }
-    .sky-active-tab { border: 2px solid #38bdf8 !important; background: linear-gradient(135deg, rgba(56, 189, 248, 0.15), rgba(30, 41, 59, 0.8)) !important; box-shadow: 0 4px 18px rgba(56, 189, 248, 0.2); }
-    select, select option { background-color: var(--bg-surface) !important; color: #ffffff !important; }
-    
-    .dot { height: 8px; width: 8px; background-color: #475569; border-radius: 50%; display: inline-block; cursor: pointer; transition: 0.3s; }
-    .dot.active { background-color: #38bdf8; transform: scale(1.35); }
-
-    /* تأثيرات Glitch والنيون السينمائية */
-    .neon-purple-glow { box-shadow: 0 0 16px rgba(168, 85, 247, 0.45); }
-    .neon-cyan-glow { box-shadow: 0 0 16px rgba(56, 189, 248, 0.45); }
-    .poster-card { transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1); }
-    .poster-card:hover { transform: translateY(-5px) scale(1.02); }
-
-    /* Pure CSS Animations */
-    @keyframes anim-coin-spin {
-      0% { transform: rotateY(0deg) scale(1); }
-      50% { transform: rotateY(180deg) scale(1.08); }
-      100% { transform: rotateY(360deg) scale(1); }
+    .sky-card {
+      background: linear-gradient(180deg, rgba(15, 23, 42, 0.85) 0%, rgba(10, 15, 30, 0.95) 100%);
+      backdrop-filter: blur(12px);
     }
-    .anim-coin { animation: anim-coin-spin 3s infinite ease-in-out; transform-style: preserve-3d; }
-
-    @keyframes anim-radar-pulse {
-      0% { r: 5; opacity: 1; stroke-width: 2; }
-      100% { r: 18; opacity: 0; stroke-width: 0.5; }
+    .sky-surface {
+      background: rgba(13, 20, 36, 0.7);
     }
-    .anim-radar { animation: anim-radar-pulse 2s infinite cubic-bezier(0, 0.2, 0.8, 1); }
-
-    @keyframes anim-vcc-float {
-      0%, 100% { transform: translateY(0) rotate(-4deg); }
-      50% { transform: translateY(-4px) rotate(2deg); }
+    .sky-btn {
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+      color: #ffffff;
     }
-    .anim-vcc { animation: anim-vcc-float 3.5s infinite ease-in-out; }
-
-    @keyframes anim-pad-rumble {
-      0%, 100% { transform: translateY(0px) rotate(0deg); }
-      20% { transform: translateY(-2px) rotate(-3deg); }
-      40% { transform: translateY(1px) rotate(2deg); }
-      60% { transform: translateY(-2px) rotate(1deg); }
-      80% { transform: translateY(0px) rotate(-1deg); }
+    .sky-btn:hover {
+      background: linear-gradient(135deg, #0369a1 0%, #075985 100%);
     }
-    .anim-gamepad { animation: anim-pad-rumble 2.5s infinite ease-in-out; }
-
-    @keyframes anim-rocket-launch {
-      0%, 100% { transform: translate(0, 0) rotate(-45deg); }
-      50% { transform: translate(2px, -3px) rotate(-43deg); }
+    .sky-active-tab {
+      background: rgba(2, 132, 199, 0.25) !important;
+      border-color: #38bdf8 !important;
     }
-    .anim-rocket { animation: anim-rocket-launch 2s infinite ease-in-out; }
-
-    @keyframes anim-flame-flicker {
-      0%, 100% { transform: scale(1); opacity: 0.9; }
-      50% { transform: scale(1.18, 0.85); opacity: 1; }
+    .slider-container {
+      overflow: hidden;
+      position: relative;
     }
-    .anim-flame { animation: anim-flame-flicker 0.6s infinite alternate ease-in-out; transform-origin: center bottom; }
-
-    @keyframes anim-palette-glow {
-      0%, 100% { filter: drop-shadow(0 0 2px rgba(6, 182, 212, 0.4)); transform: scale(1); }
-      50% { filter: drop-shadow(0 0 7px rgba(56, 189, 248, 0.8)); transform: scale(1.05); }
+    .slider-track {
+      display: flex;
+      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .anim-palette { animation: anim-palette-glow 3s infinite ease-in-out; }
-
-    @keyframes anim-reel-spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
+    .slider-slide {
+      min-width: 100%;
+      flex-shrink: 0;
     }
-    .anim-film { animation: anim-reel-spin 6s linear infinite; transform-origin: center; }
-
-    @keyframes anim-chip-pulse {
-      0%, 100% { filter: drop-shadow(0 0 2px rgba(99, 102, 241, 0.4)); opacity: 0.9; }
-      50% { filter: drop-shadow(0 0 8px rgba(129, 140, 248, 0.9)); opacity: 1; }
+    .dot.active {
+      background-color: #38bdf8;
+      width: 24px;
     }
-    .anim-chip { animation: anim-chip-pulse 2s infinite ease-in-out; }
-
-    @keyframes anim-pulse-fast {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(1.2); opacity: 0.7; }
+    /* تحسين شريط التمرير */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
     }
-    .anim-pulse { animation: anim-pulse-fast 1.5s infinite ease-in-out; transform-origin: center; }
-    .pulse-badge { animation: anim-pulse-fast 2s infinite ease-in-out; }
+    ::-webkit-scrollbar-track {
+      background: #070a12;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e293b;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #334155;
+    }
   </style>
- </head>
- <body class="min-h-screen selection:bg-sky-500 selection:text-white pb-24">
-  
-  <div id="toastContainer" class="fixed top-5 left-5 z-[120] flex flex-col gap-2 pointer-events-none"></div>
+</head>
+<body class="selection:bg-sky-500 selection:text-white">
 
-  <div id="socialProofPopup" class="fixed bottom-20 left-4 z-40 bg-[#1e293b]/95 border border-sky-500/40 p-3 rounded-2xl shadow-2xl backdrop-blur-md max-w-xs transition-all duration-500 transform translate-y-24 opacity-0 pointer-events-none flex items-center gap-3">
-    <div id="proofIcon" class="w-10 h-10 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center p-2 shrink-0 shadow text-lg">⚡</div>
-    <div class="text-right">
-      <div id="proofUser" class="text-xs font-black text-white"></div>
-      <div id="proofAction" class="text-[11px] text-sky-300 font-medium truncate max-w-[190px]"></div>
-      <div id="proofTime" class="text-[9px] text-gray-400 font-mono mt-0.5"></div>
-    </div>
-  </div>
+  <!-- إشعارات التوست السريعة -->
+  <div id="toastContainer" class="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-2 w-11/12 max-w-md pointer-events-none"></div>
 
-  <a href="https://wa.me/201060934020?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%20Migo%20AI%D8%8C%20%D8%A3%D8%AD%D8%AA%D8%A7%D8%AC%20%D9%85%D8%B3%D8%A7%D8%B9%D8%AF%D8%A9%20%D9%81%D9%8A%20%D8%A7%D9%84%D8%B7%D9%84%D8%A8" target="_blank" class="fixed bottom-6 left-6 z-40 w-12 h-12 bg-emerald-500 hover:bg-emerald-400 text-white rounded-full flex items-center justify-center shadow-2xl transition hover:scale-110 cursor-pointer" aria-label="تواصل مع الدعم الفني">
-    <svg class="w-7 h-7 fill-current" viewBox="0 0 24 24"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.04 14.69 2 12.04 2M12.05 3.67C14.25 3.67 16.31 4.53 17.87 6.09C19.42 7.65 20.28 9.72 20.28 11.92C20.28 16.46 16.58 20.15 12.04 20.15C10.56 20.15 9.11 19.76 7.85 19L7.55 18.83L4.43 19.65L5.26 16.61L5.06 16.29C4.24 15 3.8 13.47 3.8 11.91C3.81 7.37 7.5 3.67 12.05 3.67Z"/></svg>
-  </a>
-
-  <header class="border-b sky-surface sticky top-0 z-50 backdrop-blur-md bg-[#131d31]/95 shadow-xl">
-   <div class="max-w-7xl mx-auto px-3 sm:px-4 py-3 flex justify-between items-center gap-2">
-    <div class="flex items-center gap-2.5 min-w-0">
-     <button type="button" onclick="toggleSidebar()" aria-label="القائمة الشاملة" class="w-10 h-10 shrink-0 rounded-xl sky-card border flex flex-col items-center justify-center gap-1.5 cursor-pointer hover:border-sky-400">
-      <span class="w-5 h-0.5 bg-gray-200 rounded-full"></span>
-      <span class="w-5 h-0.5 bg-sky-400 rounded-full"></span>
-      <span class="w-5 h-0.5 bg-gray-200 rounded-full"></span>
-     </button>
-     
-     <a href="#" class="flex items-center gap-2 min-w-0"> 
-      <div class="w-9 h-9 shrink-0 rounded-xl sky-btn flex items-center justify-center font-black text-lg">M</div> 
-      <div class="truncate">
-       <span class="text-sm sm:text-lg font-extrabold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-white via-sky-200 to-gray-300 block truncate">Migo AI Solution</span>
-       <small class="text-[10px] text-sky-400 font-bold block truncate">متجر الخدمات الرقمية، الألعاب والاشتراكات</small>
-      </div> 
-     </a>
-    </div>
-
-    <nav class="hidden lg:flex items-center gap-1.5 sky-card border p-1 rounded-xl text-xs font-bold">
-     <a href="#sec-coins" class="px-2.5 py-1.5 rounded-lg text-pink-400 hover:text-pink-300">💎 كوينز تيك توك</a>
-     <a href="#sec-live" class="px-2.5 py-1.5 rounded-lg text-rose-400 hover:text-rose-300">🔴 برامج اللايف</a>
-     <a href="#sec-vcc" class="px-2.5 py-1.5 rounded-lg text-amber-400 hover:text-amber-300">💳 فيزا VCC</a>
-     <a href="#sec-games" class="px-2.5 py-1.5 rounded-lg text-emerald-400 hover:text-emerald-300">🎮 شحن الألعاب</a>
-     <a href="#sec-social" class="px-2.5 py-1.5 rounded-lg text-sky-400 hover:text-sky-300">📱 السوشيال ميديا</a>
-     <a href="#sec-productivity" class="px-2.5 py-1.5 rounded-lg text-cyan-400 hover:text-cyan-300">🎨 أدوات وبرامج</a>
-     <a href="#sec-entertainment" class="px-2.5 py-1.5 rounded-lg text-purple-400 hover:text-purple-300">🎬 ترفيه وبث</a>
-     <a href="#sec-ai" class="px-2.5 py-1.5 rounded-lg text-indigo-400 hover:text-indigo-300">🧠 الذكاء والـ APIs</a>
-    </nav>
-
-    <div class="flex items-center gap-2 shrink-0">
-     <button type="button" onclick="openCartModal()" aria-label="سلة المشتريات" class="relative w-9 h-9 flex items-center justify-center rounded-xl sky-card border text-white transition shadow-lg cursor-pointer hover:border-sky-400">
-      <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M17 18C15.9 18 15 18.9 15 20C15 21.1 15.9 22 17 22C18.1 22 19 21.1 19 20C19 18.9 18.1 18 17 18ZM1 2V4H3L6.6 11.59L5.25 14.04C5.09 14.32 5 14.65 5 15C5 16.1 5.9 17 7 17H19V15H7.42C7.28 15 7.17 14.89 7.17 14.75L7.2 14.63L8.1 13H15.55C16.3 13 16.96 12.59 17.3 11.97L20.88 5.48C20.96 5.34 21 5.17 21 5C21 4.45 20.55 4 20 4H5.21L4.27 2H1ZM7 18C5.9 18 5 18.9 5 20C5 21.1 5.9 22 7 22C8.1 22 9 21.1 9 20C9 18.9 8.1 18 7 18Z"/></svg>
-      <span id="cartBadge" class="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow">0</span>
-     </button>
-
-     <button type="button" id="navLoginBtn" onclick="openAuthModal('login')" class="sky-card border text-gray-200 font-bold px-3 py-2 rounded-xl text-xs transition flex items-center gap-1.5 cursor-pointer hover:border-sky-400">
-      <svg class="w-4 h-4 fill-current text-sky-400" viewBox="0 0 24 24"><path d="M12 4A4 4 0 0 1 16 8A4 4 0 0 1 12 12A4 4 0 0 1 8 8A4 4 0 0 1 12 4M12 14C16.42 14 20 15.79 20 18V20H4V18C4 15.79 7.58 14 12 14Z"/></svg>
-      <span class="hidden sm:inline">دخول</span>
-     </button>
-     
-     <div id="navUserBadge" class="hidden items-center gap-2 sky-card border px-2.5 py-1 rounded-xl">
-      <div class="text-right">
-       <div class="text-[9px] text-sky-400 font-bold flex items-center gap-0.5"><span>✓</span> موثق</div>
-       <div id="navUserName" class="text-xs font-extrabold text-white truncate max-w-[75px]"></div>
+  <!-- الهيدر وشريط الملاحة العلوي -->
+  <header class="sticky top-0 z-40 bg-[#070a14]/90 backdrop-blur-md border-b border-slate-800">
+    <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+      
+      <!-- القائمة الجانبية والشعار -->
+      <div class="flex items-center gap-3">
+        <button type="button" onclick="toggleSidebar()" class="p-2 rounded-xl bg-slate-900 border border-slate-700 text-gray-300 hover:text-white transition">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
+        <div class="flex items-center gap-2">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-sky-600 to-indigo-600 flex items-center justify-center font-black text-white text-lg shadow-lg">M</div>
+          <div>
+            <h1 class="text-sm font-black tracking-tight text-white leading-none">Migo AI Solution</h1>
+            <span class="text-[10px] text-sky-400 font-bold">متجر الخدمات الرقمية</span>
+          </div>
+        </div>
       </div>
-      <button type="button" onclick="handleLogout()" class="bg-red-500/20 hover:bg-red-500/30 text-red-300 border border-red-500/40 text-[10px] font-bold px-2 py-1 rounded-lg cursor-pointer">خروج</button>
-     </div>
+
+      <!-- السلة والدخول -->
+      <div class="flex items-center gap-2.5">
+        <button type="button" id="navLoginBtn" onclick="openAuthModal('login')" class="text-xs font-bold text-gray-300 hover:text-white px-3 py-1.5 rounded-xl border border-slate-700 bg-slate-900/60 transition">
+          دخول
+        </button>
+        
+        <div id="navUserBadge" class="hidden items-center gap-1.5 bg-slate-900 border border-slate-700 px-2.5 py-1 rounded-xl text-xs font-bold text-sky-400">
+          <span id="navUserName">مستخدم</span>
+          <button type="button" onclick="handleLogout()" class="text-gray-400 hover:text-red-400 text-[10px] mr-1">✕</button>
+        </div>
+
+        <button type="button" onclick="openCartModal()" class="relative p-2 rounded-xl bg-slate-900 border border-slate-700 text-sky-400 hover:border-sky-500 transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+          <span id="cartBadge" class="absolute -top-1.5 -right-1.5 bg-rose-600 text-white font-mono font-black text-[10px] w-5 h-5 rounded-full flex items-center justify-center border-2 border-[#070a14]">0</span>
+        </button>
+      </div>
+
     </div>
-   </div>
   </header>
 
-  <div class="max-w-4xl mx-auto px-4 mt-5">
-    <div class="relative">
-      <label for="liveSearchInput" class="sr-only">بحث في المتجر</label>
-      <input type="text" id="liveSearchInput" oninput="handleLiveSearch(this.value)" placeholder="🔍 ابحث عن كوينز تيك توك، فيزا VCC، كوديكس API، بيجو، ببجي، نتفلكس، كانفا، فري فاير..." class="w-full bg-[#131d31] border border-slate-600 focus:border-sky-400 rounded-2xl px-5 py-3 text-sm text-white outline-none shadow-xl transition">
-      <div id="searchResultsDropdown" class="hidden absolute top-full left-0 right-0 mt-2 bg-[#131d31] border border-sky-500/40 rounded-2xl p-2 shadow-2xl z-40 max-h-80 overflow-y-auto custom-scrollbar"></div>
-    </div>
-  </div>
-
-  <section class="max-w-6xl mx-auto px-4 pt-6 pb-2 text-center">
-   <div class="inline-flex flex-wrap items-center justify-center gap-2 px-4 py-1.5 sky-card border border-amber-500/40 rounded-full mb-3 text-xs font-bold shadow-lg">
-    <span class="bg-amber-500 text-slate-900 px-2 py-0.5 rounded-full text-[10px] font-black pulse-badge">عرض اليوم 🔥</span>
-    <span class="text-gray-200">ينتهي العرض المؤقت خلال:</span>
-    <span id="promoCountdown" class="font-mono text-amber-400 font-black tracking-wider text-sm">05:42:19</span>
-   </div>
-
-   <h1 class="text-2xl sm:text-4xl font-black mb-2 text-white">منصة <span class="bg-clip-text text-transparent bg-gradient-to-r from-sky-400 via-blue-400 to-amber-300">Migo AI Solution</span> المتكاملة</h1>
-   <p class="text-gray-400 text-xs sm:text-sm max-w-2xl mx-auto mb-6">الدفع محلياً بالجنيه المصري عبر المحافظ الإلكترونية، إنستاباي، والبطاقات مع تسليم فوري ونظام فحص الحساب المسبق بالاسم والصورة.</p>
-   
-   <div class="relative w-full max-w-2xl mx-auto overflow-hidden rounded-3xl mb-6 shadow-2xl" dir="rtl">
-    <div id="sliderTrack" class="flex transition-transform duration-500 ease-in-out">
-        <div class="w-full shrink-0 p-1">
-            <div class="bg-gradient-to-br from-[#1e293b] to-[#0f172a] border border-pink-500/40 p-6 rounded-3xl text-center relative">
-                <span class="absolute top-0 right-0 bg-pink-500 text-white text-[10px] font-black px-3.5 py-1 rounded-bl-2xl">فحص الاسم فوري 🎵</span>
-                <div class="w-12 h-12 mx-auto mb-2 flex items-center justify-center">
-                  <svg class="w-10 h-10 anim-coin" viewBox="0 0 40 40">
-                    <circle cx="20" cy="20" r="18" fill="url(#gradCoinP)" stroke="#f472b6" stroke-width="2"/>
-                    <circle cx="20" cy="14" fill="none" stroke="#fbcfe8" stroke-dasharray="3,2"/>
-                    <text x="20" y="25" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="900" font-family="sans-serif">💎</text>
-                    <defs>
-                      <linearGradient id="gradCoinP" x1="0" y1="0" x2="1" y2="1">
-                        <stop offset="0%" stop-color="#ec4899"/>
-                        <stop offset="100%" stop-color="#be185d"/>
-                      </linearGradient>
-                    </defs>
-                  </svg>
-                </div>
-                <h3 class="text-xl sm:text-2xl font-black text-white mb-1">شحن كوينز تيك توك الرسمية</h3>
-                <p class="text-xs text-gray-300 mb-3">شحن فوري بالاسم الرسمي للحساب لدعم البثوث وإرسال الهدايا.</p>
-                <div class="text-lg font-black text-pink-400 mb-4 font-mono">تبدأ من 65 ج.م فقط</div>
-                <a href="#sec-coins" class="bg-pink-600 hover:bg-pink-500 text-white font-extrabold py-2 px-5 rounded-xl text-xs transition inline-block">اشحن الآن ⚡</a>
-            </div>
-        </div>
-
-        <div class="w-full shrink-0 p-1">
-            <div class="bg-gradient-to-br from-[#1e293b] to-[#0f172a] border border-amber-500/40 p-6 rounded-3xl text-center relative">
-                <span class="absolute top-0 right-0 bg-amber-500 text-slate-950 text-[10px] font-black px-3.5 py-1 rounded-bl-2xl">الدفع الدولي 💳</span>
-                <div class="w-12 h-12 mx-auto mb-2 flex items-center justify-center">
-                  <svg class="w-11 h-8 anim-vcc" viewBox="0 0 44 32">
-                    <rect x="2" y="2" width="40" height="28" rx="4" fill="url(#gradVccP)" stroke="#fbbf24" stroke-width="1.5"/>
-                    <rect x="2" y="8" width="40" height="6" fill="#1e293b"/>
-                    <rect x="6" y="18" width="10" height="7" rx="1.5" fill="#fef08a" stroke="#d97706" stroke-width="0.8"/>
-                    <circle cx="34" cy="22" r="4" fill="#ef4444" opacity="0.85"/>
-                    <circle cx="28" cy="22" r="4" fill="#f59e0b" opacity="0.85"/>
-                    <defs>
-                      <linearGradient id="gradVccP" x1="0" y1="0" x2="1" y2="1">
-                        <stop offset="0%" stop-color="#b45309"/>
-                        <stop offset="100%" stop-color="#f59e0b"/>
-                      </linearGradient>
-                    </defs>
-                  </svg>
-                </div>
-                <h3 class="text-xl sm:text-2xl font-black text-white mb-1">البطاقات الافتراضية الدولية (VCC)</h3>
-                <p class="text-xs text-gray-300 mb-3">اشترِ من أي موقع عالمي، اربط حساباتك الإعلانية، وفعّل اشتراكاتك بالجنيه.</p>
-                <div class="text-lg font-black text-amber-400 mb-4 font-mono">تبدأ من 700 ج.م</div>
-                <a href="#sec-vcc" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold py-2 px-5 rounded-xl text-xs transition inline-block">احصل على فيزا 💳</a>
-            </div>
-        </div>
-
-        <div class="w-full shrink-0 p-1">
-            <div class="bg-gradient-to-br from-[#1e293b] to-[#0f172a] border border-emerald-500/40 p-6 rounded-3xl text-center relative">
-                <span class="absolute top-0 right-0 bg-emerald-500 text-white text-[10px] font-black px-3.5 py-1 rounded-bl-2xl">Midasbuy المعتمد</span>
-                <div class="w-12 h-12 mx-auto mb-2 flex items-center justify-center">
-                  <svg class="w-11 h-9 anim-gamepad" viewBox="0 0 44 34">
-                    <path d="M12 4 C5 4 2 12 2 20 C2 27 6 30 11 30 C15 30 18 25 22 25 C26 25 29 30 33 30 C38 30 42 27 42 20 C42 12 39 4 32 4 Z" fill="#047857" stroke="#34d399" stroke-width="2"/>
-                    <path d="M7 16 H17 M12 11 V21" stroke="#ecfdf5" stroke-width="2.5" stroke-linecap="round"/>
-                    <circle cx="28" cy="17" r="2.2" fill="#38bdf8"/>
-                    <circle cx="34" cy="13" r="2.2" fill="#f43f5e"/>
-                    <circle cx="34" cy="21" r="2.2" fill="#fbbf24"/>
-                  </svg>
-                </div>
-                <h3 class="text-xl sm:text-2xl font-black text-white mb-1">ببجي موبايل (3850 UC)</h3>
-                <p class="text-xs text-gray-300 mb-3">تسليم رسمي وفوري بالـ ID مع فحص اسم اللاعب قبل التحويل.</p>
-                <div class="text-lg font-black text-emerald-400 mb-4 font-mono">3,100 ج.م</div>
-                <button onclick="openGameCinematicModal('pubg')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold py-2 px-5 rounded-xl text-xs transition">شحن فوري بالـ ID ⚡</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="flex justify-center gap-2 mt-3 pb-1" id="sliderDots">
-        <span class="dot active" onclick="goToSlide(0)"></span>
-        <span class="dot" onclick="goToSlide(1)"></span>
-        <span class="dot" onclick="goToSlide(2)"></span>
-    </div>
-   </div>
-
-   <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-2 max-w-6xl mx-auto">
-    <a href="#sec-coins" class="p-2.5 rounded-2xl sky-card border text-right transition hover:border-pink-400">
-      <div class="text-xs font-bold text-white">كوينز ونجوم</div><div class="text-[9px] text-pink-400">تيك توك وتليجرام</div>
-    </a>
-    <a href="#sec-live" class="p-2.5 rounded-2xl sky-card border text-right transition hover:border-rose-400">
-      <div class="text-xs font-bold text-white">برامج اللايف</div><div class="text-[9px] text-rose-400">بيجو، بوبو، شامت</div>
-    </a>
-    <a href="#sec-vcc" class="p-2.5 rounded-2xl sky-card border text-right transition hover:border-amber-400">
-      <div class="text-xs font-bold text-white">بطاقات VCC</div><div class="text-[9px] text-amber-400">دفع دولي</div>
-    </a>
-    <a href="#sec-games" class="p-2.5 rounded-2xl sky-card border text-right transition hover:border-emerald-400">
-      <div class="text-xs font-bold text-white">شحن الألعاب</div><div class="text-[9px] text-emerald-400">18 لعبة بالـ ID</div>
-    </a>
-    <a href="#sec-social" class="p-2.5 rounded-2xl sky-card border text-right transition hover:border-sky-400">
-      <div class="text-xs font-bold text-white">السوشيال ميديا</div><div class="text-[9px] text-sky-400">18 منصة تفاعلية</div>
-    </a>
-    <a href="#sec-productivity" class="p-2.5 rounded-2xl sky-card border text-right transition hover:border-cyan-400">
-      <div class="text-xs font-bold text-white">أدوات وبرامج</div><div class="text-[9px] text-cyan-400">Canva, Notion, CapCut</div>
-    </a>
-    <a href="#sec-entertainment" class="p-2.5 rounded-2xl sky-card border text-right transition hover:border-purple-400">
-      <div class="text-xs font-bold text-white">ترفيه وبث</div><div class="text-[9px] text-purple-400">Netflix & Shahid</div>
-    </a>
-    <a href="#sec-ai" class="p-2.5 rounded-2xl sky-card border text-right transition hover:border-indigo-400">
-      <div class="text-xs font-bold text-white">AI & APIs</div><div class="text-[9px] text-indigo-400">Claude & CODEX</div>
-    </a>
-   </div>
-  </section>
-
-  <main class="max-w-7xl mx-auto px-3 sm:px-4 py-4 space-y-10">
-   
-   <!-- 1. كوينز تيك توك وتليجرام -->
-   <section id="sec-coins" class="sky-surface border rounded-3xl p-4 sm:p-6 shadow-2xl scroll-mt-24">
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 border-b border-slate-700/60 pb-3">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-2xl bg-pink-500/10 border border-pink-500/30 flex items-center justify-center shrink-0 shadow">
-          <svg class="w-7 h-7 anim-coin" viewBox="0 0 40 40">
-            <circle cx="20" cy="20" r="17" fill="url(#gradCoin1)" stroke="#f472b6" stroke-width="2"/>
-            <circle cx="20" cy="13" fill="none" stroke="#fbcfe8" stroke-dasharray="2,2"/>
-            <path d="M20 9 L26 18 L20 31 L14 18 Z" fill="#ffffff" opacity="0.95"/>
-            <path d="M14 18 L26 18" stroke="#be185d" stroke-width="1.2"/>
-            <defs>
-              <linearGradient id="gradCoin1" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="#ec4899"/>
-                <stop offset="100%" stop-color="#be185d"/>
-              </linearGradient>
-            </defs>
-          </svg>
-        </div>
-        <div>
-          <span class="px-2.5 py-0.5 sky-card border border-pink-500/40 text-pink-400 text-xs font-bold rounded-full">شحن فوري بالاسم الرسمي</span>
-          <h2 class="text-lg sm:text-2xl font-black text-white mt-1">عملات تيك توك ونجوم تليجرام</h2>
-        </div>
-      </div>
-      <span class="text-xs text-gray-400 bg-slate-900 border border-slate-700 px-3 py-1 rounded-xl">⚡ فحص المعرف والصورة قبل التأكيد</span>
-    </div>
-
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-      <div class="sky-card border p-4 rounded-2xl">
-        <div class="flex items-center gap-2 mb-3">
-          <div class="w-8 h-8 rounded-lg bg-pink-500/10 border border-pink-500/30 flex items-center justify-center text-pink-400 font-bold">🎵</div>
-          <h3 class="font-extrabold text-white text-sm">عملات تيك توك (TikTok Coins)</h3>
-        </div>
-        <div id="tiktokCoinsGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
-      </div>
-
-      <div class="sky-card border p-4 rounded-2xl">
-        <div class="flex items-center gap-2 mb-3">
-          <div class="w-8 h-8 rounded-lg bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400 font-bold">⭐</div>
-          <h3 class="font-extrabold text-white text-sm">نجوم تليجرام (Telegram Stars)</h3>
-        </div>
-        <div id="telegramStarsGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
-      </div>
-    </div>
-   </section>
-
-   <!-- 2. برامج البث المباشر (Live Apps) -->
-   <section id="sec-live" class="sky-surface border rounded-3xl p-4 sm:p-6 shadow-2xl scroll-mt-24">
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 border-b border-slate-700/60 pb-3">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-2xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center shrink-0 shadow relative overflow-hidden">
-          <svg class="w-7 h-7" viewBox="0 0 40 40">
-            <circle cx="20" cy="20" r="14" fill="none" stroke="#f43f5e" class="anim-radar"/>
-            <rect x="7" y="11" width="18" height="18" rx="4" fill="#e11d48" stroke="#fda4af" stroke-width="1.5"/>
-            <path d="M25 15 L33 11 V29 L25 25 Z" fill="#fb7185"/>
-            <circle cx="12" cy="16" r="2" fill="#ffffff" class="anim-pulse"/>
-          </svg>
-        </div>
-        <div>
-          <span class="px-2.5 py-0.5 sky-card border border-rose-500/40 text-rose-400 text-xs font-bold rounded-full">شحن برامج البث والدردشة بالـ ID</span>
-          <h2 class="text-lg sm:text-2xl font-black text-white mt-1">شحن تطبيقات البث المباشر (Live Apps)</h2>
-        </div>
-      </div>
-      <span class="text-xs text-gray-400 bg-slate-900 border border-slate-700 px-3 py-1 rounded-xl">⚡ فحص اسم المذيع والحساب فوري</span>
-    </div>
-    <div id="liveAppsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-   </section>
-
-   <!-- 3. البطاقات الافتراضية (VCC) -->
-   <section id="sec-vcc" class="sky-surface border rounded-3xl p-4 sm:p-6 shadow-2xl scroll-mt-24">
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 border-b border-slate-700/60 pb-3">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center shrink-0 shadow">
-          <svg class="w-8 h-6 anim-vcc" viewBox="0 0 44 32">
-            <rect x="2" y="2" width="40" height="28" rx="4" fill="url(#gradVccSec)" stroke="#fbbf24" stroke-width="1.5"/>
-            <rect x="2" y="8" width="40" height="5" fill="#0f172a"/>
-            <rect x="6" y="17" width="9" height="7" rx="1.5" fill="#fde047" stroke="#b45309" stroke-width="0.8"/>
-            <circle cx="34" cy="21" r="3.5" fill="#ef4444" opacity="0.85"/>
-            <circle cx="29" cy="21" r="3.5" fill="#f59e0b" opacity="0.85"/>
-            <defs>
-              <linearGradient id="gradVccSec" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="#b45309"/>
-                <stop offset="100%" stop-color="#f59e0b"/>
-              </linearGradient>
-            </defs>
-          </svg>
-        </div>
-        <div>
-          <span class="px-2.5 py-0.5 sky-card border border-amber-500/40 text-amber-400 text-xs font-bold rounded-full">شراء دولي وإعلانات</span>
-          <h2 class="text-lg sm:text-2xl font-black text-white mt-1">البطاقات الافتراضية الدولية (VCC)</h2>
-        </div>
-      </div>
-      <span class="text-xs text-gray-400 bg-slate-900 border border-slate-700 px-3 py-1 rounded-xl">تسليم بيانات الكارت عبر الإيميل والواتساب</span>
-    </div>
-    <div id="vccCardsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3"></div>
-   </section>
-
-   <!-- 4. شحن الألعاب الرسمي (طراز Glitch Store المعرض والبوسترات) -->
-   <section id="sec-games" class="sky-surface border rounded-3xl p-4 sm:p-6 shadow-2xl scroll-mt-24">
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 border-b border-slate-700/60 pb-3">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center shrink-0 shadow">
-          <svg class="w-8 h-6 anim-gamepad" viewBox="0 0 44 34">
-            <path d="M12 4 C5 4 2 12 2 20 C2 27 6 30 11 30 C15 30 18 25 22 25 C26 25 29 30 33 30 C38 30 42 27 42 20 C42 12 39 4 32 4 Z" fill="#047857" stroke="#34d399" stroke-width="2"/>
-            <path d="M7 16 H17 M12 11 V21" stroke="#ecfdf5" stroke-width="2.5" stroke-linecap="round"/>
-            <circle cx="28" cy="17" r="2.2" fill="#38bdf8"/>
-            <circle cx="34" cy="13" r="2.2" fill="#f43f5e"/>
-            <circle cx="34" cy="21" r="2.2" fill="#fbbf24"/>
-          </svg>
-        </div>
-        <div>
-          <span class="px-2.5 py-0.5 sky-card border border-emerald-500/40 text-emerald-400 text-xs font-bold rounded-full">معرض الألعاب الرسمي</span>
-          <h2 class="text-lg sm:text-2xl font-black text-white mt-1">شحن الألعاب بالـ ID (18 لعبة بالكامل)</h2>
-        </div>
-      </div>
-      <span class="text-xs text-gray-400 bg-slate-900 border border-slate-700 px-3 py-1 rounded-xl">⚡ اضغط على بوستر اللعبة لاختيار الباقة والشحن</span>
-    </div>
-
-    <!-- شبكة بوسترات الألعاب العمودية طراز Glitch Store -->
-    <div id="gamesCardsContainer" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4"></div>
-   </section>
-
-   <!-- 5. أدوات وبرامج الإنتاجية والتصميم -->
-   <section id="sec-productivity" class="sky-surface border rounded-3xl p-4 sm:p-6 shadow-2xl scroll-mt-24">
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 border-b border-slate-700/60 pb-3">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center shrink-0 shadow">
-          <svg class="w-7 h-7 anim-palette" viewBox="0 0 40 40">
-            <path d="M20 5 C10 5 4 12 4 21 C4 29 10 35 18 35 C20 35 22 33 22 31 C22 30 21 29 21 28 C21 26 23 24 25 24 H28 C34 24 37 20 37 15 C37 9 30 5 20 5 Z" fill="#0891b2" stroke="#67e8f9" stroke-width="1.8"/>
-            <circle cx="11" cy="15" r="2.5" fill="#f43f5e"/>
-            <circle cx="18" cy="11" r="2.5" fill="#fbbf24"/>
-            <circle cx="26" cy="12" r="2.5" fill="#34d399"/>
-            <circle cx="31" cy="18" r="2.5" fill="#a855f7"/>
-          </svg>
-        </div>
-        <div>
-          <span class="px-2.5 py-0.5 sky-card border border-cyan-500/40 text-cyan-400 text-xs font-bold rounded-full">أدوات المصممين والإنتاجية</span>
-          <h2 class="text-lg sm:text-2xl font-black text-white mt-1">البرامج، الاشتراكات والأصول الرقمية</h2>
-        </div>
-      </div>
-      <span class="text-xs text-gray-400 bg-slate-900 border border-slate-700 px-3 py-1 rounded-xl">تفعيل رسمي وضمان</span>
-    </div>
-    <div id="productivityContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3"></div>
-   </section>
-
-   <!-- 6. محرك السوشيال ميديا الشامل -->
-   <section id="sec-social" class="sky-surface border rounded-3xl p-4 sm:p-6 shadow-2xl scroll-mt-24">
-    <div class="flex items-center gap-3 mb-4">
-      <div class="w-10 h-10 rounded-2xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-center shrink-0 shadow">
-        <svg class="w-7 h-7 anim-rocket" viewBox="0 0 40 40">
-          <path d="M20 4 C24 10 28 17 28 25 L12 25 C12 17 16 10 20 4 Z" fill="#0284c7" stroke="#38bdf8" stroke-width="1.8"/>
-          <circle cx="20" cy="15" r="3" fill="#ffffff"/>
-          <path d="M12 22 L5 27 L11 28 Z" fill="#0369a1"/>
-          <path d="M28 22 L35 27 L29 28 Z" fill="#0369a1"/>
-          <path d="M16 26 Q20 37 20 37 Q20 37 24 26 Z" fill="#f59e0b" class="anim-flame"/>
-        </svg>
-      </div>
+  <!-- القائمة الجانبية (Sidebar Drawer) -->
+  <aside id="sidebarContainer" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm">
+    <div class="w-72 bg-[#090d1a] h-full p-4 border-l border-slate-800 flex flex-col justify-between overflow-y-auto">
       <div>
-        <span class="px-2.5 py-0.5 sky-card border border-sky-500/40 text-sky-400 text-xs font-bold rounded-full">محرك السوشيال ميديا الشامل</span>
-        <h2 class="text-lg sm:text-2xl font-black text-white mt-1">تعزيز الحسابات والمتابعين (18 منصة بالكامل)</h2>
-        <p class="text-gray-400 text-xs mt-0.5">اختر المنصة ونوع الخدمة لحساب السعر تلقائياً بالجنيه.</p>
-      </div>
-    </div>
-
-    <div class="mb-4">
-     <div id="smmPlatformsGrid" class="grid grid-cols-3 sm:grid-cols-6 md:grid-cols-9 gap-2"></div>
-    </div>
-
-    <div class="sky-card border rounded-2xl p-4">
-     <div class="flex items-center justify-between border-b border-slate-700 pb-3 mb-3">
-      <div class="flex items-center gap-2.5">
-       <div id="selectedPlatformIconContainer" class="w-9 h-9 rounded-xl bg-slate-950 border border-slate-700 flex items-center justify-center p-2"></div>
-       <div>
-        <h3 id="selectedPlatformTitle" class="font-extrabold text-sm sm:text-base text-white">تيك توك</h3>
-        <span class="text-[10px] text-gray-400">سيرفرات موثقة وبضمان عدم النقص</span>
-       </div>
-      </div>
-      <span id="selectedServiceBadgeId" class="bg-slate-950 border border-sky-500/40 text-sky-400 font-mono text-xs font-bold px-2.5 py-0.5 rounded-lg">ID: #2218</span>
-     </div>
-
-     <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
-      <div>
-       <label class="block text-xs font-bold text-gray-200 mb-1" for="smmCategorySelect">القسم:</label>
-       <select id="smmCategorySelect" onchange="onSMMCategoryChange()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white font-bold outline-none"></select>
-      </div>
-      <div>
-       <label class="block text-xs font-bold text-gray-200 mb-1" for="smmServiceSelect">الخدمة:</label>
-       <select id="smmServiceSelect" onchange="onSMMServiceChange()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white font-bold outline-none"></select>
-      </div>
-     </div>
-     
-     <div class="mb-3 bg-slate-950 border border-slate-700 rounded-xl p-2.5 flex flex-wrap gap-2 text-xs items-center justify-between" id="smmServiceMeta"></div>
-
-     <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
-      <div>
-       <label class="block text-xs font-bold text-gray-200 mb-1" for="smmLinkInput">رابط الحساب أو المنشور:</label>
-       <input type="url" id="smmLinkInput" placeholder="https://..." class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono outline-none">
-      </div>
-      <div>
-       <label class="block text-xs font-bold text-gray-200 mb-1" for="smmQtyInput">الكمية المطلوبة: <span id="smmLimitsNote" class="text-sky-300 text-[10px]"></span></label>
-       <input type="number" id="smmQtyInput" value="1000" min="10" oninput="calculateSMMCost()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono font-bold outline-none">
-      </div>
-     </div>
-
-     <div class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-950 border border-slate-700 rounded-xl p-3">
-      <div>
-       <span class="text-[11px] text-gray-400 block">التكلفة الإجمالية:</span>
-       <div class="text-xl font-black text-sky-400 font-mono" id="smmPriceEGP">0.00 ج.م</div>
-      </div>
-      <div class="flex gap-2 w-full sm:w-auto">
-        <button type="button" onclick="expressCheckoutSMM()" class="flex-1 sm:flex-initial bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold px-5 py-2.5 rounded-xl text-xs cursor-pointer shadow">شراء فوري ⚡</button>
-        <button type="button" onclick="addSMMToCart()" class="flex-1 sm:flex-initial sky-btn font-extrabold px-5 py-2.5 rounded-xl text-xs cursor-pointer shadow">أضف للسلة 🛒</button>
-      </div>
-     </div>
-    </div>
-   </section>
-
-   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    <!-- 7. الترفيه والبث -->
-    <section id="sec-entertainment" class="sky-surface border rounded-3xl p-4 sm:p-6 shadow-2xl scroll-mt-24">
-      <div class="flex items-center gap-3 mb-4">
-        <div class="w-10 h-10 rounded-2xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center shrink-0 shadow">
-          <svg class="w-7 h-7 anim-film" viewBox="0 0 40 40">
-            <circle cx="20" cy="20" r="16" fill="#7e22ce" stroke="#c084fc" stroke-width="1.8"/>
-            <circle cx="20" cy="20" r="5" fill="#0f172a" stroke="#ffffff" stroke-width="1.5"/>
-            <circle cx="20" cy="9" r="2.5" fill="#ffffff"/>
-            <circle cx="20" cy="31" r="2.5" fill="#ffffff"/>
-            <circle cx="9" cy="20" r="2.5" fill="#ffffff"/>
-            <circle cx="31" cy="20" r="2.5" fill="#ffffff"/>
-          </svg>
-        </div>
-        <div>
-          <span class="px-2.5 py-0.5 sky-card border border-purple-500/40 text-purple-400 text-xs font-bold rounded-full">مشاهدة وموسيقى</span>
-          <h2 class="text-lg sm:text-xl font-black text-white mt-1">اشتراكات الترفيه والبث</h2>
-        </div>
-      </div>
-      <div id="entertainmentCardsContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
-    </section>
-
-    <!-- 8. الذكاء الاصطناعي و الـ APIs -->
-    <section id="sec-ai" class="sky-surface border rounded-3xl p-4 sm:p-6 shadow-2xl scroll-mt-24">
-      <div class="flex items-center gap-3 mb-4">
-        <div class="w-10 h-10 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center shrink-0 shadow">
-          <svg class="w-7 h-7 anim-chip" viewBox="0 0 40 40">
-            <rect x="10" y="10" width="20" height="20" rx="3" fill="#4338ca" stroke="#818cf8" stroke-width="2"/>
-            <rect x="15" y="15" width="10" height="10" rx="1.5" fill="#c7d2fe"/>
-            <path d="M14 6 V10 M20 6 V10 M26 6 V10 M14 30 V34 M20 30 V34 M26 30 V34" stroke="#818cf8" stroke-width="1.8" stroke-linecap="round"/>
-            <path d="M6 14 H10 M6 20 H10 M6 26 H10 M30 14 H34 M30 20 H34 M30 26 H34" stroke="#818cf8" stroke-width="1.8" stroke-linecap="round"/>
-          </svg>
-        </div>
-        <div>
-          <span class="px-2.5 py-0.5 sky-card border border-indigo-500/40 text-indigo-400 text-xs font-bold rounded-full">للمطورين والشركات</span>
-          <h2 class="text-lg sm:text-xl font-black text-white mt-1">الذكاء الاصطناعي و الـ APIs</h2>
-        </div>
-      </div>
-      <div id="aiCardsContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
-    </section>
-   </div>
-
-   <section id="reviews" class="sky-surface border rounded-3xl p-4 sm:p-6 shadow-2xl scroll-mt-24">
-    <h2 class="text-lg sm:text-xl font-black text-white mb-3">⭐ آراء العملاء الموثقين</h2>
-    <div id="reviewsContainer" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3 text-xs"></div>
-   </section>
-
-  </main>
-
-  <footer class="border-t sky-surface mt-10 py-6 text-center text-xs text-gray-400">
-   <p>جميع الحقوق محفوظة © 2026 <b class="text-white">Migo AI Solution</b> - منصة الخدمات الرقمية والألعاب بالجنيه المصري</p>
-  </footer>
-
-  <!-- NEW MODAL: النافذة السينمائية للألعاب طراز Glitch Store (البانر، الأيقونة، الباقات وفحص الـ ID) -->
-  <div id="gameCinematicModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-[95] hidden items-center justify-center p-3 sm:p-4">
-    <div class="sky-surface border border-purple-500/40 rounded-3xl max-w-lg w-full relative shadow-2xl max-h-[94vh] overflow-y-auto custom-scrollbar text-right">
-      <button type="button" onclick="closeGameCinematicModal()" aria-label="إغلاق" class="absolute top-4 left-4 z-20 text-gray-300 hover:text-white bg-slate-900/80 border border-slate-700 w-8 h-8 rounded-xl flex items-center justify-center cursor-pointer shadow">✕</button>
-      
-      <!-- البانر السينمائي العلوي -->
-      <div class="relative w-full h-48 sm:h-56 bg-slate-950 overflow-hidden border-b border-slate-800">
-        <img id="gModalBanner" src="" alt="Game Banner" class="w-full h-full object-cover">
-        <div class="absolute inset-0 bg-gradient-to-t from-[#131d31] via-[#131d31]/40 to-black/30 pointer-events-none"></div>
-        <span id="gModalBadge" class="absolute top-4 right-4 bg-purple-600 text-white text-[10px] font-black px-3 py-1 rounded-full shadow-lg border border-purple-400/40"></span>
-        <div class="absolute bottom-3 right-4 left-4">
-          <h2 id="gModalTitle" class="text-xl sm:text-2xl font-black text-white drop-shadow-md"></h2>
-          <span id="gModalSubtitle" class="text-[11px] text-emerald-400 font-bold block mt-0.5">● تسليم فوري رسمي ومعتمد بالـ ID</span>
-        </div>
-      </div>
-
-      <div class="p-4 sm:p-5 space-y-4">
-        <!-- كارت اللعبة والأيقونة المتوهجة -->
-        <div class="bg-[#1e293b]/80 border border-slate-700 p-3 rounded-2xl flex items-center justify-between">
-          <div class="flex items-center gap-3">
-            <div id="gModalIconBox" class="w-12 h-12 rounded-xl bg-slate-950 border-2 border-purple-500/60 p-0.5 overflow-hidden shrink-0 neon-purple-glow flex items-center justify-center">
-              <img id="gModalIcon" src="" alt="Game Icon" class="w-full h-full object-cover rounded-lg">
-            </div>
-            <div>
-              <div class="text-xs font-black text-white" id="gModalSummaryName"></div>
-              <div class="text-[10px] text-gray-400">فحص المعرف مسبقاً قبل إتمام الشحن</div>
-            </div>
+        <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-4">
+          <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span class="text-xs font-black text-white">أقسام المتجر الشاملة</span>
           </div>
-          <span class="text-amber-400 text-xs font-mono font-bold bg-slate-900 px-2 py-1 rounded-lg border border-slate-700">5.0 ★</span>
+          <button type="button" onclick="toggleSidebar()" class="p-1 text-gray-400 hover:text-white">✕</button>
         </div>
 
-        <!-- خانة كتابة الـ ID وزر الفحص اللحظي المعتمد مع Deno API -->
-        <div class="space-y-2 bg-slate-950/70 border border-slate-800 p-3 rounded-2xl">
-          <label class="block text-xs font-bold text-gray-200" for="gModalPlayerId">
-            <span id="gModalIdLabel">معرف اللاعب (Player ID)</span> <span class="text-red-400">*</span>:
-          </label>
-          <div class="flex gap-2">
-            <input type="text" id="gModalPlayerId" placeholder="اكتب معرف اللاعب هنا..." class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono outline-none focus:border-purple-400">
-            <button type="button" id="gModalVerifyBtn" onclick="verifyCinematicPlayerAccount()" class="shrink-0 bg-purple-600 hover:bg-purple-500 text-white font-extrabold px-3 py-2 rounded-xl text-xs cursor-pointer shadow transition flex items-center gap-1">
-              <span>فحص</span> 🔍
+        <nav class="space-y-1.5 text-xs font-bold text-gray-300">
+          <button type="button" onclick="switchSectionTab('games'); toggleSidebar();" class="w-full text-right p-2.5 rounded-xl bg-slate-900/60 hover:bg-slate-800 flex items-center justify-between border border-slate-800/80">
+            <span>🎮 شحن الألعاب بالـ ID</span>
+            <span class="text-[9px] bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded-md">18 لعبة</span>
+          </button>
+          <button type="button" onclick="switchSectionTab('coins'); toggleSidebar();" class="w-full text-right p-2.5 rounded-xl bg-slate-900/60 hover:bg-slate-800 flex items-center justify-between border border-slate-800/80">
+            <span>💎 كوينز تيك توك وتليجرام</span>
+            <span class="text-[9px] bg-pink-500/20 text-pink-300 px-2 py-0.5 rounded-md">فوري</span>
+          </button>
+          <button type="button" onclick="switchSectionTab('live'); toggleSidebar();" class="w-full text-right p-2.5 rounded-xl bg-slate-900/60 hover:bg-slate-800 flex items-center justify-between border border-slate-800/80">
+            <span>🔴 برامج البث والدردشة (Live)</span>
+            <span class="text-[9px] bg-rose-500/20 text-rose-300 px-2 py-0.5 rounded-md">رسمي</span>
+          </button>
+          <button type="button" onclick="switchSectionTab('vcc'); toggleSidebar();" class="w-full text-right p-2.5 rounded-xl bg-slate-900/60 hover:bg-slate-800 flex items-center justify-between border border-slate-800/80">
+            <span>💳 بطاقات الدفع الدولي (VCC)</span>
+            <span class="text-[9px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-md">فيزا</span>
+          </button>
+          <button type="button" onclick="switchSectionTab('social'); toggleSidebar();" class="w-full text-right p-2.5 rounded-xl bg-slate-900/60 hover:bg-slate-800 flex items-center justify-between border border-slate-800/80">
+            <span>📱 خدمات السوشيال ميديا</span>
+            <span class="text-[9px] bg-sky-500/20 text-sky-300 px-2 py-0.5 rounded-md">18 منصة</span>
+          </button>
+          <button type="button" onclick="switchSectionTab('productivity'); toggleSidebar();" class="w-full text-right p-2.5 rounded-xl bg-slate-900/60 hover:bg-slate-800 flex items-center justify-between border border-slate-800/80">
+            <span>🎨 أدوات وبرامج المصممين</span>
+            <span class="text-[9px] bg-cyan-500/20 text-cyan-300 px-2 py-0.5 rounded-md">اشتراكات</span>
+          </button>
+          <button type="button" onclick="switchSectionTab('entertainment'); toggleSidebar();" class="w-full text-right p-2.5 rounded-xl bg-slate-900/60 hover:bg-slate-800 flex items-center justify-between border border-slate-800/80">
+            <span>🎬 الترفيه والبث (Netflix, Prime)</span>
+            <span class="text-[9px] bg-purple-500/20 text-purple-300 px-2 py-0.5 rounded-md">ضمان</span>
+          </button>
+          <button type="button" onclick="switchSectionTab('ai'); toggleSidebar();" class="w-full text-right p-2.5 rounded-xl bg-slate-900/60 hover:bg-slate-800 flex items-center justify-between border border-slate-800/80">
+            <span>🧠 الذكاء الاصطناعي و الـ APIs</span>
+            <span class="text-[9px] bg-indigo-500/20 text-indigo-300 px-2 py-0.5 rounded-md">تطوير</span>
+          </button>
+        </nav>
+      </div>
+
+      <!-- عداد الزوار في الفوتر السفلي للشريط الجانبي -->
+      <div class="pt-4 border-t border-slate-800 text-center">
+        <div class="text-[11px] text-gray-400 font-bold mb-1">إجمالي الزوار</div>
+        <div id="visitorCount" class="text-sm font-mono font-black text-sky-400 tracking-wider">14,289</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- محتوى الصفحة الرئيسي -->
+  <main class="max-w-6xl mx-auto px-3 sm:px-4 py-4 space-y-6">
+
+    <!-- شريط البحث السريع والحي -->
+    <div class="relative max-w-xl mx-auto">
+      <div class="relative">
+        <input type="text" oninput="handleLiveSearch(this.value)" placeholder="ابحث عن كوينز تيك توك، فيزا VCC، كوديكس API، ألعاب..." 
+               class="w-full bg-[#0b101e] border border-slate-700 rounded-2xl py-2.5 pr-10 pl-4 text-xs font-medium text-white placeholder-gray-500 focus:outline-none focus:border-sky-500 shadow-inner">
+        <span class="absolute right-3 top-2.5 text-gray-400 text-sm">🔍</span>
+      </div>
+      <div id="searchResultsDropdown" class="hidden absolute top-12 left-0 right-0 bg-[#0e1526] border border-slate-700 rounded-2xl shadow-2xl p-2 z-30 max-h-64 overflow-y-auto"></div>
+    </div>
+
+    <!-- السلايدر الإعلاني المتحرك ومؤقت العروض -->
+    <div class="sky-card border border-slate-800 rounded-3xl p-3 sm:p-4 overflow-hidden relative shadow-2xl">
+      <div class="flex items-center justify-between mb-3 text-xs">
+        <span class="bg-amber-500/20 text-amber-300 border border-amber-500/40 font-black px-2.5 py-0.5 rounded-full text-[10px] flex items-center gap-1">
+          <span>🔥</span> عرض اليوم
+        </span>
+        <div class="text-[11px] text-gray-300 font-bold flex items-center gap-1">
+          <span>ينتهي العرض المؤقت خلال:</span>
+          <span id="promoCountdown" class="font-mono text-amber-400 font-black">05:41:46</span>
+        </div>
+      </div>
+
+      <div class="slider-container rounded-2xl border border-slate-800/80">
+        <div id="sliderTrack" class="slider-track">
+          <!-- الشريحة 1: فيزا VCC -->
+          <div class="slider-slide bg-gradient-to-r from-amber-950/40 via-slate-900 to-slate-950 p-6 flex flex-col items-center text-center justify-center min-h-[170px]">
+            <span class="bg-amber-500 text-slate-950 text-[10px] font-black px-3 py-0.5 rounded-full mb-2">الدفع الدولي 💳</span>
+            <h2 class="text-lg sm:text-xl font-black text-white">البطاقات الافتراضية الدولية (VCC)</h2>
+            <p class="text-xs text-gray-400 max-w-md my-1">اشترِ من أي موقع عالمي، اربط حساباتك الإعلانية وقفل اشتراكاتك بالجنيه</p>
+            <div class="text-xs font-bold text-amber-400 my-1">تبدأ من 700 ج.م</div>
+            <button type="button" onclick="switchSectionTab('vcc')" class="mt-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black px-4 py-1.5 rounded-xl text-xs transition cursor-pointer">
+              احصل على فيزا 💳
             </button>
           </div>
+          <!-- الشريحة 2: ببجي موبايل -->
+          <div class="slider-slide bg-gradient-to-r from-purple-950/40 via-slate-900 to-slate-950 p-6 flex flex-col items-center text-center justify-center min-h-[170px]">
+            <span class="bg-purple-600 text-white text-[10px] font-black px-3 py-0.5 rounded-full mb-2">Midasbuy المعتمد 🎮</span>
+            <h2 class="text-lg sm:text-xl font-black text-white">ببجي موبايل (3850 UC)</h2>
+            <p class="text-xs text-gray-400 max-w-md my-1">تسليم رسمي وفوري بالـ ID مع فحص اسم اللاعب قبل التحويل.</p>
+            <div class="text-xs font-bold text-emerald-400 my-1">3,100 ج.م</div>
+            <button type="button" onclick="openGameCinematicModal('pubg')" class="mt-2 bg-purple-600 hover:bg-purple-500 text-white font-black px-4 py-1.5 rounded-xl text-xs transition cursor-pointer">
+              شحن فوري بالـ ID ⚡
+            </button>
+          </div>
+          <!-- الشريحة 3: تيك توك -->
+          <div class="slider-slide bg-gradient-to-r from-pink-950/40 via-slate-900 to-slate-950 p-6 flex flex-col items-center text-center justify-center min-h-[170px]">
+            <span class="bg-pink-600 text-white text-[10px] font-black px-3 py-0.5 rounded-full mb-2">فحص الاسم فوري 🎵</span>
+            <h2 class="text-lg sm:text-xl font-black text-white">شحن كوينز تيك توك الرسمية</h2>
+            <p class="text-xs text-gray-400 max-w-md my-1">شحن فوري بالاسم الرسمي للحساب لدعم البثوث وإرسال الهدايا</p>
+            <div class="text-xs font-bold text-pink-400 my-1">تبدأ من 65 ج.م فقط</div>
+            <button type="button" onclick="switchSectionTab('coins')" class="mt-2 bg-pink-600 hover:bg-pink-500 text-white font-black px-4 py-1.5 rounded-xl text-xs transition cursor-pointer">
+              اشحن الآن ⚡
+            </button>
+          </div>
+        </div>
+      </div>
 
-          <div id="gModalZoneGroup" class="hidden mt-2">
-            <label class="block text-xs font-bold text-gray-200 mb-1" for="gModalZoneId">معرف السيرفر (Zone ID):</label>
-            <input type="text" id="gModalZoneId" placeholder="مثال: 6994" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono outline-none">
+      <!-- نقاط السلايدر -->
+      <div class="flex justify-center items-center gap-1.5 mt-3">
+        <button type="button" onclick="goToSlide(0)" class="dot w-2 h-2 rounded-full bg-slate-700 transition-all"></button>
+        <button type="button" onclick="goToSlide(1)" class="dot w-2 h-2 rounded-full bg-slate-700 transition-all"></button>
+        <button type="button" onclick="goToSlide(2)" class="dot w-2 h-2 rounded-full bg-slate-700 transition-all"></button>
+      </div>
+    </div>
+
+    <!-- شبكة أزرار التبويبات الرئيسية (التحكم في ظهور قسم واحد فقط بدون تكديس) -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-2">
+      <button type="button" onclick="switchSectionTab('games')" data-tab="games" class="category-nav-tab p-2.5 rounded-2xl sky-card border text-right transition cursor-pointer">
+        <div class="text-xs font-bold text-white">🎮 شحن الألعاب</div>
+        <div class="text-[9px] text-emerald-400">18 لعبة بالـ ID</div>
+      </button>
+      <button type="button" onclick="switchSectionTab('coins')" data-tab="coins" class="category-nav-tab p-2.5 rounded-2xl sky-card border text-right transition cursor-pointer">
+        <div class="text-xs font-bold text-white">💎 كوينز ونجوم</div>
+        <div class="text-[9px] text-pink-400">تيك توك وتليجرام</div>
+      </button>
+      <button type="button" onclick="switchSectionTab('live')" data-tab="live" class="category-nav-tab p-2.5 rounded-2xl sky-card border text-right transition cursor-pointer">
+        <div class="text-xs font-bold text-white">🔴 برامج اللايف</div>
+        <div class="text-[9px] text-rose-400">بيجو، تانجو، شامت</div>
+      </button>
+      <button type="button" onclick="switchSectionTab('vcc')" data-tab="vcc" class="category-nav-tab p-2.5 rounded-2xl sky-card border text-right transition cursor-pointer">
+        <div class="text-xs font-bold text-white">💳 بطاقات VCC</div>
+        <div class="text-[9px] text-amber-400">دفع دولي وإعلانات</div>
+      </button>
+      <button type="button" onclick="switchSectionTab('social')" data-tab="social" class="category-nav-tab p-2.5 rounded-2xl sky-card border text-right transition cursor-pointer">
+        <div class="text-xs font-bold text-white">📱 السوشيال ميديا</div>
+        <div class="text-[9px] text-sky-400">18 منصة تفاعلية</div>
+      </button>
+      <button type="button" onclick="switchSectionTab('productivity')" data-tab="productivity" class="category-nav-tab p-2.5 rounded-2xl sky-card border text-right transition cursor-pointer">
+        <div class="text-xs font-bold text-white">🎨 أدوات وبرامج</div>
+        <div class="text-[9px] text-cyan-400">Canva, Notion</div>
+      </button>
+      <button type="button" onclick="switchSectionTab('entertainment')" data-tab="entertainment" class="category-nav-tab p-2.5 rounded-2xl sky-card border text-right transition cursor-pointer">
+        <div class="text-xs font-bold text-white">🎬 ترفيه وبث</div>
+        <div class="text-[9px] text-purple-400">Netflix & Shahid</div>
+      </button>
+      <button type="button" onclick="switchSectionTab('ai')" data-tab="ai" class="category-nav-tab p-2.5 rounded-2xl sky-card border text-right transition cursor-pointer">
+        <div class="text-xs font-bold text-white">🧠 AI & APIs</div>
+        <div class="text-[9px] text-indigo-400">Claude & CODEX</div>
+      </button>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- الأقسام المنفصلة (يظهر القسم المختار فقط ويختفي الباقي لمنع التكديس) -->
+    <!-- ========================================================================= -->
+
+    <!-- 1. قسم شحن الألعاب (Glitch Store Style) -->
+    <section id="sec-games" class="space-y-4">
+      <div class="sky-card border border-purple-900/50 p-4 rounded-3xl flex items-center justify-between">
+        <div>
+          <span class="bg-purple-600/20 text-purple-300 border border-purple-500/30 text-[10px] font-black px-2.5 py-0.5 rounded-full">معرض الألعاب الرسمي</span>
+          <h2 class="text-base font-black text-white mt-1">🎮 شحن الألعاب بالـ ID (18 لعبة بالكامل)</h2>
+          <p class="text-[11px] text-gray-400">اضغط على بوستر اللعبة لاختيار الباقة والتحقق من حسابك وشحنه فوراً</p>
+        </div>
+        <div class="text-3xl">🕹️</div>
+      </div>
+      <!-- شبكة بطاقات الألعاب المحدثة بدون قص الأسماء وبصور مخصصة -->
+      <div id="gamesCardsContainer" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3"></div>
+    </section>
+
+    <!-- 2. قسم عملات تيك توك ونجوم تليجرام -->
+    <section id="sec-coins" class="hidden space-y-4">
+      <div class="sky-card border border-pink-900/50 p-4 rounded-3xl flex items-center justify-between">
+        <div>
+          <span class="bg-pink-600/20 text-pink-300 border border-pink-500/30 text-[10px] font-black px-2.5 py-0.5 rounded-full">شحن فوري بالاسم الرسمي</span>
+          <h2 class="text-base font-black text-white mt-1">عملات تيك توك ونجوم تليجرام</h2>
+          <p class="text-[11px] text-gray-400">⚡ فحص المعرف والصورة قبل التأكيد</p>
+        </div>
+        <div class="text-3xl">💎</div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="sky-card border p-4 rounded-2xl">
+          <h3 class="text-xs font-black text-pink-400 mb-3 flex items-center gap-1.5">
+            <span>🎵</span> عملات تيك توك (TikTok Coins)
+          </h3>
+          <div id="tiktokCoinsGrid" class="space-y-2"></div>
+        </div>
+
+        <div class="sky-card border p-4 rounded-2xl">
+          <h3 class="text-xs font-black text-sky-400 mb-3 flex items-center gap-1.5">
+            <span>⭐</span> نجوم تليجرام (Telegram Stars)
+          </h3>
+          <div id="telegramStarsGrid" class="space-y-2"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. قسم برامج البث المباشر (Live Apps) -->
+    <section id="sec-live" class="hidden space-y-4">
+      <div class="sky-card border border-rose-900/50 p-4 rounded-3xl flex items-center justify-between">
+        <div>
+          <span class="bg-rose-600/20 text-rose-300 border border-rose-500/30 text-[10px] font-black px-2.5 py-0.5 rounded-full">شحن برامج البث والدردشة بالـ ID</span>
+          <h2 class="text-base font-black text-white mt-1">شحن تطبيقات البث المباشر (Live Apps)</h2>
+          <p class="text-[11px] text-gray-400">⚡ فحص اسم المذيع والحساب فوري</p>
+        </div>
+        <div class="text-3xl">📹</div>
+      </div>
+      <div id="liveAppsContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3"></div>
+    </section>
+
+    <!-- 4. قسم بطاقات VCC -->
+    <section id="sec-vcc" class="hidden space-y-4">
+      <div class="sky-card border border-amber-900/50 p-4 rounded-3xl flex items-center justify-between">
+        <div>
+          <span class="bg-amber-600/20 text-amber-300 border border-amber-500/30 text-[10px] font-black px-2.5 py-0.5 rounded-full">شراء دولي وإعلانات</span>
+          <h2 class="text-base font-black text-white mt-1">البطاقات الافتراضية الدولية (VCC)</h2>
+          <p class="text-[11px] text-gray-400">تسليم بيانات الكارت عبر الإيميل والواتساب</p>
+        </div>
+        <div class="text-3xl">💳</div>
+      </div>
+      <div id="vccCardsContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4"></div>
+    </section>
+
+    <!-- 5. قسم محرك السوشيال ميديا الشامل -->
+    <section id="sec-social" class="hidden space-y-4">
+      <div class="sky-card border border-sky-800 p-4 rounded-3xl flex items-center justify-between">
+        <div>
+          <span class="bg-sky-600/20 text-sky-300 border border-sky-500/30 text-[10px] font-black px-2.5 py-0.5 rounded-full">محرك السوشيال ميديا الشامل</span>
+          <h2 class="text-base font-black text-white mt-1">تعزيز الحسابات والمتابعين (18 منصة بالكامل)</h2>
+          <p class="text-[11px] text-gray-400">اختر المنصة ونوع الخدمة لحساب السعر تلقائياً بالجنيه</p>
+        </div>
+        <div class="text-3xl">🚀</div>
+      </div>
+
+      <div class="sky-card border p-4 sm:p-6 rounded-3xl space-y-4">
+        <!-- أزرار المنصات الـ 18 -->
+        <div id="smmPlatformsGrid" class="grid grid-cols-3 sm:grid-cols-6 md:grid-cols-9 gap-2"></div>
+
+        <div class="sky-surface p-4 rounded-2xl border border-slate-800 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+            <div class="flex items-center gap-2">
+              <div id="selectedPlatformIconContainer" class="w-8 h-8 rounded-lg bg-slate-900 border border-slate-700 flex items-center justify-center"></div>
+              <span id="selectedPlatformTitle" class="text-xs font-black text-white">تيك توك</span>
+            </div>
+            <span id="selectedServiceBadgeId" class="text-[10px] font-mono text-sky-400 bg-sky-950/60 px-2 py-0.5 rounded-md border border-sky-800">ID: #--</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-[11px] font-bold text-gray-300 mb-1">القسم:</label>
+              <select id="smmCategorySelect" onchange="onSMMCategoryChange()" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-sky-500"></select>
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold text-gray-300 mb-1">الخدمة:</label>
+              <select id="smmServiceSelect" onchange="onSMMServiceChange()" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-sky-500"></select>
+            </div>
+          </div>
+
+          <div id="smmServiceMeta" class="text-[11px] bg-slate-950/70 p-2.5 rounded-xl border border-slate-800 flex flex-wrap gap-4"></div>
+
+          <div>
+            <label class="block text-[11px] font-bold text-gray-300 mb-1">رابط الحساب أو المنشور:</label>
+            <input type="url" id="smmLinkInput" placeholder="https://..." dir="ltr" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white placeholder-gray-600 focus:outline-none focus:border-sky-500 text-left">
           </div>
 
           <div>
-            <label class="block text-xs font-bold text-gray-300 mb-1" for="gModalPlayerName">اسم اللاعب المسترجع:</label>
-            <input type="text" id="gModalPlayerName" placeholder="يظهر هنا تلقائياً بعد الفحص بالاسم الحقيقي" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none">
+            <div class="flex justify-between items-center mb-1">
+              <label class="text-[11px] font-bold text-gray-300">الكمية المطلوبة:</label>
+              <span id="smmLimitsNote" class="text-[10px] text-gray-400 font-mono"></span>
+            </div>
+            <input type="number" id="smmQtyInput" value="1000" oninput="calculateSMMCost()" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs font-mono text-white focus:outline-none focus:border-sky-500">
+          </div>
+
+          <div class="p-3 bg-gradient-to-r from-sky-950/40 to-slate-950 border border-sky-800/60 rounded-xl flex items-center justify-between">
+            <span class="text-xs font-bold text-gray-300">التكلفة الإجمالية:</span>
+            <span id="smmPriceEGP" class="text-base font-black text-amber-400 font-mono">0.00 ج.م</span>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2 pt-2">
+            <button type="button" onclick="expressCheckoutSMM()" class="sky-btn font-black py-2.5 rounded-xl text-xs transition cursor-pointer">
+              شراء فوري ⚡
+            </button>
+            <button type="button" onclick="addSMMToCart()" class="bg-slate-800 hover:bg-slate-700 text-white font-black py-2.5 rounded-xl text-xs transition border border-slate-700 cursor-pointer">
+              أضف للسلة 🛒
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. قسم أدوات وبرامج المصممين والإنتاجية -->
+    <section id="sec-productivity" class="hidden space-y-4">
+      <div class="sky-card border border-cyan-900/50 p-4 rounded-3xl flex items-center justify-between">
+        <div>
+          <span class="bg-cyan-600/20 text-cyan-300 border border-cyan-500/30 text-[10px] font-black px-2.5 py-0.5 rounded-full">أدوات المصممين والإنتاجية</span>
+          <h2 class="text-base font-black text-white mt-1">البرامج، الاشتراكات والأصول الرقمية</h2>
+          <p class="text-[11px] text-gray-400">تفعيل رسمي وضمان</p>
+        </div>
+        <div class="text-3xl">💻</div>
+      </div>
+      <div id="productivityContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3"></div>
+    </section>
+
+    <!-- 7. قسم الترفيه والبث (Netflix, Prime) -->
+    <section id="sec-entertainment" class="hidden space-y-4">
+      <div class="sky-card border border-purple-900/50 p-4 rounded-3xl flex items-center justify-between">
+        <div>
+          <span class="bg-purple-600/20 text-purple-300 border border-purple-500/30 text-[10px] font-black px-2.5 py-0.5 rounded-full">مشاهدة وموسيقى</span>
+          <h2 class="text-base font-black text-white mt-1">اشتراكات الترفيه والبث</h2>
+          <p class="text-[11px] text-gray-400">حسابات وشاشات خاصة وضمان كامل الفترة</p>
+        </div>
+        <div class="text-3xl">🍿</div>
+      </div>
+      <div id="entertainmentCardsContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3"></div>
+    </section>
+
+    <!-- 8. قسم الذكاء الاصطناعي و الـ APIs -->
+    <section id="sec-ai" class="hidden space-y-4">
+      <div class="sky-card border border-indigo-900/50 p-4 rounded-3xl flex items-center justify-between">
+        <div>
+          <span class="bg-indigo-600/20 text-indigo-300 border border-indigo-500/30 text-[10px] font-black px-2.5 py-0.5 rounded-full">للمطورين والشركات</span>
+          <h2 class="text-base font-black text-white mt-1">الذكاء الاصطناعي و الـ APIs</h2>
+          <p class="text-[11px] text-gray-400">اشتراكات ومفاتيح APIs جاهزة للاستخدام</p>
+        </div>
+        <div class="text-3xl">🧠</div>
+      </div>
+      <div id="aiCardsContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3"></div>
+    </section>
+
+    <!-- آراء العملاء الموثقين -->
+    <section class="sky-card border border-slate-800 p-4 sm:p-6 rounded-3xl space-y-3">
+      <h3 class="text-xs font-black text-white flex items-center gap-1.5">
+        <span>⭐</span> آراء العملاء الموثقين
+      </h3>
+      <div id="reviewsContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3"></div>
+    </section>
+
+  </main>
+
+  <!-- الفوتر السفلي -->
+  <footer class="border-t border-slate-800 bg-[#070a14] py-8 mt-12 text-center text-xs text-gray-500">
+    <div class="max-w-6xl mx-auto px-4 space-y-2">
+      <div class="font-black text-gray-300">جميع الحقوق محفوظة © 2026 Migo AI Solution</div>
+      <p class="text-[11px]">الدفع مجاناً بالجنيه المصري عبر فودافون كاش، اتصالات كاش، إنستاباي، والبطاقات البنكية.</p>
+    </div>
+  </footer>
+
+  <!-- نافذة اللعبة السينمائية المنبثقة (Game Cinematic Modal) -->
+  <div id="gameCinematicModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md items-center justify-center p-3">
+    <div class="bg-[#0b101e] border border-slate-800 rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+      
+      <!-- هيدر البانر الخاص باللعبة -->
+      <div class="relative h-40 sm:h-48 w-full shrink-0">
+        <img id="gModalBanner" src="" alt="Game Banner" class="w-full h-full object-cover">
+        <div class="absolute inset-0 bg-gradient-to-t from-[#0b101e] via-[#0b101e]/60 to-transparent"></div>
+        <button type="button" onclick="closeGameCinematicModal()" class="absolute top-3 left-3 bg-black/60 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold hover:bg-black transition">✕</button>
+        <div class="absolute bottom-3 right-4 flex items-center gap-2.5">
+          <div class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-700 overflow-hidden shrink-0">
+            <img id="gModalIcon" src="" class="w-full h-full object-cover">
+          </div>
+          <div>
+            <span id="gModalBadge" class="bg-purple-600/80 text-white text-[9px] font-black px-2 py-0.5 rounded-full"></span>
+            <h2 id="gModalTitle" class="text-sm sm:text-base font-black text-white mt-0.5"></h2>
+          </div>
+        </div>
+      </div>
+
+      <!-- محتوى المودال القابل للتمرير -->
+      <div class="p-4 space-y-3 overflow-y-auto text-right">
+        
+        <!-- حقول المعرف وفحص السيرفر -->
+        <div class="space-y-2 bg-slate-950 p-3 rounded-2xl border border-slate-800">
+          <div class="flex gap-2">
+            <div class="flex-1">
+              <label class="block text-[10px] font-bold text-gray-300 mb-1">معرف اللاعب (Player ID):</label>
+              <input type="text" id="gModalPlayerId" placeholder="اكتب الآي دي هنا..." dir="ltr" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs font-mono text-white focus:outline-none focus:border-purple-500 text-left">
+            </div>
+            <div id="gModalZoneGroup" class="w-28 hidden">
+              <label class="block text-[10px] font-bold text-gray-300 mb-1">Zone ID:</label>
+              <input type="text" id="gModalZoneId" placeholder="(1234)" dir="ltr" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs font-mono text-white focus:outline-none focus:border-purple-500 text-left">
+            </div>
+            <div class="flex items-end">
+              <button type="button" id="gModalVerifyBtn" onclick="verifyCinematicPlayerAccount()" class="bg-purple-600 hover:bg-purple-500 text-white text-xs font-black px-3 py-2 rounded-xl transition cursor-pointer flex items-center gap-1">
+                <span>فحص</span> 🔍
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-[10px] font-bold text-gray-300 mb-1">اسم الحساب المسترجع (أو اكتبه يدوياً):</label>
+            <input type="text" id="gModalPlayerName" placeholder="الاسم المسجل في اللعبة..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-purple-500">
           </div>
 
           <div id="gModalVerifyStatus" class="hidden p-2 rounded-xl text-xs font-bold text-center border"></div>
         </div>
 
-        <!-- شبكة اختيار باقة اللعبة المخصصة -->
+        <!-- اختيار الباقة -->
         <div>
-          <label class="block text-xs font-bold text-gray-200 mb-2">اختر الباقة المطلوبة:</label>
+          <label class="block text-xs font-black text-white mb-2">اختر الباقة المطلوبة:</label>
           <div id="gModalPackagesGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-2"></div>
         </div>
 
-        <!-- شريط الإجمالي والأزرار -->
-        <div class="pt-2 border-t border-slate-700/80 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div class="text-right w-full sm:w-auto">
-            <span class="text-[10px] text-gray-400 block">الباقة والسعر:</span>
-            <div id="gModalSelectedSummary" class="text-sm font-black text-amber-400 font-mono">اختر باقة أولاً</div>
-          </div>
-          <div class="flex gap-2 w-full sm:w-auto">
-            <button type="button" onclick="submitCinematicOrder(true)" class="flex-1 sm:flex-initial bg-gradient-to-r from-purple-600 to-indigo-600 hover:brightness-110 text-white font-extrabold px-5 py-2.5 rounded-xl text-xs cursor-pointer shadow">شراء فوري ⚡</button>
-            <button type="button" onclick="submitCinematicOrder(false)" class="flex-1 sm:flex-initial sky-card border text-white font-bold px-4 py-2.5 rounded-xl text-xs cursor-pointer">أضف للسلة 🛒</button>
-          </div>
+        <div class="p-2.5 bg-slate-950 border border-slate-800 rounded-xl flex items-center justify-between text-xs">
+          <span class="text-gray-400">الباقة المحددة:</span>
+          <span id="gModalSelectedSummary" class="font-bold text-white"></span>
         </div>
 
       </div>
+
+      <!-- أزرار الإجراءات السريعة -->
+      <div class="p-3 bg-slate-950 border-t border-slate-800 flex gap-2">
+        <button type="button" onclick="submitCinematicOrder(true)" class="flex-1 bg-purple-600 hover:bg-purple-500 text-white font-black py-2.5 rounded-xl text-xs transition cursor-pointer shadow-lg">
+          شحن فوري الآن ⚡
+        </button>
+        <button type="button" onclick="submitCinematicOrder(false)" class="bg-slate-800 hover:bg-slate-700 text-white font-black px-4 py-2.5 rounded-xl text-xs transition border border-slate-700 cursor-pointer">
+          أضف للسلة 🛒
+        </button>
+      </div>
+
     </div>
   </div>
 
-  <!-- Modal: VCC -->
-  <div id="vccModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-[90] hidden items-center justify-center p-3">
-   <div class="sky-surface border border-amber-500/40 rounded-3xl max-w-md w-full p-5 relative shadow-2xl">
-    <button type="button" onclick="closeVccModal()" aria-label="إغلاق" class="absolute top-4 left-4 text-gray-400 hover:text-white sky-card border w-8 h-8 rounded-xl flex items-center justify-center cursor-pointer">✕</button>
-    <div class="text-center mb-4">
-      <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 mx-auto flex items-center justify-center mb-2">
-        <svg class="w-9 h-7 anim-vcc" viewBox="0 0 44 32">
-          <rect x="2" y="2" width="40" height="28" rx="4" fill="url(#gradVccModal)" stroke="#fbbf24" stroke-width="1.5"/>
-          <rect x="2" y="8" width="40" height="5" fill="#0f172a"/>
-          <rect x="6" y="17" width="9" height="7" rx="1.5" fill="#fde047" stroke="#b45309" stroke-width="0.8"/>
-          <circle cx="34" cy="21" r="3.5" fill="#ef4444" opacity="0.85"/>
-          <circle cx="29" cy="21" r="3.5" fill="#f59e0b" opacity="0.85"/>
-          <defs>
-            <linearGradient id="gradVccModal" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stop-color="#b45309"/>
-              <stop offset="100%" stop-color="#f59e0b"/>
-            </linearGradient>
-          </defs>
-        </svg>
+  <!-- نافذة التحقق المخصصة للعملات (Player ID Modal) -->
+  <div id="playerIdModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md items-center justify-center p-3">
+    <div class="bg-[#0b101e] border border-slate-800 rounded-3xl w-full max-w-md p-5 text-right space-y-3">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+        <h3 class="text-sm font-black text-white">تفاصيل الشحن والحساب</h3>
+        <button type="button" onclick="closePlayerIdModal()" class="text-gray-400 hover:text-white">✕</button>
       </div>
-      <h3 id="vccModalTitle" class="text-base sm:text-lg font-black text-white">طلب بطاقة افتراضية (VCC)</h3>
-      <p id="vccModalPrice" class="text-xs text-amber-400 font-bold mt-0.5 font-mono"></p>
-    </div>
-    
-    <div class="space-y-3 mb-4">
-      <div>
-        <label class="block text-xs font-bold text-gray-200 mb-1" for="vccEmailInput">البريد الإلكتروني (لاستلام تفاصيل الكارت):</label>
-        <input type="email" id="vccEmailInput" placeholder="example@gmail.com" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono outline-none">
-      </div>
-      <div>
-        <label class="block text-xs font-bold text-gray-200 mb-1" for="vccPurposeInput">الغرض من البطاقة (اختياري):</label>
-        <input type="text" id="vccPurposeInput" placeholder="إعلانات ممولة، شات جي بي تي، شوبيفاي..." class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none">
-      </div>
-    </div>
 
-    <div class="flex gap-2">
-      <button type="button" onclick="submitVccModal(true)" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold py-3 rounded-xl text-xs cursor-pointer shadow">شراء فوري ⚡</button>
-      <button type="button" onclick="submitVccModal(false)" class="sky-card border text-white font-bold py-3 px-4 rounded-xl text-xs cursor-pointer">أضف للسلة 🛒</button>
+      <div class="flex items-center gap-3 bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+        <div id="modalTargetIcon" class="w-10 h-10 rounded-lg overflow-hidden shrink-0"></div>
+        <div>
+          <div id="modalTargetTitle" class="text-xs font-black text-white"></div>
+          <div id="modalTargetPkg" class="text-[11px] text-amber-400 font-bold font-mono"></div>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-[11px] font-bold text-gray-300 mb-1">تحديد اللعبة / الخدمة:</label>
+        <select id="modalSelectGame" onchange="onModalGameSelectChange()" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-xs text-white"></select>
+      </div>
+
+      <div class="flex gap-2">
+        <div class="flex-1">
+          <label class="block text-[11px] font-bold text-gray-300 mb-1">معرف الحساب (ID):</label>
+          <input type="text" id="modalInputPlayerId" placeholder="ID الحساب..." dir="ltr" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-xs text-white text-left font-mono">
+        </div>
+        <div id="modalZoneGroup" class="w-24 hidden">
+          <label class="block text-[11px] font-bold text-gray-300 mb-1">Zone ID:</label>
+          <input type="text" id="modalInputZoneId" placeholder="Zone" dir="ltr" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-xs text-white text-left font-mono">
+        </div>
+        <div class="flex items-end">
+          <button type="button" id="verifyAccountBtn" onclick="verifyPlayerAccount()" class="bg-sky-600 hover:bg-sky-500 text-white text-xs font-black px-3 py-2 rounded-xl transition cursor-pointer">
+            فحص 🔍
+          </button>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-[11px] font-bold text-gray-300 mb-1">الاسم المسترجع:</label>
+        <input type="text" id="modalInputPlayerName" placeholder="الاسم يدوياً أو آلياً..." class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-xs text-white">
+      </div>
+
+      <div id="verifyStatusBox" class="hidden p-2 rounded-xl text-xs font-bold text-center border"></div>
+
+      <button type="button" id="modalSubmitBtn" class="w-full sky-btn font-black py-2.5 rounded-xl text-xs transition cursor-pointer mt-2">
+        متابعة الشحن الآن ⚡
+      </button>
     </div>
-   </div>
   </div>
 
-  <!-- Modal: Live Apps & Custom ID Lookup -->
-  <div id="playerIdModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-[90] hidden items-center justify-center p-3">
-   <div class="sky-surface border border-sky-500/40 rounded-3xl max-w-md w-full p-5 relative shadow-2xl max-h-[92vh] overflow-y-auto custom-scrollbar">
-    <button type="button" onclick="closePlayerIdModal()" aria-label="إغلاق" class="absolute top-4 left-4 text-gray-400 hover:text-white sky-card border w-8 h-8 rounded-xl flex items-center justify-center cursor-pointer">✕</button>
-    
-    <div class="text-center mb-4">
-      <div id="modalTargetIcon" class="w-14 h-14 rounded-2xl bg-slate-950 border border-slate-700 mx-auto flex items-center justify-center p-2 mb-2 shadow overflow-hidden"></div>
-      <h3 id="modalTargetTitle" class="text-base sm:text-lg font-black text-white">شحن الحساب</h3>
-      <p id="modalTargetPkg" class="text-xs text-amber-400 font-bold mt-0.5 font-mono"></p>
-    </div>
-    
-    <div class="space-y-3 mb-4">
+  <!-- نافذة طلب بطاقة VCC -->
+  <div id="vccModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md items-center justify-center p-3">
+    <div class="bg-[#0b101e] border border-amber-500/40 rounded-3xl w-full max-w-md p-5 text-right space-y-3">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+        <h3 id="vccModalTitle" class="text-sm font-black text-white">طلب بطاقة VCC</h3>
+        <button type="button" onclick="closeVccModal()" class="text-gray-400 hover:text-white">✕</button>
+      </div>
+
+      <div id="vccModalPrice" class="text-xs font-bold text-amber-400 font-mono"></div>
+
       <div>
-        <label class="block text-xs font-bold text-gray-200 mb-1" for="modalSelectGame">الخدمة / اللعبة:</label>
-        <select id="modalSelectGame" onchange="onModalGameSelectChange()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-bold outline-none"></select>
+        <label class="block text-[11px] font-bold text-gray-300 mb-1">البريد الإلكتروني لاستلام بيانات البطاقة:</label>
+        <input type="email" id="vccEmailInput" placeholder="name@domain.com" dir="ltr" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-xs text-white text-left font-mono">
       </div>
 
       <div>
-        <label class="block text-xs font-bold text-gray-200 mb-1" for="modalInputPlayerId"><span id="modalIdLabel">معرف اللاعب أو اليوزر نيم</span> <span class="text-red-400">*</span>:</label>
+        <label class="block text-[11px] font-bold text-gray-300 mb-1">الغرض من البطاقة (إعلانات، شوبينج، ذكاء اصطناعي...):</label>
+        <input type="text" id="vccPurposeInput" placeholder="الغرض..." class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-xs text-white">
+      </div>
+
+      <div class="grid grid-cols-2 gap-2 pt-2">
+        <button type="button" onclick="submitVccModal(true)" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-black py-2.5 rounded-xl text-xs transition cursor-pointer">
+          شراء فوري ⚡
+        </button>
+        <button type="button" onclick="submitVccModal(false)" class="bg-slate-800 hover:bg-slate-700 text-white font-black py-2.5 rounded-xl text-xs transition border border-slate-700 cursor-pointer">
+          أضف للسلة 🛒
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- مودال سلة المشتريات (Cart Modal) -->
+  <div id="cartModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md items-center justify-center p-3">
+    <div class="bg-[#0b101e] border border-slate-800 rounded-3xl w-full max-w-lg p-5 text-right space-y-4 max-h-[90vh] flex flex-col">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h3 class="text-sm font-black text-white flex items-center gap-2">
+          <span>🛒</span> سلة المشتريات
+        </h3>
+        <button type="button" onclick="closeCartModal()" class="text-gray-400 hover:text-white">✕</button>
+      </div>
+
+      <div id="cartItemsContainer" class="space-y-2 overflow-y-auto flex-1 pr-1"></div>
+
+      <!-- كوبون الخصم -->
+      <div class="pt-2 border-t border-slate-800 space-y-2">
         <div class="flex gap-2">
-            <input type="text" id="modalInputPlayerId" placeholder="اكتب الـ ID أو @username" class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono outline-none">
-            <button type="button" id="verifyAccountBtn" onclick="verifyPlayerAccount()" class="shrink-0 bg-sky-600 hover:bg-sky-500 text-white font-extrabold px-3 rounded-xl text-xs cursor-pointer shadow transition flex items-center gap-1">
-                <span>فحص</span> 🔍
-            </button>
+          <input type="text" id="cartCouponInput" placeholder="كود الخصم (SIAFFC15)" dir="ltr" class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-white uppercase font-mono text-left">
+          <button type="button" onclick="applyCartCoupon()" class="bg-slate-800 hover:bg-slate-700 text-white text-xs font-black px-3 py-1.5 rounded-xl border border-slate-700">تطبيق</button>
+        </div>
+        <div id="cartCouponStatus" class="hidden text-[10px] font-bold"></div>
+      </div>
+
+      <div class="bg-slate-950 p-3 rounded-2xl border border-slate-800 space-y-1.5 text-xs">
+        <div class="flex justify-between text-gray-400">
+          <span>المجموع الجزئي:</span>
+          <span id="cartSubtotal" class="font-mono text-white">0.00 ج.م</span>
+        </div>
+        <div id="cartDiscountRow" class="hidden flex justify-between text-emerald-400">
+          <span>الخصم المطبق:</span>
+          <span id="cartDiscountAmount" class="font-mono">0.00 ج.م</span>
+        </div>
+        <div class="flex justify-between text-white font-black border-t border-slate-800 pt-1.5 text-sm">
+          <span>الإجمالي النهائي:</span>
+          <span id="cartTotal" class="font-mono text-amber-400">0.00 ج.م</span>
         </div>
       </div>
 
-      <div id="modalZoneGroup" class="hidden">
-        <label class="block text-xs font-bold text-gray-200 mb-1" for="modalInputZoneId">معرف السيرفر (Zone ID):</label>
-        <input type="text" id="modalInputZoneId" placeholder="مثال: 6994" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono outline-none">
+      <button type="button" onclick="proceedToCheckout()" class="w-full sky-btn font-black py-3 rounded-2xl text-xs transition cursor-pointer shadow-xl">
+        المتابعة للدفع وتأكيد الطلب 💳
+      </button>
+    </div>
+  </div>
+
+  <!-- مودال الدفع والتأكيد عبر واتساب (Checkout Modal) -->
+  <div id="checkoutModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md items-center justify-center p-3">
+    <div class="bg-[#0b101e] border border-slate-800 rounded-3xl w-full max-w-lg p-5 text-right space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+        <h3 class="text-sm font-black text-white">اختر وسيلة الدفع</h3>
+        <button type="button" onclick="closeCheckoutModal()" class="text-gray-400 hover:text-white">✕</button>
+      </div>
+
+      <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex justify-between items-center text-xs">
+        <span class="text-gray-300">المبلغ المطلوب سداده:</span>
+        <span id="checkoutTotalText" class="font-black text-amber-400 font-mono text-base">0.00 ج.م</span>
+      </div>
+
+      <!-- خيارات الدفع المتاحة -->
+      <div class="grid grid-cols-2 gap-2 text-xs">
+        <button type="button" onclick="selectPaymentMethod('instapay', 'إنستاباي (InstaPay)', this)" class="pay-method-btn p-3 rounded-xl bg-slate-900 border border-slate-700 hover:border-sky-500 font-bold text-white transition text-right">
+          <div>⚡ إنستاباي (InstaPay)</div>
+          <div class="text-[10px] text-gray-400 font-normal">تحويل لحظي مباشر</div>
+        </button>
+        <button type="button" onclick="selectPaymentMethod('vodafone', 'فودافون كاش', this)" class="pay-method-btn p-3 rounded-xl bg-slate-900 border border-slate-700 hover:border-sky-500 font-bold text-white transition text-right">
+          <div>🔴 فودافون كاش</div>
+          <div class="text-[10px] text-gray-400 font-normal">محفظة إلكترونية</div>
+        </button>
+        <button type="button" onclick="selectPaymentMethod('etisalat', 'اتصالات كاش', this)" class="pay-method-btn p-3 rounded-xl bg-slate-900 border border-slate-700 hover:border-sky-500 font-bold text-white transition text-right">
+          <div>🟢 اتصالات كاش</div>
+          <div class="text-[10px] text-gray-400 font-normal">محفظة إلكترونية</div>
+        </button>
+        <button type="button" onclick="selectPaymentMethod('binance', 'Binance Pay (USDT)', this)" class="pay-method-btn p-3 rounded-xl bg-slate-900 border border-slate-700 hover:border-sky-500 font-bold text-white transition text-right">
+          <div>🟡 بايننس (Binance Pay)</div>
+          <div class="text-[10px] text-gray-400 font-normal">دفع رقمي USDT</div>
+        </button>
+      </div>
+
+      <!-- تفاصيل التحويل المالي -->
+      <div id="checkoutDetailsBox" class="hidden bg-slate-950 p-3.5 rounded-2xl border border-slate-800 space-y-2 text-xs">
+        <h4 id="checkoutPayTitle" class="font-black text-sky-400"></h4>
+        <div id="checkoutPayContent" class="text-gray-300 text-[11px] leading-relaxed"></div>
       </div>
 
       <div>
-        <label class="block text-xs font-bold text-gray-200 mb-1" for="modalInputPlayerName">اسم الحساب المسترجع (Nickname):</label>
-        <input type="text" id="modalInputPlayerName" placeholder="يظهر هنا تلقائياً بعد الفحص" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none">
+        <label class="block text-[11px] font-bold text-gray-300 mb-1">رقم المحفظة أو الحساب الذي قمت بالتحويل منه:</label>
+        <input type="text" id="senderAccountInput" placeholder="رقم هاتفك أو معرف إنستاباي..." dir="ltr" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white text-left font-mono focus:outline-none focus:border-sky-500">
       </div>
 
-      <div id="verifyStatusBox" class="hidden p-2.5 rounded-xl text-xs font-bold text-center border"></div>
+      <button type="button" id="confirmPaymentBtn" onclick="finalizeOrderWhatsApp()" class="hidden w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-3 rounded-2xl text-xs transition cursor-pointer shadow-lg flex items-center justify-center gap-2">
+        <span>تأكيد الطلب عبر واتساب وإرسال الإشعار</span> 💬
+      </button>
     </div>
-
-    <div class="flex gap-2">
-      <button type="button" id="modalSubmitBtn" class="w-full sky-btn font-extrabold py-3 rounded-xl text-xs sm:text-sm cursor-pointer shadow"></button>
-    </div>
-   </div>
   </div>
 
-  <!-- Sidebar -->
-  <div id="sidebarContainer" class="fixed inset-0 z-50 hidden">
-   <div onclick="toggleSidebar()" class="fixed inset-0 bg-black/80 backdrop-blur-sm"></div>
-   <aside class="fixed top-0 right-0 h-full w-72 max-w-[85vw] sky-surface border-l border-slate-700 z-10 p-4 flex flex-col justify-between overflow-y-auto shadow-2xl custom-scrollbar">
-    <div>
-     <div class="flex justify-between items-center pb-3 border-b border-slate-700">
-      <div class="flex items-center gap-2">
-       <div class="w-8 h-8 rounded-lg sky-btn flex items-center justify-center font-black">M</div>
-       <span class="font-extrabold text-white text-sm">أقسام المتجر الشاملة</span>
+  <!-- مودال تسجيل الدخول وإنشاء الحساب -->
+  <div id="authModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md items-center justify-center p-3">
+    <div class="bg-[#0b101e] border border-slate-800 rounded-3xl w-full max-w-sm p-5 text-right space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+        <h3 class="text-sm font-black text-white">حساب العميل</h3>
+        <button type="button" onclick="closeAuthModal()" class="text-gray-400 hover:text-white">✕</button>
       </div>
-      <button type="button" onclick="toggleSidebar()" aria-label="إغلاق" class="w-8 h-8 rounded-lg sky-card border text-gray-300 hover:text-white flex items-center justify-center cursor-pointer">✕</button>
-     </div>
-     
-     <div class="mt-3 space-y-1.5 text-xs">
-      <a href="#sec-coins" onclick="toggleSidebar()" class="w-full px-3 py-2 rounded-xl sky-card border text-pink-400 font-bold flex items-center justify-between"> <span>💎 كوينز تيك توك وتليجرام</span> </a>
-      <a href="#sec-live" onclick="toggleSidebar()" class="w-full px-3 py-2 rounded-xl sky-card border text-rose-400 font-bold flex items-center justify-between"> <span>🔴 برامج البث والدردشة (Live)</span> </a>
-      <a href="#sec-vcc" onclick="toggleSidebar()" class="w-full px-3 py-2 rounded-xl sky-card border text-amber-400 font-bold flex items-center justify-between"> <span>💳 بطاقات الدفع الدولي (VCC)</span> </a>
-      <a href="#sec-games" onclick="toggleSidebar()" class="w-full px-3 py-2 rounded-xl sky-card border text-emerald-400 font-bold flex items-center justify-between"> <span>🎮 شحن الألعاب بالـ ID</span> <span class="text-[10px] text-emerald-300">18 لعبة</span></a>
-      <a href="#sec-social" onclick="toggleSidebar()" class="w-full px-3 py-2 rounded-xl sky-card border text-sky-400 font-bold flex items-center justify-between"> <span>📱 خدمات السوشيال ميديا</span> <span class="text-[10px]">18 منصة</span></a>
-      <a href="#sec-productivity" onclick="toggleSidebar()" class="w-full px-3 py-2 rounded-xl sky-card border text-cyan-400 font-bold flex items-center justify-between"> <span>🎨 أدوات وبرامج المصممين</span> </a>
-      <a href="#sec-entertainment" onclick="toggleSidebar()" class="w-full px-3 py-2 rounded-xl sky-card border text-purple-400 font-bold flex items-center justify-between"> <span>🎬 الترفيه والبث (Netflix, Prime)</span> </a>
-      <a href="#sec-ai" onclick="toggleSidebar()" class="w-full px-3 py-2 rounded-xl sky-card border text-indigo-400 font-bold flex items-center justify-between"> <span>🧠 الذكاء الاصطناعي و الـ APIs</span> </a>
-     </div>
+
+      <div class="grid grid-cols-2 gap-2 bg-slate-950 p-1 rounded-xl border border-slate-800 text-center">
+        <button type="button" id="tabLoginBtn" onclick="switchAuthTab('login')" class="py-1.5 text-xs font-bold rounded-lg transition sky-btn">دخول</button>
+        <button type="button" id="tabRegisterBtn" onclick="switchAuthTab('register')" class="py-1.5 text-xs font-bold rounded-lg transition text-gray-400">حساب جديد</button>
+      </div>
+
+      <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-3">
+        <div>
+          <label class="block text-[10px] font-bold text-gray-300 mb-1">البريد الإلكتروني:</label>
+          <input type="email" id="loginEmail" required class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-xs text-white" dir="ltr">
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-gray-300 mb-1">كلمة المرور:</label>
+          <input type="password" required class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-xs text-white" dir="ltr">
+        </div>
+        <button type="submit" class="w-full sky-btn font-black py-2 rounded-xl text-xs">دخول الحساب</button>
+      </form>
+
+      <form id="registerForm" onsubmit="handleRegister(event)" class="hidden space-y-3">
+        <div>
+          <label class="block text-[10px] font-bold text-gray-300 mb-1">الاسم بالكامل:</label>
+          <input type="text" id="regName" required class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-xs text-white">
+        </div>
+        <div>
+          <label class="block text-[10px] font-bold text-gray-300 mb-1">البريد الإلكتروني:</label>
+          <input type="email" id="regEmail" required class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-xs text-white" dir="ltr">
+        </div>
+        <button type="submit" class="w-full sky-btn font-black py-2 rounded-xl text-xs">إنشاء الحساب</button>
+      </form>
     </div>
-    
-    <div class="pt-3 border-t border-slate-700 mt-4 text-center">
-     <div class="bg-slate-900 border border-slate-700 rounded-xl p-2.5 mb-2.5 text-xs flex justify-between items-center">
-        <span class="text-gray-400">إجمالي الزوار:</span>
-        <span id="visitorCount" class="font-mono text-sky-400 font-black">--</span>
-     </div>
-     <button type="button" onclick="toggleSidebar(); openAuthModal('login');" class="w-full sky-card border text-white font-bold py-2 rounded-xl text-xs cursor-pointer">👤 دخول / تسجيل حساب</button>
-    </div>
-   </aside>
   </div>
 
-  <!-- Modal: Auth -->
-  <div id="authModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-   <div class="sky-surface border rounded-2xl max-w-md w-full p-6 relative shadow-2xl">
-    <button type="button" onclick="closeAuthModal()" aria-label="إغلاق" class="absolute top-4 left-4 text-gray-300 hover:text-white sky-card border w-8 h-8 rounded-lg flex items-center justify-center cursor-pointer">✕</button>
-    <div class="text-center mb-4">
-     <div class="w-10 h-10 rounded-2xl sky-btn flex items-center justify-center font-black text-xl mx-auto mb-1">M</div>
-     <h3 class="text-lg font-extrabold text-white">بوابة عملاء Migo AI</h3>
+  <!-- إشعار المبيعات الحية (Social Proof Popup) -->
+  <div id="socialProofPopup" class="fixed bottom-4 right-4 z-40 bg-slate-900/90 border border-slate-700 backdrop-blur-md p-3 rounded-2xl shadow-2xl flex items-center gap-3 max-w-xs transition-all duration-500 transform translate-y-24 opacity-0 pointer-events-none">
+    <div id="proofIcon" class="w-9 h-9 rounded-xl bg-slate-800 flex items-center justify-center text-lg shrink-0">🎮</div>
+    <div class="text-right">
+      <div id="proofUser" class="text-xs font-black text-white">أحمد م. (القاهرة)</div>
+      <div id="proofAction" class="text-[11px] text-emerald-400 font-bold">شحن 660 UC ببجي موبايل</div>
+      <span id="proofTime" class="text-[9px] text-gray-400 font-mono">منذ دقيقتين</span>
     </div>
-    <div class="grid grid-cols-2 gap-2 sky-card p-1 rounded-xl mb-4 border border-slate-700">
-     <button type="button" id="tabLoginBtn" onclick="switchAuthTab('login')" class="py-1.5 text-xs font-bold rounded-lg transition sky-btn cursor-pointer">دخول</button>
-     <button type="button" id="tabRegisterBtn" onclick="switchAuthTab('register')" class="py-1.5 text-xs font-bold rounded-lg transition text-gray-400 cursor-pointer">تسجيل حساب</button>
-    </div>
-    <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-3">
-     <div><label class="block text-xs font-bold text-gray-300 mb-1" for="loginEmail">البريد الإلكتروني:</label><input type="email" id="loginEmail" required class="w-full sky-card border rounded-xl px-3 py-2 text-xs text-white focus:outline-none"></div>
-     <div><label class="block text-xs font-bold text-gray-300 mb-1" for="loginPassword">الرقم السري:</label><input type="password" id="loginPassword" required class="w-full sky-card border rounded-xl px-3 py-2 text-xs text-white focus:outline-none"></div>
-     <button type="submit" class="w-full sky-btn font-extrabold py-2.5 rounded-xl text-xs cursor-pointer">دخول الآن</button>
-    </form>
-    <form id="registerForm" onsubmit="handleRegister(event)" class="space-y-3 hidden">
-     <div><label class="block text-xs font-bold text-gray-300 mb-1" for="regName">الاسم الكامل:</label><input type="text" id="regName" required minlength="3" class="w-full sky-card border rounded-xl px-3 py-2 text-xs text-white"></div>
-     <div><label class="block text-xs font-bold text-gray-300 mb-1" for="regEmail">البريد الإلكتروني:</label><input type="email" id="regEmail" required class="w-full sky-card border rounded-xl px-3 py-2 text-xs text-white font-mono"></div>
-     <div><label class="block text-xs font-bold text-gray-300 mb-1" for="regPhone">رقم الهاتف:</label><input type="tel" id="regPhone" required class="w-full sky-card border rounded-xl px-3 py-2 text-xs text-white font-mono"></div>
-     <div><label class="block text-xs font-bold text-gray-300 mb-1" for="regPassword">الرقم السري:</label><input type="password" id="regPassword" required minlength="6" class="w-full sky-card border rounded-xl px-3 py-2 text-xs text-white font-mono"></div>
-     <button type="submit" class="w-full sky-btn font-extrabold py-2.5 rounded-xl text-xs cursor-pointer">تسجيل الحساب</button>
-    </form>
-   </div>
   </div>
 
-  <!-- Modal: Cart -->
-  <div id="cartModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-   <div class="sky-surface border rounded-2xl max-w-lg w-full p-5 relative shadow-2xl flex flex-col max-h-[90vh]">
-    <div class="flex justify-between items-center mb-3 border-b border-slate-700 pb-2">
-     <h3 class="text-lg font-extrabold text-white flex items-center gap-2">🛒 سلة المشتريات</h3>
-     <button type="button" onclick="closeCartModal()" aria-label="إغلاق" class="text-gray-400 hover:text-white sky-card border w-8 h-8 rounded-lg flex items-center justify-center cursor-pointer">✕</button>
-    </div>
-    
-    <div id="cartItemsContainer" class="flex-1 overflow-y-auto custom-scrollbar space-y-2 mb-3 min-h-[140px]"></div>
-
-    <div class="border-t border-slate-700 pt-3 space-y-2">
-     <div class="flex gap-2">
-      <label for="cartCouponInput" class="sr-only">كود الخصم</label>
-      <input type="text" id="cartCouponInput" placeholder="كود الخصم (SIAFFC15 أو MIGO15)" class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono focus:outline-none uppercase">
-      <button type="button" onclick="applyCartCoupon()" class="sky-btn text-xs font-bold px-3 py-2 rounded-xl cursor-pointer">تفعيل</button>
-     </div>
-     <div id="cartCouponStatus" class="hidden text-[10px] font-bold"></div>
-     
-     <div class="bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs">
-      <div class="flex justify-between text-gray-400 mb-1"><span>المجموع الفرعي:</span> <span id="cartSubtotal" class="font-mono">0 ج.م</span></div>
-      <div class="flex justify-between text-emerald-400 mb-1 hidden" id="cartDiscountRow"><span>الخصم:</span> <span id="cartDiscountAmount" class="font-mono">-0 ج.م</span></div>
-      <div class="flex justify-between text-white font-black text-base border-t border-slate-800 pt-1 mt-1"><span>الإجمالي:</span> <span id="cartTotal" class="text-sky-400 font-mono">0 ج.م</span></div>
-     </div>
-     <button type="button" onclick="proceedToCheckout()" class="w-full sky-btn font-extrabold py-3 rounded-xl text-xs cursor-pointer shadow">
-      متابعة الدفع 💳
-     </button>
-    </div>
-   </div>
-  </div>
-
-  <!-- Modal: Checkout (14 وسيلة دفع مستقلة تماماً) -->
-  <div id="checkoutModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 hidden items-center justify-center p-4">
-   <div class="sky-surface border border-sky-500/30 rounded-2xl max-w-lg w-full p-5 relative shadow-2xl max-h-[95vh] overflow-y-auto custom-scrollbar">
-    <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-700">
-     <h3 class="text-lg font-extrabold text-white">💳 تأكيد وسيلة الدفع</h3>
-     <button type="button" onclick="closeCheckoutModal()" aria-label="إغلاق" class="text-gray-400 hover:text-white sky-card border w-8 h-8 rounded-lg flex items-center justify-center cursor-pointer">✕</button>
-    </div>
-    
-    <p class="text-xs text-gray-300 mb-3">اختر المحفظة أو البوابة لإتمام الطلب (المبلغ: <b id="checkoutTotalText" class="text-sky-400 font-mono"></b>):</p>
-    
-    <!-- شبكة أزرار الدفع الـ 14 كاملة ومستقلة بدون أي دمج -->
-    <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-2 mb-4">
-     
-     <button type="button" onclick="selectPaymentMethod('vodafone', '📱 فودافون كاش', this)" class="pay-method-btn sky-card border p-2 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-red-500">
-      <div class="w-7 h-7 bg-red-600 rounded-full flex items-center justify-center text-white font-bold text-xs">V</div>
-      <span class="text-[10px] font-bold text-white">فودافون كاش</span>
-     </button>
-     
-     <button type="button" onclick="selectPaymentMethod('etisalat', '🟢 اتصالات كاش', this)" class="pay-method-btn sky-card border p-2 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-emerald-500">
-      <div class="w-7 h-7 bg-emerald-600 rounded-full flex items-center justify-center text-white font-bold text-[9px]">اتصالات</div>
-      <span class="text-[10px] font-bold text-white">اتصالات كاش</span>
-     </button>
-
-     <button type="button" onclick="selectPaymentMethod('instapay', '⚡ إنستاباي (InstaPay)', this)" class="pay-method-btn sky-card border p-2 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-purple-500">
-      <div class="w-7 h-7 bg-purple-600 rounded-full flex items-center justify-center text-white font-bold text-xs">IP</div>
-      <span class="text-[10px] font-bold text-white">إنستاباي</span>
-     </button>
-
-     <button type="button" onclick="selectPaymentMethod('telda', '🟣 تيلدا (Telda)', this)" class="pay-method-btn sky-card border p-2 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-pink-500">
-      <div class="w-7 h-7 bg-gradient-to-tr from-pink-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-xs">T</div>
-      <span class="text-[10px] font-bold text-white">تيلدا Telda</span>
-     </button>
-
-     <button type="button" onclick="selectPaymentMethod('binance', '🟡 باينانس باي (Binance Pay)', this)" class="pay-method-btn sky-card border p-2 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-amber-400">
-      <div class="w-7 h-7 bg-amber-400 rounded-full flex items-center justify-center text-slate-950 font-black text-xs">B</div>
-      <span class="text-[10px] font-bold text-white">Binance Pay</span>
-     </button>
-
-     <button type="button" onclick="selectPaymentMethod('redotpay', '🔴 ريدوت باي (RedotPay)', this)" class="pay-method-btn sky-card border p-2 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-rose-500">
-      <div class="w-7 h-7 bg-rose-600 rounded-full flex items-center justify-center text-white font-bold text-xs">R</div>
-      <span class="text-[10px] font-bold text-white">RedotPay</span>
-     </button>
-
-     <button type="button" onclick="selectPaymentMethod('paypal', '🔵 باي بال (PayPal)', this)" class="pay-method-btn sky-card border p-2 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-blue-500">
-      <div class="w-7 h-7 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xs">P</div>
-      <span class="text-[10px] font-bold text-white">PayPal</span>
-     </button>
-
-     <button type="button" onclick="selectPaymentMethod('cards', '💳 فيزا وماستركارد (Cards)', this)" class="pay-method-btn sky-card border p-2 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-sky-400">
-      <div class="w-7 h-7 bg-sky-600 rounded-full flex items-center justify-center text-white font-bold text-xs">💳</div>
-      <span class="text-[10px] font-bold text-white">بطاقة بنكية</span>
-     </button>
-
-     <button type="button" onclick="selectPaymentMethod('valu', '⚡ فاليو (valU)', this)" class="pay-method-btn sky-card border p-2 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-red-400">
-      <div class="w-7 h-7 bg-red-700 rounded-full flex items-center justify-center text-white font-black text-[9px]">valU</div>
-      <span class="text-[10px] font-bold text-white">فاليو valU</span>
-     </button>
-
-     <button type="button" onclick="selectPaymentMethod('tamara', '🟠 تمارة (Tamara)', this)" class="pay-method-btn sky-card border p-2 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-amber-500">
-      <div class="w-7 h-7 bg-amber-600 rounded-full flex items-center justify-center text-white font-black text-[8px]">tamara</div>
-      <span class="text-[10px] font-bold text-white">تمارة Tamara</span>
-     </button>
-
-     <button type="button" onclick="selectPaymentMethod('tabby', '🟢 تابي (Tabby)', this)" class="pay-method-btn sky-card border p-2 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-emerald-400">
-      <div class="w-7 h-7 bg-emerald-500 rounded-full flex items-center justify-center text-slate-950 font-black text-[9px]">tabby</div>
-      <span class="text-[10px] font-bold text-white">تابي Tabby</span>
-     </button>
-
-     <button type="button" onclick="selectPaymentMethod('souhoola', '🟣 سهولة (Souhoola)', this)" class="pay-method-btn sky-card border p-2 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-indigo-400">
-      <div class="w-7 h-7 bg-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-[9px]">سهولة</div>
-      <span class="text-[10px] font-bold text-white">سهولة</span>
-     </button>
-
-     <button type="button" onclick="selectPaymentMethod('forsa', '🟢 فرصة (Forsa)', this)" class="pay-method-btn sky-card border p-2 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-teal-400">
-      <div class="w-7 h-7 bg-teal-600 rounded-full flex items-center justify-center text-white font-bold text-[9px]">فرصة</div>
-      <span class="text-[10px] font-bold text-white">فرصة Forsa</span>
-     </button>
-
-     <button type="button" onclick="selectPaymentMethod('aman', '🔵 أمان (Aman)', this)" class="pay-method-btn sky-card border p-2 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-cyan-500">
-      <div class="w-7 h-7 bg-cyan-600 rounded-full flex items-center justify-center text-white font-bold text-[9px]">أمان</div>
-      <span class="text-[10px] font-bold text-white">أمان Aman</span>
-     </button>
-    </div>
-
-    <!-- صندوق تفاصيل الحساب المختار وزر النسخ -->
-    <div id="checkoutDetailsBox" class="hidden bg-slate-950 border border-slate-700 p-3.5 rounded-xl text-center mb-3">
-     <h4 id="checkoutPayTitle" class="text-xs font-bold text-gray-200 mb-1.5"></h4>
-     <div id="checkoutPayContent" class="text-xs text-gray-300"></div>
-    </div>
-
-    <!-- حقل تأكيد رقم المحفظة / الحساب المُحوّل منه -->
-    <div class="mb-3 text-right">
-      <label class="block text-xs font-bold text-gray-200 mb-1" for="senderAccountInput">رقم المحفظة / الحساب الذي حوّلت منه (لتأكيد العملية): <span class="text-red-400">*</span></label>
-      <input type="text" id="senderAccountInput" placeholder="مثال: 010xxxxxxxx أو يوزر إنستاباي / باينانس" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono outline-none focus:border-sky-400">
-    </div>
-
-    <button type="button" id="confirmPaymentBtn" onclick="finalizeOrderWhatsApp()" class="hidden w-full bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold py-3 rounded-xl text-xs cursor-pointer shadow transition">
-     تم التحويل، إرسال الفاتورة عبر واتساب 💬
-    </button>
-   </div>
-  </div>
-
-  <!-- استدعاء ملفات السكربت بإصدار كسر الكاش الشامل v=2026.10 -->
-  <script src="payments.js?v=2026.10"></script>
-  <script src="games.js?v=2026.10"></script>
-  <script src="live-coins.js?v=2026.10"></script>
-  <script src="subscriptions.js?v=2026.10"></script>
-  <script src="ai-tools.js?v=2026.10"></script>
-  <script src="smm.js?v=2026.10"></script>
-  <script src="app.js?v=2026.10" defer></script>
- </body>
+  <!-- استدعاء ملفات البيانات والبرمجة بالتسلسل الصحيح -->
+  <script src="games.js"></script>
+  <script src="payments.js"></script>
+  <script src="live-coins.js"></script>
+  <script src="app.js"></script>
+</body>
 </html>
