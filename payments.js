@@ -1,5 +1,5 @@
 // ==============================================================================
-// بيانات وسائل الدفع الرسمية (14 وسيلة مستقلة)
+// بيانات وسائل الدفع الرسمية (14 وسيلة مستقلة بالكامل)
 // ==============================================================================
 
 const WHATSAPP_NUMBER = "201060934020";
@@ -47,10 +47,14 @@ const PAYMENT_METHODS_DATA = {
         html: `
             <div class="flex flex-col items-center justify-center gap-2">
                 <span class="text-xs text-gray-300">امسح كود الـ QR عبر تطبيق Binance للدفع بـ (USDT):</span>
-                <div class="bg-white p-2 rounded-2xl border-2 border-amber-400 shadow-xl inline-block my-1">
-                    <img src="binance-qr.png.jpg" alt="Binance Pay QR" class="w-44 h-44 object-contain rounded-lg block mx-auto">
+                <div class="bg-white p-2.5 rounded-2xl border-2 border-amber-400 shadow-2xl inline-block my-1">
+                    <img src="binance-qr.png.jpg" 
+                         onerror="this.onerror=null; this.src='https://raw.githubusercontent.com/naroelwakel-dot/MigoAi/main/binance-qr.png.jpg';" 
+                         alt="Binance Pay QR" 
+                         class="w-48 h-48 object-contain rounded-lg block mx-auto">
                 </div>
-                <span class="text-amber-400 font-bold text-[11px] block mt-1">تأكد من إتمام التحويل ثم اكتب رقم العملية أو حسابك بالأسفل</span>
+                <a href="https://raw.githubusercontent.com/naroelwakel-dot/MigoAi/main/binance-qr.png.jpg" target="_blank" class="text-[11px] text-sky-400 underline hover:text-sky-300">فتح الكود بحجم كامل 🔍</a>
+                <span class="text-amber-400 font-bold text-[11px] block mt-0.5">تأكد من إتمام التحويل ثم اكتب رقم العملية أو حسابك بالأسفل</span>
             </div>
         `
     },
