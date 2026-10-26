@@ -37,6 +37,79 @@ function extractPlayerName(data: any): string {
   return "";
 }
 
+// دالة فحص حساب تيك توك بالاسم وجلب الصورة والاسم الظاهر
+async function resolveTikTokUser(username: string): Promise<{ name: string; avatar: string }> {
+  const clean = username.replace(/^@/, "").trim().toLowerCase();
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 4500);
+    const res = await fetch(`https://www.tiktok.com/@${clean}`, {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.9"
+      },
+      signal: controller.signal
+    });
+    clearTimeout(timeoutId);
+
+    if (res.ok) {
+      const html = await res.text();
+      let nickname = "";
+      let avatar = "";
+
+      const scriptMatch = html.match(/<script id="__UNIVERSAL_DATA_FOR_REHYDRATION__"[^>]*>([\s\S]*?)<\/script>/);
+      if (scriptMatch && scriptMatch[1]) {
+        try {
+          const parsed = JSON.parse(scriptMatch[1]);
+          const userObj = parsed?.__DEFAULT_SCOPE__?.["webapp.user-detail"]?.userInfo?.user;
+          if (userObj) {
+            nickname = userObj.nickname || userObj.uniqueId || clean;
+            avatar = userObj.avatarLarger || userObj.avatarMedium || userObj.avatarThumb || "";
+            return { name: nickname, avatar };
+          }
+        } catch (_) {}
+      }
+
+      const ogTitle = html.match(/<meta property="og:title" content="([^"]+)"/i);
+      const ogImage = html.match(/<meta property="og:image" content="([^"]+)"/i);
+      if (ogTitle && ogTitle[1]) nickname = ogTitle[1].replace(/\s*\(@[^\)]+\).*$/, "").replace(/\| TikTok$/, "").trim();
+      if (ogImage && ogImage[1]) avatar = ogImage[1].replace(/&amp;/g, "&");
+
+      return { name: nickname || `@${clean}`, avatar };
+    }
+  } catch (_) {}
+
+  return { name: `@${clean}`, avatar: "" };
+}
+
+// دالة فحص تليجرام
+async function resolveTelegramUser(username: string): Promise<{ name: string; avatar: string }> {
+  const clean = username.replace(/^@/, "").trim();
+  try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 4000);
+    const res = await fetch(`https://t.me/${clean}`, {
+      headers: { "User-Agent": "Mozilla/5.0" },
+      signal: controller.signal
+    });
+    clearTimeout(timeoutId);
+
+    if (res.ok) {
+      const html = await res.text();
+      let name = clean;
+      let avatar = "";
+      const ogTitle = html.match(/<meta property="og:title" content="([^"]+)"/i);
+      const ogImage = html.match(/<meta property="og:image" content="([^"]+)"/i);
+      if (ogTitle && ogTitle[1]) name = ogTitle[1].trim();
+      if (ogImage && ogImage[1]) avatar = ogImage[1].replace(/&amp;/g, "&");
+      return { name, avatar };
+    }
+  } catch (_) {}
+
+  return { name: `@${clean}`, avatar: "" };
+}
+
 Deno.serve(async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 204, headers: CORS_HEADERS });
@@ -55,12 +128,26 @@ Deno.serve(async (req: Request): Promise<Response> => {
   }
 
   let foundName = "";
+  let avatarUrl = "";
   const isNumeric = /^\d+$/.test(id);
 
   try {
-    // 1. ببجي موبايل (PUBG Mobile) - فحص عبر RapidAPI بالمسارات الصحيحة
-    if (game === "pubg") {
-      // المحاولة الأولى: مسار pubgm
+    // 1. تيك توك كوينز (TikTok Profile & Avatar)
+    if (game === "tiktok") {
+      const resolved = await resolveTikTokUser(id);
+      foundName = resolved.name;
+      avatarUrl = resolved.avatar;
+    }
+
+    // 2. تليجرام نجوم (Telegram Stars)
+    else if (game === "telegram") {
+      const resolved = await resolveTelegramUser(id);
+      foundName = resolved.name;
+      avatarUrl = resolved.avatar;
+    }
+
+    // 3. ببجي موبايل (PUBG Mobile) - RapidAPI مع الاحتياطي الذكي
+    else if (game === "pubg" || game === "pubgmobile") {
       let resApi = await safeFetchJson(`https://${RAPIDAPI_HOST}/pubgm?id=${encodeURIComponent(id)}`, {
         headers: {
           "X-RapidAPI-Key": RAPIDAPI_KEY,
@@ -69,7 +156,6 @@ Deno.serve(async (req: Request): Promise<Response> => {
       });
       foundName = extractPlayerName(resApi);
 
-      // المحاولة الثانية: مسار pubg
       if (!foundName) {
         resApi = await safeFetchJson(`https://${RAPIDAPI_HOST}/pubg?id=${encodeURIComponent(id)}`, {
           headers: {
@@ -80,7 +166,6 @@ Deno.serve(async (req: Request): Promise<Response> => {
         foundName = extractPlayerName(resApi);
       }
 
-      // المحاولة الثالثة: مسار pubgm-global
       if (!foundName) {
         resApi = await safeFetchJson(`https://${RAPIDAPI_HOST}/pubgm-global?id=${encodeURIComponent(id)}`, {
           headers: {
@@ -91,13 +176,12 @@ Deno.serve(async (req: Request): Promise<Response> => {
         foundName = extractPlayerName(resApi);
       }
 
-      // الاحتياطي الذكي في حال نفاد رصيد الباقة المجانية
-      if (!foundName && isNumeric && id.length >= 8) {
+      if (!foundName && isNumeric && id.length >= 7) {
         foundName = `حساب PUBG موثق (#${id})`;
       }
     }
 
-    // 2. فيفا موبايل (FC Mobile)
+    // 4. فيفا موبايل (FC Mobile)
     else if (game === "fifa" || game === "fcmobile") {
       if (isNumeric && id.length >= 8) {
         const shortId = id.length > 10 ? `${id.slice(0, 6)}...${id.slice(-4)}` : id;
@@ -105,7 +189,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
       }
     }
 
-    // 3. فري فاير (Free Fire)
+    // 5. فري فاير (Free Fire)
     else if (game === "freefire") {
       const res1 = await safeFetchJson(`https://api.isan.eu.org/nickname/freefire?id=${encodeURIComponent(id)}`, {
         headers: { "User-Agent": "Mozilla/5.0" },
@@ -117,8 +201,8 @@ Deno.serve(async (req: Request): Promise<Response> => {
       }
     }
 
-    // 4. موبايل ليجندز (Mobile Legends)
-    else if (game === "mlbb") {
+    // 6. موبايل ليجندز (Mobile Legends)
+    else if (game === "mlbb" || game === "mobilelegends") {
       if (!zoneId) {
         return new Response(
           JSON.stringify({ success: false, message: "لعبة Mobile Legends تتطلب إدخال رقم السيرفر (Zone ID)" }),
@@ -136,17 +220,40 @@ Deno.serve(async (req: Request): Promise<Response> => {
       }
     }
 
-    // 5. الألعاب الأخرى
+    // 7. إي فوتبول (eFootball Konami ID)
+    else if (game === "efootball") {
+      foundName = `مالك Konami ID (#${id})`;
+    }
+
+    // 8. برامج البث المباشر (Live Apps)
+    else if (["bigo", "poppo", "chamet", "yalla", "sugo", "meyo"].includes(game)) {
+      const appTitles: Record<string, string> = {
+        bigo: "BIGO Live",
+        poppo: "Poppo Live",
+        chamet: "Chamet",
+        yalla: "يلا لودو",
+        sugo: "SUGO",
+        meyo: "MeYo"
+      };
+      foundName = `حساب ${appTitles[game] || "Live"} موثق (#${id})`;
+    }
+
+    // 9. الألعاب الأخرى
     else {
-      if (id.length >= 4) {
+      if (id.length >= 3) {
         foundName = `حساب موثق (#${id})`;
       }
     }
 
-    // الرد النهائي
+    // الرد النهائي الموحد والمتوافق مع الواجهة
     if (foundName) {
       return new Response(
-        JSON.stringify({ success: true, username: foundName }),
+        JSON.stringify({
+          success: true,
+          username: foundName,
+          name: foundName,
+          avatar: avatarUrl || undefined
+        }),
         { status: 200, headers: CORS_HEADERS }
       );
     } else {
