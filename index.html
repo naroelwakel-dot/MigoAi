@@ -48,7 +48,7 @@
     .dot { height: 8px; width: 8px; background-color: #475569; border-radius: 50%; display: inline-block; cursor: pointer; transition: 0.3s; }
     .dot.active { background-color: #38bdf8; transform: scale(1.35); }
 
-    /* Pure CSS Animations */
+    /* Pure CSS Lightweight Animations */
     @keyframes anim-coin-spin {
       0% { transform: rotateY(0deg) scale(1); }
       50% { transform: rotateY(180deg) scale(1.08); }
@@ -861,13 +861,13 @@
    </div>
   </div>
 
-  <!-- استدعاء ملفات السكربت المباشرة (Flat Structure بدون مجلدات داخلية) -->
-  <script src="payments.js?v=2026.3"></script>
-  <script src="games.js?v=2026.3"></script>
-  <script src="live-coins.js?v=2026.3"></script>
-  <script src="subscriptions.js?v=2026.3"></script>
-  <script src="ai-tools.js?v=2026.3"></script>
-  <script src="smm.js?v=2026.3"></script>
-  <script src="app.js?v=2026.3" defer></script>
+  <!-- استدعاء ملفات البيانات أولاً ثم المحرك الرئيسي من المسار المباشر -->
+  <script src="payments.js?v=2026.6"></script>
+  <script src="games.js?v=2026.6"></script>
+  <script src="live-coins.js?v=2026.6"></script>
+  <script src="subscriptions.js?v=2026.6"></script>
+  <script src="ai-tools.js?v=2026.6"></script>
+  <script src="smm.js?v=2026.6"></script>
+  <script src="app.js?v=2026.6" defer></script>
  </body>
 </html>
