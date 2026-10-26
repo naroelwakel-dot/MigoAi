@@ -1,3 +1,8 @@
+// ==============================================================================
+// Migo AI Solution - Complete Store Logic & Engine
+// Currency: EGP (Rate: 1 USD = 62 EGP)
+// ==============================================================================
+
 const WHATSAPP_NUMBER = "201060934020";
 const USD_TO_EGP = 62; 
 const USERS_STORAGE_KEY = 'migo_registered_users_v2';
@@ -5,6 +10,9 @@ const SESSION_STORAGE_KEY = 'migo_active_member_v2';
 const CART_STORAGE_KEY = 'migo_cart_v2';
 const DENO_API_URL = "https://migoai-72.naroelwakel-dot.deno.net";
 
+// ------------------------------------------------------------------------------
+// SVG Logos for SMM & Interface
+// ------------------------------------------------------------------------------
 const SVG_LOGOS = {
     tiktok: `<svg class="w-5 h-5 fill-current text-white" viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-1.01-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.24 1.07-.14 1.61.24 1.64 1.82 2.89 3.5 2.76 1.44-.03 2.74-.93 3.22-2.29.21-.59.27-1.23.26-1.86.03-5.26.01-10.53.02-15.79z"/></svg>`,
     facebook: `<svg class="w-5 h-5 fill-current text-blue-500" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>`,
@@ -26,6 +34,9 @@ const SVG_LOGOS = {
     kwai: `<svg class="w-5 h-5 fill-current text-orange-500" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 14.5v-3.8l3.2 2.2-1.2 2.1-2-.5zm-4.2-2.1l3.2-2.2V16.5l-2 .5-1.2-2.1zm.2-4.9c0-1.4 1.1-2.5 2.5-2.5s2.5 1.1 2.5 2.5-1.1 2.5-2.5 2.5-2.5-1.1-2.5-2.5z"/></svg>`
 };
 
+// ------------------------------------------------------------------------------
+// Promotion Countdown & Slider
+// ------------------------------------------------------------------------------
 function initCountdown() {
     let totalSeconds = 5 * 3600 + 42 * 60 + 19;
     setInterval(() => {
@@ -39,17 +50,35 @@ function initCountdown() {
     }, 1000);
 }
 
+let currentSlide = 0;
+function updateSlider() {
+    const track = document.getElementById('sliderTrack');
+    if (track) track.style.transform = `translateX(${currentSlide * 100}%)`;
+    const dots = document.querySelectorAll('.dot');
+    dots.forEach((dot, idx) => {
+        dot.classList.toggle('active', idx === currentSlide);
+    });
+}
+function goToSlide(index) { currentSlide = index; updateSlider(); }
+setInterval(() => { currentSlide = (currentSlide + 1) % 3; updateSlider(); }, 5000);
+
+// ------------------------------------------------------------------------------
+// Social Proof Notifications & Visitor Counter
+// ------------------------------------------------------------------------------
 const egyptianNames = ["أحمد م.", "محمد س.", "كريم ع.", "يوسف ط.", "عمر ح.", "سارة م.", "محمود خ.", "زياد ف.", "مصطفى ن.", "نور د."];
 const purchaseTemplates = [
     { act: "شحن 700 عملة تيك توك فوري", icon: '💎' },
     { act: "طلب بطاقة افتراضية VCC (25$)", icon: '💳' },
     { act: "شحن 3850 UC ببجي موبايل", icon: '🎮' },
+    { act: "تفعيل Claude Max 5x", icon: '🧠' },
     { act: "تفعيل Notion Plus 12M", icon: '🎨' },
     { act: "شحن 500 نجمة تليجرام", icon: '⭐' },
     { act: "شحن 840 ماسة بيجو لايف", icon: '🔴' },
     { act: "تفعيل اشتراك Canva Pro Admin", icon: '🎨' },
     { act: "شحن 550 كوينز eFootball", icon: '⚽' },
-    { act: "تفعيل API Claude 30D", icon: '🧠' }
+    { act: "تفعيل API Claude 30D", icon: '🧠' },
+    { act: "تفعيل اشتراك Super Grok", icon: '🧠' },
+    { act: "تفعيل Cursor AI Pro", icon: '💻' }
 ];
 
 function triggerSocialProof() {
@@ -66,17 +95,14 @@ function triggerSocialProof() {
     setTimeout(triggerSocialProof, Math.floor(Math.random() * 10000) + 12000);
 }
 
-let currentSlide = 0;
-function updateSlider() {
-    const track = document.getElementById('sliderTrack');
-    if (track) track.style.transform = `translateX(${currentSlide * 100}%)`;
-    const dots = document.querySelectorAll('.dot');
-    dots.forEach((dot, idx) => {
-        dot.classList.toggle('active', idx === currentSlide);
-    });
+function initVisitorCounter() {
+    let count = localStorage.getItem('migo_visitors_v4');
+    if (!count) count = 1420 + Math.floor(Math.random() * 20);
+    else count = parseInt(count) + 1;
+    localStorage.setItem('migo_visitors_v4', count);
+    const counterEl = document.getElementById('visitorCount');
+    if (counterEl) counterEl.innerText = Number(count).toLocaleString();
 }
-function goToSlide(index) { currentSlide = index; updateSlider(); }
-setInterval(() => { currentSlide = (currentSlide + 1) % 3; updateSlider(); }, 5000);
 
 function showToast(msg, type = 'success') {
     const container = document.getElementById('toastContainer');
@@ -88,15 +114,9 @@ function showToast(msg, type = 'success') {
     setTimeout(() => { toast.classList.add('-translate-x-full'); setTimeout(() => toast.remove(), 300); }, 3200);
 }
 
-function initVisitorCounter() {
-    let count = localStorage.getItem('migo_visitors_v4');
-    if (!count) count = 1420 + Math.floor(Math.random() * 20);
-    else count = parseInt(count) + 1;
-    localStorage.setItem('migo_visitors_v4', count);
-    const counterEl = document.getElementById('visitorCount');
-    if (counterEl) counterEl.innerText = Number(count).toLocaleString();
-}
-
+// ------------------------------------------------------------------------------
+// Cart System & Discount Coupons
+// ------------------------------------------------------------------------------
 let cart = [];
 let appliedCoupon = null;
 const validCoupons = {
@@ -181,7 +201,9 @@ function calculateCartTotal() {
     }
 }
 
-// 1. TikTok Coins & Telegram Stars
+// ------------------------------------------------------------------------------
+// 1. TikTok Coins & Telegram Stars Catalog
+// ------------------------------------------------------------------------------
 const tiktokCoinsList = [
     { coins: 70, price: 65 },
     { coins: 350, price: 295 },
@@ -230,7 +252,9 @@ function renderCoinsAndStars() {
     }
 }
 
-// 2. Live Apps (BIGO, Chamet, Poppo, Yalla Ludo, SUGO, MeYo)
+// ------------------------------------------------------------------------------
+// 2. Live Streaming Apps (All 6 Apps Fully Intact)
+// ------------------------------------------------------------------------------
 const liveAppsCatalog = [
     { key: 'bigo', name: "بيجو لايف (BIGO Live)", tag: "شحن فوري بالـ ID", pkgs: [{l: "42 ماسة", p: 60}, {l: "210 ماسة", p: 295}, {l: "840 ماسة", p: 1180}, {l: "2100 ماسة", p: 2950}] },
     { key: 'poppo', name: "بوبو لايف (Poppo Live)", tag: "فوري بالمعرف", pkgs: [{l: "7,000 نقطة", p: 65}, {l: "35,000 نقطة", p: 310}, {l: "70,000 نقطة", p: 620}, {l: "140,000 نقطة", p: 1240}] },
@@ -265,7 +289,9 @@ function renderLiveApps() {
     `).join('');
 }
 
-// 3. VCC Cards
+// ------------------------------------------------------------------------------
+// 3. Virtual Cards (VCC)
+// ------------------------------------------------------------------------------
 const vccCatalog = [
     { id: 'vcc_10', name: 'بطاقة افتراضية (10 دولار)', price: 700, tag: 'تفعيل سريع' },
     { id: 'vcc_25', name: 'بطاقة افتراضية (25 دولار)', price: 1650, tag: 'الأكثر طلباً' },
@@ -324,7 +350,9 @@ function submitVccModal(isExpress) {
     else addToCart(item);
 }
 
-// 4. Games Catalog (All 18 Games & All Packages Fully Restored)
+// ------------------------------------------------------------------------------
+// 4. Games Catalog (All 18 Games & All Packages Intact)
+// ------------------------------------------------------------------------------
 const allGames = [
     { key: 'pubg', name: "بابجي موبايل (PUBG)", tag: "Midasbuy", pkgs: [{l: "60 UC", p: 62}, {l: "325 UC", p: 310}, {l: "660 UC", p: 620}, {l: "1800 UC", p: 1550}, {l: "3850 UC", p: 3100}, {l: "8100 UC", p: 6200}] },
     { key: 'freefire', name: "فري فاير (Free Fire)", tag: "فوري بالـ ID", pkgs: [{l: "110 Diamonds", p: 55}, {l: "231 Diamonds", p: 110}, {l: "583 Diamonds", p: 265}, {l: "1188 Diamonds", p: 530}, {l: "2420 Diamonds", p: 1050}] },
@@ -371,7 +399,9 @@ function renderGames() {
     `).join('');
 }
 
+// ------------------------------------------------------------------------------
 // 5. Productivity, Design & Digital Assets
+// ------------------------------------------------------------------------------
 const productivityProducts = [
     { id: 'prod_canva_adm', name: 'Canva Pro Admin', tag: 'تحكم إداري كامل', price: 340, desc: 'موثق بالمستندات مع صلاحية إضافة أعضاء' },
     { id: 'prod_capcut_1m', name: 'CapCut Pro (شهر)', tag: 'جاهز وثابت 30 يوم', price: 110, desc: 'يدعم جهازين وضمان كامل' },
@@ -411,7 +441,9 @@ function renderProductivity() {
     `).join('');
 }
 
+// ------------------------------------------------------------------------------
 // 6. Entertainment & Streaming
+// ------------------------------------------------------------------------------
 const entertainmentProducts = [
     { id: 'sub_netflix', name: 'Netflix Premium', label: 'حساب كامل برمز خاص', price: 310, desc: 'ضمان كامل طوال المدة' },
     { id: 'sub_shahid', name: 'شاهد VIP', label: 'شهر واحد', price: 205, desc: 'أحدث المسلسلات بدون إعلانات' },
@@ -439,18 +471,33 @@ function renderEntertainment() {
     `).join('');
 }
 
-// 7. AI & Developer APIs
+// ------------------------------------------------------------------------------
+// 7. AI & Developer APIs (COMPLETE RESTORED LIST - NO OMISSIONS)
+// ------------------------------------------------------------------------------
 const aiProducts = [
-    { id: 'ai_claude_max5', name: 'Claude Max 5x', tag: '5 أضعاف Pro', price: 4340, desc: 'على بريدك وبدون VPN' },
-    { id: 'ai_claude_pro', name: 'Claude AI Pro', tag: 'شهر واحد', price: 1200, desc: 'تفعيل رسمي على إيميلك' },
-    { id: 'ai_api_claude10', name: 'API Claude 10M Tokens', tag: 'يومي للمطورين', price: 75, desc: 'تسليم فوري للمفتاح' },
-    { id: 'ai_api_claude_100', name: 'API Claude 30D $100', tag: 'رصيد 100 دولار', price: 150, desc: 'صلاحية شهر كامل' },
-    { id: 'ai_api_claude50', name: 'API Claude 50M Tokens', tag: 'توكنز مرتفعة', price: 210, desc: 'صلاحية يومين' },
-    { id: 'ai_api_codex10', name: 'API CODEX 10M Tokens', tag: 'أكواد وبرمجة', price: 75, desc: 'مخصص للمبرمجين' },
-    { id: 'ai_api_codex50', name: 'API CODEX 50M Tokens', tag: 'توكنز برمجية 50M', price: 185, desc: 'صلاحية يومين' },
-    { id: 'ai_api_codex100', name: 'API CODEX 100M Tokens', tag: 'توكنز برمجية 100M', price: 310, desc: 'صلاحية 3 أيام' },
-    { id: 'ai_muse', name: 'Muse AI', tag: 'توليد ومونتاج ذكي', price: 140, desc: 'حساب كامل مخصص' },
-    { id: 'ai_chatgpt', name: 'ChatGPT Plus (شهر)', tag: 'الأصلي', price: 480, desc: 'حساب مفعل بكامل مميزات GPT-4o' }
+    // عائلة كلود (Claude AI)
+    { id: 'ai_claude_max5', name: 'Claude Max 5x', tag: '5 أضعاف Pro', price: 4340, desc: 'حساب خاص مفعل على بريدك وبدون VPN' },
+    { id: 'ai_claude_max20', name: 'Claude Max 20x', tag: 'الاستخدام الأقصى 20x', price: 9200, desc: 'أعلى باقة للشركات بدون حدود إرسال' },
+    { id: 'ai_claude_pro', name: 'Claude AI Pro', tag: 'شهر واحد', price: 1200, desc: 'تفعيل رسمي على إيميلك الشخصي مباشرة' },
+    { id: 'ai_claude_team', name: 'Claude Team Workspace', tag: 'فريق عمل', price: 2900, desc: 'مساحة عمل مخصصة لفريقك حتى 5 أعضاء' },
+    
+    // مفاتيح الـ API للمطورين
+    { id: 'ai_api_claude10', name: 'API Claude 10M Tokens', tag: 'يومي للمطورين', price: 75, desc: 'تسليم فوري للمفتاح مخصص للبرمجة' },
+    { id: 'ai_api_claude50', name: 'API Claude 50M Tokens', tag: 'توكنز مرتفعة', price: 210, desc: 'صلاحية يومين للاستخدام المكثف' },
+    { id: 'ai_api_claude_100', name: 'API Claude 30D $100', tag: 'رصيد 100 دولار', price: 150, desc: 'صلاحية شهر كامل لدعم مشاريعك' },
+    { id: 'ai_api_codex10', name: 'API CODEX 10M Tokens', tag: 'أكواد وبرمجة', price: 75, desc: 'مخصص لمحررات الأكواد والمطورين' },
+    { id: 'ai_api_codex50', name: 'API CODEX 50M Tokens', tag: 'توكنز برمجية 50M', price: 185, desc: 'صلاحية يومين مع دعم كامل' },
+    { id: 'ai_api_codex100', name: 'API CODEX 100M Tokens', tag: 'توكنز برمجية 100M', price: 310, desc: 'صلاحية 3 أيام للمشاريع الكبيرة' },
+
+    // منصات الذكاء الاصطناعي الأخرى
+    { id: 'ai_super_grok', name: 'Super Grok (xAI)', tag: 'إيلون ماسك الذكي', price: 980, desc: 'اشتراك رسمي في أقوى نماذج Grok غير المقيدة' },
+    { id: 'ai_midjourney_std', name: 'Midjourney Standard', tag: 'توليد الصور الاحترافي', price: 1850, desc: 'ساعات Fast كاملة وتوليد صور غير محدود في Relax' },
+    { id: 'ai_midjourney_pro', name: 'Midjourney Pro', tag: 'وضع التخفي (Stealth)', price: 3700, desc: 'الوضع السري وحرية تجارية كاملة للمصممين' },
+    { id: 'ai_chatgpt', name: 'ChatGPT Plus (شهر)', tag: 'GPT-4o الأصلي', price: 480, desc: 'حساب مفعل بكامل مميزات التحليل وتوليد الصور' },
+    { id: 'ai_perplexity_pro', name: 'Perplexity Pro', tag: 'محرك البحث الذكي', price: 450, desc: 'بحث علمي وتحليلي متقدم مع Claude 3.5 و GPT-4o' },
+    { id: 'ai_cursor_pro', name: 'Cursor AI Pro', tag: 'محرر المبرمجين الذكي', price: 1250, desc: 'أقوى IDE برمجي مدعوم بالذكاء الاصطناعي' },
+    { id: 'ai_elevenlabs', name: 'ElevenLabs Creator', tag: 'دوبلاج وأصوات AI', price: 1350, desc: '100,000 حرف شهرياً واستنساخ الأصوات بدقة فائقة' },
+    { id: 'ai_muse', name: 'Muse AI', tag: 'توليد ومونتاج ذكي', price: 140, desc: 'حساب كامل مخصص للإنتاج المرئي' }
 ];
 
 function renderAI() {
@@ -471,7 +518,9 @@ function renderAI() {
     `).join('');
 }
 
-// 8. SMM Engine (All 18 Platforms Fully Restored)
+// ------------------------------------------------------------------------------
+// 8. SMM Engine (All 18 Platforms Fully Intact)
+// ------------------------------------------------------------------------------
 const smmPlatforms = [
     { 
         id: 'tiktok', name: 'تيك توك', svg: SVG_LOGOS.tiktok,
@@ -713,7 +762,9 @@ function expressCheckoutSMM() {
     expressCheckout(item);
 }
 
+// ------------------------------------------------------------------------------
 // 9. ID & Account Lookup Modal (Games & TikTok & Live Apps)
+// ------------------------------------------------------------------------------
 let currentModalItem = null;
 let isExpressModal = false;
 
@@ -875,7 +926,9 @@ function expressCheckout(item) {
     proceedToCheckout();
 }
 
+// ------------------------------------------------------------------------------
 // 10. Checkout & Complete Payment Gateways
+// ------------------------------------------------------------------------------
 let selectedPayment = null;
 function proceedToCheckout() {
     if (cart.length === 0) return showToast('السلة فارغة، اختر خدمات أولاً', 'error');
@@ -937,7 +990,9 @@ function finalizeOrderWhatsApp() {
     window.open('https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent(msg), '_blank');
 }
 
+// ------------------------------------------------------------------------------
 // 11. Live Search
+// ------------------------------------------------------------------------------
 function handleLiveSearch(query) {
     const dropdown = document.getElementById('searchResultsDropdown');
     query = query.trim().toLowerCase();
@@ -970,7 +1025,7 @@ function handleLiveSearch(query) {
         if (e.name.toLowerCase().includes(query)) results.push({ name: e.name, price: e.price, type: 'ent', item: e });
     });
     aiProducts.forEach(a => {
-        if (a.name.toLowerCase().includes(query) || a.tag.toLowerCase().includes(query)) results.push({ name: a.name, price: a.price, type: 'ai', item: a });
+        if (a.name.toLowerCase().includes(query) || a.tag.toLowerCase().includes(query) || a.desc.toLowerCase().includes(query)) results.push({ name: a.name, price: a.price, type: 'ai', item: a });
     });
 
     if (results.length === 0) {
@@ -1004,13 +1059,16 @@ function onGlobalSearchClick(encodedItem) {
     else if (item.type === 'ai') expressCheckout({ id: item.item.id, name: item.item.name, type: 'ai', price: item.price, details: item.item.desc });
 }
 
+// ------------------------------------------------------------------------------
 // 12. User Auth & Reviews
+// ------------------------------------------------------------------------------
 const verifiedReviews = [
     { name: "أحمد عبد الرحمن", service: "تيك توك كوينز (700)", text: "شحن فوري باليوزر نيم فقط بدون أي تعقيد وفحص الحساب والصورة ميزة ممتازة.", date: "أكتوبر 2026" },
     { name: "محمد طارق", service: "ببجي 3850 UC", text: "الشدات وصلت فوراً بعد التحويل بالـ ID، خدمة سريعة جداً ومحترمة.", date: "أكتوبر 2026" },
     { name: "محمود إبراهيم", service: "فيزا افتراضية (50$)", text: "استلمت بيانات الكارت واشتغلت في إعلانات الفيسبوك بدون أي رفض.", date: "أكتوبر 2026" },
     { name: "سارة م.", service: "Canva Pro Admin", text: "الحساب شغال بصلاحيات الأدمن كاملة وممتاز جداً لفريقي في التصميم.", date: "أكتوبر 2026" },
-    { name: "خالد وائل", service: "بيجو لايف (840 ماسة)", text: "الماسات نزلت في حسابي فوراً بعد الفحص بالـ ID، متجر ثقة.", date: "أكتوبر 2026" }
+    { name: "خالد وائل", service: "بيجو لايف (840 ماسة)", text: "الماسات نزلت في حسابي فوراً بعد الفحص بالـ ID، متجر ثقة.", date: "أكتوبر 2026" },
+    { name: "يوسف إبراهيم", service: "Claude Max 5x", text: "شغال بأعلى كفاءة وبدون VPN، أنقذني في مشاريع البرمجة والعمل.", date: "أكتوبر 2026" }
 ];
 
 function renderReviews() {
@@ -1105,6 +1163,9 @@ function updateNavbarAuthUI() {
 
 function toggleSidebar() { document.getElementById('sidebarContainer').classList.toggle('hidden'); }
 
+// ------------------------------------------------------------------------------
+// Store Application Initialization
+// ------------------------------------------------------------------------------
 window.onload = function() {
     updateNavbarAuthUI();
     initVisitorCounter();
