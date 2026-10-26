@@ -44,7 +44,15 @@ const PAYMENT_METHODS_DATA = {
     binance: {
         title: '🟡 باينانس باي (Binance Pay)',
         type: 'info',
-        html: `الدفع عبر باينانس باي (Binance Pay) متاح بالعملات الرقمية (USDT).<br><span class="text-amber-400 font-bold block mt-1">امسح رمز الـ QR من البطاقة أو اطلب الـ Pay ID عبر واتساب للمتابعة.</span>`
+        html: `
+            <div class="flex flex-col items-center justify-center gap-2">
+                <span class="text-xs text-gray-300">امسح كود الـ QR عبر تطبيق Binance للدفع بـ (USDT):</span>
+                <div class="bg-white p-2 rounded-2xl border-2 border-amber-400 shadow-xl inline-block my-1">
+                    <img src="binance-qr.png.jpg" alt="Binance Pay QR" class="w-44 h-44 object-contain rounded-lg block mx-auto">
+                </div>
+                <span class="text-amber-400 font-bold text-[11px] block mt-1">تأكد من إتمام التحويل ثم اكتب رقم العملية أو حسابك بالأسفل</span>
+            </div>
+        `
     },
     cards: {
         title: '💳 بطاقة بنكية (Visa / Apple Pay)',
