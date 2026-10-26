@@ -849,6 +849,9 @@ window.onload = function() {
     selectSMMPlatform('tiktok');
     renderReviews();
 
+    // تشغيل سلايدر العروض تلقائياً كل 5 ثوانٍ
+    setInterval(() => { currentSlide = (currentSlide + 1) % 3; updateSlider(); }, 5000);
+
     setTimeout(triggerSocialProof, 3500);
 
     document.addEventListener('click', (e) => {
