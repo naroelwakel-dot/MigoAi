@@ -48,9 +48,7 @@
     .dot { height: 8px; width: 8px; background-color: #475569; border-radius: 50%; display: inline-block; cursor: pointer; transition: 0.3s; }
     .dot.active { background-color: #38bdf8; transform: scale(1.35); }
 
-    /* =========================================================
-       CSS ANIMATIONS FOR STORE SECTION ICONS (Pure CSS / Lightweight)
-       ========================================================= */
+    /* SVG Keyframes Animations */
     @keyframes anim-coin-spin {
       0% { transform: rotateY(0deg) scale(1); }
       50% { transform: rotateY(180deg) scale(1.08); }
@@ -69,12 +67,6 @@
       50% { transform: translateY(-4px) rotate(2deg); }
     }
     .anim-vcc { animation: anim-vcc-float 3.5s infinite ease-in-out; }
-
-    @keyframes anim-vcc-shine {
-      0% { transform: translateX(-100%); }
-      30%, 100% { transform: translateX(200%); }
-    }
-    .anim-vcc-glimmer { animation: anim-vcc-shine 3s infinite ease-in-out; }
 
     @keyframes anim-pad-rumble {
       0%, 100% { transform: translateY(0px) rotate(0deg); }
@@ -120,7 +112,6 @@
       50% { transform: scale(1.2); opacity: 0.7; }
     }
     .anim-pulse { animation: anim-pulse-fast 1.5s infinite ease-in-out; transform-origin: center; }
-
     .pulse-badge { animation: anim-pulse-fast 2s infinite ease-in-out; }
   </style>
  </head>
@@ -137,7 +128,7 @@
     </div>
   </div>
 
-  <a href="https://wa.me/201060934020?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%20Migo%20AI%D8%8C%20%D8%A3%D8%AD%D8%AA%D8%A7%D8%AC%20%D9%85%D8%B3%D8%A7%D8%B9%D8%AF%D8%A9%20%D9%81%D9%8A%20%D8%A7%D9%84%D8%B7%D9%84%D8%A8" target="_blank" class="fixed bottom-6 left-6 z-40 w-12 h-12 bg-emerald-500 hover:bg-emerald-400 text-white rounded-full flex items-center justify-center shadow-2xl transition hover:scale-110 cursor-pointer" aria-label="تواصل مع الدعم الفني">
+  <a href="https://wa.me/201060934020?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%20Migo%20AI%D8%8C%20%D8%A3%D8%AD%D8%AA%D8%A7%D8%AC%20%D9%85%D8%B3%D8%A7%D8%B9%D8%AF%D8%A9%20%D9%81%D9%8A%20%D8%A7%D9%84%D8%B7%D9%84%D8%A8" class="fixed bottom-6 left-6 z-40 w-12 h-12 bg-emerald-500 hover:bg-emerald-400 text-white rounded-full flex items-center justify-center shadow-2xl transition hover:scale-110 cursor-pointer" aria-label="تواصل مع الدعم الفني">
     <svg class="w-7 h-7 fill-current" viewBox="0 0 24 24"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.04 14.69 2 12.04 2M12.05 3.67C14.25 3.67 16.31 4.53 17.87 6.09C19.42 7.65 20.28 9.72 20.28 11.92C20.28 16.46 16.58 20.15 12.04 20.15C10.56 20.15 9.11 19.76 7.85 19L7.55 18.83L4.43 19.65L5.26 16.61L5.06 16.29C4.24 15 3.8 13.47 3.8 11.91C3.81 7.37 7.5 3.67 12.05 3.67Z"/></svg>
   </a>
 
@@ -195,7 +186,7 @@
   <div class="max-w-4xl mx-auto px-4 mt-5">
     <div class="relative">
       <label for="liveSearchInput" class="sr-only">بحث في المتجر</label>
-      <input type="text" id="liveSearchInput" oninput="handleLiveSearch(this.value)" placeholder="🔍 ابحث عن كوينز تيك توك، فيزا VCC، كوديكس API، بيجو، ببجي، نتفلكس، كانفا، فري فاير..." class="w-full bg-[#131d31] border border-slate-600 focus:border-sky-400 rounded-2xl px-5 py-3 text-sm text-white outline-none shadow-xl transition">
+      <input type="text" id="liveSearchInput" oninput="handleLiveSearch(this.value)" placeholder="🔍 ابحث عن كوينز تيك توك، فيزا VCC، كوديكس API، متابعين، بيجو، ببجي، نتفلكس، كانفا، فري فاير..." class="w-full bg-[#131d31] border border-slate-600 focus:border-sky-400 rounded-2xl px-5 py-3 text-sm text-white outline-none shadow-xl transition">
       <div id="searchResultsDropdown" class="hidden absolute top-full left-0 right-0 mt-2 bg-[#131d31] border border-sky-500/40 rounded-2xl p-2 shadow-2xl z-40 max-h-80 overflow-y-auto custom-scrollbar"></div>
     </div>
   </div>
@@ -317,7 +308,7 @@
 
   <main class="max-w-7xl mx-auto px-3 sm:px-4 py-4 space-y-10">
    
-   <!-- 1. تيك توك وتليجرام -->
+   <!-- 1. كوينز تيك توك وتليجرام -->
    <section id="sec-coins" class="sky-surface border rounded-3xl p-4 sm:p-6 shadow-2xl scroll-mt-24">
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 border-b border-slate-700/60 pb-3">
       <div class="flex items-center gap-3">
@@ -764,7 +755,7 @@
    </div>
   </div>
 
-  <!-- Modal: Checkout -->
+  <!-- Modal: Checkout (بدون أورنج كاش - مع حقل رقم الحساب المحول منه) -->
   <div id="checkoutModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 hidden items-center justify-center p-4">
    <div class="sky-surface border border-sky-500/30 rounded-2xl max-w-lg w-full p-5 relative shadow-2xl max-h-[95vh] overflow-y-auto custom-scrollbar">
     <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-700">
@@ -787,10 +778,6 @@
       <div class="w-7 h-7 bg-emerald-600 rounded-full flex items-center justify-center text-white font-bold text-[9px]">اتصالات</div>
       <span class="text-[10px] font-bold text-white">اتصالات كاش</span>
      </button>
-     <button type="button" onclick="selectPaymentMethod('orange', '🟠 أورنج كاش', this)" class="pay-method-btn sky-card border p-2 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-orange-500">
-      <div class="w-7 h-7 bg-orange-500 rounded-full flex items-center justify-center text-white font-bold text-xs">Orange</div>
-      <span class="text-[10px] font-bold text-white">أورنج كاش</span>
-     </button>
      <button type="button" onclick="selectPaymentMethod('card', '💳 فيزا / ماستركارد', this)" class="pay-method-btn sky-card border p-2 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-sky-500">
       <div class="w-7 h-7 bg-sky-600 rounded-full flex items-center justify-center text-white font-bold text-xs">Card</div>
       <span class="text-[10px] font-bold text-white">بطاقة بنكية</span>
@@ -812,6 +799,11 @@
     <div id="checkoutDetailsBox" class="hidden bg-slate-950 border border-slate-700 p-3.5 rounded-xl text-center mb-4">
      <h4 id="checkoutPayTitle" class="text-xs font-bold text-gray-200 mb-1.5"></h4>
      <div id="checkoutPayContent" class="text-xs text-gray-300"></div>
+    </div>
+
+    <div class="mb-4 text-right">
+      <label class="block text-xs font-bold text-gray-200 mb-1" for="senderAccountInput">رقم المحفظة أو الحساب الذي قمت بالتحويل منه: <span class="text-red-400">*</span></label>
+      <input type="text" id="senderAccountInput" placeholder="مثال: 010xxxxxxxx أو معرف إنستاباي" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono outline-none focus:border-sky-400">
     </div>
 
     <button type="button" id="confirmPaymentBtn" onclick="finalizeOrderWhatsApp()" class="hidden w-full bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold py-3 rounded-xl text-xs cursor-pointer shadow transition">
