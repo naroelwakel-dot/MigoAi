@@ -48,7 +48,7 @@
     .dot { height: 8px; width: 8px; background-color: #475569; border-radius: 50%; display: inline-block; cursor: pointer; transition: 0.3s; }
     .dot.active { background-color: #38bdf8; transform: scale(1.35); }
 
-    /* Pure CSS Lightweight Animations */
+    /* Pure CSS Animations */
     @keyframes anim-coin-spin {
       0% { transform: rotateY(0deg) scale(1); }
       50% { transform: rotateY(180deg) scale(1.08); }
@@ -765,8 +765,10 @@
     
     <p class="text-xs text-gray-300 mb-3">اختر المحفظة أو البوابة لإتمام الطلب (المبلغ: <b id="checkoutTotalText" class="text-sky-400 font-mono"></b>):</p>
     
-    <!-- شبكة أزرار الدفع الرسمية والمطابقة 100% لبطاقتك -->
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
+    <!-- شبكة أزرار الدفع الـ 14 كاملة ومستقلة بدون أي دمج -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-2 mb-4">
+     
+     <!-- 1. المحافظ الرقمية المحلية -->
      <button type="button" onclick="selectPaymentMethod('vodafone', '📱 فودافون كاش', this)" class="pay-method-btn sky-card border p-2 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-red-500">
       <div class="w-7 h-7 bg-red-600 rounded-full flex items-center justify-center text-white font-bold text-xs">V</div>
       <span class="text-[10px] font-bold text-white">فودافون كاش</span>
@@ -787,6 +789,7 @@
       <span class="text-[10px] font-bold text-white">تيلدا Telda</span>
      </button>
 
+     <!-- 2. الدفع العالمي والعملات الرقمية -->
      <button type="button" onclick="selectPaymentMethod('binance', '🟡 باينانس باي (Binance Pay)', this)" class="pay-method-btn sky-card border p-2 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-amber-400">
       <div class="w-7 h-7 bg-amber-400 rounded-full flex items-center justify-center text-slate-950 font-black text-xs">B</div>
       <span class="text-[10px] font-bold text-white">Binance Pay</span>
@@ -802,9 +805,41 @@
       <span class="text-[10px] font-bold text-white">PayPal</span>
      </button>
 
-     <button type="button" onclick="selectPaymentMethod('cards_bnpl', '💳 فيزا / تقسيط (ValU / Tabby)', this)" class="pay-method-btn sky-card border p-2 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-sky-400">
+     <!-- 3. البطاقات المباشرة والائتمانية -->
+     <button type="button" onclick="selectPaymentMethod('cards', '💳 فيزا وماستركارد (Cards)', this)" class="pay-method-btn sky-card border p-2 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-sky-400">
       <div class="w-7 h-7 bg-sky-600 rounded-full flex items-center justify-center text-white font-bold text-xs">💳</div>
-      <span class="text-[10px] font-bold text-white">بطاقة / تقسيط</span>
+      <span class="text-[10px] font-bold text-white">بطاقة بنكية</span>
+     </button>
+
+     <!-- 4. خدمات الشراء الآن والدفع لاحقاً والائتمان -->
+     <button type="button" onclick="selectPaymentMethod('valu', '⚡ فاليو (valU)', this)" class="pay-method-btn sky-card border p-2 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-red-400">
+      <div class="w-7 h-7 bg-red-700 rounded-full flex items-center justify-center text-white font-black text-[9px]">valU</div>
+      <span class="text-[10px] font-bold text-white">فاليو valU</span>
+     </button>
+
+     <button type="button" onclick="selectPaymentMethod('tamara', '🟠 تمارة (Tamara)', this)" class="pay-method-btn sky-card border p-2 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-amber-500">
+      <div class="w-7 h-7 bg-amber-600 rounded-full flex items-center justify-center text-white font-black text-[8px]">tamara</div>
+      <span class="text-[10px] font-bold text-white">تمارة Tamara</span>
+     </button>
+
+     <button type="button" onclick="selectPaymentMethod('tabby', '🟢 تابي (Tabby)', this)" class="pay-method-btn sky-card border p-2 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-emerald-400">
+      <div class="w-7 h-7 bg-emerald-500 rounded-full flex items-center justify-center text-slate-950 font-black text-[9px]">tabby</div>
+      <span class="text-[10px] font-bold text-white">تابي Tabby</span>
+     </button>
+
+     <button type="button" onclick="selectPaymentMethod('souhoola', '🟣 سهولة (Souhoola)', this)" class="pay-method-btn sky-card border p-2 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-indigo-400">
+      <div class="w-7 h-7 bg-indigo-600 rounded-full flex items-center justify-center text-white font-bold text-[9px]">سهولة</div>
+      <span class="text-[10px] font-bold text-white">سهولة</span>
+     </button>
+
+     <button type="button" onclick="selectPaymentMethod('forsa', '🟢 فرصة (Forsa)', this)" class="pay-method-btn sky-card border p-2 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-teal-400">
+      <div class="w-7 h-7 bg-teal-600 rounded-full flex items-center justify-center text-white font-bold text-[9px]">فرصة</div>
+      <span class="text-[10px] font-bold text-white">فرصة Forsa</span>
+     </button>
+
+     <button type="button" onclick="selectPaymentMethod('aman', '🔵 أمان (Aman)', this)" class="pay-method-btn sky-card border p-2 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-cyan-500">
+      <div class="w-7 h-7 bg-cyan-600 rounded-full flex items-center justify-center text-white font-bold text-[9px]">أمان</div>
+      <span class="text-[10px] font-bold text-white">أمان Aman</span>
      </button>
     </div>
 
@@ -826,7 +861,13 @@
    </div>
   </div>
 
-  <!-- Cache Buster Script Tag -->
-  <script src="script.js?v=2026.1" defer></script>
+  <!-- استدعاء ملفات السكربت المباشرة (Flat Structure بدون مجلدات داخلية) -->
+  <script src="payments.js?v=2026.3"></script>
+  <script src="games.js?v=2026.3"></script>
+  <script src="live-coins.js?v=2026.3"></script>
+  <script src="subscriptions.js?v=2026.3"></script>
+  <script src="ai-tools.js?v=2026.3"></script>
+  <script src="smm.js?v=2026.3"></script>
+  <script src="app.js?v=2026.3" defer></script>
  </body>
 </html>
