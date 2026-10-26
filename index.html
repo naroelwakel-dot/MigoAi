@@ -47,18 +47,81 @@
     
     .dot { height: 8px; width: 8px; background-color: #475569; border-radius: 50%; display: inline-block; cursor: pointer; transition: 0.3s; }
     .dot.active { background-color: #38bdf8; transform: scale(1.35); }
-    
-    @keyframes subtle-float {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-4px); }
-    }
-    .animate-float { animation: subtle-float 3s infinite ease-in-out; }
 
-    @keyframes subtle-pulse {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.92; transform: scale(1.02); }
+    /* =========================================================
+       CSS ANIMATIONS FOR STORE SECTION ICONS (Pure CSS / Lightweight)
+       ========================================================= */
+    @keyframes anim-coin-spin {
+      0% { transform: rotateY(0deg) scale(1); }
+      50% { transform: rotateY(180deg) scale(1.08); }
+      100% { transform: rotateY(360deg) scale(1); }
     }
-    .pulse-badge { animation: subtle-pulse 2s infinite ease-in-out; }
+    .anim-coin { animation: anim-coin-spin 3s infinite ease-in-out; transform-style: preserve-3d; }
+
+    @keyframes anim-radar-pulse {
+      0% { r: 5; opacity: 1; stroke-width: 2; }
+      100% { r: 18; opacity: 0; stroke-width: 0.5; }
+    }
+    .anim-radar { animation: anim-radar-pulse 2s infinite cubic-bezier(0, 0.2, 0.8, 1); }
+
+    @keyframes anim-vcc-float {
+      0%, 100% { transform: translateY(0) rotate(-4deg); }
+      50% { transform: translateY(-4px) rotate(2deg); }
+    }
+    .anim-vcc { animation: anim-vcc-float 3.5s infinite ease-in-out; }
+
+    @keyframes anim-vcc-shine {
+      0% { transform: translateX(-100%); }
+      30%, 100% { transform: translateX(200%); }
+    }
+    .anim-vcc-glimmer { animation: anim-vcc-shine 3s infinite ease-in-out; }
+
+    @keyframes anim-pad-rumble {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      20% { transform: translateY(-2px) rotate(-3deg); }
+      40% { transform: translateY(1px) rotate(2deg); }
+      60% { transform: translateY(-2px) rotate(1deg); }
+      80% { transform: translateY(0px) rotate(-1deg); }
+    }
+    .anim-gamepad { animation: anim-pad-rumble 2.5s infinite ease-in-out; }
+
+    @keyframes anim-rocket-launch {
+      0%, 100% { transform: translate(0, 0) rotate(-45deg); }
+      50% { transform: translate(2px, -3px) rotate(-43deg); }
+    }
+    .anim-rocket { animation: anim-rocket-launch 2s infinite ease-in-out; }
+
+    @keyframes anim-flame-flicker {
+      0%, 100% { transform: scale(1); opacity: 0.9; }
+      50% { transform: scale(1.18, 0.85); opacity: 1; }
+    }
+    .anim-flame { animation: anim-flame-flicker 0.6s infinite alternate ease-in-out; transform-origin: center bottom; }
+
+    @keyframes anim-palette-glow {
+      0%, 100% { filter: drop-shadow(0 0 2px rgba(6, 182, 212, 0.4)); transform: scale(1); }
+      50% { filter: drop-shadow(0 0 7px rgba(56, 189, 248, 0.8)); transform: scale(1.05); }
+    }
+    .anim-palette { animation: anim-palette-glow 3s infinite ease-in-out; }
+
+    @keyframes anim-reel-spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .anim-film { animation: anim-reel-spin 6s linear infinite; transform-origin: center; }
+
+    @keyframes anim-chip-pulse {
+      0%, 100% { filter: drop-shadow(0 0 2px rgba(99, 102, 241, 0.4)); opacity: 0.9; }
+      50% { filter: drop-shadow(0 0 8px rgba(129, 140, 248, 0.9)); opacity: 1; }
+    }
+    .anim-chip { animation: anim-chip-pulse 2s infinite ease-in-out; }
+
+    @keyframes anim-pulse-fast {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.2); opacity: 0.7; }
+    }
+    .anim-pulse { animation: anim-pulse-fast 1.5s infinite ease-in-out; transform-origin: center; }
+
+    .pulse-badge { animation: anim-pulse-fast 2s infinite ease-in-out; }
   </style>
  </head>
  <body class="min-h-screen selection:bg-sky-500 selection:text-white pb-24">
@@ -139,7 +202,7 @@
 
   <section class="max-w-6xl mx-auto px-4 pt-6 pb-2 text-center">
    <div class="inline-flex flex-wrap items-center justify-center gap-2 px-4 py-1.5 sky-card border border-amber-500/40 rounded-full mb-3 text-xs font-bold shadow-lg">
-    <span class="bg-amber-500 text-slate-900 px-2 py-0.5 rounded-full text-[10px] font-black pulse-badge">عرض اليوم</span>
+    <span class="bg-amber-500 text-slate-900 px-2 py-0.5 rounded-full text-[10px] font-black pulse-badge">عرض اليوم 🔥</span>
     <span class="text-gray-200">ينتهي العرض المؤقت خلال:</span>
     <span id="promoCountdown" class="font-mono text-amber-400 font-black tracking-wider text-sm">05:42:19</span>
    </div>
@@ -152,7 +215,19 @@
         <div class="w-full shrink-0 p-1">
             <div class="bg-gradient-to-br from-[#1e293b] to-[#0f172a] border border-pink-500/40 p-6 rounded-3xl text-center relative">
                 <span class="absolute top-0 right-0 bg-pink-500 text-white text-[10px] font-black px-3.5 py-1 rounded-bl-2xl">فحص الاسم فوري 🎵</span>
-                <div class="text-3xl mb-2 animate-float">💎</div>
+                <div class="w-12 h-12 mx-auto mb-2 flex items-center justify-center">
+                  <svg class="w-10 h-10 anim-coin" viewBox="0 0 40 40">
+                    <circle cx="20" cy="20" r="18" fill="url(#gradCoinP)" stroke="#f472b6" stroke-width="2"/>
+                    <circle cx="20" cy="20" r="14" fill="none" stroke="#fbcfe8" stroke-dasharray="3,2"/>
+                    <text x="20" y="25" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="900" font-family="sans-serif">💎</text>
+                    <defs>
+                      <linearGradient id="gradCoinP" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%" stop-color="#ec4899"/>
+                        <stop offset="100%" stop-color="#be185d"/>
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                </div>
                 <h3 class="text-xl sm:text-2xl font-black text-white mb-1">شحن كوينز تيك توك الرسمية</h3>
                 <p class="text-xs text-gray-300 mb-3">شحن فوري بالاسم الرسمي للحساب لدعم البثوث وإرسال الهدايا.</p>
                 <div class="text-lg font-black text-pink-400 mb-4 font-mono">تبدأ من 65 ج.م فقط</div>
@@ -163,7 +238,21 @@
         <div class="w-full shrink-0 p-1">
             <div class="bg-gradient-to-br from-[#1e293b] to-[#0f172a] border border-amber-500/40 p-6 rounded-3xl text-center relative">
                 <span class="absolute top-0 right-0 bg-amber-500 text-slate-950 text-[10px] font-black px-3.5 py-1 rounded-bl-2xl">الدفع الدولي 💳</span>
-                <div class="text-3xl mb-2 animate-float">🌐</div>
+                <div class="w-12 h-12 mx-auto mb-2 flex items-center justify-center">
+                  <svg class="w-11 h-8 anim-vcc" viewBox="0 0 44 32">
+                    <rect x="2" y="2" width="40" height="28" rx="4" fill="url(#gradVccP)" stroke="#fbbf24" stroke-width="1.5"/>
+                    <rect x="2" y="8" width="40" height="6" fill="#1e293b"/>
+                    <rect x="6" y="18" width="10" height="7" rx="1.5" fill="#fef08a" stroke="#d97706" stroke-width="0.8"/>
+                    <circle cx="34" cy="22" r="4" fill="#ef4444" opacity="0.85"/>
+                    <circle cx="28" cy="22" r="4" fill="#f59e0b" opacity="0.85"/>
+                    <defs>
+                      <linearGradient id="gradVccP" x1="0" y1="0" x2="1" y2="1">
+                        <stop offset="0%" stop-color="#b45309"/>
+                        <stop offset="100%" stop-color="#f59e0b"/>
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                </div>
                 <h3 class="text-xl sm:text-2xl font-black text-white mb-1">البطاقات الافتراضية الدولية (VCC)</h3>
                 <p class="text-xs text-gray-300 mb-3">اشترِ من أي موقع عالمي، اربط حساباتك الإعلانية، وفعّل اشتراكاتك بالجنيه.</p>
                 <div class="text-lg font-black text-amber-400 mb-4 font-mono">تبدأ من 700 ج.م</div>
@@ -174,7 +263,15 @@
         <div class="w-full shrink-0 p-1">
             <div class="bg-gradient-to-br from-[#1e293b] to-[#0f172a] border border-emerald-500/40 p-6 rounded-3xl text-center relative">
                 <span class="absolute top-0 right-0 bg-emerald-500 text-white text-[10px] font-black px-3.5 py-1 rounded-bl-2xl">Midasbuy المعتمد</span>
-                <div class="text-3xl mb-2 animate-float">🎮</div>
+                <div class="w-12 h-12 mx-auto mb-2 flex items-center justify-center">
+                  <svg class="w-11 h-9 anim-gamepad" viewBox="0 0 44 34">
+                    <path d="M12 4 C5 4 2 12 2 20 C2 27 6 30 11 30 C15 30 18 25 22 25 C26 25 29 30 33 30 C38 30 42 27 42 20 C42 12 39 4 32 4 Z" fill="#047857" stroke="#34d399" stroke-width="2"/>
+                    <path d="M7 16 H17 M12 11 V21" stroke="#ecfdf5" stroke-width="2.5" stroke-linecap="round"/>
+                    <circle cx="28" cy="17" r="2.2" fill="#38bdf8"/>
+                    <circle cx="34" cy="13" r="2.2" fill="#f43f5e"/>
+                    <circle cx="34" cy="21" r="2.2" fill="#fbbf24"/>
+                  </svg>
+                </div>
                 <h3 class="text-xl sm:text-2xl font-black text-white mb-1">ببجي موبايل (3850 UC)</h3>
                 <p class="text-xs text-gray-300 mb-3">تسليم رسمي وفوري بالـ ID مع فحص اسم اللاعب قبل التحويل.</p>
                 <div class="text-lg font-black text-emerald-400 mb-4 font-mono">3,100 ج.م</div>
@@ -220,11 +317,28 @@
 
   <main class="max-w-7xl mx-auto px-3 sm:px-4 py-4 space-y-10">
    
+   <!-- 1. تيك توك وتليجرام -->
    <section id="sec-coins" class="sky-surface border rounded-3xl p-4 sm:p-6 shadow-2xl scroll-mt-24">
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 border-b border-slate-700/60 pb-3">
-      <div>
-        <span class="px-2.5 py-0.5 sky-card border border-pink-500/40 text-pink-400 text-xs font-bold rounded-full">شحن فوري بالاسم الرسمي</span>
-        <h2 class="text-lg sm:text-2xl font-black text-white mt-1">💎 عملات تيك توك ونجوم تليجرام</h2>
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-pink-500/10 border border-pink-500/30 flex items-center justify-center shrink-0 shadow">
+          <svg class="w-7 h-7 anim-coin" viewBox="0 0 40 40">
+            <circle cx="20" cy="20" r="17" fill="url(#gradCoin1)" stroke="#f472b6" stroke-width="2"/>
+            <circle cx="20" cy="20" r="13" fill="none" stroke="#fbcfe8" stroke-dasharray="2,2"/>
+            <path d="M20 9 L26 18 L20 31 L14 18 Z" fill="#ffffff" opacity="0.95"/>
+            <path d="M14 18 L26 18" stroke="#be185d" stroke-width="1.2"/>
+            <defs>
+              <linearGradient id="gradCoin1" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#ec4899"/>
+                <stop offset="100%" stop-color="#be185d"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div>
+          <span class="px-2.5 py-0.5 sky-card border border-pink-500/40 text-pink-400 text-xs font-bold rounded-full">شحن فوري بالاسم الرسمي</span>
+          <h2 class="text-lg sm:text-2xl font-black text-white mt-1">عملات تيك توك ونجوم تليجرام</h2>
+        </div>
       </div>
       <span class="text-xs text-gray-400 bg-slate-900 border border-slate-700 px-3 py-1 rounded-xl">⚡ فحص المعرف والصورة قبل التأكيد</span>
     </div>
@@ -248,55 +362,120 @@
     </div>
    </section>
 
+   <!-- 2. برامج البث المباشر (Live Apps) -->
    <section id="sec-live" class="sky-surface border rounded-3xl p-4 sm:p-6 shadow-2xl scroll-mt-24">
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 border-b border-slate-700/60 pb-3">
-      <div>
-        <span class="px-2.5 py-0.5 sky-card border border-rose-500/40 text-rose-400 text-xs font-bold rounded-full">شحن برامج البث والدردشة بالـ ID</span>
-        <h2 class="text-lg sm:text-2xl font-black text-white mt-1">🔴 شحن تطبيقات البث المباشر (Live Apps)</h2>
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center shrink-0 shadow relative overflow-hidden">
+          <svg class="w-7 h-7" viewBox="0 0 40 40">
+            <circle cx="20" cy="20" r="14" fill="none" stroke="#f43f5e" class="anim-radar"/>
+            <rect x="7" y="11" width="18" height="18" rx="4" fill="#e11d48" stroke="#fda4af" stroke-width="1.5"/>
+            <path d="M25 15 L33 11 V29 L25 25 Z" fill="#fb7185"/>
+            <circle cx="12" cy="16" r="2" fill="#ffffff" class="anim-pulse"/>
+          </svg>
+        </div>
+        <div>
+          <span class="px-2.5 py-0.5 sky-card border border-rose-500/40 text-rose-400 text-xs font-bold rounded-full">شحن برامج البث والدردشة بالـ ID</span>
+          <h2 class="text-lg sm:text-2xl font-black text-white mt-1">شحن تطبيقات البث المباشر (Live Apps)</h2>
+        </div>
       </div>
       <span class="text-xs text-gray-400 bg-slate-900 border border-slate-700 px-3 py-1 rounded-xl">⚡ فحص اسم المذيع والحساب فوري</span>
     </div>
     <div id="liveAppsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
    </section>
 
+   <!-- 3. البطاقات الافتراضية (VCC) -->
    <section id="sec-vcc" class="sky-surface border rounded-3xl p-4 sm:p-6 shadow-2xl scroll-mt-24">
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 border-b border-slate-700/60 pb-3">
-      <div>
-        <span class="px-2.5 py-0.5 sky-card border border-amber-500/40 text-amber-400 text-xs font-bold rounded-full">شراء دولي وإعلانات</span>
-        <h2 class="text-lg sm:text-2xl font-black text-white mt-1">💳 البطاقات الافتراضية الدولية (VCC)</h2>
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center shrink-0 shadow">
+          <svg class="w-8 h-6 anim-vcc" viewBox="0 0 44 32">
+            <rect x="2" y="2" width="40" height="28" rx="4" fill="url(#gradVccSec)" stroke="#fbbf24" stroke-width="1.5"/>
+            <rect x="2" y="8" width="40" height="5" fill="#0f172a"/>
+            <rect x="6" y="17" width="9" height="7" rx="1.5" fill="#fde047" stroke="#b45309" stroke-width="0.8"/>
+            <circle cx="34" cy="21" r="3.5" fill="#ef4444" opacity="0.85"/>
+            <circle cx="29" cy="21" r="3.5" fill="#f59e0b" opacity="0.85"/>
+            <defs>
+              <linearGradient id="gradVccSec" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#b45309"/>
+                <stop offset="100%" stop-color="#f59e0b"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div>
+          <span class="px-2.5 py-0.5 sky-card border border-amber-500/40 text-amber-400 text-xs font-bold rounded-full">شراء دولي وإعلانات</span>
+          <h2 class="text-lg sm:text-2xl font-black text-white mt-1">البطاقات الافتراضية الدولية (VCC)</h2>
+        </div>
       </div>
       <span class="text-xs text-gray-400 bg-slate-900 border border-slate-700 px-3 py-1 rounded-xl">تسليم بيانات الكارت عبر الإيميل والواتساب</span>
     </div>
     <div id="vccCardsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3"></div>
    </section>
 
+   <!-- 4. شحن الألعاب الرسمي -->
    <section id="sec-games" class="sky-surface border rounded-3xl p-4 sm:p-6 shadow-2xl scroll-mt-24">
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 border-b border-slate-700/60 pb-3">
-      <div>
-        <span class="px-2.5 py-0.5 sky-card border border-emerald-500/40 text-emerald-400 text-xs font-bold rounded-full">شحن رسمي بالـ ID</span>
-        <h2 class="text-lg sm:text-2xl font-black text-white mt-1">🎮 شحن الألعاب الرسمي (18 لعبة بالكامل)</h2>
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center shrink-0 shadow">
+          <svg class="w-8 h-6 anim-gamepad" viewBox="0 0 44 34">
+            <path d="M12 4 C5 4 2 12 2 20 C2 27 6 30 11 30 C15 30 18 25 22 25 C26 25 29 30 33 30 C38 30 42 27 42 20 C42 12 39 4 32 4 Z" fill="#047857" stroke="#34d399" stroke-width="2"/>
+            <path d="M7 16 H17 M12 11 V21" stroke="#ecfdf5" stroke-width="2.5" stroke-linecap="round"/>
+            <circle cx="28" cy="17" r="2.2" fill="#38bdf8"/>
+            <circle cx="34" cy="13" r="2.2" fill="#f43f5e"/>
+            <circle cx="34" cy="21" r="2.2" fill="#fbbf24"/>
+          </svg>
+        </div>
+        <div>
+          <span class="px-2.5 py-0.5 sky-card border border-emerald-500/40 text-emerald-400 text-xs font-bold rounded-full">شحن رسمي بالـ ID</span>
+          <h2 class="text-lg sm:text-2xl font-black text-white mt-1">شحن الألعاب الرسمي (18 لعبة بالكامل)</h2>
+        </div>
       </div>
       <span class="text-xs text-gray-400 bg-slate-900 border border-slate-700 px-3 py-1 rounded-xl">⚡ معتمد من الموزعين الرسميين</span>
     </div>
     <div id="gamesCardsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
    </section>
 
+   <!-- 5. أدوات وبرامج الإنتاجية -->
    <section id="sec-productivity" class="sky-surface border rounded-3xl p-4 sm:p-6 shadow-2xl scroll-mt-24">
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 border-b border-slate-700/60 pb-3">
-      <div>
-        <span class="px-2.5 py-0.5 sky-card border border-cyan-500/40 text-cyan-400 text-xs font-bold rounded-full">أدوات المصممين والإنتاجية</span>
-        <h2 class="text-lg sm:text-2xl font-black text-white mt-1">🎨 البرامج، الاشتراكات والأصول الرقمية</h2>
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center shrink-0 shadow">
+          <svg class="w-7 h-7 anim-palette" viewBox="0 0 40 40">
+            <path d="M20 5 C10 5 4 12 4 21 C4 29 10 35 18 35 C20 35 22 33 22 31 C22 30 21 29 21 28 C21 26 23 24 25 24 H28 C34 24 37 20 37 15 C37 9 30 5 20 5 Z" fill="#0891b2" stroke="#67e8f9" stroke-width="1.8"/>
+            <circle cx="11" cy="15" r="2.5" fill="#f43f5e"/>
+            <circle cx="18" cy="11" r="2.5" fill="#fbbf24"/>
+            <circle cx="26" cy="12" r="2.5" fill="#34d399"/>
+            <circle cx="31" cy="18" r="2.5" fill="#a855f7"/>
+          </svg>
+        </div>
+        <div>
+          <span class="px-2.5 py-0.5 sky-card border border-cyan-500/40 text-cyan-400 text-xs font-bold rounded-full">أدوات المصممين والإنتاجية</span>
+          <h2 class="text-lg sm:text-2xl font-black text-white mt-1">البرامج، الاشتراكات والأصول الرقمية</h2>
+        </div>
       </div>
       <span class="text-xs text-gray-400 bg-slate-900 border border-slate-700 px-3 py-1 rounded-xl">تفعيل رسمي وضمان</span>
     </div>
     <div id="productivityContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3"></div>
    </section>
 
+   <!-- 6. محرك السوشيال ميديا الشامل -->
    <section id="sec-social" class="sky-surface border rounded-3xl p-4 sm:p-6 shadow-2xl scroll-mt-24">
-    <div class="mb-4">
-      <span class="px-2.5 py-0.5 sky-card border border-sky-500/40 text-sky-400 text-xs font-bold rounded-full">محرك السوشيال ميديا الشامل</span>
-      <h2 class="text-lg sm:text-2xl font-black text-white mt-1">📱 تعزيز الحسابات والمتابعين (18 منصة بالكامل)</h2>
-      <p class="text-gray-400 text-xs mt-0.5">اختر المنصة ونوع الخدمة لحساب السعر تلقائياً بالجنيه.</p>
+    <div class="flex items-center gap-3 mb-4">
+      <div class="w-10 h-10 rounded-2xl bg-sky-500/10 border border-sky-500/30 flex items-center justify-center shrink-0 shadow">
+        <svg class="w-7 h-7 anim-rocket" viewBox="0 0 40 40">
+          <path d="M20 4 C24 10 28 17 28 25 L12 25 C12 17 16 10 20 4 Z" fill="#0284c7" stroke="#38bdf8" stroke-width="1.8"/>
+          <circle cx="20" cy="15" r="3" fill="#ffffff"/>
+          <path d="M12 22 L5 27 L11 28 Z" fill="#0369a1"/>
+          <path d="M28 22 L35 27 L29 28 Z" fill="#0369a1"/>
+          <path d="M16 26 Q20 37 20 37 Q20 37 24 26 Z" fill="#f59e0b" class="anim-flame"/>
+        </svg>
+      </div>
+      <div>
+        <span class="px-2.5 py-0.5 sky-card border border-sky-500/40 text-sky-400 text-xs font-bold rounded-full">محرك السوشيال ميديا الشامل</span>
+        <h2 class="text-lg sm:text-2xl font-black text-white mt-1">تعزيز الحسابات والمتابعين (18 منصة بالكامل)</h2>
+        <p class="text-gray-400 text-xs mt-0.5">اختر المنصة ونوع الخدمة لحساب السعر تلقائياً بالجنيه.</p>
+      </div>
     </div>
 
     <div class="mb-4">
@@ -353,18 +532,42 @@
    </section>
 
    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- 7. الترفيه والبث -->
     <section id="sec-entertainment" class="sky-surface border rounded-3xl p-4 sm:p-6 shadow-2xl scroll-mt-24">
-      <div class="mb-4">
-        <span class="px-2.5 py-0.5 sky-card border border-purple-500/40 text-purple-400 text-xs font-bold rounded-full">مشاهدة وموسيقى</span>
-        <h2 class="text-lg sm:text-xl font-black text-white mt-1">🎬 اشتراكات الترفيه والبث</h2>
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 rounded-2xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center shrink-0 shadow">
+          <svg class="w-7 h-7 anim-film" viewBox="0 0 40 40">
+            <circle cx="20" cy="20" r="16" fill="#7e22ce" stroke="#c084fc" stroke-width="1.8"/>
+            <circle cx="20" cy="20" r="5" fill="#0f172a" stroke="#ffffff" stroke-width="1.5"/>
+            <circle cx="20" cy="9" r="2.5" fill="#ffffff"/>
+            <circle cx="20" cy="31" r="2.5" fill="#ffffff"/>
+            <circle cx="9" cy="20" r="2.5" fill="#ffffff"/>
+            <circle cx="31" cy="20" r="2.5" fill="#ffffff"/>
+          </svg>
+        </div>
+        <div>
+          <span class="px-2.5 py-0.5 sky-card border border-purple-500/40 text-purple-400 text-xs font-bold rounded-full">مشاهدة وموسيقى</span>
+          <h2 class="text-lg sm:text-xl font-black text-white mt-1">اشتراكات الترفيه والبث</h2>
+        </div>
       </div>
       <div id="entertainmentCardsContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
     </section>
 
+    <!-- 8. الذكاء الاصطناعي و الـ APIs -->
     <section id="sec-ai" class="sky-surface border rounded-3xl p-4 sm:p-6 shadow-2xl scroll-mt-24">
-      <div class="mb-4">
-        <span class="px-2.5 py-0.5 sky-card border border-indigo-500/40 text-indigo-400 text-xs font-bold rounded-full">للمطورين والشركات</span>
-        <h2 class="text-lg sm:text-xl font-black text-white mt-1">🧠 الذكاء الاصطناعي و الـ APIs</h2>
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-10 h-10 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 flex items-center justify-center shrink-0 shadow">
+          <svg class="w-7 h-7 anim-chip" viewBox="0 0 40 40">
+            <rect x="10" y="10" width="20" height="20" rx="3" fill="#4338ca" stroke="#818cf8" stroke-width="2"/>
+            <rect x="15" y="15" width="10" height="10" rx="1.5" fill="#c7d2fe"/>
+            <path d="M14 6 V10 M20 6 V10 M26 6 V10 M14 30 V34 M20 30 V34 M26 30 V34" stroke="#818cf8" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M6 14 H10 M6 20 H10 M6 26 H10 M30 14 H34 M30 20 H34 M30 26 H34" stroke="#818cf8" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div>
+          <span class="px-2.5 py-0.5 sky-card border border-indigo-500/40 text-indigo-400 text-xs font-bold rounded-full">للمطورين والشركات</span>
+          <h2 class="text-lg sm:text-xl font-black text-white mt-1">الذكاء الاصطناعي و الـ APIs</h2>
+        </div>
       </div>
       <div id="aiCardsContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
     </section>
@@ -381,11 +584,26 @@
    <p>جميع الحقوق محفوظة © 2026 <b class="text-white">Migo AI Solution</b> - منصة الخدمات الرقمية والألعاب بالجنيه المصري</p>
   </footer>
 
+  <!-- Modal: VCC -->
   <div id="vccModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-[90] hidden items-center justify-center p-3">
    <div class="sky-surface border border-amber-500/40 rounded-3xl max-w-md w-full p-5 relative shadow-2xl">
     <button type="button" onclick="closeVccModal()" aria-label="إغلاق" class="absolute top-4 left-4 text-gray-400 hover:text-white sky-card border w-8 h-8 rounded-xl flex items-center justify-center cursor-pointer">✕</button>
     <div class="text-center mb-4">
-      <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 mx-auto flex items-center justify-center text-2xl mb-2">💳</div>
+      <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 mx-auto flex items-center justify-center mb-2">
+        <svg class="w-9 h-7 anim-vcc" viewBox="0 0 44 32">
+          <rect x="2" y="2" width="40" height="28" rx="4" fill="url(#gradVccModal)" stroke="#fbbf24" stroke-width="1.5"/>
+          <rect x="2" y="8" width="40" height="5" fill="#0f172a"/>
+          <rect x="6" y="17" width="9" height="7" rx="1.5" fill="#fde047" stroke="#b45309" stroke-width="0.8"/>
+          <circle cx="34" cy="21" r="3.5" fill="#ef4444" opacity="0.85"/>
+          <circle cx="29" cy="21" r="3.5" fill="#f59e0b" opacity="0.85"/>
+          <defs>
+            <linearGradient id="gradVccModal" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#b45309"/>
+              <stop offset="100%" stop-color="#f59e0b"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
       <h3 id="vccModalTitle" class="text-base sm:text-lg font-black text-white">طلب بطاقة افتراضية (VCC)</h3>
       <p id="vccModalPrice" class="text-xs text-amber-400 font-bold mt-0.5 font-mono"></p>
     </div>
@@ -408,6 +626,7 @@
    </div>
   </div>
 
+  <!-- Modal: Player ID & Account Lookup -->
   <div id="playerIdModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-[90] hidden items-center justify-center p-3">
    <div class="sky-surface border border-sky-500/40 rounded-3xl max-w-md w-full p-5 relative shadow-2xl max-h-[92vh] overflow-y-auto custom-scrollbar">
     <button type="button" onclick="closePlayerIdModal()" aria-label="إغلاق" class="absolute top-4 left-4 text-gray-400 hover:text-white sky-card border w-8 h-8 rounded-xl flex items-center justify-center cursor-pointer">✕</button>
@@ -453,6 +672,7 @@
    </div>
   </div>
 
+  <!-- Sidebar -->
   <div id="sidebarContainer" class="fixed inset-0 z-50 hidden">
    <div onclick="toggleSidebar()" class="fixed inset-0 bg-black/80 backdrop-blur-sm"></div>
    <aside class="fixed top-0 right-0 h-full w-72 max-w-[85vw] sky-surface border-l border-slate-700 z-10 p-4 flex flex-col justify-between overflow-y-auto shadow-2xl custom-scrollbar">
@@ -487,6 +707,7 @@
    </aside>
   </div>
 
+  <!-- Modal: Auth -->
   <div id="authModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
    <div class="sky-surface border rounded-2xl max-w-md w-full p-6 relative shadow-2xl">
     <button type="button" onclick="closeAuthModal()" aria-label="إغلاق" class="absolute top-4 left-4 text-gray-300 hover:text-white sky-card border w-8 h-8 rounded-lg flex items-center justify-center cursor-pointer">✕</button>
@@ -513,6 +734,7 @@
    </div>
   </div>
 
+  <!-- Modal: Cart -->
   <div id="cartModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
    <div class="sky-surface border rounded-2xl max-w-lg w-full p-5 relative shadow-2xl flex flex-col max-h-[90vh]">
     <div class="flex justify-between items-center mb-3 border-b border-slate-700 pb-2">
@@ -542,6 +764,7 @@
    </div>
   </div>
 
+  <!-- Modal: Checkout -->
   <div id="checkoutModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 hidden items-center justify-center p-4">
    <div class="sky-surface border border-sky-500/30 rounded-2xl max-w-lg w-full p-5 relative shadow-2xl max-h-[95vh] overflow-y-auto custom-scrollbar">
     <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-700">
