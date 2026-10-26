@@ -18,7 +18,7 @@
       overflow-x: hidden;
     }
     .sky-card {
-      background: linear-gradient(180deg, rgba(15, 23, 42, 0.92) 0%, rgba(10, 15, 30, 0.98) 100%);
+      background: linear-gradient(180deg, rgba(15, 23, 42, 0.94) 0%, rgba(10, 15, 30, 0.98) 100%);
       backdrop-filter: blur(12px);
     }
     .sky-surface {
@@ -40,7 +40,7 @@
     .slider-track {
       display: flex;
       width: 100%;
-      transition: transform 0.5s ease-in-out;
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .slider-slide {
       min-width: 100%;
@@ -51,7 +51,7 @@
       background-color: #38bdf8;
       width: 24px;
     }
-    .service-card {
+    .poster-card {
       position: relative;
       border-radius: 1.25rem;
       overflow: hidden;
@@ -62,7 +62,7 @@
       justify-content: space-between;
       transition: all 0.25s ease;
     }
-    .service-card:hover {
+    .poster-card:hover {
       border-color: #38bdf8;
       transform: translateY(-2px);
     }
@@ -145,10 +145,10 @@
     </div>
   </aside>
 
-  <!-- المحتوى الرئيسي -->
+  <!-- الصفحة الرئيسية -->
   <main class="max-w-6xl mx-auto px-3 sm:px-4 py-4 space-y-6">
 
-    <!-- شريط البحث السريع والحي -->
+    <!-- شريط البحث -->
     <div class="relative max-w-xl mx-auto">
       <input type="text" oninput="handleLiveSearch(this.value)" placeholder="ابحث عن لعبة، كوينز تيك توك، فيزا VCC، كوديكس API، كانفا برو..." 
              class="w-full bg-[#0b101e] border border-slate-700 rounded-2xl py-2.5 pr-10 pl-4 text-xs font-medium text-white placeholder-gray-500 focus:outline-none focus:border-sky-500 shadow-inner">
@@ -247,7 +247,7 @@
     <!-- الأقسام المتعددة (يظهر قسم واحد فقط بنظام الـ Tabs لمنع التكدس) -->
     <!-- ========================================================================= -->
 
-    <!-- 1. شحن الألعاب بالكامل (18 لعبة ببوسترات حقيقية ومخصصة) -->
+    <!-- 1. شحن الألعاب بالكامل (18 لعبة بالبوسترات والشعارات الرسمية) -->
     <section id="sec-games" class="space-y-4">
       <div class="sky-card border border-purple-900/50 p-4 rounded-3xl flex items-center justify-between">
         <div>
@@ -382,7 +382,7 @@
       </div>
     </section>
 
-    <!-- 6. أدوات وبرامج المصممين (11 أداة - إضافة مباشرة للسلة) -->
+    <!-- 6. أدوات وبرامج المصممين (11 أداة بالشعارات الرسمية - إضافة مباشرة للسلة) -->
     <section id="sec-productivity" class="hidden space-y-4">
       <div class="sky-card border border-cyan-900/50 p-4 rounded-3xl flex items-center justify-between">
         <div>
@@ -395,20 +395,20 @@
       <div id="productivityContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5"></div>
     </section>
 
-    <!-- 7. الترفيه والبث المشفر (11 خدمة - إضافة مباشرة للسلة) -->
+    <!-- 7. الترفيه والبث المشفر (11 خدمة بالشعارات الأصلية - إضافة مباشرة للسلة) -->
     <section id="sec-entertainment" class="hidden space-y-4">
       <div class="sky-card border border-purple-900/50 p-4 rounded-3xl flex items-center justify-between">
         <div>
           <span class="bg-purple-600/20 text-purple-300 border border-purple-500/30 text-[10px] font-black px-2.5 py-0.5 rounded-full">مشاهدة وموسيقى</span>
           <h2 class="text-base font-black text-white mt-1">اشتراكات الترفيه والبث (11 خدمة كاملة)</h2>
-          <p class="text-[11px] text-gray-400">حسابات رسمية، شاشات خاصة 4K وضمان عدم التوقف</p>
+          <p class="text-[11px] text-gray-400">حسابات وشاشات خاصة 4K وضمان عدم التوقف</p>
         </div>
         <div class="text-3xl">🍿</div>
       </div>
       <div id="entertainmentCardsContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5"></div>
     </section>
 
-    <!-- 8. الذكاء الاصطناعي و الـ APIs (9 خدمات - إضافة مباشرة للسلة) -->
+    <!-- 8. الذكاء الاصطناعي و الـ APIs (9 خدمات بشعاراتها - إضافة مباشرة للسلة) -->
     <section id="sec-ai" class="hidden space-y-4">
       <div class="sky-card border border-indigo-900/50 p-4 rounded-3xl flex items-center justify-between">
         <div>
@@ -442,13 +442,13 @@
   <!-- مودال الألعاب السينمائي مع فحص خادم Deno -->
   <div id="gameCinematicModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md items-center justify-center p-3">
     <div class="bg-[#0b101e] border border-slate-800 rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
-      <div class="relative h-40 sm:h-48 w-full shrink-0">
-        <img id="gModalBanner" src="" alt="Game Banner" class="w-full h-full object-cover">
-        <div class="absolute inset-0 bg-gradient-to-t from-[#0b101e] via-[#0b101e]/60 to-transparent"></div>
-        <button type="button" onclick="closeGameCinematicModal()" class="absolute top-3 left-3 bg-black/60 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold hover:bg-black transition">✕</button>
+      <div class="relative h-44 sm:h-52 w-full shrink-0 bg-slate-950 flex items-center justify-center p-2">
+        <img id="gModalBanner" src="" alt="Game Banner" class="w-full h-full object-contain">
+        <div class="absolute inset-0 bg-gradient-to-t from-[#0b101e] via-[#0b101e]/40 to-transparent pointer-events-none"></div>
+        <button type="button" onclick="closeGameCinematicModal()" class="absolute top-3 left-3 bg-black/60 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold hover:bg-black transition cursor-pointer">✕</button>
         <div class="absolute bottom-3 right-4 flex items-center gap-2.5">
-          <div class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-700 overflow-hidden shrink-0">
-            <img id="gModalIcon" src="" class="w-full h-full object-cover">
+          <div class="w-12 h-12 rounded-xl bg-slate-900 border border-slate-700 overflow-hidden shrink-0 flex items-center justify-center p-1">
+            <img id="gModalIcon" src="" class="w-full h-full object-contain">
           </div>
           <div>
             <span id="gModalBadge" class="bg-purple-600/80 text-white text-[9px] font-black px-2 py-0.5 rounded-full"></span>
@@ -477,7 +477,7 @@
           </div>
 
           <div>
-            <label class="block text-[10px] font-bold text-gray-300 mb-1">اسم الحساب المسترجع (أو اكتبه يدوياً):</label>
+            <label class="block text-[10px] font-bold text-gray-300 mb-1">اسم الحساب المسجل (أو اكتبه يدوياً):</label>
             <input type="text" id="gModalPlayerName" placeholder="الاسم المسجل في اللعبة..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-purple-500">
           </div>
 
@@ -507,7 +507,7 @@
     <div class="bg-[#0b101e] border border-rose-500/40 rounded-3xl w-full max-w-md p-5 text-right space-y-3">
       <div class="flex items-center justify-between border-b border-slate-800 pb-2">
         <h3 id="liveModalTitle" class="text-sm font-black text-white">شحن برنامج البث</h3>
-        <button type="button" onclick="closeLiveModal()" class="text-gray-400 hover:text-white">✕</button>
+        <button type="button" onclick="closeLiveModal()" class="text-gray-400 hover:text-white cursor-pointer">✕</button>
       </div>
 
       <div class="p-2.5 bg-slate-950 rounded-xl border border-slate-800 flex justify-between items-center text-xs">
@@ -532,7 +532,7 @@
     <div class="bg-[#0b101e] border border-amber-500/40 rounded-3xl w-full max-w-md p-5 text-right space-y-3">
       <div class="flex items-center justify-between border-b border-slate-800 pb-2">
         <h3 id="vccModalTitle" class="text-sm font-black text-white">طلب بطاقة VCC</h3>
-        <button type="button" onclick="closeVccModal()" class="text-gray-400 hover:text-white">✕</button>
+        <button type="button" onclick="closeVccModal()" class="text-gray-400 hover:text-white cursor-pointer">✕</button>
       </div>
       <div id="vccModalPrice" class="text-xs font-bold text-amber-400 font-mono"></div>
       <div>
@@ -555,22 +555,16 @@
     <div class="bg-[#0b101e] border border-slate-800 rounded-3xl w-full max-w-lg p-5 text-right space-y-4 max-h-[90vh] flex flex-col">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
         <h3 class="text-sm font-black text-white flex items-center gap-2"><span>🛒</span> سلة المشتريات</h3>
-        <button type="button" onclick="closeCartModal()" class="text-gray-400 hover:text-white">✕</button>
+        <button type="button" onclick="closeCartModal()" class="text-gray-400 hover:text-white cursor-pointer">✕</button>
       </div>
 
       <div id="cartItemsContainer" class="space-y-2 overflow-y-auto flex-1 pr-1"></div>
-
-      <!-- حقل البريد الإلكتروني للتفعيل المباشر للاشتراكات والـ VCC -->
-      <div id="cartEmailSection" class="p-2.5 bg-slate-950 border border-slate-800 rounded-xl space-y-1">
-        <label class="block text-[10px] font-bold text-gray-300">البريد الإلكتروني لتفعيل الاشتراكات (إن وجدت):</label>
-        <input type="email" id="cartUserEmail" placeholder="your-email@domain.com" dir="ltr" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs text-white text-left font-mono">
-      </div>
 
       <!-- كوبون الخصم -->
       <div class="pt-2 border-t border-slate-800 space-y-2">
         <div class="flex gap-2">
           <input type="text" id="cartCouponInput" placeholder="كود الخصم (SIAFFC15)" dir="ltr" class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-white uppercase font-mono text-left">
-          <button type="button" onclick="applyCartCoupon()" class="bg-slate-800 hover:bg-slate-700 text-white text-xs font-black px-3 py-1.5 rounded-xl border border-slate-700">تطبيق</button>
+          <button type="button" onclick="applyCartCoupon()" class="bg-slate-800 hover:bg-slate-700 text-white text-xs font-black px-3 py-1.5 rounded-xl border border-slate-700 cursor-pointer">تطبيق</button>
         </div>
         <div id="cartCouponStatus" class="hidden text-[10px] font-bold"></div>
       </div>
@@ -596,49 +590,59 @@
     </div>
   </div>
 
-  <!-- مودال الدفع الرسمي المتكامل بدون أي وسيلة خارجية ملغاة -->
-  <div id="checkoutModal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-md items-center justify-center p-3">
-    <div class="bg-[#0b101e] border border-slate-800 rounded-3xl w-full max-w-lg p-5 text-right space-y-4 max-h-[90vh] overflow-y-auto">
+  <!-- مودال الدفع الرسمي (معالجة مشكلة شاشة الدفع بالكامل) -->
+  <div id="checkoutModal" class="hidden fixed inset-0 z-50 bg-black/85 backdrop-blur-md items-center justify-center p-3">
+    <div class="bg-[#0b101e] border border-slate-800 rounded-3xl w-full max-w-lg p-5 text-right space-y-4 max-h-[92vh] overflow-y-auto shadow-2xl">
       <div class="flex items-center justify-between border-b border-slate-800 pb-2">
         <h3 class="text-sm font-black text-white">اختر وسيلة الدفع بالجنيه المصري</h3>
-        <button type="button" onclick="closeCheckoutModal()" class="text-gray-400 hover:text-white">✕</button>
+        <button type="button" onclick="closeCheckoutModal()" class="text-gray-400 hover:text-white cursor-pointer">✕</button>
       </div>
 
       <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex justify-between items-center text-xs">
-        <span class="text-gray-300">المبلغ المطلوب سداده:</span>
+        <span class="text-gray-300 font-bold">المبلغ المطلوب سداده:</span>
         <span id="checkoutTotalText" class="font-black text-amber-400 font-mono text-base">0.00 ج.م</span>
       </div>
 
+      <!-- أزرار وسائل الدفع (معالجة RTL والأقواس) -->
       <div class="grid grid-cols-2 gap-2 text-xs">
-        <button type="button" onclick="selectPaymentMethod('instapay', 'إنستاباي (InstaPay)', this)" class="pay-method-btn p-3 rounded-xl bg-slate-900 border border-slate-700 hover:border-sky-500 font-bold text-white transition text-right">
-          <div>⚡ إنستاباي (InstaPay)</div>
-          <div class="text-[10px] text-gray-400 font-normal">تحويل لحظي مباشر</div>
+        <button type="button" id="payBtn-instapay" onclick="selectPaymentMethod('instapay', 'إنستاباي (InstaPay)', this)" class="pay-method-btn p-3 rounded-xl bg-slate-900 border border-slate-700 hover:border-sky-500 font-bold text-white transition text-right cursor-pointer">
+          <div class="text-emerald-400">⚡ إنستاباي InstaPay</div>
+          <div class="text-[10px] text-gray-400 font-normal mt-0.5">تحويل لحظي مباشر</div>
         </button>
-        <button type="button" onclick="selectPaymentMethod('vodafone', 'فودافون كاش', this)" class="pay-method-btn p-3 rounded-xl bg-slate-900 border border-slate-700 hover:border-sky-500 font-bold text-white transition text-right">
-          <div>🔴 فودافون كاش</div>
-          <div class="text-[10px] text-gray-400 font-normal">محفظة إلكترونية</div>
+        <button type="button" id="payBtn-vodafone" onclick="selectPaymentMethod('vodafone', 'فودافون كاش', this)" class="pay-method-btn p-3 rounded-xl bg-slate-900 border border-slate-700 hover:border-sky-500 font-bold text-white transition text-right cursor-pointer">
+          <div class="text-rose-400">🔴 فودافون كاش</div>
+          <div class="text-[10px] text-gray-400 font-normal mt-0.5">محفظة إلكترونية</div>
         </button>
-        <button type="button" onclick="selectPaymentMethod('etisalat', 'اتصالات كاش', this)" class="pay-method-btn p-3 rounded-xl bg-slate-900 border border-slate-700 hover:border-sky-500 font-bold text-white transition text-right">
-          <div>🟢 اتصالات كاش</div>
-          <div class="text-[10px] text-gray-400 font-normal">محفظة إلكترونية</div>
+        <button type="button" id="payBtn-etisalat" onclick="selectPaymentMethod('etisalat', 'اتصالات كاش', this)" class="pay-method-btn p-3 rounded-xl bg-slate-900 border border-slate-700 hover:border-sky-500 font-bold text-white transition text-right cursor-pointer">
+          <div class="text-emerald-400">🟢 اتصالات كاش</div>
+          <div class="text-[10px] text-gray-400 font-normal mt-0.5">محفظة إلكترونية</div>
         </button>
-        <button type="button" onclick="selectPaymentMethod('binance', 'Binance Pay (USDT)', this)" class="pay-method-btn p-3 rounded-xl bg-slate-900 border border-slate-700 hover:border-sky-500 font-bold text-white transition text-right">
-          <div>🟡 بايننس (Binance Pay)</div>
-          <div class="text-[10px] text-gray-400 font-normal">دفع رقمي USDT</div>
+        <button type="button" id="payBtn-binance" onclick="selectPaymentMethod('binance', 'بايننس Pay (USDT)', this)" class="pay-method-btn p-3 rounded-xl bg-slate-900 border border-slate-700 hover:border-sky-500 font-bold text-white transition text-right cursor-pointer">
+          <div class="text-amber-400">🟡 بايننس Pay - USDT</div>
+          <div class="text-[10px] text-gray-400 font-normal mt-0.5">دفع رقمي فوري</div>
         </button>
       </div>
 
-      <div id="checkoutDetailsBox" class="hidden bg-slate-950 p-3.5 rounded-2xl border border-slate-800 space-y-2 text-xs">
+      <!-- صندوق تفاصيل الحساب المختار ورقم التحويل (مفعّل وظاهر تلقائياً) -->
+      <div id="checkoutDetailsBox" class="bg-slate-950 p-3.5 rounded-2xl border border-sky-500/30 space-y-2 text-xs">
         <h4 id="checkoutPayTitle" class="font-black text-sky-400"></h4>
         <div id="checkoutPayContent" class="text-gray-300 text-[11px] leading-relaxed"></div>
       </div>
 
-      <div>
-        <label class="block text-[11px] font-bold text-gray-300 mb-1">رقم المحفظة أو الحساب الذي قمت بالتحويل منه:</label>
-        <input type="text" id="senderAccountInput" placeholder="رقم هاتفك أو معرف إنستاباي..." dir="ltr" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white text-left font-mono focus:outline-none focus:border-sky-500">
+      <!-- حقول بيانات العميل لتأكيد التحويل والاستلام -->
+      <div class="space-y-2">
+        <div>
+          <label class="block text-[11px] font-bold text-gray-300 mb-1">رقم المحفظة أو الحساب الذي قمت بالتحويل منه:</label>
+          <input type="text" id="senderAccountInput" placeholder="رقم هاتفك أو معرف إنستاباي الذي حوّلت منه..." dir="ltr" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white text-left font-mono focus:outline-none focus:border-sky-500">
+        </div>
+        <div>
+          <label class="block text-[11px] font-bold text-gray-300 mb-1">البريد الإلكتروني لاستلام بيانات الاشتراك / الكود (اختياري للبرامج):</label>
+          <input type="email" id="customerEmailInput" placeholder="name@domain.com" dir="ltr" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2.5 text-xs text-white text-left font-mono focus:outline-none focus:border-sky-500">
+        </div>
       </div>
 
-      <button type="button" id="confirmPaymentBtn" onclick="finalizeOrderWhatsApp()" class="hidden w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-3 rounded-2xl text-xs transition cursor-pointer shadow-lg flex items-center justify-center gap-2">
+      <!-- زر تأكيد الطلب الدائم والجاهز -->
+      <button type="button" id="confirmPaymentBtn" onclick="finalizeOrderWhatsApp()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-black py-3 rounded-2xl text-xs transition cursor-pointer shadow-lg flex items-center justify-center gap-2">
         <span>تأكيد الطلب عبر واتساب وإرسال الفاتورة</span> 💬
       </button>
     </div>
@@ -655,32 +659,32 @@
   </div>
 
   <!-- ========================================================================= -->
-  <!-- المحرك البرمجي وقواعد البيانات الشاملة المدمجة بالكامل -->
+  <!-- المحرك البرمجي وقواعد البيانات بالصور والبوسترات والشعارات الرسمية -->
   <!-- ========================================================================= -->
   <script>
-    // 1. قاعدة بيانات الـ 18 لعبة مع بوسترات مخصصة وباقات كاملة
+    // 1. قاعدة بيانات الـ 18 لعبة مع البوسترات الحقيقية الرسمية
     const allGames = [
-      { id: "pubg", name: "بابجي موبايل (PUBG)", badge: "🔥 الأكثر طلباً", banner: "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=600&auto=format&fit=crop", icon: "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=200&auto=format&fit=crop", requireZone: false, packages: [{ name: "60 UC", price: 55 }, { name: "325 UC", price: 270 }, { name: "660 UC", price: 540 }, { name: "1800 UC", price: 1450 }, { name: "3850 UC", price: 3100 }, { name: "8100 UC", price: 6150 }] },
-      { id: "freefire", name: "فري فاير (Free Fire)", badge: "⚡ شحن فوري", banner: "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?q=80&w=600&auto=format&fit=crop", icon: "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?q=80&w=200&auto=format&fit=crop", requireZone: false, packages: [{ name: "100+10 جوهرة", price: 65 }, { name: "310+31 جوهرة", price: 185 }, { name: "520+52 جوهرة", price: 310 }, { name: "1060+106 جوهرة", price: 610 }, { name: "2180+218 جوهرة", price: 1220 }] },
-      { id: "efmc", name: "إي فوتبول (PES)", badge: "⚽ رسمي كوانمي", banner: "https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=600&auto=format&fit=crop", icon: "https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=200&auto=format&fit=crop", requireZone: false, packages: [{ name: "130 كوينز", price: 65 }, { name: "550 كوينز", price: 260 }, { name: "1040 كوينز", price: 490 }, { name: "2130 كوينز", price: 970 }] },
-      { id: "roblox", name: "روبلوكس (Robux)", badge: "💎 تسليم فوري", banner: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=600&auto=format&fit=crop", icon: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=200&auto=format&fit=crop", requireZone: false, packages: [{ name: "80 روبوكس", price: 65 }, { name: "400 روبوكس", price: 270 }, { name: "800 روبوكس", price: 530 }, { name: "1700 روبوكس", price: 1050 }] },
-      { id: "pool8", name: "8 Ball Pool", badge: "🎱 كاش فوري", banner: "https://images.unsplash.com/photo-1580234811497-9df7fd2f357e?q=80&w=600&auto=format&fit=crop", icon: "https://images.unsplash.com/photo-1580234811497-9df7fd2f357e?q=80&w=200&auto=format&fit=crop", requireZone: false, packages: [{ name: "110 كاش", price: 65 }, { name: "250 كاش", price: 135 }, { name: "550 كاش", price: 270 }, { name: "1200 كاش", price: 540 }] },
-      { id: "mlbb", name: "موبايل ليجندز (MLBB)", badge: "🛡️ معتمد بالـ Zone", banner: "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?q=80&w=600&auto=format&fit=crop", icon: "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?q=80&w=200&auto=format&fit=crop", requireZone: true, packages: [{ name: "86 ماسة", price: 65 }, { name: "257 ماسة", price: 185 }, { name: "706 ماسات", price: 490 }, { name: "2195 ماسة", price: 1450 }] },
-      { id: "coc", name: "كلاش أوف كلانس (CoC)", badge: "⚔️ سوبر سيل", banner: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=600&auto=format&fit=crop", icon: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=200&auto=format&fit=crop", requireZone: false, packages: [{ name: "80 جوهرة", price: 65 }, { name: "500 جوهرة", price: 270 }, { name: "1200 جوهرة", price: 540 }, { name: "2500 جوهرة", price: 1050 }] },
-      { id: "fifam", name: "فيفا موبايل (EA FC)", badge: "🏆 FC Points", banner: "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=600&auto=format&fit=crop", icon: "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=200&auto=format&fit=crop", requireZone: false, packages: [{ name: "100 FC Points", price: 65 }, { name: "500 FC Points", price: 270 }, { name: "1050 FC Points", price: 530 }, { name: "2200 FC Points", price: 1050 }] },
-      { id: "brawlstars", name: "براول ستارز (Brawl)", badge: "💥 جواهر فورية", banner: "https://images.unsplash.com/photo-1563089145-599997674d42?q=80&w=600&auto=format&fit=crop", icon: "https://images.unsplash.com/photo-1563089145-599997674d42?q=80&w=200&auto=format&fit=crop", requireZone: false, packages: [{ name: "30 جوهرة", price: 110 }, { name: "80 جوهرة", price: 270 }, { name: "170 جوهرة", price: 540 }, { name: "360 جوهرة", price: 1050 }] },
-      { id: "genshin", name: "جينشين إمباكت (Genshin)", badge: "✨ كريستال رسمي", banner: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=600&auto=format&fit=crop", icon: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=200&auto=format&fit=crop", requireZone: true, packages: [{ name: "60 كريستال", price: 65 }, { name: "300+30 كريستال", price: 270 }, { name: "980+110 كريستال", price: 820 }, { name: "1980+260 كريستال", price: 1600 }] },
-      { id: "codm", name: "كول أوف ديوتي (CODM)", badge: "🎖️ CP فوري", banner: "https://images.unsplash.com/photo-1542751110-97427bbecf20?q=80&w=600&auto=format&fit=crop", icon: "https://images.unsplash.com/photo-1542751110-97427bbecf20?q=80&w=200&auto=format&fit=crop", requireZone: false, packages: [{ name: "80 CP", price: 65 }, { name: "420 CP", price: 270 }, { name: "880 CP", price: 540 }, { name: "2400 CP", price: 1350 }] },
-      { id: "valorant", name: "فالورانت (Valorant)", badge: "🎯 نقاط VP", banner: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=600&auto=format&fit=crop", icon: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=200&auto=format&fit=crop", requireZone: false, packages: [{ name: "475 VP", price: 270 }, { name: "1000 VP", price: 540 }, { name: "2050 VP", price: 1050 }, { name: "3650 VP", price: 1800 }] },
-      { id: "fortnite", name: "فورتنايت (V-Bucks)", badge: "⚡ في بوكس", banner: "https://images.unsplash.com/photo-1589241062272-c0a000072dfa?q=80&w=600&auto=format&fit=crop", icon: "https://images.unsplash.com/photo-1589241062272-c0a000072dfa?q=80&w=200&auto=format&fit=crop", requireZone: false, packages: [{ name: "1000 V-Bucks", price: 490 }, { name: "2800 V-Bucks", price: 1150 }, { name: "5000 V-Bucks", price: 1850 }] },
-      { id: "farlight84", name: "فارلايت 84 (Farlight)", badge: "🚀 شحن مباشر", banner: "https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=600&auto=format&fit=crop", icon: "https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=200&auto=format&fit=crop", requireZone: false, packages: [{ name: "60 ماسة", price: 65 }, { name: "300+30 ماسة", price: 270 }, { name: "680+70 ماسة", price: 540 }] },
-      { id: "wildrift", name: "وايلد ريفت (Wild Rift)", badge: "⚔️ Wild Cores", banner: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=600&auto=format&fit=crop", icon: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=200&auto=format&fit=crop", requireZone: false, packages: [{ name: "500 Wild Cores", price: 270 }, { name: "1050 Wild Cores", price: 540 }, { name: "2175 Wild Cores", price: 1050 }] },
-      { id: "arenabreakout", name: "أرينا بريك آوت (Arena)", badge: "🔫 Bonds فوري", banner: "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=600&auto=format&fit=crop", icon: "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=200&auto=format&fit=crop", requireZone: false, packages: [{ name: "60 Bonds", price: 65 }, { name: "310 Bonds", price: 270 }, { name: "630 Bonds", price: 540 }] },
-      { id: "honorofkings", name: "هونر أوف كينجز (HoK)", badge: "👑 توكنز فوري", banner: "https://images.unsplash.com/photo-1563089145-599997674d42?q=80&w=600&auto=format&fit=crop", icon: "https://images.unsplash.com/photo-1563089145-599997674d42?q=80&w=200&auto=format&fit=crop", requireZone: false, packages: [{ name: "80 توكنز", price: 65 }, { name: "240+17 توكنز", price: 185 }, { name: "400+32 توكنز", price: 290 }] },
-      { id: "top_eleven", name: "توب إلفن (Top Eleven)", badge: "⚽ توكنز المدرب", banner: "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=600&auto=format&fit=crop", icon: "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=200&auto=format&fit=crop", requireZone: false, packages: [{ name: "37 توكنز", price: 130 }, { name: "80 توكنز", price: 270 }, { name: "176 توكنز", price: 540 }] }
+      { id: "pubg", name: "بابجي موبايل (PUBG)", badge: "🔥 الأكثر طلباً", banner: "https://upload.wikimedia.org/wikipedia/en/thumb/5/52/Battlegrounds_Mobile_India_logo.png/640px-Battlegrounds_Mobile_India_logo.png", icon: "https://upload.wikimedia.org/wikipedia/en/thumb/5/52/Battlegrounds_Mobile_India_logo.png/200px-Battlegrounds_Mobile_India_logo.png", requireZone: false, packages: [{ name: "60 UC", price: 55 }, { name: "325 UC", price: 270 }, { name: "660 UC", price: 540 }, { name: "1800 UC", price: 1450 }, { name: "3850 UC", price: 3100 }, { name: "8100 UC", price: 6150 }] },
+      { id: "freefire", name: "فري فاير (Free Fire)", badge: "⚡ شحن فوري", banner: "https://upload.wikimedia.org/wikipedia/en/thumb/1/12/Garena_Free_Fire_Logo.png/640px-Garena_Free_Fire_Logo.png", icon: "https://upload.wikimedia.org/wikipedia/en/thumb/1/12/Garena_Free_Fire_Logo.png/200px-Garena_Free_Fire_Logo.png", requireZone: false, packages: [{ name: "100+10 جوهرة", price: 65 }, { name: "310+31 جوهرة", price: 185 }, { name: "520+52 جوهرة", price: 310 }, { name: "1060+106 جوهرة", price: 610 }, { name: "2180+218 جوهرة", price: 1220 }] },
+      { id: "mlbb", name: "موبايل ليجندز (MLBB)", badge: "🛡️ معتمد بالـ Zone", banner: "https://upload.wikimedia.org/wikipedia/en/thumb/a/a3/Mobile_Legends_Bang_Bang_logo.png/640px-Mobile_Legends_Bang_Bang_logo.png", icon: "https://upload.wikimedia.org/wikipedia/en/thumb/a/a3/Mobile_Legends_Bang_Bang_logo.png/200px-Mobile_Legends_Bang_Bang_logo.png", requireZone: true, packages: [{ name: "86 ماسة", price: 65 }, { name: "257 ماسة", price: 185 }, { name: "706 ماسات", price: 490 }, { name: "2195 ماسة", price: 1450 }] },
+      { id: "efmc", name: "إي فوتبول (PES)", badge: "⚽ رسمي كوانمي", banner: "https://upload.wikimedia.org/wikipedia/en/thumb/0/07/EFootball_logo.svg/640px-EFootball_logo.svg.png", icon: "https://upload.wikimedia.org/wikipedia/en/thumb/0/07/EFootball_logo.svg/200px-EFootball_logo.svg.png", requireZone: false, packages: [{ name: "130 كوينز", price: 65 }, { name: "550 كوينز", price: 260 }, { name: "1040 كوينز", price: 490 }, { name: "2130 كوينز", price: 970 }] },
+      { id: "roblox", name: "روبلوكس (Robux)", badge: "💎 تسليم فوري", banner: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Roblox_player_icon_black.svg/640px-Roblox_player_icon_black.svg.png", icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Roblox_player_icon_black.svg/200px-Roblox_player_icon_black.svg.png", requireZone: false, packages: [{ name: "80 روبوكس", price: 65 }, { name: "400 روبوكس", price: 270 }, { name: "800 روبوكس", price: 530 }, { name: "1700 روبوكس", price: 1050 }] },
+      { id: "pool8", name: "8 Ball Pool", badge: "🎱 كاش فوري", banner: "https://upload.wikimedia.org/wikipedia/en/thumb/3/32/8_Ball_Pool_Logo.png/640px-8_Ball_Pool_Logo.png", icon: "https://upload.wikimedia.org/wikipedia/en/thumb/3/32/8_Ball_Pool_Logo.png/200px-8_Ball_Pool_Logo.png", requireZone: false, packages: [{ name: "110 كاش", price: 65 }, { name: "250 كاش", price: 135 }, { name: "550 كاش", price: 270 }, { name: "1200 كاش", price: 540 }] },
+      { id: "coc", name: "كلاش أوف كلانس (CoC)", badge: "⚔️ سوبر سيل", banner: "https://upload.wikimedia.org/wikipedia/en/thumb/7/74/Clash_of_Clans_Logo.png/640px-Clash_of_Clans_Logo.png", icon: "https://upload.wikimedia.org/wikipedia/en/thumb/7/74/Clash_of_Clans_Logo.png/200px-Clash_of_Clans_Logo.png", requireZone: false, packages: [{ name: "80 جوهرة", price: 65 }, { name: "500 جوهرة", price: 270 }, { name: "1200 جوهرة", price: 540 }, { name: "2500 جوهرة", price: 1050 }] },
+      { id: "fifam", name: "فيفا موبايل (EA FC)", badge: "🏆 FC Points", banner: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/EA_Sports_FC_Mobile_logo.svg/640px-EA_Sports_FC_Mobile_logo.svg.png", icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/EA_Sports_FC_Mobile_logo.svg/200px-EA_Sports_FC_Mobile_logo.svg.png", requireZone: false, packages: [{ name: "100 FC Points", price: 65 }, { name: "500 FC Points", price: 270 }, { name: "1050 FC Points", price: 530 }, { name: "2200 FC Points", price: 1050 }] },
+      { id: "brawlstars", name: "براول ستارز (Brawl)", badge: "💥 جواهر فورية", banner: "https://upload.wikimedia.org/wikipedia/en/thumb/5/52/Brawl_Stars_logo.png/640px-Brawl_Stars_logo.png", icon: "https://upload.wikimedia.org/wikipedia/en/thumb/5/52/Brawl_Stars_logo.png/200px-Brawl_Stars_logo.png", requireZone: false, packages: [{ name: "30 جوهرة", price: 110 }, { name: "80 جوهرة", price: 270 }, { name: "170 جوهرة", price: 540 }, { name: "360 جوهرة", price: 1050 }] },
+      { id: "genshin", name: "جينشين إمباكت (Genshin)", badge: "✨ كريستال رسمي", banner: "https://upload.wikimedia.org/wikipedia/en/thumb/5/5d/Genshin_Impact_logo.svg/640px-Genshin_Impact_logo.svg.png", icon: "https://upload.wikimedia.org/wikipedia/en/thumb/5/5d/Genshin_Impact_logo.svg/200px-Genshin_Impact_logo.svg.png", requireZone: true, packages: [{ name: "60 كريستال", price: 65 }, { name: "300+30 كريستال", price: 270 }, { name: "980+110 كريستال", price: 820 }, { name: "1980+260 كريستال", price: 1600 }] },
+      { id: "codm", name: "كول أوف ديوتي (CODM)", badge: "🎖️ CP فوري", banner: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Call_of_Duty_Mobile_logo.png/640px-Call_of_Duty_Mobile_logo.png", icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Call_of_Duty_Mobile_logo.png/200px-Call_of_Duty_Mobile_logo.png", requireZone: false, packages: [{ name: "80 CP", price: 65 }, { name: "420 CP", price: 270 }, { name: "880 CP", price: 540 }, { name: "2400 CP", price: 1350 }] },
+      { id: "valorant", name: "فالورانت (Valorant)", badge: "🎯 نقاط VP", banner: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Valorant_logo_-_pink_color_version.svg/640px-Valorant_logo_-_pink_color_version.svg.png", icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Valorant_logo_-_pink_color_version.svg/200px-Valorant_logo_-_pink_color_version.svg.png", requireZone: false, packages: [{ name: "475 VP", price: 270 }, { name: "1000 VP", price: 540 }, { name: "2050 VP", price: 1050 }, { name: "3650 VP", price: 1800 }] },
+      { id: "fortnite", name: "فورتنايت (V-Bucks)", badge: "⚡ في بوكس", banner: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/FortniteLogo.svg/640px-FortniteLogo.svg.png", icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/FortniteLogo.svg/200px-FortniteLogo.svg.png", requireZone: false, packages: [{ name: "1000 V-Bucks", price: 490 }, { name: "2800 V-Bucks", price: 1150 }, { name: "5000 V-Bucks", price: 1850 }] },
+      { id: "farlight84", name: "فارلايت 84 (Farlight)", badge: "🚀 شحن مباشر", banner: "https://upload.wikimedia.org/wikipedia/en/thumb/3/36/Farlight_84_logo.png/640px-Farlight_84_logo.png", icon: "https://upload.wikimedia.org/wikipedia/en/thumb/3/36/Farlight_84_logo.png/200px-Farlight_84_logo.png", requireZone: false, packages: [{ name: "60 ماسة", price: 65 }, { name: "300+30 ماسة", price: 270 }, { name: "680+70 ماسة", price: 540 }] },
+      { id: "wildrift", name: "وايلد ريفت (Wild Rift)", badge: "⚔️ Wild Cores", banner: "https://upload.wikimedia.org/wikipedia/en/thumb/0/04/League_of_Legends_Wild_Rift_logo.png/640px-League_of_Legends_Wild_Rift_logo.png", icon: "https://upload.wikimedia.org/wikipedia/en/thumb/0/04/League_of_Legends_Wild_Rift_logo.png/200px-League_of_Legends_Wild_Rift_logo.png", requireZone: false, packages: [{ name: "500 Wild Cores", price: 270 }, { name: "1050 Wild Cores", price: 540 }, { name: "2175 Wild Cores", price: 1050 }] },
+      { id: "arenabreakout", name: "أرينا بريك آوت (Arena)", badge: "🔫 Bonds فوري", banner: "https://upload.wikimedia.org/wikipedia/en/thumb/9/90/Arena_Breakout_logo.png/640px-Arena_Breakout_logo.png", icon: "https://upload.wikimedia.org/wikipedia/en/thumb/9/90/Arena_Breakout_logo.png/200px-Arena_Breakout_logo.png", requireZone: false, packages: [{ name: "60 Bonds", price: 65 }, { name: "310 Bonds", price: 270 }, { name: "630 Bonds", price: 540 }] },
+      { id: "honorofkings", name: "هونر أوف كينجز (HoK)", badge: "👑 توكنز فوري", banner: "https://upload.wikimedia.org/wikipedia/en/thumb/0/02/Honor_of_Kings_logo.png/640px-Honor_of_Kings_logo.png", icon: "https://upload.wikimedia.org/wikipedia/en/thumb/0/02/Honor_of_Kings_logo.png/200px-Honor_of_Kings_logo.png", requireZone: false, packages: [{ name: "80 توكنز", price: 65 }, { name: "240+17 توكنز", price: 185 }, { name: "400+32 توكنز", price: 290 }] },
+      { id: "top_eleven", name: "توب إلفن (Top Eleven)", badge: "⚽ توكنز المدرب", banner: "https://upload.wikimedia.org/wikipedia/en/thumb/9/9c/Top_Eleven_Football_Manager_logo.png/640px-Top_Eleven_Football_Manager_logo.png", icon: "https://upload.wikimedia.org/wikipedia/en/thumb/9/9c/Top_Eleven_Football_Manager_logo.png/200px-Top_Eleven_Football_Manager_logo.png", requireZone: false, packages: [{ name: "37 توكنز", price: 130 }, { name: "80 توكنز", price: 270 }, { name: "176 توكنز", price: 540 }] }
     ];
 
-    // 2. محرك السوشيال ميديا الشامل (18 منصة بالكامل مع حساب الأسعار تلقائياً)
+    // 2. محرك السوشيال ميديا الشامل (18 منصة بالكامل مع الحساب التلقائي)
     const smmData = [
       { name: "تيك توك", icon: "🎵", categories: [{ name: "متابعون", services: [{ id: 101, name: "متابعون حقيقيون ضمان 30 يوم", rateUSD: 1.2, min: 100, max: 50000, speed: "سريع", guarantee: "30 يوم" }]}, { name: "لايكات", services: [{ id: 102, name: "لايكات فورية بدون نقصان", rateUSD: 0.45, min: 100, max: 100000, speed: "فوري", guarantee: "مدى الحياة" }]}] },
       { name: "إنستغرام", icon: "📸", categories: [{ name: "متابعون", services: [{ id: 201, name: "متابعون بجودة عالية ضمان", rateUSD: 1.1, min: 100, max: 100000, speed: "سريع", guarantee: "30 يوم" }]}, { name: "لايكات ريلز", services: [{ id: 202, name: "لايكات ريلز ومنشورات", rateUSD: 0.35, min: 50, max: 50000, speed: "فوري", guarantee: "ثابت" }]}] },
@@ -704,14 +708,14 @@
 
     // 3. تطبيقات البث المباشر (8 برامج كاملة بالـ ID)
     const liveApps = [
-      { id: "bigo", name: "بيجو لايف (BIGO)", badge: "📹 بث فوري", banner: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=400&auto=format&fit=crop", packages: [{ n: "40 ماسة", p: 65 }, { n: "210 ماسة", p: 320 }, { n: "530 ماسة", p: 790 }] },
-      { id: "poppo", name: "بوبو لايف (Poppo)", badge: "👑 نقاط رسمية", banner: "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?q=80&w=400&auto=format&fit=crop", packages: [{ n: "7,000 نقطة", p: 65 }, { n: "35,000 نقطة", p: 310 }, { n: "70,000 نقطة", p: 610 }] },
-      { id: "tango", name: "تانجو لايف (Tango)", badge: "⚡ كوينز فورية", banner: "https://images.unsplash.com/photo-1511512578047-dfb367046420?q=80&w=400&auto=format&fit=crop", packages: [{ n: "120 كوينز", p: 65 }, { n: "600 كوينز", p: 310 }, { n: "1200 كوينز", p: 610 }] },
-      { id: "likee", name: "لايكي (Likee)", badge: "💎 ماسات رسمية", banner: "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?q=80&w=400&auto=format&fit=crop", packages: [{ n: "45 ماسة", p: 65 }, { n: "220 ماسة", p: 310 }, { n: "450 ماسة", p: 610 }] },
-      { id: "chamet", name: "تشاميت (Chamet)", badge: "🔥 كوينز لايف", banner: "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?q=80&w=400&auto=format&fit=crop", packages: [{ n: "10,000 نقطة", p: 85 }, { n: "50,000 نقطة", p: 390 }] },
-      { id: "yalla", name: "يلا لودو (Yalla Ludo)", badge: "🎲 كوينز وماسات", banner: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=400&auto=format&fit=crop", packages: [{ n: "100 ماسة", p: 65 }, { n: "520 ماسة", p: 290 }, { n: "1050 ماسة", p: 580 }] },
-      { id: "sugo", name: "سوجو (SUGO)", badge: "🌟 عملات صوتية", banner: "https://images.unsplash.com/photo-1563089145-599997674d42?q=80&w=400&auto=format&fit=crop", packages: [{ n: "300 كوينز", p: 65 }, { n: "1500 كوينز", p: 310 }] },
-      { id: "meyo", name: "ميو (MeYo)", badge: "💬 شات وصوت", banner: "https://images.unsplash.com/photo-1580234811497-9df7fd2f357e?q=80&w=400&auto=format&fit=crop", packages: [{ n: "150 ذهب", p: 65 }, { n: "750 ذهب", p: 310 }] }
+      { id: "bigo", name: "بيجو لايف (BIGO)", badge: "📹 بث فوري", banner: "https://upload.wikimedia.org/wikipedia/en/thumb/e/e0/Bigo_Live_logo.png/400px-Bigo_Live_logo.png", packages: [{ n: "40 ماسة", p: 65 }, { n: "210 ماسة", p: 320 }, { n: "530 ماسة", p: 790 }] },
+      { id: "poppo", name: "بوبو لايف (Poppo)", badge: "👑 نقاط رسمية", banner: "https://play-lh.googleusercontent.com/Fw_wLp9-8hKjKkUuJ0rK=w400-h200", packages: [{ n: "7,000 نقطة", p: 65 }, { n: "35,000 نقطة", p: 310 }, { n: "70,000 نقطة", p: 610 }] },
+      { id: "tango", name: "تانجو لايف (Tango)", badge: "⚡ كوينز فورية", banner: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Tango_Logo.svg/400px-Tango_Logo.svg.png", packages: [{ n: "120 كوينز", p: 65 }, { n: "600 كوينز", p: 310 }, { n: "1200 كوينز", p: 610 }] },
+      { id: "likee", name: "لايكي (Likee)", badge: "💎 ماسات رسمية", banner: "https://upload.wikimedia.org/wikipedia/en/thumb/f/f6/Likee_app_logo.png/400px-Likee_app_logo.png", packages: [{ n: "45 ماسة", p: 65 }, { n: "220 ماسة", p: 310 }, { n: "450 ماسة", p: 610 }] },
+      { id: "chamet", name: "تشاميت (Chamet)", badge: "🔥 كوينز لايف", banner: "https://play-lh.googleusercontent.com/kO1L5pQzJ0rK=w400-h200", packages: [{ n: "10,000 نقطة", p: 85 }, { n: "50,000 نقطة", p: 390 }] },
+      { id: "yalla", name: "يلا لودو (Yalla Ludo)", badge: "🎲 كوينز وماسات", banner: "https://upload.wikimedia.org/wikipedia/en/thumb/1/1a/Yalla_Ludo_logo.png/400px-Yalla_Ludo_logo.png", packages: [{ n: "100 ماسة", p: 65 }, { n: "520 ماسة", p: 290 }, { n: "1050 ماسة", p: 580 }] },
+      { id: "sugo", name: "سوجو (SUGO)", badge: "🌟 عملات صوتية", banner: "https://play-lh.googleusercontent.com/L7p_12KkUuJ0=w400-h200", packages: [{ n: "300 كوينز", p: 65 }, { n: "1500 كوينز", p: 310 }] },
+      { id: "meyo", name: "ميو (MeYo)", badge: "💬 شات وصوت", banner: "https://play-lh.googleusercontent.com/P5r_09JkUuJ0=w400-h200", packages: [{ n: "150 ذهب", p: 65 }, { n: "750 ذهب", p: 310 }] }
     ];
 
     // 4. بطاقات VCC الدولية
@@ -722,55 +726,55 @@
       { name: "بطاقة VCC دولية 100$", price: 6850, desc: "شحن إعلانات جوجل وفيسبوك بأرصدة عالية" }
     ];
 
-    // 5. أدوات وبرامج المصممين (11 أداة كاملة)
+    // 5. أدوات وبرامج المصممين (11 أداة بالشعارات الرسمية)
     const productivityData = [
-      { name: "Canva Pro (كانفا برو)", banner: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=400&auto=format&fit=crop", p: "اشتراك سنوي رسمي", price: 290, badge: "تصميم" },
-      { name: "Notion Plus (نوشن)", banner: "https://images.unsplash.com/photo-1517842645767-c639042777db?q=80&w=400&auto=format&fit=crop", p: "اشتراك 6 شهور", price: 350, badge: "إنتاجية" },
-      { name: "CapCut Pro (كاب كات)", banner: "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?q=80&w=400&auto=format&fit=crop", p: "اشتراك شهر (كمبيوتر وموبايل)", price: 180, badge: "مونتاج" },
-      { name: "ChatGPT Plus (شات جي بي تي)", banner: "https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=400&auto=format&fit=crop", p: "اشتراك شهري خاص", price: 950, badge: "ذكاء اصطناعي" },
-      { name: "Figma Professional", banner: "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?q=80&w=400&auto=format&fit=crop", p: "اشتراك سنوي للمصممين", price: 450, badge: "UI/UX" },
-      { name: "Adobe Creative Cloud", banner: "https://images.unsplash.com/photo-1626785774573-4b799315345d?q=80&w=400&auto=format&fit=crop", p: "باقة أدوبي كاملة شهر", price: 650, badge: "تصميم" },
-      { name: "Freepik Premium", banner: "https://images.unsplash.com/photo-1542744094-24638eff58bb?q=80&w=400&auto=format&fit=crop", p: "اشتراك شهر تحميل غير محدود", price: 260, badge: "أصول رقمية" },
-      { name: "Envato Elements", banner: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=400&auto=format&fit=crop", p: "اشتراك شهر كامل", price: 420, badge: "أصول رقمية" },
-      { name: "Microsoft 365 + 1TB", banner: "https://images.unsplash.com/photo-1531403009284-440f080d1e12?q=80&w=400&auto=format&fit=crop", p: "سنة كاملة مع أوفيس وأون درايف", price: 320, badge: "أوفيس" },
-      { name: "Grammarly Premium", banner: "https://images.unsplash.com/photo-1455390582262-044cdead277a?q=80&w=400&auto=format&fit=crop", p: "اشتراك 3 شهور خاص", price: 280, badge: "تدقيق" },
-      { name: "Duolingo Super (دولينجو)", banner: "https://images.unsplash.com/photo-1546410531-bb4caa6b424d?q=80&w=400&auto=format&fit=crop", p: "اشتراك عائلي سنوي", price: 190, badge: "لغات" }
+      { name: "Canva Pro (كانفا برو)", banner: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Canva_icon_2021.svg/400px-Canva_icon_2021.svg.png", p: "اشتراك سنوي رسمي", price: 290, badge: "تصميم" },
+      { name: "Notion Plus (نوشن)", banner: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Notion-logo.svg/400px-Notion-logo.svg.png", p: "اشتراك 6 شهور", price: 350, badge: "إنتاجية" },
+      { name: "CapCut Pro (كاب كات)", banner: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/CapCut_Logo.svg/400px-CapCut_Logo.svg.png", p: "اشتراك شهر (كمبيوتر وموبايل)", price: 180, badge: "مونتاج" },
+      { name: "ChatGPT Plus (شات جي بي تي)", banner: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/ChatGPT_logo.svg/400px-ChatGPT_logo.svg.png", p: "اشتراك شهري خاص", price: 950, badge: "ذكاء اصطناعي" },
+      { name: "Figma Professional", banner: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Figma-logo.svg/400px-Figma-logo.svg.png", p: "اشتراك سنوي للمصممين", price: 450, badge: "UI/UX" },
+      { name: "Adobe Creative Cloud", banner: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Adobe_Creative_Cloud_rainbow_icon.svg/400px-Adobe_Creative_Cloud_rainbow_icon.svg.png", p: "باقة أدوبي كاملة شهر", price: 650, badge: "تصميم" },
+      { name: "Freepik Premium", banner: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Freepik_logo.svg/400px-Freepik_logo.svg.png", p: "اشتراك شهر تحميل غير محدود", price: 260, badge: "أصول رقمية" },
+      { name: "Envato Elements", banner: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Envato_Logo.svg/400px-Envato_Logo.svg.png", p: "اشتراك شهر كامل", price: 420, badge: "أصول رقمية" },
+      { name: "Microsoft 365 + 1TB", banner: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Microsoft_365_%282022%29.svg/400px-Microsoft_365_%282022%29.svg.png", p: "سنة كاملة مع أوفيس وأون درايف", price: 320, badge: "أوفيس" },
+      { name: "Grammarly Premium", banner: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Grammarly_logo.svg/400px-Grammarly_logo.svg.png", p: "اشتراك 3 شهور خاص", price: 280, badge: "تدقيق" },
+      { name: "Duolingo Super (دولينجو)", banner: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Duolingo_2019_logo.svg/400px-Duolingo_2019_logo.svg.png", p: "اشتراك عائلي سنوي", price: 190, badge: "لغات" }
     ];
 
-    // 6. اشتراكات الترفيه والبث المشفر (11 خدمة كاملة)
+    // 6. اشتراكات الترفيه والبث المشفر (11 خدمة بالشعارات الرسمية المعترف بها)
     const entertainmentData = [
-      { name: "Netflix Premium 4K", banner: "https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?q=80&w=400&auto=format&fit=crop", p: "شاشة خاصة شهر كامل 4K", price: 140, badge: "أفلام ومسلسلات" },
-      { name: "شاهد VIP (Shahid)", banner: "https://images.unsplash.com/photo-1522869635100-9f4c5e86aa37?q=80&w=400&auto=format&fit=crop", p: "باقة شاملة شهر", price: 110, badge: "بث عربي" },
-      { name: "YouTube Premium", banner: "https://images.unsplash.com/photo-1611162616475-46b635cb6868?q=80&w=400&auto=format&fit=crop", p: "بدون إعلانات على إيميلك (شهر)", price: 65, badge: "يوتيوب" },
-      { name: "Spotify Premium", banner: "https://images.unsplash.com/photo-1614680376593-902f749f7ffc?q=80&w=400&auto=format&fit=crop", p: "حساب شخصي 3 شهور", price: 160, badge: "موسيقى" },
-      { name: "OSN+ Premium", banner: "https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?q=80&w=400&auto=format&fit=crop", p: "اشتراك شهري مسلسلات HBO", price: 130, badge: "أفلام HBO" },
-      { name: "Watch It (واتش إت)", banner: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?q=80&w=400&auto=format&fit=crop", p: "شاشة خاصة شهر كامل", price: 90, badge: "بث مصري" },
-      { name: "Disney+ (ديزني بلس)", banner: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=400&auto=format&fit=crop", p: "شاشة خاصة شهر 4K", price: 135, badge: "عالمي" },
-      { name: "Amazon Prime Video", banner: "https://images.unsplash.com/photo-1586899028174-e7098604235b?q=80&w=400&auto=format&fit=crop", p: "اشتراك شهري خاص", price: 95, badge: "أمازون" },
-      { name: "Anghami Plus (أنغامي)", banner: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=400&auto=format&fit=crop", p: "اشتراك 3 شهور بدون إعلانات", price: 120, badge: "موسيقى" },
-      { name: "IPTV 4K Ultra", banner: "https://images.unsplash.com/photo-1461151304267-38535e780c79?q=80&w=400&auto=format&fit=crop", p: "سيرفر سنوي لجميع القنوات المشفرة", price: 550, badge: "قنوات فضائية" },
-      { name: "TOD / beIN Connect", banner: "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=400&auto=format&fit=crop", p: "باقة الرياضة المباشرة شهر", price: 290, badge: "مباريات حية" }
+      { name: "Netflix Premium 4K", banner: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Netflix_2015_logo.svg/400px-Netflix_2015_logo.svg.png", p: "شاشة خاصة شهر كامل 4K", price: 140, badge: "أفلام ومسلسلات" },
+      { name: "شاهد VIP (Shahid)", banner: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/26/Shahid_VIP_Logo.png/400px-Shahid_VIP_Logo.png", p: "باقة شاملة شهر", price: 110, badge: "بث عربي" },
+      { name: "YouTube Premium", banner: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/YouTube_Logo_2017.svg/400px-YouTube_Logo_2017.svg.png", p: "بدون إعلانات على إيميلك (شهر)", price: 65, badge: "يوتيوب" },
+      { name: "Spotify Premium", banner: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/19/Spotify_logo_without_text.svg/400px-Spotify_logo_without_text.svg.png", p: "حساب شخصي 3 شهور", price: 160, badge: "موسيقى" },
+      { name: "OSN+ Premium", banner: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/OSN%2B_Logo.png/400px-OSN%2B_Logo.png", p: "اشتراك شهري مسلسلات HBO", price: 130, badge: "أفلام HBO" },
+      { name: "Watch It (واتش إت)", banner: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/WATCH_IT_logo.png/400px-WATCH_IT_logo.png", p: "شاشة خاصة شهر كامل", price: 90, badge: "بث مصري" },
+      { name: "Disney+ (ديزني بلس)", banner: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Disney%2B_logo.svg/400px-Disney%2B_logo.svg.png", p: "شاشة خاصة شهر 4K", price: 135, badge: "عالمي" },
+      { name: "Amazon Prime Video", banner: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Amazon_Prime_Video_logo.svg/400px-Amazon_Prime_Video_logo.svg.png", p: "اشتراك شهري خاص", price: 95, badge: "أمازون" },
+      { name: "Anghami Plus (أنغامي)", banner: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Anghami_Logo_2022.svg/400px-Anghami_Logo_2022.svg.png", p: "اشتراك 3 شهور بدون إعلانات", price: 120, badge: "موسيقى" },
+      { name: "IPTV 4K Ultra", banner: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Smart_IPTV_logo.png/400px-Smart_IPTV_logo.png", p: "سيرفر سنوي لجميع القنوات المشفرة", price: 550, badge: "قنوات فضائية" },
+      { name: "TOD / beIN Connect", banner: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/TOD_TV_Logo.png/400px-TOD_TV_Logo.png", p: "باقة الرياضة المباشرة شهر", price: 290, badge: "مباريات حية" }
     ];
 
-    // 7. الذكاء الاصطناعي و الـ APIs (9 خدمات كاملة)
+    // 7. الذكاء الاصطناعي و الـ APIs (9 خدمات بشعاراتها الرسمية)
     const aiData = [
-      { name: "Claude Pro (Anthropic)", banner: "https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=400&auto=format&fit=crop", p: "اشتراك شهري خاص ومفعل", price: 950, badge: "Claude 3.5" },
-      { name: "CODEX & GitHub Copilot", banner: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=400&auto=format&fit=crop", p: "اشتراك شهر كامل للمبرمجين", price: 380, badge: "برمجة" },
-      { name: "Midjourney Standard", banner: "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?q=80&w=400&auto=format&fit=crop", p: "توليد صور ذكاء اصطناعي شهر", price: 890, badge: "توليد صور" },
-      { name: "OpenAI API Keys ($20)", banner: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=400&auto=format&fit=crop", p: "مفتاح API رسمي مشحون $20", price: 1250, badge: "API جاهز" },
-      { name: "Claude Console API ($25)", banner: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=400&auto=format&fit=crop", p: "رصيد شحن رسمي لمطوري Claude", price: 1550, badge: "Anthropic API" },
-      { name: "Cursor AI Pro", banner: "https://images.unsplash.com/photo-1542838132-92c53300491e?q=80&w=400&auto=format&fit=crop", p: "محرر الأكواد الذكي شهر كامل", price: 920, badge: "IDE ذكي" },
-      { name: "Runway Gen-3 Alpha", banner: "https://images.unsplash.com/photo-1536240478700-b869070f9279?q=80&w=400&auto=format&fit=crop", p: "توليد فيديو بالذكاء الاصطناعي", price: 780, badge: "فيديو AI" },
-      { name: "ElevenLabs Voice AI", banner: "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?q=80&w=400&auto=format&fit=crop", p: "توليد تعليق صوتي واقعي 30K حرف", price: 450, badge: "صوت AI" },
-      { name: "Perplexity Pro AI", banner: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?q=80&w=400&auto=format&fit=crop", p: "محرك البحث الذكي اشتراك شهر", price: 420, badge: "أبحاث AI" }
+      { name: "Claude Pro (Anthropic)", banner: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Anthropic_logo.svg/400px-Anthropic_logo.svg.png", p: "اشتراك شهري خاص ومفعل", price: 950, badge: "Claude 3.5" },
+      { name: "CODEX & GitHub Copilot", banner: "https://github.githubassets.com/images/modules/site/copilot/copilot.png", p: "اشتراك شهر كامل للمبرمجين", price: 380, badge: "برمجة" },
+      { name: "Midjourney Standard", banner: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Midjourney_Emblem.png/400px-Midjourney_Emblem.png", p: "توليد صور ذكاء اصطناعي شهر", price: 890, badge: "توليد صور" },
+      { name: "OpenAI API Keys ($20)", banner: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/OpenAI_Logo.svg/400px-OpenAI_Logo.svg.png", p: "مفتاح API رسمي مشحون $20", price: 1250, badge: "API جاهز" },
+      { name: "Claude Console API ($25)", banner: "https://upload.wikimedia.org/wikipedia/commons/thumb/7/78/Anthropic_logo.svg/400px-Anthropic_logo.svg.png", p: "رصيد شحن رسمي لمطوري Claude", price: 1550, badge: "Anthropic API" },
+      { name: "Cursor AI Pro", banner: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Cursor_AI_logo.png/400px-Cursor_AI_logo.png", p: "محرر الأكواد الذكي شهر كامل", price: 920, badge: "IDE ذكي" },
+      { name: "Runway Gen-3 Alpha", banner: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/RunwayML_Logo.png/400px-RunwayML_Logo.png", p: "توليد فيديو بالذكاء الاصطناعي", price: 780, badge: "فيديو AI" },
+      { name: "ElevenLabs Voice AI", banner: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2d/ElevenLabs_logo.svg/400px-ElevenLabs_logo.svg.png", p: "توليد تعليق صوتي واقعي 30K حرف", price: 450, badge: "صوت AI" },
+      { name: "Perplexity Pro AI", banner: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Perplexity_AI_logo.svg/400px-Perplexity_AI_logo.svg.png", p: "محرك البحث الذكي اشتراك شهر", price: 420, badge: "أبحاث AI" }
     ];
 
     // وسائل الدفع الرسمية المعتمدة
     const paymentDetails = {
-      instapay: `<p class="font-bold text-emerald-400">⚡ عنوان الدفع اللحظي عبر InstaPay:</p><div class="bg-slate-900 p-2 rounded-xl border border-slate-700 flex justify-between items-center my-1 font-mono text-white text-xs"><span>migoai@instapay</span><button type="button" onclick="copyText('migoai@instapay', 'تم نسخ معرّف إنستاباي')" class="sky-btn text-[10px] px-2 py-0.5 rounded">نسخ</button></div><p class="text-[10px] text-gray-400">أو التحويل على رقم الهاتف: <b>01060934020</b> (باسم: صاهر محمد)</p>`,
-      vodafone: `<p class="font-bold text-rose-400">🔴 رقم محفظة فودافون كاش المعتمدة:</p><div class="bg-slate-900 p-2 rounded-xl border border-slate-700 flex justify-between items-center my-1 font-mono text-white text-xs"><span>01060934020</span><button type="button" onclick="copyText('01060934020', 'تم نسخ رقم فودافون كاش')" class="bg-rose-600 text-white text-[10px] px-2 py-0.5 rounded">نسخ</button></div><p class="text-[10px] text-gray-400">يرجى التأكد من تحويل المبلغ الصافي بدون خصم رسوم التحويل.</p>`,
-      etisalat: `<p class="font-bold text-emerald-400">🟢 رقم محفظة اتصالات كاش الرسمية:</p><div class="bg-slate-900 p-2 rounded-xl border border-slate-700 flex justify-between items-center my-1 font-mono text-white text-xs"><span>01150064560</span><button type="button" onclick="copyText('01150064560', 'تم نسخ رقم اتصالات كاش')" class="bg-emerald-600 text-white text-[10px] px-2 py-0.5 rounded">نسخ</button></div><p class="text-[10px] text-gray-400">التحويل فوري متاح من أي محفظة إلكترونية أخرى.</p>`,
-      binance: `<p class="font-bold text-amber-400">🟡 معرف بايننس باي Binance Pay ID:</p><div class="bg-slate-900 p-2 rounded-xl border border-slate-700 flex justify-between items-center my-1 font-mono text-white text-xs"><span>827163910</span><button type="button" onclick="copyText('827163910', 'تم نسخ Binance Pay ID')" class="bg-amber-500 text-slate-950 font-bold text-[10px] px-2 py-0.5 rounded">نسخ</button></div><p class="text-[10px] text-gray-400">العملة المقبولة: USDT (يتم حساب الدولار بسعر الصرف الحالي بالمتجر).</p>`
+      instapay: `<p class="font-bold text-emerald-400">⚡ عنوان الدفع اللحظي عبر InstaPay:</p><div class="bg-slate-900 p-2.5 rounded-xl border border-slate-700 flex justify-between items-center my-1.5 font-mono text-white text-xs"><span>migoai@instapay</span><button type="button" onclick="copyText('migoai@instapay', 'تم نسخ معرّف إنستاباي')" class="sky-btn text-[10px] px-2.5 py-1 rounded cursor-pointer">نسخ</button></div><p class="text-[10px] text-gray-400">أو التحويل على رقم الهاتف: <b class="text-white">01060934020</b> (باسم: صاهر محمد)</p>`,
+      vodafone: `<p class="font-bold text-rose-400">🔴 رقم محفظة فودافون كاش المعتمدة:</p><div class="bg-slate-900 p-2.5 rounded-xl border border-slate-700 flex justify-between items-center my-1.5 font-mono text-white text-xs"><span>01060934020</span><button type="button" onclick="copyText('01060934020', 'تم نسخ رقم فودافون كاش')" class="bg-rose-600 text-white text-[10px] px-2.5 py-1 rounded cursor-pointer">نسخ</button></div><p class="text-[10px] text-gray-400">يرجى التأكد من تحويل المبلغ الصافي بدون خصم رسوم التحويل.</p>`,
+      etisalat: `<p class="font-bold text-emerald-400">🟢 رقم محفظة اتصالات كاش الرسمية:</p><div class="bg-slate-900 p-2.5 rounded-xl border border-slate-700 flex justify-between items-center my-1.5 font-mono text-white text-xs"><span>01150064560</span><button type="button" onclick="copyText('01150064560', 'تم نسخ رقم اتصالات كاش')" class="bg-emerald-600 text-white text-[10px] px-2.5 py-1 rounded cursor-pointer">نسخ</button></div><p class="text-[10px] text-gray-400">التحويل فوري متاح من أي محفظة إلكترونية أخرى.</p>`,
+      binance: `<p class="font-bold text-amber-400">🟡 معرف بايننس باي Binance Pay ID:</p><div class="bg-slate-900 p-2.5 rounded-xl border border-slate-700 flex justify-between items-center my-1.5 font-mono text-white text-xs"><span>827163910</span><button type="button" onclick="copyText('827163910', 'تم نسخ Binance Pay ID')" class="bg-amber-500 text-slate-950 font-bold text-[10px] px-2.5 py-1 rounded cursor-pointer">نسخ</button></div><p class="text-[10px] text-gray-400">العملة المقبولة: USDT (يتم حساب السعر بالمعادل الرسمي).</p>`
     };
 
     let cart = [];
@@ -784,7 +788,6 @@
     let activeLiveApp = null;
     let activeLivePkg = null;
 
-    // تشغيل المتجر عند التحميل
     document.addEventListener("DOMContentLoaded", () => {
       initVisitorCounter();
       startPromoCountdown();
@@ -804,7 +807,6 @@
       switchSectionTab('games');
     });
 
-    // التبديل بين الأقسام دون تكدس
     function switchSectionTab(tabId) {
       const sections = ['games', 'coins', 'live', 'vcc', 'social', 'productivity', 'entertainment', 'ai'];
       sections.forEach(s => {
@@ -828,19 +830,20 @@
       });
     }
 
-    // عرض بطاقات الألعاب
     function renderGames() {
       const container = document.getElementById("gamesCardsContainer");
       if (!container) return;
       container.innerHTML = allGames.map(g => `
-        <div onclick="openGameCinematicModal('${g.id}')" class="service-card h-56 sm:h-64 cursor-pointer p-2.5 group hover:border-purple-500 transition-all">
-          <img src="${g.banner}" alt="${g.name}" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
-          <div class="absolute inset-0 bg-gradient-to-t from-[#07090e] via-[#07090e]/45 to-black/20"></div>
+        <div onclick="openGameCinematicModal('${g.id}')" class="poster-card h-56 sm:h-64 cursor-pointer p-2.5 group hover:border-purple-500 transition-all">
+          <div class="absolute inset-0 bg-slate-950 flex items-center justify-center p-3">
+            <img src="${g.banner}" alt="${g.name}" class="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105">
+          </div>
+          <div class="absolute inset-0 bg-gradient-to-t from-[#07090e] via-[#07090e]/40 to-transparent pointer-events-none"></div>
           <div class="relative z-10 flex justify-between items-center">
             <span class="bg-purple-600/90 text-white text-[9px] font-black px-2 py-0.5 rounded-full border border-purple-400/30">${g.badge}</span>
             <span class="text-[9px] text-amber-400 bg-black/60 px-1.5 py-0.5 rounded-md font-mono">5.0 ★</span>
           </div>
-          <div class="relative z-10 bg-slate-950/85 border border-white/10 px-2.5 py-2 rounded-xl text-right">
+          <div class="relative z-10 bg-slate-950/90 border border-white/10 px-2.5 py-2 rounded-xl text-right">
             <h3 class="text-xs font-black text-white truncate">${g.name}</h3>
             <div class="flex items-center justify-between mt-1 text-[10px]">
               <span class="text-gray-300">Top-Up</span>
@@ -976,7 +979,6 @@
       }
     }
 
-    // محرك السوشيال ميديا 18 منصة
     function initSMM() {
       const grid = document.getElementById("smmPlatformsGrid");
       if (!grid) return;
@@ -1058,14 +1060,13 @@
       proceedToCheckoutModal();
     }
 
-    // برامج البث المباشر (8 برامج) مع نافذة الـ ID المخصصة
     function renderLiveApps() {
       const container = document.getElementById("liveAppsContainer");
       container.innerHTML = liveApps.map(app => `
-        <div class="service-card p-3.5 space-y-3">
-          <div class="relative h-28 rounded-xl overflow-hidden border border-slate-800">
-            <img src="${app.banner}" alt="${app.name}" class="w-full h-full object-cover">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+        <div class="poster-card p-3 space-y-3">
+          <div class="relative h-28 rounded-xl overflow-hidden bg-slate-950 flex items-center justify-center p-2 border border-slate-800">
+            <img src="${app.banner}" alt="${app.name}" class="w-full h-full object-contain">
+            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none"></div>
             <span class="absolute top-2 right-2 bg-rose-600 text-white text-[9px] font-black px-2 py-0.5 rounded-full">${app.badge}</span>
             <div class="absolute bottom-2 right-2 font-black text-white text-xs">${app.name}</div>
           </div>
@@ -1126,7 +1127,6 @@
       }
     }
 
-    // كوينز تيك توك وتليجرام
     function renderTiktokAndTelegram() {
       const ttGrid = document.getElementById("tiktokCoinsGrid");
       const tgGrid = document.getElementById("telegramStarsGrid");
@@ -1148,11 +1148,10 @@
       `).join("");
     }
 
-    // بطاقات VCC
     function renderVcc() {
       const container = document.getElementById("vccCardsContainer");
       container.innerHTML = vccCards.map(card => `
-        <div class="service-card p-4 text-center border-amber-500/30">
+        <div class="poster-card p-4 text-center border-amber-500/30">
           <div>
             <span class="bg-amber-500/20 text-amber-300 text-[9px] font-black px-2.5 py-0.5 rounded-full mb-2 inline-block">فيزا إلكترونية</span>
             <h3 class="text-sm font-black text-white">${card.name}</h3>
@@ -1194,27 +1193,26 @@
       else showToast(`🛒 تمت إضافة ${name} إلى السلة`, "success");
     }
 
-    // إضافة الاشتراكات والأدوات مباشرة للسلة بدون Prompt
     function addToCartDirect(title, pkg, price) {
       cart.push({ title, package: pkg, price });
       updateCartUI();
-      showToast(`🛒 تمت إضافة "${title}" إلى السلة`, "success");
+      showToast(`🛒 تمت إضافة "${title}" إلى السلة بنجاح`, "success");
     }
 
-    // 11 أداة وتصميم (إضافة مباشرة للسلة)
     function renderProductivity() {
       const container = document.getElementById("productivityContainer");
       container.innerHTML = productivityData.map(item => `
-        <div class="service-card p-3 space-y-2.5">
-          <div class="relative h-24 rounded-xl overflow-hidden border border-slate-800">
-            <img src="${item.banner}" alt="${item.name}" class="w-full h-full object-cover">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+        <div class="poster-card p-3 space-y-2.5">
+          <div class="relative h-24 rounded-xl overflow-hidden bg-slate-950 flex items-center justify-center p-2.5 border border-slate-800">
+            <img src="${item.banner}" alt="${item.name}" class="w-full h-full object-contain">
             <span class="absolute top-2 right-2 bg-cyan-600 text-white text-[8px] font-black px-2 py-0.5 rounded-full">${item.badge}</span>
-            <div class="absolute bottom-2 right-2 font-black text-white text-xs truncate max-w-[90%]">${item.name}</div>
           </div>
-          <div class="flex justify-between items-center text-xs">
-            <span class="text-[10px] text-gray-400">${item.p}</span>
-            <span class="text-amber-400 font-mono font-bold">${item.price} ج.م</span>
+          <div>
+            <div class="font-black text-white text-xs truncate">${item.name}</div>
+            <div class="flex justify-between items-center text-xs mt-1">
+              <span class="text-[10px] text-gray-400">${item.p}</span>
+              <span class="text-amber-400 font-mono font-bold">${item.price} ج.م</span>
+            </div>
           </div>
           <div class="grid grid-cols-2 gap-1.5 pt-1">
             <button type="button" onclick="addToCartDirect('${item.name}', '${item.p}', ${item.price})" class="bg-slate-800 hover:bg-slate-700 text-white font-bold py-1.5 rounded-xl text-xs transition border border-slate-700 cursor-pointer">أضف للسلة 🛒</button>
@@ -1224,20 +1222,20 @@
       `).join("");
     }
 
-    // 11 خدمة ترفيه وبث (إضافة مباشرة للسلة)
     function renderEntertainment() {
       const container = document.getElementById("entertainmentCardsContainer");
       container.innerHTML = entertainmentData.map(item => `
-        <div class="service-card p-3 space-y-2.5 border-purple-900/40">
-          <div class="relative h-24 rounded-xl overflow-hidden border border-slate-800">
-            <img src="${item.banner}" alt="${item.name}" class="w-full h-full object-cover">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+        <div class="poster-card p-3 space-y-2.5 border-purple-900/40">
+          <div class="relative h-24 rounded-xl overflow-hidden bg-slate-950 flex items-center justify-center p-2.5 border border-slate-800">
+            <img src="${item.banner}" alt="${item.name}" class="w-full h-full object-contain">
             <span class="absolute top-2 right-2 bg-purple-600 text-white text-[8px] font-black px-2 py-0.5 rounded-full">${item.badge}</span>
-            <div class="absolute bottom-2 right-2 font-black text-white text-xs truncate max-w-[90%]">${item.name}</div>
           </div>
-          <div class="flex justify-between items-center text-xs">
-            <span class="text-[10px] text-gray-400">${item.p}</span>
-            <span class="text-amber-400 font-mono font-bold">${item.price} ج.م</span>
+          <div>
+            <div class="font-black text-white text-xs truncate">${item.name}</div>
+            <div class="flex justify-between items-center text-xs mt-1">
+              <span class="text-[10px] text-gray-400">${item.p}</span>
+              <span class="text-amber-400 font-mono font-bold">${item.price} ج.م</span>
+            </div>
           </div>
           <div class="grid grid-cols-2 gap-1.5 pt-1">
             <button type="button" onclick="addToCartDirect('${item.name}', '${item.p}', ${item.price})" class="bg-slate-800 hover:bg-slate-700 text-white font-bold py-1.5 rounded-xl text-xs transition border border-slate-700 cursor-pointer">أضف للسلة 🛒</button>
@@ -1247,20 +1245,20 @@
       `).join("");
     }
 
-    // 9 خدمات ذكاء اصطناعي و APIs (إضافة مباشرة للسلة)
     function renderAI() {
       const container = document.getElementById("aiCardsContainer");
       container.innerHTML = aiData.map(item => `
-        <div class="service-card p-3 space-y-2.5 border-indigo-900/40">
-          <div class="relative h-24 rounded-xl overflow-hidden border border-slate-800">
-            <img src="${item.banner}" alt="${item.name}" class="w-full h-full object-cover">
-            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+        <div class="poster-card p-3 space-y-2.5 border-indigo-900/40">
+          <div class="relative h-24 rounded-xl overflow-hidden bg-slate-950 flex items-center justify-center p-2.5 border border-slate-800">
+            <img src="${item.banner}" alt="${item.name}" class="w-full h-full object-contain">
             <span class="absolute top-2 right-2 bg-indigo-600 text-white text-[8px] font-black px-2 py-0.5 rounded-full">${item.badge}</span>
-            <div class="absolute bottom-2 right-2 font-black text-white text-xs truncate max-w-[90%]">${item.name}</div>
           </div>
-          <div class="flex justify-between items-center text-xs">
-            <span class="text-[10px] text-gray-400">${item.p}</span>
-            <span class="text-amber-400 font-mono font-bold">${item.price} ج.م</span>
+          <div>
+            <div class="font-black text-white text-xs truncate">${item.name}</div>
+            <div class="flex justify-between items-center text-xs mt-1">
+              <span class="text-[10px] text-gray-400">${item.p}</span>
+              <span class="text-amber-400 font-mono font-bold">${item.price} ج.م</span>
+            </div>
           </div>
           <div class="grid grid-cols-2 gap-1.5 pt-1">
             <button type="button" onclick="addToCartDirect('${item.name}', '${item.p}', ${item.price})" class="bg-slate-800 hover:bg-slate-700 text-white font-bold py-1.5 rounded-xl text-xs transition border border-slate-700 cursor-pointer">أضف للسلة 🛒</button>
@@ -1287,7 +1285,6 @@
       `).join("");
     }
 
-    // إدارة السلة والكوبونات
     function updateCartUI() {
       document.getElementById("cartBadge").innerText = cart.length;
       const container = document.getElementById("cartItemsContainer");
@@ -1385,6 +1382,10 @@
       const modal = document.getElementById("checkoutModal");
       modal.classList.remove("hidden");
       modal.classList.add("flex");
+
+      // تفعيل إنستاباي افتراضياً فور فتح النافذة لإظهار الأرقام وزر التأكيد فوراً
+      const defaultBtn = document.getElementById("payBtn-instapay");
+      selectPaymentMethod('instapay', 'إنستاباي (InstaPay)', defaultBtn);
     }
 
     function closeCheckoutModal() {
@@ -1394,12 +1395,15 @@
 
     function selectPaymentMethod(key, title, btn) {
       selectedPayment = { key, title };
-      document.querySelectorAll(".pay-method-btn").forEach(b => b.classList.remove("border-sky-500", "bg-sky-950/40"));
-      btn.classList.add("border-sky-500", "bg-sky-950/40");
+      document.querySelectorAll(".pay-method-btn").forEach(b => {
+        b.classList.remove("border-sky-400", "bg-sky-950/60", "shadow-lg");
+      });
+      if (btn) {
+        btn.classList.add("border-sky-400", "bg-sky-950/60", "shadow-lg");
+      }
 
       const box = document.getElementById("checkoutDetailsBox");
       box.classList.remove("hidden");
-      document.getElementById("confirmPaymentBtn").classList.remove("hidden");
       document.getElementById("checkoutPayTitle").innerText = title;
       document.getElementById("checkoutPayContent").innerHTML = paymentDetails[key] || "";
     }
@@ -1424,7 +1428,7 @@
         return;
       }
 
-      const cartEmail = document.getElementById("cartUserEmail").value.trim();
+      const custEmail = document.getElementById("customerEmailInput").value.trim();
       const subtotal = cart.reduce((sum, i) => sum + i.price, 0);
       let discount = appliedCoupon ? (subtotal * appliedCoupon.percent) / 100 : 0;
       const total = Math.max(0, subtotal - discount);
@@ -1439,8 +1443,8 @@
         msg += `▫️ السعر: ${i.price} ج.م\n\n`;
       });
 
-      if (cartEmail) {
-        msg += `📧 *البريد الإلكتروني للعميل:* \`${cartEmail}\`\n`;
+      if (custEmail) {
+        msg += `📧 *بريد العميل للاستلام:* \`${custEmail}\`\n`;
       }
       if (appliedCoupon) {
         msg += `🎟️ *كود الخصم المطبق:* ${appliedCoupon.code} (${appliedCoupon.percent}%)\n`;
@@ -1459,7 +1463,6 @@
       showToast("✓ تم إرسال الطلب! جارٍ فتح محادثة الواتساب المباشرة", "success");
     }
 
-    // العداد والسلايدر والبحث
     function initVisitorCounter() {
       const el = document.getElementById("visitorCount");
       let count = localStorage.getItem("migo_visitors") || 14295;
