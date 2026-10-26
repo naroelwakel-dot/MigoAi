@@ -71,14 +71,15 @@ const purchaseTemplates = [
     { act: "طلب بطاقة افتراضية VCC (25$)", icon: '💳' },
     { act: "شحن 3850 UC ببجي موبايل", icon: '🎮' },
     { act: "تفعيل Claude Max 5x", icon: '🧠' },
-    { act: "تفعيل Notion Plus 12M", icon: '🎨' },
+    { act: "تفعيل اشتراك Watch IT", icon: '🎬' },
+    { act: "تفعيل باقة beIN Sports TOD", icon: '⚽' },
+    { act: "تفعيل Adobe Creative Cloud (شهر)", icon: '🎨' },
+    { act: "تفعيل Discord Nitro (سنة)", icon: '🎮' },
     { act: "شحن 500 نجمة تليجرام", icon: '⭐' },
     { act: "شحن 840 ماسة بيجو لايف", icon: '🔴' },
     { act: "تفعيل اشتراك Canva Pro Admin", icon: '🎨' },
-    { act: "شحن 550 كوينز eFootball", icon: '⚽' },
-    { act: "تفعيل API Claude 30D", icon: '🧠' },
-    { act: "تفعيل اشتراك Super Grok", icon: '🧠' },
-    { act: "تفعيل Cursor AI Pro", icon: '💻' }
+    { act: "شحن 1200 كوينز تانجو لايف", icon: '🔴' },
+    { act: "تفعيل GitHub Copilot", icon: '💻' }
 ];
 
 function triggerSocialProof() {
@@ -253,11 +254,13 @@ function renderCoinsAndStars() {
 }
 
 // ------------------------------------------------------------------------------
-// 2. Live Streaming Apps (All 6 Apps Fully Intact)
+// 2. Live Streaming Apps (All 8 Apps Intact: BIGO, Poppo, Tango, Likee, Chamet, Yalla, SUGO, MeYo)
 // ------------------------------------------------------------------------------
 const liveAppsCatalog = [
     { key: 'bigo', name: "بيجو لايف (BIGO Live)", tag: "شحن فوري بالـ ID", pkgs: [{l: "42 ماسة", p: 60}, {l: "210 ماسة", p: 295}, {l: "840 ماسة", p: 1180}, {l: "2100 ماسة", p: 2950}] },
     { key: 'poppo', name: "بوبو لايف (Poppo Live)", tag: "فوري بالمعرف", pkgs: [{l: "7,000 نقطة", p: 65}, {l: "35,000 نقطة", p: 310}, {l: "70,000 نقطة", p: 620}, {l: "140,000 نقطة", p: 1240}] },
+    { key: 'tango', name: "تانجو لايف (Tango Live)", tag: "كوينز البثوث المباشرة", pkgs: [{l: "1,200 كوينز", p: 190}, {l: "6,000 كوينز", p: 920}, {l: "12,500 كوينز", p: 1850}] },
+    { key: 'likee', name: "لايكي (Likee App)", tag: "ماسات لايكي الرسمية", pkgs: [{l: "84 ماسة", p: 110}, {l: "420 ماسة", p: 540}, {l: "840 ماسة", p: 1080}] },
     { key: 'chamet', name: "تشاميت (Chamet)", tag: "فوري بالـ ID", pkgs: [{l: "1,000 ماسة", p: 75}, {l: "5,000 ماسة", p: 360}, {l: "10,000 ماسة", p: 710}, {l: "20,000 ماسة", p: 1400}] },
     { key: 'yalla', name: "يلا لودو (Yalla Ludo)", tag: "الماس ودايموند", pkgs: [{l: "50 دايموند", p: 60}, {l: "250 دايموند", p: 285}, {l: "500 دايموند", p: 560}, {l: "1,000 دايموند", p: 1100}] },
     { key: 'sugo', name: "سوجو (SUGO)", tag: "عملات الدردشة", pkgs: [{l: "حزمة أساسية", p: 70}, {l: "حزمة متوسطة", p: 340}, {l: "حزمة VIP", p: 680}] },
@@ -400,20 +403,41 @@ function renderGames() {
 }
 
 // ------------------------------------------------------------------------------
-// 5. Productivity, Design & Digital Assets
+// 5. Productivity, Design & Digital Assets (Comprehensive Catalog)
 // ------------------------------------------------------------------------------
 const productivityProducts = [
+    // عائلة أدوبي كريتيف
+    { id: 'prod_adobe_cc_1m', name: 'Adobe Creative Cloud (شهر)', tag: 'جميع التطبيقات 20+', price: 450, desc: 'حساب رسمي يشمل Photoshop, Illustrator, Premiere ومساحة سحابية' },
+    { id: 'prod_adobe_cc_3m', name: 'Adobe Creative Cloud (3 شهور)', tag: 'الحزمة الكاملة VIP', price: 1250, desc: 'تفعيل رسمي على بريدك الشخصي بضمان كامل المدة' },
+    { id: 'prod_adobe_cc_12m', name: 'Adobe Creative Cloud (سنة)', tag: 'اشتراك سنوي شامل', price: 4200, desc: 'خطة جميع تطبيقات أدوبي الأصلية لمدة 12 شهر مع السحابة' },
+    { id: 'prod_adobe_sub_single', name: 'Adobe Single App (سنة)', tag: 'برنامج فردي مخصص', price: 1850, desc: 'تفعيل سنوي لبرنامج تختاره (Photoshop أو Illustrator)' },
+    { id: 'prod_adobe', name: 'Adobe Express (12 شهر)', tag: 'أدوبي للتصميم', price: 50, desc: 'تفعيل رسمي لسنة كاملة' },
+
+    // أدوات التصميم العالمية المستعادة
+    { id: 'prod_envato', name: 'Envato Elements (شهر)', tag: 'تحميلات غير محدودة', price: 580, desc: 'مكتبة القوالب، الفيديوهات، والمؤثرات الصوتية الشاملة للمصممين' },
+    { id: 'prod_freepik', name: 'Freepik Premium (شهر)', tag: 'بنك التصميم الأول', price: 340, desc: 'تحميل الفيكتور، الصور الحصرية وملفات PSD بدون حدود يومية' },
     { id: 'prod_canva_adm', name: 'Canva Pro Admin', tag: 'تحكم إداري كامل', price: 340, desc: 'موثق بالمستندات مع صلاحية إضافة أعضاء' },
+    { id: 'prod_canva_personal', name: 'Canva Pro (سنة على إيميلك)', tag: 'اشتراك سنوي فردي', price: 160, desc: 'تفعيل رسمي على بريدك الشخصي بضمان 365 يوم' },
     { id: 'prod_capcut_1m', name: 'CapCut Pro (شهر)', tag: 'جاهز وثابت 30 يوم', price: 110, desc: 'يدعم جهازين وضمان كامل' },
     { id: 'prod_capcut_6m', name: 'CapCut Pro (6 شهور)', tag: 'اشتراك 6 شهور', price: 680, desc: 'حساب ثابت نصف سنوي' },
     { id: 'prod_capcut_cred', name: 'CapCut Pro 1600 نقطة', tag: 'رصيد توليد AI', price: 140, desc: 'رصيد نقاط إضافي' },
+    { id: 'prod_framer', name: 'Framer AI (سنة)', tag: 'كود ترقية رسمي', price: 475, desc: 'خطة Basic السنوية لتصميم المواقع' },
+    { id: 'prod_figma', name: 'Figma Pro Edu (سنتين)', tag: 'اشتراك سنتين', price: 340, desc: 'أدوات التصميم والـ UI/UX كاملة' },
+
+    // أنظمة التشغيل، الإنتاجية والتدقيق
+    { id: 'prod_win_pro', name: 'مفتاح Windows 10/11 Pro أصلي', tag: 'مدى الحياة OEM', price: 190, desc: 'سيريال رقمي رسمي يربط بجهازك مدى الحياة مع التحديثات' },
+    { id: 'prod_office', name: 'Office 365 Plus (سنة)', tag: 'مايكروسوفت أوفيس', price: 45, desc: 'حزمة برامج كاملة مع سحابة OneDrive' },
+    { id: 'prod_grammarly', name: 'Grammarly Premium (سنة)', tag: 'تدقيق لغوي احترافي', price: 380, desc: 'تصحيح القواعد، النبرة، وفحص الاقتباس والسرقة الأدبية' },
     { id: 'prod_notion', name: 'Notion Plus (12 شهر)', tag: 'تسليم فوري Outlook', price: 115, desc: 'حساب مخصص ومفعل لسنة كاملة' },
     { id: 'prod_miro', name: 'Miro Lifetime Panel', tag: 'مدى الحياة', price: 680, desc: 'إدارة فريق رسمي حتى 100 عضو' },
     { id: 'prod_ilovepdf', name: 'iLovePDF Premium (سنة)', tag: 'شامل 2000 رصيد AI', price: 80, desc: 'توقيعات رقمية وتعديل كامل' },
-    { id: 'prod_framer', name: 'Framer AI (سنة)', tag: 'كود ترقية رسمي', price: 475, desc: 'خطة Basic السنوية لتصميم المواقع' },
-    { id: 'prod_figma', name: 'Figma Pro Edu (سنتين)', tag: 'اشتراك سنتين', price: 340, desc: 'أدوات التصميم والـ UI/UX كاملة' },
-    { id: 'prod_office', name: 'Office 365 Plus (سنة)', tag: 'مايكروسوفت أوفيس', price: 45, desc: 'حزمة برامج كاملة مع سحابة OneDrive' },
-    { id: 'prod_adobe', name: 'Adobe Express (12 شهر)', tag: 'أدوبي للتصميم', price: 50, desc: 'تفعيل لسنة كاملة' },
+
+    // الجيمينج والمحادثات
+    { id: 'prod_discord_nitro_m', name: 'Discord Nitro (شهر)', tag: 'مع 2 بوست سيرفر', price: 320, desc: 'إيموجي مخصص في كل مكان، ستريم 4K وبث بجودة فائقة' },
+    { id: 'prod_discord_nitro_y', name: 'Discord Nitro (سنة)', tag: 'اشتراك سنوي كامل', price: 2900, desc: 'تفعيل رسمي على حسابك لعام كامل مع كافة المميزات' },
+    { id: 'prod_xbox_pass', name: 'Xbox Game Pass Ultimate (شهر)', tag: 'PC & Console', price: 380, desc: 'مكتبة تضم أكثر من 400 لعبة تشمل EA Play والألعاب فور صدورها' },
+
+    // الحسابات والشبكات
     { id: 'prod_gmail', name: 'حسابات Gmail جاهزة', tag: 'مع أكواد الاسترداد', price: 55, desc: 'تسليم: البريد | الباسورد | كود 8 أرقام' },
     { id: 'prod_hotmail', name: 'حسابات Outlook / Hotmail', tag: 'جاهزة وفورية', price: 5, desc: 'إيميلات نظيفة للاستخدام الفوري' },
     { id: 'prod_vpn_nord', name: 'NordVPN (3 شهور)', tag: 'حماية وVPN', price: 210, desc: 'تشفير فائق وحماية للتصفح' },
@@ -442,15 +466,23 @@ function renderProductivity() {
 }
 
 // ------------------------------------------------------------------------------
-// 6. Entertainment & Streaming
+// 6. Entertainment & Streaming (Full Comprehensive Catalog)
 // ------------------------------------------------------------------------------
 const entertainmentProducts = [
-    { id: 'sub_netflix', name: 'Netflix Premium', label: 'حساب كامل برمز خاص', price: 310, desc: 'ضمان كامل طوال المدة' },
-    { id: 'sub_shahid', name: 'شاهد VIP', label: 'شهر واحد', price: 205, desc: 'أحدث المسلسلات بدون إعلانات' },
+    { id: 'sub_netflix', name: 'Netflix Premium', label: 'حساب كامل برمز خاص 4K', price: 310, desc: 'ضمان كامل طوال المدة' },
+    { id: 'sub_shahid', name: 'شاهد VIP', label: 'شهر واحد باقة المسلسلات', price: 205, desc: 'أحدث المسلسلات بدون إعلانات وبأعلى جودة' },
     { id: 'sub_prime', name: 'Prime Video (6 شهور)', label: 'وصول كامل للإيميل', price: 270, desc: 'حساب خاص بضمان شهرين' },
-    { id: 'sub_youtube', name: 'YouTube Premium', label: 'شهر واحد', price: 115, desc: 'تشغيل بالخلفية وبدون إعلانات' },
-    { id: 'sub_spotify', name: 'Spotify Premium', label: 'شهر واحد', price: 95, desc: 'موسيقى بجودة فائقة بدون فواصل' },
-    { id: 'sub_appletv', name: 'Apple TV (12 شهر)', label: 'سنة كاملة', price: 140, desc: 'وصول لمكتبة آبل سينما' }
+    { id: 'sub_youtube', name: 'YouTube Premium', label: 'شهر واحد على إيميلك', price: 115, desc: 'تشغيل بالخلفية وبدون إعلانات مع YT Music' },
+    { id: 'sub_spotify', name: 'Spotify Premium', label: 'شهر واحد حساب خاص', price: 95, desc: 'موسيقى بجودة فائقة بدون فواصل' },
+    { id: 'sub_appletv', name: 'Apple TV (12 شهر)', label: 'سنة كاملة', price: 140, desc: 'وصول لمكتبة آبل سينما الأصلية' },
+    
+    // الإضافات المستعادة
+    { id: 'sub_watchit', name: 'Watch IT (شهر)', label: 'المنصة المصرية الأولى', price: 120, desc: 'حساب رسمي لمتابعة الدراما المصرية الحصرية بدون فواصل' },
+    { id: 'sub_tod', name: 'TOD / beIN Sports (شهر)', label: 'الباقة الرياضية الشاملة', price: 480, desc: 'بث مباشر لجميع البطولات والدوريات العالمية بدون تقطيع' },
+    { id: 'sub_disney', name: 'Disney+ (شهر)', label: 'مارفل، ستار وورز وديزني', price: 210, desc: 'أحدث الأفلام والرسوم المتحركة بدقة 4K مع الترجمة والدبلجة' },
+    { id: 'sub_osn', name: 'OSN+ (شهر)', label: 'أعمال HBO الحصرية', price: 220, desc: 'مسلسلات House of the Dragon و The Last of Us بجودة فائقة' },
+    { id: 'sub_crunchyroll', name: 'Crunchyroll Mega Fan (شهر)', label: 'عالم الأنمي بالكامل', price: 95, desc: 'مشاهدة بدون إعلانات وتحميل أوفلاين بعد ساعة من العرض باليابان' },
+    { id: 'sub_anghami', name: 'Anghami Plus (شهر)', label: 'أنغامي الموسيقية الذهبية', price: 85, desc: 'تحميل وسماع بدون نت وتخطي لا نهائي للأغاني' }
 ];
 
 function renderEntertainment() {
@@ -472,7 +504,7 @@ function renderEntertainment() {
 }
 
 // ------------------------------------------------------------------------------
-// 7. AI & Developer APIs (Full Intact List)
+// 7. AI & Developer APIs (Full Intact Catalog)
 // ------------------------------------------------------------------------------
 const aiProducts = [
     // عائلة كلود (Claude AI)
@@ -489,14 +521,18 @@ const aiProducts = [
     { id: 'ai_api_codex50', name: 'API CODEX 50M Tokens', tag: 'توكنز برمجية 50M', price: 185, desc: 'صلاحية يومين مع دعم كامل' },
     { id: 'ai_api_codex100', name: 'API CODEX 100M Tokens', tag: 'توكنز برمجية 100M', price: 310, desc: 'صلاحية 3 أيام للمشاريع الكبيرة' },
 
-    // منصات الذكاء الاصطناعي الأخرى
-    { id: 'ai_super_grok', name: 'Super Grok (xAI)', tag: 'إيلون ماسك الذكي', price: 980, desc: 'اشتراك رسمي في أقوى نماذج Grok غير المقيدة' },
-    { id: 'ai_midjourney_std', name: 'Midjourney Standard', tag: 'توليد الصور الاحترافي', price: 1850, desc: 'ساعات Fast كاملة وتوليد صور غير محدود في Relax' },
-    { id: 'ai_midjourney_pro', name: 'Midjourney Pro', tag: 'وضع التخفي (Stealth)', price: 3700, desc: 'الوضع السري وحرية تجارية كاملة للمصممين' },
-    { id: 'ai_chatgpt', name: 'ChatGPT Plus (شهر)', tag: 'GPT-4o الأصلي', price: 480, desc: 'حساب مفعل بكامل مميزات التحليل وتوليد الصور' },
+    // محركات ومساعدات المطورين والبحث
+    { id: 'ai_github_copilot', name: 'GitHub Copilot (شهر)', tag: 'مساعد البرمجة الذكي', price: 420, desc: 'إكمال الأكواد البرمجية وتحليل الأخطاء داخل VS Code مباشرة' },
+    { id: 'ai_cursor_pro', name: 'Cursor AI Pro', tag: 'محرر المبرمجين الذكي', price: 1250, desc: 'أقوى IDE برمجي مدعوم بالذكاء الاصطناعي لكتابة المشاريع' },
+    { id: 'ai_chatgpt', name: 'ChatGPT Plus (شهر)', tag: 'GPT-4o الأصلي', price: 480, desc: 'حساب مفعل بكامل مميزات التحليل، التصفح وتوليد الصور DALL-E' },
     { id: 'ai_perplexity_pro', name: 'Perplexity Pro', tag: 'محرك البحث الذكي', price: 450, desc: 'بحث علمي وتحليلي متقدم مع Claude 3.5 و GPT-4o' },
-    { id: 'ai_cursor_pro', name: 'Cursor AI Pro', tag: 'محرر المبرمجين الذكي', price: 1250, desc: 'أقوى IDE برمجي مدعوم بالذكاء الاصطناعي' },
-    { id: 'ai_elevenlabs', name: 'ElevenLabs Creator', tag: 'دوبلاج وأصوات AI', price: 1350, desc: '100,000 حرف شهرياً واستنساخ الأصوات بدقة فائقة' },
+    { id: 'ai_super_grok', name: 'Super Grok (xAI)', tag: 'إيلون ماسك الذكي', price: 980, desc: 'اشتراك رسمي في أقوى نماذج Grok غير المقيدة' },
+
+    // الصوت، الموسيقى، والصور
+    { id: 'ai_midjourney_std', name: 'Midjourney Standard', tag: 'توليد الصور الاحترافي', price: 1850, desc: 'ساعات Fast كاملة وتوليد صور غير محدود في وضع Relax' },
+    { id: 'ai_midjourney_pro', name: 'Midjourney Pro', tag: 'وضع التخفي (Stealth)', price: 3700, desc: 'الوضع السري وحرية تجارية كاملة للمصممين والشركات' },
+    { id: 'ai_suno_pro', name: 'Suno AI Pro (شهر)', tag: 'إنتاج الأغاني والموسيقى', price: 620, desc: '2,500 نقطة (500 أغنية) مع حقوق الملكية التجارية الكاملة' },
+    { id: 'ai_elevenlabs', name: 'ElevenLabs Creator', tag: 'دوبلاج وأصوات AI', price: 1350, desc: '100,000 حرف شهرياً واستنساخ الأصوات بدقة بشرية فائقة' },
     { id: 'ai_muse', name: 'Muse AI', tag: 'توليد ومونتاج ذكي', price: 140, desc: 'حساب كامل مخصص للإنتاج المرئي' }
 ];
 
@@ -784,6 +820,8 @@ const GAMES_REGISTRY = [
     { key: 'codm', label: 'كول أوف ديوتي (Player ID)', hasZone: false },
     { key: 'bigo', label: 'بيجو لايف (BIGO ID)', hasZone: false },
     { key: 'poppo', label: 'بوبو لايف (Poppo ID)', hasZone: false },
+    { key: 'tango', label: 'تانجو لايف (Tango ID)', hasZone: false },
+    { key: 'likee', label: 'لايكي (Likee ID)', hasZone: false },
     { key: 'chamet', label: 'تشاميت (Chamet ID)', hasZone: false },
     { key: 'yalla', label: 'يلا لودو (User ID)', hasZone: false },
     { key: 'sugo', label: 'سوجو (SUGO ID)', hasZone: false },
@@ -806,7 +844,7 @@ function openPlayerIdModal(targetName, pkgLabel, price, isExpress = false, iconK
     const iconContainer = document.getElementById('modalTargetIcon');
     if (iconKey === 'tiktok') iconContainer.innerHTML = SVG_LOGOS.tiktok;
     else if (iconKey === 'telegram') iconContainer.innerHTML = SVG_LOGOS.telegram;
-    else if (['bigo', 'poppo', 'chamet', 'yalla', 'sugo', 'meyo'].includes(iconKey)) iconContainer.innerHTML = `<span class="text-2xl">🔴</span>`;
+    else if (['bigo', 'poppo', 'tango', 'likee', 'chamet', 'yalla', 'sugo', 'meyo'].includes(iconKey)) iconContainer.innerHTML = `<span class="text-2xl">🔴</span>`;
     else iconContainer.innerHTML = `<span class="text-2xl">🎮</span>`;
 
     document.getElementById('modalInputPlayerId').value = '';
@@ -816,7 +854,7 @@ function openPlayerIdModal(targetName, pkgLabel, price, isExpress = false, iconK
     const select = document.getElementById('modalSelectGame');
     const found = GAMES_REGISTRY.find(g => g.key === iconKey);
     select.value = found ? found.key : 'pubg';
-    select.disabled = true; // قفل القائمة لمنع تضارب السعر والخدمة
+    select.disabled = true; // قفل القائمة لحماية التوافق بين السعر واللعبة
     onModalGameSelectChange();
 
     const statusBox = document.getElementById('verifyStatusBox');
@@ -928,7 +966,7 @@ function expressCheckout(item) {
 }
 
 // ------------------------------------------------------------------------------
-// 10. Checkout & Complete Payment Gateways (Orange Cash Deleted 100%)
+// 10. Checkout & Complete Payment Gateways (Orange Cash Permanently Removed)
 // ------------------------------------------------------------------------------
 let selectedPayment = null;
 function proceedToCheckout() {
@@ -965,7 +1003,7 @@ function selectPaymentMethod(method, name, btnElement) {
     if (method === 'vodafone') content.innerHTML = `يرجى تحويل المبلغ لمحفظة فودافون كاش التالية:<br>${copyBtn('01020323432')}`;
     else if (method === 'instapay') content.innerHTML = `يرجى تحويل المبلغ عبر إنستاباي للحساب التالي:<br>${copyBtn('01146691073')}`;
     else if (method === 'etisalat') content.innerHTML = `يرجى تحويل المبلغ لمحفظة اتصالات كاش التالية:<br>${copyBtn('01146691073')}`;
-    else if (method === 'card') content.innerHTML = `الدفع عبر البطاقات البنكية متاح عبر البوابة الآمنة. سيتم تزويدك بالرابط فوراً على واتساب.`;
+    else if (method === 'card') content.innerHTML = `الدفع عبر البطاقات البنكية المباشرة متاح عبر البوابة الآمنة. سيتم تزويدك بالرابط فوراً على واتساب.`;
     else content.innerHTML = `الدفع عبر <b>${name}</b> متاح. اضغط على الزر وسنزودك برابط الفاتورة المباشر فوراً على واتساب.`;
 
     document.getElementById('confirmPaymentBtn').classList.remove('hidden');
@@ -995,12 +1033,12 @@ function finalizeOrderWhatsApp() {
     saveCartToStorage();
     closeCheckoutModal();
 
-    // التوجيه المباشر الآمن على جميع الهواتف
+    // التوجيه المباشر المضمون على الموبايل
     window.location.href = 'https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent(msg);
 }
 
 // ------------------------------------------------------------------------------
-// 11. Live Search (Including SMM Platforms)
+// 11. Live Search (All Categories & SMM Included)
 // ------------------------------------------------------------------------------
 function handleLiveSearch(query) {
     const dropdown = document.getElementById('searchResultsDropdown');
@@ -1028,16 +1066,16 @@ function handleLiveSearch(query) {
         }
     });
     productivityProducts.forEach(p => {
-        if (p.name.toLowerCase().includes(query) || p.desc.toLowerCase().includes(query)) results.push({ name: p.name, price: p.price, type: 'prod', item: p });
+        if (p.name.toLowerCase().includes(query) || p.desc.toLowerCase().includes(query) || p.tag.toLowerCase().includes(query)) results.push({ name: p.name, price: p.price, type: 'prod', item: p });
     });
     entertainmentProducts.forEach(e => {
-        if (e.name.toLowerCase().includes(query)) results.push({ name: e.name, price: e.price, type: 'ent', item: e });
+        if (e.name.toLowerCase().includes(query) || e.label.toLowerCase().includes(query) || e.desc.toLowerCase().includes(query)) results.push({ name: e.name, price: e.price, type: 'ent', item: e });
     });
     aiProducts.forEach(a => {
         if (a.name.toLowerCase().includes(query) || a.tag.toLowerCase().includes(query) || a.desc.toLowerCase().includes(query)) results.push({ name: a.name, price: a.price, type: 'ai', item: a });
     });
 
-    // البحث في خدمات السوشيال ميديا
+    // البحث في منصات وخدمات السوشيال ميديا
     smmPlatforms.forEach(p => {
         if (p.name.toLowerCase().includes(query) || query.includes(p.name.toLowerCase())) {
             p.categories.forEach(cat => {
