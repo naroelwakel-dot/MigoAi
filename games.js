@@ -1,5 +1,5 @@
 // ==============================================================================
-// قائمة الألعاب الرسمية الـ 18 بالكامل وسجل المعرفات
+// قائمة الألعاب الـ 18 الرسمية بالكامل وسجل المعرفات الشامل
 // ==============================================================================
 
 const allGames = [
@@ -29,14 +29,21 @@ const GAMES_REGISTRY = [
     { key: 'pubg', label: 'بابجي موبايل (PUBG Mobile)', hasZone: false },
     { key: 'freefire', label: 'فري فاير (Free Fire)', hasZone: false },
     { key: 'efootball', label: 'إي فوتبول (eFootball Konami ID)', hasZone: false },
-    { key: 'mlbb', label: 'موبايل ليجندز (Mobile Legends)', hasZone: true },
     { key: 'roblox', label: 'روبلوكس (Roblox)', hasZone: false },
     { key: 'pool8', label: '8 Ball Pool (Miniclip ID)', hasZone: false },
+    { key: 'mlbb', label: 'موبايل ليجندز (Mobile Legends)', hasZone: true },
     { key: 'clash', label: 'كلاش أوف كلانس (Player Tag)', hasZone: false },
     { key: 'fifa', label: 'فيفا موبايل (FC Mobile)', hasZone: false },
     { key: 'brawl', label: 'براول ستارز (Player Tag)', hasZone: false },
     { key: 'genshin', label: 'جينشين إمباكت (Genshin UID)', hasZone: true },
     { key: 'codm', label: 'كول أوف ديوتي (Player ID)', hasZone: false },
+    { key: 'valorant', label: 'فالورانت (VALORANT Riot ID)', hasZone: false },
+    { key: 'fortnite', label: 'فورتنايت (Fortnite Epic ID)', hasZone: false },
+    { key: 'farlight', label: 'فارلايت 84 (Farlight ID)', hasZone: false },
+    { key: 'wildrift', label: 'وايلد ريفت (Wild Rift Riot ID)', hasZone: false },
+    { key: 'arena', label: 'أرينا بريك آوت (Arena Breakout ID)', hasZone: false },
+    { key: 'honor', label: 'هونر أوف كينجز (Honor of Kings ID)', hasZone: false },
+    { key: 'topeleven', label: 'توب إلفن (Top Eleven Manager ID)', hasZone: false },
     { key: 'bigo', label: 'بيجو لايف (BIGO ID)', hasZone: false },
     { key: 'poppo', label: 'بوبو لايف (Poppo ID)', hasZone: false },
     { key: 'tango', label: 'تانجو لايف (Tango ID)', hasZone: false },
