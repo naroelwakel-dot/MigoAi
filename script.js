@@ -1,6 +1,6 @@
 // ==============================================================================
 // Migo AI Solution - Complete Store Logic & Engine
-// Currency: EGP (Rate: 1 USD = 62 EGP)
+// Currency: EGP (Exchange Rate: 1 USD = 62 EGP)
 // ==============================================================================
 
 const WHATSAPP_NUMBER = "201060934020";
@@ -472,7 +472,7 @@ function renderEntertainment() {
 }
 
 // ------------------------------------------------------------------------------
-// 7. AI & Developer APIs (COMPLETE RESTORED LIST - NO OMISSIONS)
+// 7. AI & Developer APIs (Full Intact List)
 // ------------------------------------------------------------------------------
 const aiProducts = [
     // عائلة كلود (Claude AI)
@@ -816,6 +816,7 @@ function openPlayerIdModal(targetName, pkgLabel, price, isExpress = false, iconK
     const select = document.getElementById('modalSelectGame');
     const found = GAMES_REGISTRY.find(g => g.key === iconKey);
     select.value = found ? found.key : 'pubg';
+    select.disabled = true; // قفل القائمة لمنع تضارب السعر والخدمة
     onModalGameSelectChange();
 
     const statusBox = document.getElementById('verifyStatusBox');
@@ -927,7 +928,7 @@ function expressCheckout(item) {
 }
 
 // ------------------------------------------------------------------------------
-// 10. Checkout & Complete Payment Gateways
+// 10. Checkout & Complete Payment Gateways (Orange Cash Deleted 100%)
 // ------------------------------------------------------------------------------
 let selectedPayment = null;
 function proceedToCheckout() {
@@ -964,18 +965,24 @@ function selectPaymentMethod(method, name, btnElement) {
     if (method === 'vodafone') content.innerHTML = `يرجى تحويل المبلغ لمحفظة فودافون كاش التالية:<br>${copyBtn('01020323432')}`;
     else if (method === 'instapay') content.innerHTML = `يرجى تحويل المبلغ عبر إنستاباي للحساب التالي:<br>${copyBtn('01146691073')}`;
     else if (method === 'etisalat') content.innerHTML = `يرجى تحويل المبلغ لمحفظة اتصالات كاش التالية:<br>${copyBtn('01146691073')}`;
-    else if (method === 'orange') content.innerHTML = `يرجى تحويل المبلغ لمحفظة أورنج كاش التالية:<br>${copyBtn('01200000000')}`;
-    else if (method === 'card') content.innerHTML = `الدفع عبر البطاقات البنكية المباشرة متاح عبر بوابة الدفع الآمنة. سيتم تزويدك برابط مباشر بالضغط على زر الواتساب.`;
+    else if (method === 'card') content.innerHTML = `الدفع عبر البطاقات البنكية متاح عبر البوابة الآمنة. سيتم تزويدك بالرابط فوراً على واتساب.`;
     else content.innerHTML = `الدفع عبر <b>${name}</b> متاح. اضغط على الزر وسنزودك برابط الفاتورة المباشر فوراً على واتساب.`;
 
     document.getElementById('confirmPaymentBtn').classList.remove('hidden');
 }
+
 function finalizeOrderWhatsApp() {
     if (!selectedPayment) return showToast('اختر وسيلة الدفع أولاً', 'error');
+    
+    const senderInput = document.getElementById('senderAccountInput');
+    const senderAcc = senderInput ? senderInput.value.trim() : '';
+    if (!senderAcc) return showToast('يرجى إدخال رقم المحفظة أو الحساب الذي قمت بالتحويل منه', 'error');
+
     const orderId = Math.floor(1000 + Math.random() * 9000);
     let msg = `السلام عليكم، أود تأكيد طلبي الجديد من Migo AI Solution\n`;
     msg += `*رقم الفاتورة:* #${orderId}\n`;
-    msg += `*طريقة الدفع:* ${selectedPayment}\n\n`;
+    msg += `*طريقة الدفع:* ${selectedPayment}\n`;
+    msg += `*الحساب المُحوّل منه:* ${senderAcc}\n\n`;
     msg += `*--- تفاصيل الطلب ---*\n`;
     cart.forEach((item, index) => {
         msg += `${index + 1}. *${item.name}*\n   - السعر: ${Number(item.price).toLocaleString()} ج.م\n   - البيانات: [${item.details}]\n`;
@@ -987,11 +994,13 @@ function finalizeOrderWhatsApp() {
     appliedCoupon = null;
     saveCartToStorage();
     closeCheckoutModal();
-    window.open('https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent(msg), '_blank');
+
+    // التوجيه المباشر الآمن على جميع الهواتف
+    window.location.href = 'https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent(msg);
 }
 
 // ------------------------------------------------------------------------------
-// 11. Live Search
+// 11. Live Search (Including SMM Platforms)
 // ------------------------------------------------------------------------------
 function handleLiveSearch(query) {
     const dropdown = document.getElementById('searchResultsDropdown');
@@ -1028,6 +1037,23 @@ function handleLiveSearch(query) {
         if (a.name.toLowerCase().includes(query) || a.tag.toLowerCase().includes(query) || a.desc.toLowerCase().includes(query)) results.push({ name: a.name, price: a.price, type: 'ai', item: a });
     });
 
+    // البحث في خدمات السوشيال ميديا
+    smmPlatforms.forEach(p => {
+        if (p.name.toLowerCase().includes(query) || query.includes(p.name.toLowerCase())) {
+            p.categories.forEach(cat => {
+                cat.services.forEach(srv => {
+                    const price1k = ((srv.baseUSD * 2.0 * USD_TO_EGP)).toFixed(0);
+                    results.push({
+                        name: `${p.name}: ${srv.title}`,
+                        price: price1k,
+                        type: 'smm_quick',
+                        platformId: p.id
+                    });
+                });
+            });
+        }
+    });
+
     if (results.length === 0) {
         dropdown.innerHTML = '<div class="text-center py-3 text-xs text-gray-400">لا توجد نتائج مطابقة لبحثك</div>';
     } else {
@@ -1057,6 +1083,10 @@ function onGlobalSearchClick(encodedItem) {
     else if (item.type === 'prod') expressCheckout({ id: item.item.id, name: item.item.name, type: 'digital', price: item.price, details: item.item.desc });
     else if (item.type === 'ent') expressCheckout({ id: item.item.id, name: item.item.name, type: 'sub', price: item.price, details: item.item.desc });
     else if (item.type === 'ai') expressCheckout({ id: item.item.id, name: item.item.name, type: 'ai', price: item.price, details: item.item.desc });
+    else if (item.type === 'smm_quick') {
+        selectSMMPlatform(item.platformId);
+        window.location.hash = 'sec-social';
+    }
 }
 
 // ------------------------------------------------------------------------------
