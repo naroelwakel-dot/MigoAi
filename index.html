@@ -3,10 +3,10 @@
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="title" content="Migo AI Solution | منصة الخدمات الرقمية والألعاب">
-  <meta name="description" content="متجرك المتكامل لشحن الألعاب، كوينز تيك توك، برامج الذكاء الاصطناعي، البطاقات الافتراضية، وخدمات السوشيال ميديا بالجنيه المصري.">
+  <meta name="title" content="Migo AI Solution | منصة الخدمات الرقمية وشحن الألعاب">
+  <meta name="description" content="شحن فوري للألعاب بالـ ID، كوينز تيك توك، بطاقات افتراضية VCC، اشتراكات برامج وأدوات الذكاء الاصطناعي بالجنيه المصري.">
   
-  <title>Migo AI Solution | متجر الألعاب، كوينز تيك توك، واشتراكات الذكاء الاصطناعي</title>
+  <title>Migo AI Solution | الحلول الرقمية، الألعاب والاشتراكات</title>
   
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-TRJHFVNBF5"></script>
   <script>
@@ -23,48 +23,42 @@
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
   
   <style>
-        :root {
-            --bg-main: #0b1120;      
-            --bg-surface: #131d31;   
-            --bg-card: #1e293b;      
-            --border-color: #334155; 
-        }
-        * { box-sizing: border-box; }
-        html, body { font-family: 'Tajawal', sans-serif; scroll-behavior: smooth; background-color: var(--bg-main); color: #f8fafc; overflow-x: hidden; margin: 0; padding: 0; }
-        .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: var(--bg-surface); border-radius: 8px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #38bdf8; border-radius: 8px; }
-        details > summary { list-style: none; }
-        details > summary::-webkit-details-marker { display: none; }
-        
-        .sky-surface { background-color: var(--bg-surface); border-color: var(--border-color); }
-        .sky-card { background-color: var(--bg-card); border-color: var(--border-color); transition: all 0.25s ease; }
-        .sky-card:hover { border-color: #38bdf8; }
-        .sky-btn { background: linear-gradient(135deg, #0284c7, #2563eb); color: #ffffff; box-shadow: 0 4px 15px rgba(2, 132, 199, 0.3); transition: 0.25s; }
-        .sky-btn:hover { background: linear-gradient(135deg, #38bdf8, #3b82f6); transform: translateY(-1px); }
-        .sky-active-tab { border: 2px solid #38bdf8 !important; background: linear-gradient(135deg, rgba(56, 189, 248, 0.15), rgba(30, 41, 59, 0.8)) !important; box-shadow: 0 4px 18px rgba(56, 189, 248, 0.2); }
-        select, select option { background-color: var(--bg-surface) !important; color: #ffffff !important; }
-        
-        .dot { height: 8px; width: 8px; background-color: #475569; border-radius: 50%; display: inline-block; cursor: pointer; transition: background-color 0.3s ease, transform 0.3s ease; }
-        .dot.active { background-color: #38bdf8; transform: scale(1.35); }
-        
-        @keyframes pulse-subtle {
-          0%, 100% { opacity: 1; transform: scale(1); }
-          50% { opacity: 0.92; transform: scale(1.03); }
-        }
-        .pulse-badge { animation: pulse-subtle 2s infinite ease-in-out; }
+    :root {
+        --bg-main: #0b1120;      
+        --bg-surface: #131d31;   
+        --bg-card: #1e293b;      
+        --border-color: #334155; 
+    }
+    * { box-sizing: border-box; }
+    html, body { font-family: 'Tajawal', sans-serif; scroll-behavior: smooth; background-color: var(--bg-main); color: #f8fafc; overflow-x: hidden; margin: 0; padding: 0; }
+    .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: var(--bg-surface); border-radius: 8px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #38bdf8; border-radius: 8px; }
+    details > summary { list-style: none; }
+    details > summary::-webkit-details-marker { display: none; }
+    
+    .sky-surface { background-color: var(--bg-surface); border-color: var(--border-color); }
+    .sky-card { background-color: var(--bg-card); border-color: var(--border-color); transition: all 0.25s ease; }
+    .sky-card:hover { border-color: #38bdf8; }
+    .sky-btn { background: linear-gradient(135deg, #0284c7, #2563eb); color: #ffffff; box-shadow: 0 4px 15px rgba(2, 132, 199, 0.3); transition: 0.25s; }
+    .sky-btn:hover { background: linear-gradient(135deg, #38bdf8, #3b82f6); transform: translateY(-1px); }
+    .sky-active-tab { border: 2px solid #38bdf8 !important; background: linear-gradient(135deg, rgba(56, 189, 248, 0.15), rgba(30, 41, 59, 0.8)) !important; box-shadow: 0 4px 18px rgba(56, 189, 248, 0.2); }
+    select, select option { background-color: var(--bg-surface) !important; color: #ffffff !important; }
+    
+    .dot { height: 8px; width: 8px; background-color: #475569; border-radius: 50%; display: inline-block; cursor: pointer; transition: 0.3s; }
+    .dot.active { background-color: #38bdf8; transform: scale(1.35); }
+    
+    @keyframes subtle-float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-4px); }
+    }
+    .animate-float { animation: subtle-float 3s infinite ease-in-out; }
 
-        @keyframes float-anim {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-4px); }
-        }
-        .icon-float { animation: float-anim 3s ease-in-out infinite; }
-
-        @keyframes spin-slow {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-        .spin-slow { animation: spin-slow 12s linear infinite; }
+    @keyframes subtle-pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.92; transform: scale(1.02); }
+    }
+    .pulse-badge { animation: subtle-pulse 2s infinite ease-in-out; }
   </style>
  </head>
  <body class="min-h-screen selection:bg-sky-500 selection:text-white pb-24">
@@ -72,7 +66,7 @@
   <div id="toastContainer" class="fixed top-5 left-5 z-[120] flex flex-col gap-2 pointer-events-none"></div>
 
   <div id="socialProofPopup" class="fixed bottom-20 left-4 z-40 bg-[#1e293b]/95 border border-sky-500/40 p-3 rounded-2xl shadow-2xl backdrop-blur-md max-w-xs transition-all duration-500 transform translate-y-24 opacity-0 pointer-events-none flex items-center gap-3">
-    <div id="proofIcon" class="w-10 h-10 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center p-2 shrink-0 shadow"></div>
+    <div id="proofIcon" class="w-10 h-10 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center p-2 shrink-0 shadow text-lg">⚡</div>
     <div class="text-right">
       <div id="proofUser" class="text-xs font-black text-white"></div>
       <div id="proofAction" class="text-[11px] text-sky-300 font-medium truncate max-w-[190px]"></div>
@@ -80,14 +74,14 @@
     </div>
   </div>
 
-  <a href="https://wa.me/201060934020?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%20Migo%20AI%D8%8C%20%D8%A3%D8%AD%D8%AA%D8%A7%D8%AC%20%D9%85%D8%B3%D8%A7%D8%B9%D8%AF%D8%A9%20%D9%81%D9%8A%20%D8%A7%D9%84%D8%B7%D9%84%D8%A8" target="_blank" class="fixed bottom-6 left-6 z-40 w-12 h-12 bg-emerald-500 hover:bg-emerald-400 text-white rounded-full flex items-center justify-center shadow-2xl transition hover:scale-110 group cursor-pointer" aria-label="تواصل مع الدعم الفني عبر واتساب">
+  <a href="https://wa.me/201060934020?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%20Migo%20AI%D8%8C%20%D8%A3%D8%AD%D8%AA%D8%A7%D8%AC%20%D9%85%D8%B3%D8%A7%D8%B9%D8%AF%D8%A9%20%D9%81%D9%8A%20%D8%A7%D9%84%D8%B7%D9%84%D8%A8" target="_blank" class="fixed bottom-6 left-6 z-40 w-12 h-12 bg-emerald-500 hover:bg-emerald-400 text-white rounded-full flex items-center justify-center shadow-2xl transition hover:scale-110 cursor-pointer" aria-label="تواصل مع الدعم الفني">
     <svg class="w-7 h-7 fill-current" viewBox="0 0 24 24"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.04 14.69 2 12.04 2M12.05 3.67C14.25 3.67 16.31 4.53 17.87 6.09C19.42 7.65 20.28 9.72 20.28 11.92C20.28 16.46 16.58 20.15 12.04 20.15C10.56 20.15 9.11 19.76 7.85 19L7.55 18.83L4.43 19.65L5.26 16.61L5.06 16.29C4.24 15 3.8 13.47 3.8 11.91C3.81 7.37 7.5 3.67 12.05 3.67Z"/></svg>
   </a>
 
   <header class="border-b sky-surface sticky top-0 z-50 backdrop-blur-md bg-[#131d31]/95 shadow-xl">
    <div class="max-w-7xl mx-auto px-3 sm:px-4 py-3 flex justify-between items-center gap-2">
     <div class="flex items-center gap-2.5 min-w-0">
-     <button type="button" onclick="toggleSidebar()" aria-label="القائمة الرئيسية" class="w-10 h-10 shrink-0 rounded-xl sky-card border flex flex-col items-center justify-center gap-1.5 cursor-pointer hover:border-sky-400">
+     <button type="button" onclick="toggleSidebar()" aria-label="القائمة الشاملة" class="w-10 h-10 shrink-0 rounded-xl sky-card border flex flex-col items-center justify-center gap-1.5 cursor-pointer hover:border-sky-400">
       <span class="w-5 h-0.5 bg-gray-200 rounded-full"></span>
       <span class="w-5 h-0.5 bg-sky-400 rounded-full"></span>
       <span class="w-5 h-0.5 bg-gray-200 rounded-full"></span>
@@ -97,20 +91,19 @@
       <div class="w-9 h-9 shrink-0 rounded-xl sky-btn flex items-center justify-center font-black text-lg">M</div> 
       <div class="truncate">
        <span class="text-sm sm:text-lg font-extrabold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-white via-sky-200 to-gray-300 block truncate">Migo AI Solution</span>
-       <small class="text-[10px] text-sky-400 font-bold block truncate">خدمات رقمية وشحن فوري بالجنيه</small>
+       <small class="text-[10px] text-sky-400 font-bold block truncate">متجر الخدمات الرقمية وشحن الحسابات</small>
       </div> 
      </a>
     </div>
 
     <nav class="hidden lg:flex items-center gap-1.5 sky-card border p-1 rounded-xl text-xs font-bold">
-     <a href="#sec-vcc" class="px-2.5 py-1.5 rounded-lg transition text-amber-400 hover:text-amber-300">💳 فيزا VCC</a>
-     <a href="#sec-tiktok-coins" class="px-2.5 py-1.5 rounded-lg transition text-pink-400 hover:text-pink-300">💎 كوينز تيك توك</a>
-     <a href="#sec-games" class="px-2.5 py-1.5 rounded-lg transition text-emerald-400 hover:text-emerald-300">🎮 شحن الألعاب</a>
-     <a href="#sec-social" class="px-2.5 py-1.5 rounded-lg transition text-sky-400 hover:text-white">📱 السوشيال</a>
-     <a href="#sec-liveapps" class="px-2.5 py-1.5 rounded-lg transition text-gray-300 hover:text-white">🔴 لايف</a>
-     <a href="#sec-entertainment" class="px-2.5 py-1.5 rounded-lg transition text-purple-400 hover:text-purple-300">🎬 ترفيه وبث</a>
-     <a href="#sec-apps" class="px-2.5 py-1.5 rounded-lg transition text-indigo-400 hover:text-indigo-300">🧠 AI & APIs</a>
-     <a href="#sec-software" class="px-2.5 py-1.5 rounded-lg transition text-teal-400 hover:text-teal-300">🎨 برامج وحسابات</a>
+     <a href="#sec-vcc" class="px-3 py-1.5 rounded-lg text-amber-400 hover:text-amber-300">💳 فيزا VCC</a>
+     <a href="#sec-coins" class="px-3 py-1.5 rounded-lg text-pink-400 hover:text-pink-300">💎 كوينز تيك توك</a>
+     <a href="#sec-games" class="px-3 py-1.5 rounded-lg text-emerald-400 hover:text-emerald-300">🎮 شحن الألعاب</a>
+     <a href="#sec-social" class="px-3 py-1.5 rounded-lg text-sky-400 hover:text-sky-300">📱 السوشيال ميديا</a>
+     <a href="#sec-productivity" class="px-3 py-1.5 rounded-lg text-cyan-400 hover:text-cyan-300">🎨 أدوات وبرامج</a>
+     <a href="#sec-entertainment" class="px-3 py-1.5 rounded-lg text-purple-400 hover:text-purple-300">🎬 ترفيه وبث</a>
+     <a href="#sec-ai" class="px-3 py-1.5 rounded-lg text-indigo-400 hover:text-indigo-300">🧠 الذكاء والـ APIs</a>
     </nav>
 
     <div class="flex items-center gap-2 shrink-0">
@@ -119,7 +112,7 @@
       <span id="cartBadge" class="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow">0</span>
      </button>
 
-     <button type="button" id="navLoginBtn" onclick="openAuthModal('login')" aria-label="تسجيل الدخول" class="sky-card border text-gray-200 font-bold px-3 py-2 rounded-xl text-xs transition flex items-center gap-1.5 cursor-pointer hover:border-sky-400">
+     <button type="button" id="navLoginBtn" onclick="openAuthModal('login')" class="sky-card border text-gray-200 font-bold px-3 py-2 rounded-xl text-xs transition flex items-center gap-1.5 cursor-pointer hover:border-sky-400">
       <svg class="w-4 h-4 fill-current text-sky-400" viewBox="0 0 24 24"><path d="M12 4A4 4 0 0 1 16 8A4 4 0 0 1 12 12A4 4 0 0 1 8 8A4 4 0 0 1 12 4M12 14C16.42 14 20 15.79 20 18V20H4V18C4 15.79 7.58 14 12 14Z"/></svg>
       <span class="hidden sm:inline">دخول</span>
      </button>
@@ -129,7 +122,7 @@
        <div class="text-[9px] text-sky-400 font-bold flex items-center gap-0.5"><span>✓</span> موثق</div>
        <div id="navUserName" class="text-xs font-extrabold text-white truncate max-w-[75px]"></div>
       </div>
-      <button type="button" onclick="handleLogout()" aria-label="تسجيل الخروج" class="bg-red-500/20 hover:bg-red-500/30 text-red-300 border border-red-500/40 text-[10px] font-bold px-2 py-1 rounded-lg cursor-pointer">خروج</button>
+      <button type="button" onclick="handleLogout()" class="bg-red-500/20 hover:bg-red-500/30 text-red-300 border border-red-500/40 text-[10px] font-bold px-2 py-1 rounded-lg cursor-pointer">خروج</button>
      </div>
     </div>
    </div>
@@ -138,64 +131,55 @@
   <div class="max-w-4xl mx-auto px-4 mt-5">
     <div class="relative">
       <label for="liveSearchInput" class="sr-only">بحث في المتجر</label>
-      <input type="text" id="liveSearchInput" oninput="handleLiveSearch(this.value)" placeholder="🔍 ابحث عن أي خدمة: كوينز تيك توك، فيزا، ببجي، كاب كات، كانفا، نتفلكس، API..." class="w-full bg-[#131d31] border border-slate-600 focus:border-sky-400 rounded-2xl px-5 py-3 text-sm text-white outline-none shadow-xl transition">
+      <input type="text" id="liveSearchInput" oninput="handleLiveSearch(this.value)" placeholder="🔍 ابحث عن كوينز تيك توك، فيزا VCC، كوديكس API، ببجي، نتفلكس، كانفا، فري فاير..." class="w-full bg-[#131d31] border border-slate-600 focus:border-sky-400 rounded-2xl px-5 py-3 text-sm text-white outline-none shadow-xl transition">
       <div id="searchResultsDropdown" class="hidden absolute top-full left-0 right-0 mt-2 bg-[#131d31] border border-sky-500/40 rounded-2xl p-2 shadow-2xl z-40 max-h-80 overflow-y-auto custom-scrollbar"></div>
     </div>
   </div>
 
-  <section id="sec-offers" class="max-w-6xl mx-auto px-4 pt-6 pb-4 text-center">
-   <div class="inline-flex flex-wrap items-center justify-center gap-2 px-4 py-1.5 sky-card border border-amber-500/40 rounded-full mb-4 text-xs font-bold shadow-lg">
-    <span class="bg-amber-500 text-slate-900 px-2 py-0.5 rounded-full text-[10px] font-black pulse-badge">عرض حصري</span>
-    <span class="text-gray-200">ينتهي الخصم المؤقت خلال:</span>
+  <section class="max-w-6xl mx-auto px-4 pt-6 pb-2 text-center">
+   <div class="inline-flex flex-wrap items-center justify-center gap-2 px-4 py-1.5 sky-card border border-amber-500/40 rounded-full mb-3 text-xs font-bold shadow-lg">
+    <span class="bg-amber-500 text-slate-900 px-2 py-0.5 rounded-full text-[10px] font-black pulse-badge">عرض اليوم</span>
+    <span class="text-gray-200">ينتهي العرض المؤقت خلال:</span>
     <span id="promoCountdown" class="font-mono text-amber-400 font-black tracking-wider text-sm">05:42:19</span>
    </div>
 
-   <h1 class="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight mb-3 leading-tight text-white">متجرك الرقمي المتكامل من <span class="bg-clip-text text-transparent bg-gradient-to-r from-sky-400 via-blue-400 to-amber-300">Migo AI</span></h1>
-   <p class="text-gray-400 text-xs sm:text-sm max-w-2xl mx-auto mb-6">شحن فوري بالـ ID، كوينز تيك توك، بطاقات فيزا دولية، واشتراكات الذكاء الاصطناعي والتصميم بالجنيه المصري.</p>
+   <h1 class="text-2xl sm:text-4xl font-black mb-2 text-white">منصة <span class="bg-clip-text text-transparent bg-gradient-to-r from-sky-400 via-blue-400 to-amber-300">Migo AI Solution</span> المتكاملة</h1>
+   <p class="text-gray-400 text-xs sm:text-sm max-w-2xl mx-auto mb-6">الدفع محلياً بالجنيه المصري عبر المحافظ الإلكترونية وإنستاباي مع تسليم فوري ونظام فحص وتأكيد الحساب المسبق.</p>
    
-   <div class="relative w-full max-w-2xl mx-auto overflow-hidden rounded-3xl mb-8 shadow-2xl" dir="rtl">
-    <div id="sliderTrack" class="flex transition-transform duration-500 ease-in-out" style="transform: translateX(0%);">
-        
+   <div class="relative w-full max-w-2xl mx-auto overflow-hidden rounded-3xl mb-6 shadow-2xl" dir="rtl">
+    <div id="sliderTrack" class="flex transition-transform duration-500 ease-in-out">
         <div class="w-full shrink-0 p-1">
-            <div class="bg-gradient-to-br from-[#1e293b] to-[#0f172a] border border-amber-500/40 p-6 rounded-3xl relative h-full flex flex-col justify-center items-center text-center">
-                <div class="absolute top-0 right-0 bg-amber-500 text-slate-950 text-[10px] font-black px-3.5 py-1 rounded-bl-2xl">جديد بالكامل 💳</div>
-                <div class="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-3xl mb-2 icon-float">💳</div>
-                <h3 class="text-2xl font-black text-white mb-1">البطاقات الافتراضية الدولية (VCC)</h3>
-                <p class="text-xs text-gray-300 mb-3 max-w-sm">اشترِ من أي موقع عالمي، اربط إعلاناتك، وفعّل اشتراكاتك بسهولة بدون فيزا بنكية.</p>
-                <div class="text-xl font-black text-amber-400 mb-4 font-mono">تبدأ من 700 ج.م فقط</div>
-                <div class="flex gap-2">
-                  <a href="#sec-vcc" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold py-2.5 px-5 rounded-xl text-xs transition shadow-lg cursor-pointer inline-flex items-center">احصل على بطاقتك 💳</a>
-                </div>
+            <div class="bg-gradient-to-br from-[#1e293b] to-[#0f172a] border border-pink-500/40 p-6 rounded-3xl text-center relative">
+                <span class="absolute top-0 right-0 bg-pink-500 text-white text-[10px] font-black px-3.5 py-1 rounded-bl-2xl">فحص الاسم فوري 🎵</span>
+                <div class="text-3xl mb-2 animate-float">💎</div>
+                <h3 class="text-xl sm:text-2xl font-black text-white mb-1">شحن كوينز تيك توك الرسمية</h3>
+                <p class="text-xs text-gray-300 mb-3">شحن فوري بالاسم الرسمي للحساب لدعم البثوث وإرسال الهدايا.</p>
+                <div class="text-lg font-black text-pink-400 mb-4 font-mono">تبدأ من 65 ج.م فقط</div>
+                <a href="#sec-coins" class="bg-pink-600 hover:bg-pink-500 text-white font-extrabold py-2 px-5 rounded-xl text-xs transition inline-block">اشحن الآن ⚡</a>
             </div>
         </div>
 
         <div class="w-full shrink-0 p-1">
-            <div class="bg-gradient-to-br from-[#1e293b] to-[#0f172a] border border-pink-500/40 p-6 rounded-3xl relative h-full flex flex-col justify-center items-center text-center">
-                <div class="absolute top-0 right-0 bg-pink-500 text-white text-[10px] font-black px-3.5 py-1 rounded-bl-2xl">فحص الحساب فوري ⚡</div>
-                <div class="w-14 h-14 rounded-2xl bg-pink-500/10 border border-pink-500/30 flex items-center justify-center text-3xl mb-2 icon-float">🪙</div>
-                <h3 class="text-2xl font-black text-white mb-1">شحن كوينز تيك توك باليوزر (@)</h3>
-                <p class="text-xs text-gray-300 mb-3 max-w-sm">اختر أي عدد من الكوينز مع حاسبة الأسعار اللحظية وفحص صورة واسم الحساب قبل الدفع.</p>
-                <div class="text-xl font-black text-pink-400 mb-4 font-mono">70 كوينز بـ 65 ج.م فقط</div>
-                <div class="flex gap-2">
-                  <a href="#sec-tiktok-coins" class="bg-pink-600 hover:bg-pink-500 text-white font-extrabold py-2.5 px-5 rounded-xl text-xs transition shadow-lg cursor-pointer">احسب واشحن الآن 💎</a>
-                </div>
+            <div class="bg-gradient-to-br from-[#1e293b] to-[#0f172a] border border-amber-500/40 p-6 rounded-3xl text-center relative">
+                <span class="absolute top-0 right-0 bg-amber-500 text-slate-950 text-[10px] font-black px-3.5 py-1 rounded-bl-2xl">الدفع الدولي 💳</span>
+                <div class="text-3xl mb-2 animate-float">🌐</div>
+                <h3 class="text-xl sm:text-2xl font-black text-white mb-1">البطاقات الافتراضية الدولية (VCC)</h3>
+                <p class="text-xs text-gray-300 mb-3">اشترِ من أي موقع عالمي، اربط حساباتك الإعلانية، وفعّل اشتراكاتك بالجنيه.</p>
+                <div class="text-lg font-black text-amber-400 mb-4 font-mono">تبدأ من 700 ج.م</div>
+                <a href="#sec-vcc" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold py-2 px-5 rounded-xl text-xs transition inline-block">احصل على فيزا 💳</a>
             </div>
         </div>
 
         <div class="w-full shrink-0 p-1">
-            <div class="bg-gradient-to-br from-[#1e293b] to-[#0f172a] border border-emerald-500/40 p-6 rounded-3xl relative h-full flex flex-col justify-center items-center text-center">
-                <div class="absolute top-0 right-0 bg-emerald-500 text-white text-[10px] font-black px-3.5 py-1 rounded-bl-2xl">تسليم فوري بالـ ID</div>
-                <div id="slidePubgIcon" class="w-14 h-14 rounded-2xl bg-slate-900 border border-emerald-500/30 flex items-center justify-center p-2 mb-2 icon-float"></div>
-                <h3 class="text-2xl font-black text-white mb-1">ببجي موبايل (3850 UC)</h3>
-                <p class="text-xs text-gray-300 mb-3 max-w-sm">3000 شدة + 850 شدة بونص فوري بحسابك الرسمي مع التحقق المسبق من الاسم.</p>
-                <div class="text-2xl font-black text-emerald-400 mb-4 font-mono">3,100 ج.م</div>
-                <div class="flex gap-2">
-                  <button onclick="openPlayerIdModal('بابجي موبايل (PUBG)', '3850 UC', 3100, true, 'pubg')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold py-2.5 px-5 rounded-xl text-xs transition shadow-lg cursor-pointer">شحن فوري بالـ ID ⚡</button>
-                  <button onclick="openPlayerIdModal('بابجي موبايل (PUBG)', '3850 UC', 3100, false, 'pubg')" class="sky-card border text-white font-bold py-2.5 px-4 rounded-xl text-xs transition cursor-pointer">أضف للسلة 🛒</button>
-                </div>
+            <div class="bg-gradient-to-br from-[#1e293b] to-[#0f172a] border border-emerald-500/40 p-6 rounded-3xl text-center relative">
+                <span class="absolute top-0 right-0 bg-emerald-500 text-white text-[10px] font-black px-3.5 py-1 rounded-bl-2xl">Midasbuy المعتمد</span>
+                <div class="text-3xl mb-2 animate-float">🎮</div>
+                <h3 class="text-xl sm:text-2xl font-black text-white mb-1">ببجي موبايل (3850 UC)</h3>
+                <p class="text-xs text-gray-300 mb-3">تسليم رسمي وفوري بالـ ID مع فحص اسم اللاعب قبل التحويل.</p>
+                <div class="text-lg font-black text-emerald-400 mb-4 font-mono">3,100 ج.م</div>
+                <button onclick="openPlayerIdModal('بابجي موبايل (PUBG)', '3850 UC', 3100, true, 'pubg')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold py-2 px-5 rounded-xl text-xs transition">شحن فوري بالـ ID ⚡</button>
             </div>
         </div>
-
     </div>
 
     <div class="flex justify-center gap-2 mt-3 pb-1" id="sliderDots">
@@ -205,297 +189,178 @@
     </div>
    </div>
 
-   <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-2.5 max-w-6xl mx-auto">
-    <a href="#sec-vcc" class="p-2.5 rounded-2xl sky-card border text-right transition flex items-center justify-between hover:border-amber-400 group"> 
-     <div><div class="font-black text-xs text-white">بطاقات فيزا</div><div class="text-[9px] text-amber-400">دفع دولي</div></div> 
-     <span class="text-lg group-hover:scale-110 transition">💳</span>
+   <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2 max-w-6xl mx-auto">
+    <a href="#sec-coins" class="p-2.5 rounded-2xl sky-card border text-right transition hover:border-pink-400">
+      <div class="text-xs font-bold text-white">كوينز ونجوم</div><div class="text-[9px] text-pink-400">تيك توك وتليجرام</div>
     </a>
-    <a href="#sec-tiktok-coins" class="p-2.5 rounded-2xl sky-card border text-right transition flex items-center justify-between hover:border-pink-400 group"> 
-     <div><div class="font-black text-xs text-white">كوينز تيك توك</div><div class="text-[9px] text-pink-400">حاسبة فورية</div></div> 
-     <span class="text-lg group-hover:scale-110 transition">💎</span>
+    <a href="#sec-vcc" class="p-2.5 rounded-2xl sky-card border text-right transition hover:border-amber-400">
+      <div class="text-xs font-bold text-white">بطاقات VCC</div><div class="text-[9px] text-amber-400">دفع دولي</div>
     </a>
-    <a href="#sec-games" class="p-2.5 rounded-2xl sky-card border text-right transition flex items-center justify-between hover:border-emerald-400 group"> 
-     <div><div class="font-black text-xs text-white">شحن الألعاب</div><div class="text-[9px] text-emerald-400">18+ لعبة</div></div> 
-     <span class="text-lg group-hover:scale-110 transition">🎮</span>
+    <a href="#sec-games" class="p-2.5 rounded-2xl sky-card border text-right transition hover:border-emerald-400">
+      <div class="text-xs font-bold text-white">شحن الألعاب</div><div class="text-[9px] text-emerald-400">18 لعبة بالـ ID</div>
     </a>
-    <a href="#sec-social" class="p-2.5 rounded-2xl sky-card border text-right transition flex items-center justify-between hover:border-sky-400 group"> 
-     <div><div class="font-black text-xs text-white">السوشيال</div><div class="text-[9px] text-sky-400">18 منصة</div></div> 
-     <span class="text-lg group-hover:scale-110 transition">📱</span>
+    <a href="#sec-social" class="p-2.5 rounded-2xl sky-card border text-right transition hover:border-sky-400">
+      <div class="text-xs font-bold text-white">السوشيال ميديا</div><div class="text-[9px] text-sky-400">حاسبة فورية</div>
     </a>
-    <a href="#sec-liveapps" class="p-2.5 rounded-2xl sky-card border text-right transition flex items-center justify-between hover:border-pink-400 group"> 
-     <div><div class="font-black text-xs text-white">برامج لايف</div><div class="text-[9px] text-pink-400">بيجو وبوبو</div></div> 
-     <span class="text-lg group-hover:scale-110 transition">🔴</span>
+    <a href="#sec-productivity" class="p-2.5 rounded-2xl sky-card border text-right transition hover:border-cyan-400">
+      <div class="text-xs font-bold text-white">أدوات وبرامج</div><div class="text-[9px] text-cyan-400">Canva, Notion, CapCut</div>
     </a>
-    <a href="#sec-entertainment" class="p-2.5 rounded-2xl sky-card border text-right transition flex items-center justify-between hover:border-purple-400 group"> 
-     <div><div class="font-black text-xs text-white">ترفيه وبث</div><div class="text-[9px] text-purple-400">نتفلكس وشاهد</div></div> 
-     <span class="text-lg group-hover:scale-110 transition">🎬</span>
+    <a href="#sec-entertainment" class="p-2.5 rounded-2xl sky-card border text-right transition hover:border-purple-400">
+      <div class="text-xs font-bold text-white">ترفيه وبث</div><div class="text-[9px] text-purple-400">Netflix & Shahid</div>
     </a>
-    <a href="#sec-apps" class="p-2.5 rounded-2xl sky-card border text-right transition flex items-center justify-between hover:border-indigo-400 group"> 
-     <div><div class="font-black text-xs text-white">AI & APIs</div><div class="text-[9px] text-indigo-400">Claude & Grok</div></div> 
-     <span class="text-lg group-hover:scale-110 transition">🧠</span>
-    </a>
-    <a href="#sec-software" class="p-2.5 rounded-2xl sky-card border text-right transition flex items-center justify-between hover:border-teal-400 group"> 
-     <div><div class="font-black text-xs text-white">برامج وتصميم</div><div class="text-[9px] text-teal-400">كاب كات وكانفا</div></div> 
-     <span class="text-lg group-hover:scale-110 transition">🎨</span>
+    <a href="#sec-ai" class="p-2.5 rounded-2xl sky-card border text-right transition hover:border-indigo-400">
+      <div class="text-xs font-bold text-white">AI & APIs</div><div class="text-[9px] text-indigo-400">Claude & CODEX</div>
     </a>
    </div>
   </section>
 
-  <main class="max-w-7xl mx-auto px-3 sm:px-4 py-4 space-y-12">
+  <main class="max-w-7xl mx-auto px-3 sm:px-4 py-4 space-y-10">
    
-   <!-- SECTION: VCC Virtual Cards -->
-   <section id="sec-vcc" class="sky-surface border rounded-3xl p-4 sm:p-8 shadow-2xl scroll-mt-24">
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-6 border-b border-slate-700/60 pb-4">
+   <section id="sec-coins" class="sky-surface border rounded-3xl p-4 sm:p-6 shadow-2xl scroll-mt-24">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 border-b border-slate-700/60 pb-3">
       <div>
-        <span class="px-3 py-1 sky-card border border-amber-500/40 text-amber-400 text-xs font-bold rounded-full">حل نهائي للدفع الدولي بالجنيه</span>
-        <h2 class="text-xl sm:text-3xl font-black text-white mt-2 flex items-center gap-2">
-            <span class="icon-float">💳</span> البطاقات الافتراضية الدولية مسبقة الدفع (VCC)
-        </h2>
-        <p class="text-gray-400 text-xs sm:text-sm mt-1">اشترِ من أي موقع عالمي، اربط إعلاناتك، وفعّل اشتراكاتك فوراً بدون فيزا بنكية.</p>
+        <span class="px-2.5 py-0.5 sky-card border border-pink-500/40 text-pink-400 text-xs font-bold rounded-full">شحن فوري بالاسم الرسمي</span>
+        <h2 class="text-lg sm:text-2xl font-black text-white mt-1">💎 عملات تيك توك ونجوم تليجرام</h2>
       </div>
-      <span class="text-xs text-gray-400 bg-slate-900 border border-slate-700 px-3 py-1.5 rounded-xl">⚡ تسليم سريع عبر الإيميل والواتساب</span>
-    </div>
-    <div id="vccCardsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"></div>
-   </section>
-
-   <!-- SECTION: TikTok Coins & Telegram Stars -->
-   <section id="sec-tiktok-coins" class="sky-surface border border-pink-500/30 rounded-3xl p-4 sm:p-8 shadow-2xl scroll-mt-24">
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-6 border-b border-slate-700/60 pb-4">
-      <div>
-        <span class="px-3 py-1 sky-card border border-pink-500/40 text-pink-400 text-xs font-bold rounded-full">شحن فوري باليوزر (@)</span>
-        <h2 class="text-xl sm:text-3xl font-black text-white mt-2 flex items-center gap-2">
-            <span class="icon-float">🪙</span> كوينز تيك توك ونجوم تليجرام
-        </h2>
-        <p class="text-gray-400 text-xs sm:text-sm mt-1">استخدم الحاسبة الذكية لتحديد أي كمية من كوينز تيك توك مع التحقق من الحساب قبل الدفع.</p>
-      </div>
-      <span class="text-xs text-pink-400 bg-slate-900 border border-pink-500/30 px-3 py-1.5 rounded-xl">🔒 لا نطلب كلمة السر أبداً</span>
+      <span class="text-xs text-gray-400 bg-slate-900 border border-slate-700 px-3 py-1 rounded-xl">⚡ فحص المعرف والصورة قبل التأكيد</span>
     </div>
 
-    <!-- TikTok Interactive Calculator Card -->
-    <div class="bg-gradient-to-br from-slate-900 to-[#131d31] border border-pink-500/40 rounded-3xl p-5 sm:p-7 shadow-xl mb-8">
-      <div class="flex flex-col md:flex-row gap-6 items-center justify-between">
-        <div class="flex-1 w-full space-y-4">
-          <div class="flex items-center justify-between">
-            <h3 class="text-lg font-black text-white flex items-center gap-2">
-              <span class="text-2xl">💎</span> حاسبة كوينز تيك توك المخصصة
-            </h3>
-            <span class="text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/30 px-2.5 py-1 rounded-full font-bold">تسليم في ثوانٍ</span>
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold text-gray-300 mb-1.5" for="ttCoinsInput">أدخل عدد الكوينز المطلوبة (الحد الأدنى 70):</label>
-            <div class="flex gap-2">
-              <input type="number" id="ttCoinsInput" value="700" min="70" step="10" oninput="calculateCustomTikTokCoins()" class="w-full bg-slate-950 border border-slate-700 focus:border-pink-500 rounded-xl px-4 py-3 text-lg font-mono font-bold text-white outline-none">
-              <button type="button" onclick="calculateCustomTikTokCoins()" class="bg-pink-600 hover:bg-pink-500 text-white font-bold px-4 rounded-xl text-xs cursor-pointer shrink-0">حساب</button>
-            </div>
-          </div>
-
-          <div class="flex flex-wrap gap-2 pt-1">
-            <span class="text-[11px] text-gray-400 font-bold self-center">باقات سريعة:</span>
-            <button type="button" onclick="setQuickTTCoins(70)" class="bg-slate-800 hover:bg-slate-700 border border-slate-600 text-white text-xs font-mono px-2.5 py-1 rounded-lg">70</button>
-            <button type="button" onclick="setQuickTTCoins(350)" class="bg-slate-800 hover:bg-slate-700 border border-slate-600 text-white text-xs font-mono px-2.5 py-1 rounded-lg">350</button>
-            <button type="button" onclick="setQuickTTCoins(700)" class="bg-slate-800 hover:bg-slate-700 border border-slate-600 text-white text-xs font-mono px-2.5 py-1 rounded-lg">700</button>
-            <button type="button" onclick="setQuickTTCoins(1400)" class="bg-slate-800 hover:bg-slate-700 border border-slate-600 text-white text-xs font-mono px-2.5 py-1 rounded-lg">1,400</button>
-            <button type="button" onclick="setQuickTTCoins(3500)" class="bg-slate-800 hover:bg-slate-700 border border-slate-600 text-white text-xs font-mono px-2.5 py-1 rounded-lg">3,500</button>
-            <button type="button" onclick="setQuickTTCoins(7000)" class="bg-slate-800 hover:bg-slate-700 border border-slate-600 text-white text-xs font-mono px-2.5 py-1 rounded-lg">7,000</button>
-          </div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div class="sky-card border p-4 rounded-2xl">
+        <div class="flex items-center gap-2 mb-3">
+          <div class="w-8 h-8 rounded-lg bg-pink-500/10 border border-pink-500/30 flex items-center justify-center text-pink-400 font-bold">🎵</div>
+          <h3 class="font-extrabold text-white text-sm">عملات تيك توك (TikTok Coins)</h3>
         </div>
+        <div id="tiktokCoinsGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
+      </div>
 
-        <div class="w-full md:w-80 bg-slate-950/80 border border-slate-800 rounded-2xl p-5 text-center flex flex-col justify-between shrink-0 shadow-inner">
-          <div>
-            <span class="text-xs text-gray-400 block mb-1">المبلغ المطلوب بالجنيه المصري:</span>
-            <div id="ttCalculatedPrice" class="text-3xl font-black text-pink-400 font-mono mb-2">575 ج.م</div>
-            <div id="ttCoinsSummaryText" class="text-[11px] text-gray-300 font-bold">باقة 700 كوينز</div>
-          </div>
-          <div class="pt-4 border-t border-slate-800 mt-3 flex flex-col gap-2">
-            <button type="button" onclick="openTikTokCoinsCheckout(true)" class="w-full bg-pink-600 hover:bg-pink-500 text-white font-extrabold py-3 rounded-xl text-xs sm:text-sm cursor-pointer shadow-lg transition">شحن الكوينز فوري ⚡</button>
-            <button type="button" onclick="openTikTokCoinsCheckout(false)" class="w-full sky-card border text-white font-bold py-2.5 rounded-xl text-xs cursor-pointer">أضف للسلة 🛒</button>
-          </div>
+      <div class="sky-card border p-4 rounded-2xl">
+        <div class="flex items-center gap-2 mb-3">
+          <div class="w-8 h-8 rounded-lg bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400 font-bold">⭐</div>
+          <h3 class="font-extrabold text-white text-sm">نجوم تليجرام (Telegram Stars)</h3>
         </div>
+        <div id="telegramStarsGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
       </div>
-    </div>
-
-    <!-- Telegram Stars Row -->
-    <div>
-      <div class="flex items-center gap-2 mb-3">
-        <span class="text-xl">⭐</span>
-        <h3 class="text-base sm:text-lg font-black text-white">نجوم تليجرام الرسمية (Telegram Stars)</h3>
-      </div>
-      <div id="telegramStarsContainer" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3"></div>
     </div>
    </section>
 
-   <!-- SECTION: Games -->
-   <section id="sec-games" class="sky-surface border rounded-3xl p-4 sm:p-8 shadow-2xl scroll-mt-24">
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-6 border-b border-slate-700/60 pb-4">
+   <section id="sec-vcc" class="sky-surface border rounded-3xl p-4 sm:p-6 shadow-2xl scroll-mt-24">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 border-b border-slate-700/60 pb-3">
       <div>
-        <span class="px-3 py-1 sky-card border border-emerald-500/40 text-emerald-400 text-xs font-bold rounded-full">تسليم فوري وآمن بالـ ID</span>
-        <h2 class="text-xl sm:text-3xl font-black text-white mt-2 flex items-center gap-2">
-            <span class="icon-float">🎮</span> متجر شحن الألعاب الرسمي (18+ لعبة)
-        </h2>
-        <p class="text-gray-400 text-xs sm:text-sm mt-1">باقات رسمية موثقة مع التحقق التلقائي من اسم اللاعب قبل تأكيد الشحن.</p>
+        <span class="px-2.5 py-0.5 sky-card border border-amber-500/40 text-amber-400 text-xs font-bold rounded-full">شراء دولي وإعلانات</span>
+        <h2 class="text-lg sm:text-2xl font-black text-white mt-1">💳 البطاقات الافتراضية الدولية (VCC)</h2>
       </div>
-      <span class="text-xs text-gray-400 bg-slate-900 border border-slate-700 px-3 py-1.5 rounded-xl">🔒 لا نطلب كلمة المرور مطلقاً</span>
+      <span class="text-xs text-gray-400 bg-slate-900 border border-slate-700 px-3 py-1 rounded-xl">تسليم بيانات الكارت عبر الإيميل والواتساب</span>
     </div>
-    
-    <div id="gamesCardsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
-    
-    <div class="mt-6 text-center">
-      <button type="button" id="toggleMoreGamesBtn" onclick="toggleMoreGames()" class="sky-card border text-emerald-400 text-xs font-bold px-6 py-2.5 rounded-full cursor-pointer hover:bg-slate-800 transition">عرض باقي الألعاب (+12 لعبة) ⌄</button>
-    </div>
+    <div id="vccCardsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3"></div>
    </section>
 
-   <!-- SECTION: Social Media -->
-   <section id="sec-social" class="sky-surface border rounded-3xl p-4 sm:p-8 shadow-2xl scroll-mt-24">
-    <div class="mb-6">
-      <span class="px-3 py-1 sky-card border border-sky-500/40 text-sky-400 text-xs font-bold rounded-full">قسم السوشيال ميديا الموثق</span>
-      <h2 class="text-xl sm:text-3xl font-black text-white mt-2 flex items-center gap-2">
-          <span class="icon-float">📱</span> خدمات تعزيز الحسابات والسوشيال ميديا
-      </h2>
-      <p class="text-gray-400 text-xs sm:text-sm mt-1">اختر المنصة والخدمة وسيتم حساب التكلفة فورياً (سيرفرات سريعة بضمان تعويض عدم النقص)</p>
+   <section id="sec-games" class="sky-surface border rounded-3xl p-4 sm:p-6 shadow-2xl scroll-mt-24">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 border-b border-slate-700/60 pb-3">
+      <div>
+        <span class="px-2.5 py-0.5 sky-card border border-emerald-500/40 text-emerald-400 text-xs font-bold rounded-full">شحن رسمي بالـ ID</span>
+        <h2 class="text-lg sm:text-2xl font-black text-white mt-1">🎮 شحن الألعاب الرسمي</h2>
+      </div>
+      <button onclick="toggleAllGamesView()" id="toggleGamesBtn" class="text-xs text-sky-400 sky-card border px-3 py-1 rounded-xl cursor-pointer hover:bg-slate-800">عرض جميع الألعاب (+14) ⌄</button>
+    </div>
+    <div id="gamesCardsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+   </section>
+
+   <section id="sec-productivity" class="sky-surface border rounded-3xl p-4 sm:p-6 shadow-2xl scroll-mt-24">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 border-b border-slate-700/60 pb-3">
+      <div>
+        <span class="px-2.5 py-0.5 sky-card border border-cyan-500/40 text-cyan-400 text-xs font-bold rounded-full">أدوات المصممين والإنتاجية</span>
+        <h2 class="text-lg sm:text-2xl font-black text-white mt-1">🎨 البرامج، الاشتراكات والأصول الرقمية</h2>
+      </div>
+      <span class="text-xs text-gray-400 bg-slate-900 border border-slate-700 px-3 py-1 rounded-xl">تفعيل رسمي وضمان</span>
+    </div>
+    <div id="productivityContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3"></div>
+   </section>
+
+   <section id="sec-social" class="sky-surface border rounded-3xl p-4 sm:p-6 shadow-2xl scroll-mt-24">
+    <div class="mb-4">
+      <span class="px-2.5 py-0.5 sky-card border border-sky-500/40 text-sky-400 text-xs font-bold rounded-full">محرك السوشيال ميديا</span>
+      <h2 class="text-lg sm:text-2xl font-black text-white mt-1">📱 تعزيز الحسابات والمتابعين</h2>
+      <p class="text-gray-400 text-xs mt-0.5">اختر المنصة ونوع الخدمة لحساب السعر تلقائياً بالجنيه.</p>
     </div>
 
-    <div class="mb-5">
-     <div class="text-xs font-bold text-gray-300 mb-3">⊞ اختر المنصة الرقمية:</div>
-     <div id="smmPlatformsGrid" class="grid grid-cols-3 sm:grid-cols-6 gap-2.5"></div>
-     <div class="mt-3 text-center">
-      <button type="button" id="toggleMorePlatformsBtn" onclick="toggleMoreSMMPlatforms()" class="sky-card border text-sky-400 text-xs font-bold px-5 py-2 rounded-full cursor-pointer hover:bg-slate-800 transition">عرض المزيد من المنصات (+12) ⌄</button>
+    <div class="mb-4">
+     <div id="smmPlatformsGrid" class="grid grid-cols-3 sm:grid-cols-6 gap-2"></div>
+     <div class="mt-2 text-center">
+      <button type="button" id="toggleMorePlatformsBtn" onclick="toggleMoreSMMPlatforms()" class="sky-card border text-sky-400 text-xs font-bold px-4 py-1.5 rounded-full cursor-pointer hover:bg-slate-800">عرض المزيد من المنصات ⌄</button>
      </div>
     </div>
 
-    <div class="mt-5 sky-card border rounded-2xl p-4 sm:p-6">
-     <div class="flex items-center justify-between border-b border-slate-700 pb-4 mb-4">
-      <div class="flex items-center gap-3">
-       <div id="selectedPlatformIconContainer" class="w-11 h-11 rounded-xl bg-slate-950 border border-slate-700 flex items-center justify-center p-2"></div>
+    <div class="sky-card border rounded-2xl p-4">
+     <div class="flex items-center justify-between border-b border-slate-700 pb-3 mb-3">
+      <div class="flex items-center gap-2.5">
+       <div id="selectedPlatformIconContainer" class="w-9 h-9 rounded-xl bg-slate-950 border border-slate-700 flex items-center justify-center p-2"></div>
        <div>
-        <h3 id="selectedPlatformTitle" class="font-extrabold text-base sm:text-lg text-white">تيك توك</h3>
-        <span class="text-[11px] text-gray-400">سيرفرات مباشرة مع الضمان</span>
+        <h3 id="selectedPlatformTitle" class="font-extrabold text-sm sm:text-base text-white">تيك توك</h3>
+        <span class="text-[10px] text-gray-400">سيرفرات موثقة وبضمان عدم النقص</span>
        </div>
       </div>
-      <span id="selectedServiceBadgeId" class="bg-slate-950 border border-sky-500/40 text-sky-400 font-mono text-xs font-bold px-3 py-1 rounded-lg">ID: #2218</span>
+      <span id="selectedServiceBadgeId" class="bg-slate-950 border border-sky-500/40 text-sky-400 font-mono text-xs font-bold px-2.5 py-0.5 rounded-lg">ID: #2218</span>
      </div>
 
-     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+     <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
       <div>
-       <label class="block text-xs font-bold text-gray-200 mb-1.5" for="smmCategorySelect">اختر القسم:</label>
-       <select id="smmCategorySelect" onchange="onSMMCategoryChange()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-3 text-xs sm:text-sm text-white font-bold outline-none"></select>
+       <label class="block text-xs font-bold text-gray-200 mb-1" for="smmCategorySelect">القسم:</label>
+       <select id="smmCategorySelect" onchange="onSMMCategoryChange()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white font-bold outline-none"></select>
       </div>
       <div>
-       <label class="block text-xs font-bold text-gray-200 mb-1.5" for="smmServiceSelect">اختر الخدمة:</label>
-       <select id="smmServiceSelect" onchange="onSMMServiceChange()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-3 text-xs sm:text-sm text-white font-bold outline-none"></select>
+       <label class="block text-xs font-bold text-gray-200 mb-1" for="smmServiceSelect">الخدمة:</label>
+       <select id="smmServiceSelect" onchange="onSMMServiceChange()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white font-bold outline-none"></select>
       </div>
      </div>
      
-     <div class="mb-4 bg-slate-950 border border-slate-700 rounded-xl p-3 flex flex-wrap gap-3 text-xs items-center justify-between" id="smmServiceMeta"></div>
+     <div class="mb-3 bg-slate-950 border border-slate-700 rounded-xl p-2.5 flex flex-wrap gap-2 text-xs items-center justify-between" id="smmServiceMeta"></div>
 
-     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+     <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
       <div>
-       <label class="block text-xs font-bold text-gray-200 mb-1.5" for="smmLinkInput">رابط الحساب أو المنشور:</label>
-       <input type="url" id="smmLinkInput" placeholder="https://..." class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-3 text-xs sm:text-sm text-white font-mono outline-none focus:border-sky-500">
+       <label class="block text-xs font-bold text-gray-200 mb-1" for="smmLinkInput">رابط الحساب أو المنشور:</label>
+       <input type="url" id="smmLinkInput" placeholder="https://..." class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono outline-none">
       </div>
       <div>
-       <label class="block text-xs font-bold text-gray-200 mb-1.5 justify-between" for="smmQtyInput">الكمية المطلوبة: <span id="smmLimitsNote" class="text-sky-300 text-[10px]"></span></label>
-       <input type="number" id="smmQtyInput" value="1000" min="10" oninput="calculateSMMCost()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-3 text-xs sm:text-sm text-white font-mono font-bold outline-none focus:border-sky-500">
+       <label class="block text-xs font-bold text-gray-200 mb-1" for="smmQtyInput">الكمية المطلوبة: <span id="smmLimitsNote" class="text-sky-300 text-[10px]"></span></label>
+       <input type="number" id="smmQtyInput" value="1000" min="10" oninput="calculateSMMCost()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono font-bold outline-none">
       </div>
      </div>
 
-     <div class="flex flex-col sm:flex-row items-center justify-between gap-4 bg-slate-950 border border-slate-700 rounded-2xl p-4">
+     <div class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-950 border border-slate-700 rounded-xl p-3">
       <div>
-       <span class="text-xs text-gray-400 block">التكلفة الإجمالية:</span>
-       <div class="text-2xl font-black text-sky-400 font-mono" id="smmPriceEGP">0.00 ج.م</div>
+       <span class="text-[11px] text-gray-400 block">التكلفة الإجمالية:</span>
+       <div class="text-xl font-black text-sky-400 font-mono" id="smmPriceEGP">0.00 ج.م</div>
       </div>
       <div class="flex gap-2 w-full sm:w-auto">
-        <button type="button" onclick="expressCheckoutSMM()" class="flex-1 sm:flex-initial bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold px-6 py-3.5 rounded-xl text-xs sm:text-sm cursor-pointer shadow-lg transition">شراء فوري ⚡</button>
-        <button type="button" onclick="addSMMToCart()" class="flex-1 sm:flex-initial sky-btn font-extrabold px-6 py-3.5 rounded-xl text-xs sm:text-sm cursor-pointer shadow-lg">أضف للسلة 🛒</button>
+        <button type="button" onclick="expressCheckoutSMM()" class="flex-1 sm:flex-initial bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold px-5 py-2.5 rounded-xl text-xs cursor-pointer shadow">شراء فوري ⚡</button>
+        <button type="button" onclick="addSMMToCart()" class="flex-1 sm:flex-initial sky-btn font-extrabold px-5 py-2.5 rounded-xl text-xs cursor-pointer shadow">أضف للسلة 🛒</button>
       </div>
      </div>
     </div>
    </section>
 
-   <!-- SECTION: Live Apps -->
-   <section id="sec-liveapps" class="sky-surface border rounded-3xl p-4 sm:p-8 shadow-2xl scroll-mt-24">
-    <div class="mb-6">
-      <span class="px-3 py-1 sky-card border border-pink-500/40 text-pink-400 text-xs font-bold rounded-full">شحن فوري بالمعرّف ID</span>
-      <h2 class="text-xl sm:text-3xl font-black text-white mt-2 flex items-center gap-2">
-          <span class="icon-float">🔴</span> برامج البث المباشر (Live Apps)
-      </h2>
-      <p class="text-gray-400 text-xs sm:text-sm mt-1">شحن عملات وماسات تطبيقات المحادثة والبث المباشر بالـ ID الرسمي لحسابك.</p>
-    </div>
-    <div id="liveAppsCardsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
-   </section>
-
-   <!-- SECTION: Entertainment & Streaming -->
-   <section id="sec-entertainment" class="sky-surface border rounded-3xl p-4 sm:p-8 shadow-2xl scroll-mt-24">
-    <div class="mb-6">
-      <span class="px-3 py-1 sky-card border border-purple-500/40 text-purple-400 text-xs font-bold rounded-full">حسابات أصلية ومضمونة</span>
-      <h2 class="text-xl sm:text-3xl font-black text-white mt-2 flex items-center gap-2">
-          <span class="icon-float">🎬</span> الاشتراكات الترفيهية ومنصات البث
-      </h2>
-      <p class="text-gray-400 text-xs sm:text-sm mt-1">استمتع بأفضل المسلسلات والأفلام والموسيقى بدون إعلانات وبأفضل الأسعار بالجنيه.</p>
-    </div>
-    <div id="entertainmentCardsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-   </section>
-
-   <!-- SECTION: AI Subscriptions & APIs -->
-   <section id="sec-apps" class="sky-surface border rounded-3xl p-4 sm:p-8 shadow-2xl scroll-mt-24">
-    <div class="mb-6">
-      <span class="px-3 py-1 sky-card border border-indigo-500/40 text-indigo-400 text-xs font-bold rounded-full">تفعيل رسمي ومباشر</span>
-      <h2 class="text-xl sm:text-3xl font-black text-white mt-2 flex items-center gap-2">
-          <span class="icon-float">🧠</span> اشتراكات الذكاء الاصطناعي ورصيد الـ APIs
-      </h2>
-      <p class="text-gray-400 text-xs sm:text-sm mt-1">باقات Claude Max، وتفعيل الحسابات الرسمية، ومفاتيح API المخصصة للمطورين.</p>
-    </div>
-    
-    <div class="mb-4 flex gap-2 border-b border-slate-700 pb-2">
-      <button type="button" onclick="filterAICategory('all')" id="aiTabAll" class="px-4 py-1.5 rounded-xl text-xs font-bold sky-active-tab cursor-pointer">الكل</button>
-      <button type="button" onclick="filterAICategory('subs')" id="aiTabSubs" class="px-4 py-1.5 rounded-xl text-xs font-bold sky-card border text-gray-300 hover:text-white cursor-pointer">اشتراكات الحسابات</button>
-      <button type="button" onclick="filterAICategory('apis')" id="aiTabApis" class="px-4 py-1.5 rounded-xl text-xs font-bold sky-card border text-gray-300 hover:text-white cursor-pointer">مفاتيح ورصيد الـ APIs</button>
-    </div>
-
-    <div id="appCardsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
-   </section>
-
-   <!-- SECTION: Software, Design & Digital Assets -->
-   <section id="sec-software" class="sky-surface border rounded-3xl p-4 sm:p-8 shadow-2xl scroll-mt-24">
-    <div class="mb-6">
-      <span class="px-3 py-1 sky-card border border-teal-500/40 text-teal-400 text-xs font-bold rounded-full">أدوات المصممين والإنتاجية</span>
-      <h2 class="text-xl sm:text-3xl font-black text-white mt-2 flex items-center gap-2">
-          <span class="icon-float">🎨</span> برامج التصميم، الـ VPN، والحسابات الرقمية
-      </h2>
-      <p class="text-gray-400 text-xs sm:text-sm mt-1">كانفا، كاب كات، نوشن، فيجما، خدمات الـ VPN، وإيميلات موثقة بتسليم فوري.</p>
-    </div>
-    <div id="softwareCardsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-   </section>
-
-   <!-- SECTION: Guarantees & FAQ -->
-   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <section id="why-us" class="sky-surface border rounded-3xl p-5 sm:p-6 scroll-mt-24">
-     <h3 class="text-lg sm:text-xl font-black text-white mb-3">🛡️ الضمان والأمان في Migo AI</h3>
-     <ul class="space-y-2.5 text-xs text-gray-300">
-      <li class="sky-card border p-3 rounded-xl flex items-center gap-2">✅ <b>ضمان كامل:</b> تعويض فوري واشتراكات رسمية 100% طوال فترة التفعيل.</li>
-      <li class="sky-card border p-3 rounded-xl flex items-center gap-2">⚡ <b>شحن بالـ ID فقط:</b> لا نطلب أبداً كلمات مرور لحسابات الألعاب أو برامج اللايف.</li>
-      <li class="sky-card border p-3 rounded-xl flex items-center gap-2">💳 <b>دفع محلي آمن:</b> فودافون كاش، اتصالات، إنستاباي، فاليو وجميع المحافظ بالجنيه بدون فيزا دولية.</li>
-     </ul>
+   <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <section id="sec-entertainment" class="sky-surface border rounded-3xl p-4 sm:p-6 shadow-2xl scroll-mt-24">
+      <div class="mb-4">
+        <span class="px-2.5 py-0.5 sky-card border border-purple-500/40 text-purple-400 text-xs font-bold rounded-full">مشاهدة وموسيقى</span>
+        <h2 class="text-lg sm:text-xl font-black text-white mt-1">🎬 اشتراكات الترفيه والبث</h2>
+      </div>
+      <div id="entertainmentCardsContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
     </section>
 
-    <section id="faq" class="sky-surface border rounded-3xl p-5 sm:p-6 scroll-mt-24">
-     <h3 class="text-lg sm:text-xl font-black text-white mb-3">❓ الأسئلة الشائعة</h3>
-     <div class="space-y-3 text-xs sm:text-sm">
-      <details class="sky-card border rounded-xl p-3 cursor-pointer">
-       <summary class="font-extrabold text-white flex justify-between items-center">كيف يصلني شحن الألعاب وكوينز تيك توك؟ <span>⌄</span></summary>
-       <p class="text-gray-300 mt-2 text-xs">الشحن يتم مباشرة إلى معرّف اللاعب (Player ID) أو يوزر تيك توك في غضون 2 إلى 5 دقائق من تأكيد التحويل دون الحاجة للباسورد.</p>
-      </details>
-      <details class="sky-card border rounded-xl p-3 cursor-pointer">
-       <summary class="font-extrabold text-white flex justify-between items-center">كيف تعمل البطاقات الافتراضية (VCC)؟ <span>⌄</span></summary>
-       <p class="text-gray-300 mt-2 text-xs">يصلك كود البطاقة وتاريخ الانتهاء ورقم CVV لاستخدامها في الشراء من المواقع الدولية وتفعيل الإعلانات بحرية تامة.</p>
-      </details>
-     </div>
+    <section id="sec-ai" class="sky-surface border rounded-3xl p-4 sm:p-6 shadow-2xl scroll-mt-24">
+      <div class="mb-4">
+        <span class="px-2.5 py-0.5 sky-card border border-indigo-500/40 text-indigo-400 text-xs font-bold rounded-full">للمطورين والشركات</span>
+        <h2 class="text-lg sm:text-xl font-black text-white mt-1">🧠 الذكاء الاصطناعي و الـ APIs</h2>
+      </div>
+      <div id="aiCardsContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
     </section>
    </div>
 
-   <section id="reviews" class="sky-surface border rounded-3xl p-5 sm:p-8 scroll-mt-24">
-    <h2 class="text-xl sm:text-2xl font-black text-white mb-4">⭐ آراء العملاء الموثقين</h2>
-    <div id="reviewsContainer" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 text-xs"></div>
+   <section id="reviews" class="sky-surface border rounded-3xl p-4 sm:p-6 shadow-2xl scroll-mt-24">
+    <h2 class="text-lg sm:text-xl font-black text-white mb-3">⭐ آراء العملاء الموثقين</h2>
+    <div id="reviewsContainer" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3 text-xs"></div>
    </section>
 
   </main>
@@ -504,234 +369,201 @@
    <p>جميع الحقوق محفوظة © 2026 <b class="text-white">Migo AI Solution</b> - منصة الخدمات الرقمية والألعاب بالجنيه المصري</p>
   </footer>
 
-  <!-- Modal for VCC Order Details -->
-  <div id="vccModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-[90] hidden items-center justify-center p-3 sm:p-4">
-   <div class="sky-surface border border-amber-500/40 rounded-3xl max-w-md w-full p-5 sm:p-7 relative shadow-2xl">
+  <div id="vccModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-[90] hidden items-center justify-center p-3">
+   <div class="sky-surface border border-amber-500/40 rounded-3xl max-w-md w-full p-5 relative shadow-2xl">
     <button type="button" onclick="closeVccModal()" aria-label="إغلاق" class="absolute top-4 left-4 text-gray-400 hover:text-white sky-card border w-8 h-8 rounded-xl flex items-center justify-center cursor-pointer">✕</button>
-    
-    <div class="text-center mb-5">
-      <div class="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 mx-auto flex items-center justify-center text-2xl mb-2.5 shadow-md">💳</div>
-      <h3 id="vccModalTitle" class="text-lg sm:text-xl font-black text-white">طلب بطاقة افتراضية (VCC)</h3>
-      <p id="vccModalPrice" class="text-xs text-amber-400 font-bold mt-1 font-mono"></p>
+    <div class="text-center mb-4">
+      <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 mx-auto flex items-center justify-center text-2xl mb-2">💳</div>
+      <h3 id="vccModalTitle" class="text-base sm:text-lg font-black text-white">طلب بطاقة افتراضية (VCC)</h3>
+      <p id="vccModalPrice" class="text-xs text-amber-400 font-bold mt-0.5 font-mono"></p>
     </div>
     
-    <div class="space-y-3.5 mb-5">
+    <div class="space-y-3 mb-4">
       <div>
-        <label class="block text-xs font-bold text-gray-200 mb-1" for="vccEmailInput">البريد الإلكتروني (لاستلام بيانات البطاقة) <span class="text-red-400">*</span>:</label>
-        <input type="email" id="vccEmailInput" placeholder="example@gmail.com" class="w-full bg-slate-950 border border-slate-700 focus:border-amber-400 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white font-mono outline-none">
+        <label class="block text-xs font-bold text-gray-200 mb-1" for="vccEmailInput">البريد الإلكتروني (لاستلام تفاصيل الكارت):</label>
+        <input type="email" id="vccEmailInput" placeholder="example@gmail.com" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono outline-none">
       </div>
       <div>
-        <label class="block text-xs font-bold text-gray-200 mb-1" for="vccPurposeInput">الغرض من استخدام البطاقة (اختياري):</label>
-        <input type="text" id="vccPurposeInput" placeholder="مثال: إعلانات تيك توك، تفعيل شات جي بي تي، شوبيفاي..." class="w-full bg-slate-950 border border-slate-700 focus:border-amber-400 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white outline-none">
+        <label class="block text-xs font-bold text-gray-200 mb-1" for="vccPurposeInput">الغرض من البطاقة (اختياري):</label>
+        <input type="text" id="vccPurposeInput" placeholder="إعلانات ممولة، شات جي بي تي، شوبيفاي..." class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none">
       </div>
     </div>
 
     <div class="flex gap-2">
-      <button type="button" onclick="submitVccModal(true)" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold py-3.5 rounded-xl text-xs sm:text-sm cursor-pointer shadow-lg transition">شراء فوري ⚡</button>
-      <button type="button" onclick="submitVccModal(false)" class="sky-card border text-white font-bold py-3.5 px-4 rounded-xl text-xs sm:text-sm cursor-pointer transition">أضف للسلة 🛒</button>
+      <button type="button" onclick="submitVccModal(true)" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold py-3 rounded-xl text-xs cursor-pointer shadow">شراء فوري ⚡</button>
+      <button type="button" onclick="submitVccModal(false)" class="sky-card border text-white font-bold py-3 px-4 rounded-xl text-xs cursor-pointer">أضف للسلة 🛒</button>
     </div>
    </div>
   </div>
 
-  <!-- Modal for Game/App/TikTok ID Lookup -->
-  <div id="playerIdModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-[90] hidden items-center justify-center p-3 sm:p-4">
-   <div class="sky-surface border border-sky-500/40 rounded-3xl max-w-md w-full p-5 sm:p-7 relative shadow-2xl max-h-[92vh] overflow-y-auto custom-scrollbar">
+  <div id="playerIdModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-[90] hidden items-center justify-center p-3">
+   <div class="sky-surface border border-sky-500/40 rounded-3xl max-w-md w-full p-5 relative shadow-2xl max-h-[92vh] overflow-y-auto custom-scrollbar">
     <button type="button" onclick="closePlayerIdModal()" aria-label="إغلاق" class="absolute top-4 left-4 text-gray-400 hover:text-white sky-card border w-8 h-8 rounded-xl flex items-center justify-center cursor-pointer">✕</button>
     
-    <div class="text-center mb-5">
-      <div id="modalTargetIcon" class="w-14 h-14 rounded-2xl bg-slate-950 border border-slate-700 mx-auto flex items-center justify-center p-2.5 mb-2.5 shadow-md"></div>
-      <h3 id="modalTargetTitle" class="text-lg sm:text-xl font-black text-white">شحن الحساب</h3>
-      <p id="modalTargetPkg" class="text-xs text-amber-400 font-bold mt-1 font-mono"></p>
+    <div class="text-center mb-4">
+      <div id="modalTargetIcon" class="w-14 h-14 rounded-2xl bg-slate-950 border border-slate-700 mx-auto flex items-center justify-center p-2 mb-2 shadow overflow-hidden"></div>
+      <h3 id="modalTargetTitle" class="text-base sm:text-lg font-black text-white">شحن الحساب</h3>
+      <p id="modalTargetPkg" class="text-xs text-amber-400 font-bold mt-0.5 font-mono"></p>
     </div>
     
-    <div class="space-y-3.5 mb-5">
+    <div class="space-y-3 mb-4">
       <div>
-        <label class="block text-xs font-bold text-gray-200 mb-1" for="modalSelectGame">اللعبة / الخدمة المطلوبة:</label>
-        <select id="modalSelectGame" onchange="onModalGameSelectChange()" class="w-full bg-slate-950 border border-slate-700 focus:border-sky-400 rounded-xl px-3 py-2.5 text-xs text-white font-bold outline-none"></select>
+        <label class="block text-xs font-bold text-gray-200 mb-1" for="modalSelectGame">الخدمة / اللعبة:</label>
+        <select id="modalSelectGame" onchange="onModalGameSelectChange()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-bold outline-none"></select>
       </div>
 
       <div>
-        <label class="block text-xs font-bold text-gray-200 mb-1" for="modalInputPlayerId"><span id="modalIdFieldLabel">معرف اللاعب (ID) أو اليوزر</span> <span class="text-red-400">*</span>:</label>
+        <label class="block text-xs font-bold text-gray-200 mb-1" for="modalInputPlayerId"><span id="modalIdLabel">معرف اللاعب أو اليوزر نيم</span> <span class="text-red-400">*</span>:</label>
         <div class="flex gap-2">
-            <input type="text" id="modalInputPlayerId" placeholder="أدخل رقم الـ ID أو اليوزر هنا" class="flex-1 bg-slate-950 border border-slate-700 focus:border-sky-400 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white font-mono outline-none">
-            <button type="button" id="verifyAccountBtn" onclick="verifyPlayerAccount()" class="shrink-0 bg-sky-600 hover:bg-sky-500 text-white font-extrabold px-3.5 rounded-xl text-xs cursor-pointer shadow transition flex items-center gap-1.5">
-                <span>فحص الحساب</span> 🔍
+            <input type="text" id="modalInputPlayerId" placeholder="اكتب الـ ID أو @username" class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono outline-none">
+            <button type="button" id="verifyAccountBtn" onclick="verifyPlayerAccount()" class="shrink-0 bg-sky-600 hover:bg-sky-500 text-white font-extrabold px-3 rounded-xl text-xs cursor-pointer shadow transition flex items-center gap-1">
+                <span>فحص</span> 🔍
             </button>
         </div>
       </div>
 
       <div id="modalZoneGroup" class="hidden">
-        <label class="block text-xs font-bold text-gray-200 mb-1" for="modalInputZoneId">معرف السيرفر (Zone ID / Server):</label>
-        <input type="text" id="modalInputZoneId" placeholder="مثال: 6994" class="w-full bg-slate-950 border border-slate-700 focus:border-sky-400 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white font-mono outline-none">
+        <label class="block text-xs font-bold text-gray-200 mb-1" for="modalInputZoneId">معرف السيرفر (Zone ID):</label>
+        <input type="text" id="modalInputZoneId" placeholder="مثال: 6994" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono outline-none">
       </div>
 
       <div>
-        <label class="block text-xs font-bold text-gray-200 mb-1" for="modalInputPlayerName">اسم الحساب (Nickname):</label>
-        <input type="text" id="modalInputPlayerName" placeholder="سيتم جلبه تلقائياً بالفحص أو اكتبه يدوياً" class="w-full bg-slate-950 border border-slate-700 focus:border-sky-400 rounded-xl px-3.5 py-2 text-xs sm:text-sm text-white outline-none">
+        <label class="block text-xs font-bold text-gray-200 mb-1" for="modalInputPlayerName">اسم الحساب المسترجع (Nickname):</label>
+        <input type="text" id="modalInputPlayerName" placeholder="يظهر هنا تلقائياً بعد الفحص" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none">
       </div>
 
-      <div id="verifyStatusBox" class="hidden p-3 rounded-xl text-xs font-bold text-center border"></div>
+      <div id="verifyStatusBox" class="hidden p-2.5 rounded-xl text-xs font-bold text-center border"></div>
     </div>
 
     <div class="flex gap-2">
-      <button type="button" id="modalSubmitBtn" class="w-full sky-btn font-extrabold py-3.5 rounded-xl text-xs sm:text-sm cursor-pointer shadow-lg flex items-center justify-center gap-2"></button>
+      <button type="button" id="modalSubmitBtn" class="w-full sky-btn font-extrabold py-3 rounded-xl text-xs sm:text-sm cursor-pointer shadow"></button>
     </div>
    </div>
   </div>
 
-  <!-- Expanded Sidebar Navigation -->
   <div id="sidebarContainer" class="fixed inset-0 z-50 hidden">
    <div onclick="toggleSidebar()" class="fixed inset-0 bg-black/80 backdrop-blur-sm"></div>
-   <aside class="fixed top-0 right-0 h-full w-80 max-w-[85vw] sky-surface border-l border-slate-700 z-10 p-5 flex flex-col justify-between overflow-y-auto custom-scrollbar shadow-2xl">
+   <aside class="fixed top-0 right-0 h-full w-72 max-w-[85vw] sky-surface border-l border-slate-700 z-10 p-4 flex flex-col justify-between overflow-y-auto shadow-2xl custom-scrollbar">
     <div>
-     <div class="flex justify-between items-center pb-4 border-b border-slate-700">
+     <div class="flex justify-between items-center pb-3 border-b border-slate-700">
       <div class="flex items-center gap-2">
        <div class="w-8 h-8 rounded-lg sky-btn flex items-center justify-center font-black">M</div>
-       <span class="font-extrabold text-white text-sm">دليل أقسام Migo AI</span>
+       <span class="font-extrabold text-white text-sm">أقسام المتجر الشاملة</span>
       </div>
-      <button type="button" onclick="toggleSidebar()" aria-label="إغلاق القائمة" class="w-8 h-8 rounded-lg sky-card border text-gray-300 hover:text-white flex items-center justify-center cursor-pointer">✕</button>
+      <button type="button" onclick="toggleSidebar()" aria-label="إغلاق" class="w-8 h-8 rounded-lg sky-card border text-gray-300 hover:text-white flex items-center justify-center cursor-pointer">✕</button>
      </div>
      
-     <div class="mt-4 space-y-2">
-      <a href="#sec-offers" onclick="toggleSidebar()" class="w-full px-3 py-2.5 rounded-xl sky-card border text-gray-100 text-xs font-bold flex items-center justify-between hover:bg-slate-700"> <span>🔥 العروض الحصرية</span> </a>
-      <a href="#sec-vcc" onclick="toggleSidebar()" class="w-full px-3 py-2.5 rounded-xl sky-card border text-amber-400 text-xs font-bold flex items-center justify-between hover:bg-slate-700"> <span>💳 البطاقات الافتراضية (VCC)</span> <span class="text-[9px] bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full font-mono">جديد</span></a>
-      <a href="#sec-tiktok-coins" onclick="toggleSidebar()" class="w-full px-3 py-2.5 rounded-xl sky-card border text-pink-400 text-xs font-bold flex items-center justify-between hover:bg-slate-700"> <span>💎 كوينز تيك توك ونجوم تليجرام</span> <span class="text-[9px] text-pink-300">حاسبة فورية</span></a>
-      <a href="#sec-games" onclick="toggleSidebar()" class="w-full px-3 py-2.5 rounded-xl sky-card border text-emerald-400 text-xs font-bold flex items-center justify-between hover:bg-slate-700"> <span>🎮 شحن الألعاب الرسمي</span> <span class="text-[10px] text-emerald-300">18+ لعبة</span></a>
-      <a href="#sec-social" onclick="toggleSidebar()" class="w-full px-3 py-2.5 rounded-xl sky-card border text-gray-100 text-xs font-bold flex items-center justify-between hover:bg-slate-700"> <span>📱 خدمات السوشيال ميديا</span> <span class="text-[10px] text-sky-400">18 منصة</span></a>
-      <a href="#sec-liveapps" onclick="toggleSidebar()" class="w-full px-3 py-2.5 rounded-xl sky-card border text-pink-400 text-xs font-bold flex items-center justify-between hover:bg-slate-700"> <span>🔴 برامج لايف (بيجو وبوبو)</span> </a>
-      <a href="#sec-entertainment" onclick="toggleSidebar()" class="w-full px-3 py-2.5 rounded-xl sky-card border text-purple-400 text-xs font-bold flex items-center justify-between hover:bg-slate-700"> <span>🎬 الترفيه والبث (نتفلكس وشاهد)</span> </a>
-      <a href="#sec-apps" onclick="toggleSidebar()" class="w-full px-3 py-2.5 rounded-xl sky-card border text-indigo-400 text-xs font-bold flex items-center justify-between hover:bg-slate-700"> <span>🧠 الذكاء الاصطناعي و الـ APIs</span> </a>
-      <a href="#sec-software" onclick="toggleSidebar()" class="w-full px-3 py-2.5 rounded-xl sky-card border text-teal-400 text-xs font-bold flex items-center justify-between hover:bg-slate-700"> <span>🎨 برامج التصميم، VPN، وحسابات</span> </a>
-     </div>
-
-     <div class="mt-5 pt-4 border-t border-slate-700 space-y-1.5">
-      <div class="text-[11px] font-bold text-gray-400 px-1 mb-1">الدعم والمساعدة:</div>
-      <a href="https://wa.me/201060934020" target="_blank" class="block px-3 py-2 rounded-xl text-emerald-400 hover:bg-emerald-950/30 text-xs font-medium">💬 دعم فني مباشر عبر واتساب</a>
-      <a href="#why-us" onclick="toggleSidebar()" class="block px-3 py-2 rounded-xl hover:bg-white/5 text-gray-300 text-xs font-medium">🛡️ الضمان والأمان</a>
-      <a href="#faq" onclick="toggleSidebar()" class="block px-3 py-2 rounded-xl hover:bg-white/5 text-gray-300 text-xs font-medium">❓ الأسئلة الشائعة</a>
+     <div class="mt-3 space-y-1.5 text-xs">
+      <a href="#sec-coins" onclick="toggleSidebar()" class="w-full px-3 py-2 rounded-xl sky-card border text-pink-400 font-bold flex items-center justify-between"> <span>💎 كوينز تيك توك وتليجرام</span> </a>
+      <a href="#sec-vcc" onclick="toggleSidebar()" class="w-full px-3 py-2 rounded-xl sky-card border text-amber-400 font-bold flex items-center justify-between"> <span>💳 بطاقات الدفع الدولي (VCC)</span> </a>
+      <a href="#sec-games" onclick="toggleSidebar()" class="w-full px-3 py-2 rounded-xl sky-card border text-emerald-400 font-bold flex items-center justify-between"> <span>🎮 شحن الألعاب بالـ ID</span> <span class="text-[10px] text-emerald-300">18 لعبة</span></a>
+      <a href="#sec-social" onclick="toggleSidebar()" class="w-full px-3 py-2 rounded-xl sky-card border text-sky-400 font-bold flex items-center justify-between"> <span>📱 خدمات السوشيال ميديا</span> <span class="text-[10px]">18 منصة</span></a>
+      <a href="#sec-productivity" onclick="toggleSidebar()" class="w-full px-3 py-2 rounded-xl sky-card border text-cyan-400 font-bold flex items-center justify-between"> <span>🎨 أدوات وبرامج المصممين</span> </a>
+      <a href="#sec-entertainment" onclick="toggleSidebar()" class="w-full px-3 py-2 rounded-xl sky-card border text-purple-400 font-bold flex items-center justify-between"> <span>🎬 الترفيه والبث (Netflix, Prime)</span> </a>
+      <a href="#sec-ai" onclick="toggleSidebar()" class="w-full px-3 py-2 rounded-xl sky-card border text-indigo-400 font-bold flex items-center justify-between"> <span>🧠 الذكاء الاصطناعي و الـ APIs</span> </a>
      </div>
     </div>
     
-    <div class="pt-4 border-t border-slate-700 mt-4 text-center">
-     <div class="bg-slate-900 border border-slate-700 rounded-xl p-3 mb-3 text-xs flex justify-between items-center">
+    <div class="pt-3 border-t border-slate-700 mt-4 text-center">
+     <div class="bg-slate-900 border border-slate-700 rounded-xl p-2.5 mb-2.5 text-xs flex justify-between items-center">
         <span class="text-gray-400">إجمالي الزوار:</span>
-        <span id="visitorCount" class="font-mono text-sky-400 font-black text-sm">--</span>
+        <span id="visitorCount" class="font-mono text-sky-400 font-black">--</span>
      </div>
-     <button type="button" onclick="toggleSidebar(); openAuthModal('login');" class="w-full sky-card border text-white font-bold py-2.5 rounded-xl text-xs cursor-pointer mb-2">👤 دخول / تسجيل حساب</button>
+     <button type="button" onclick="toggleSidebar(); openAuthModal('login');" class="w-full sky-card border text-white font-bold py-2 rounded-xl text-xs cursor-pointer">👤 دخول / تسجيل حساب</button>
     </div>
    </aside>
   </div>
 
-  <!-- Auth Modal -->
   <div id="authModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-   <div class="sky-surface border rounded-2xl max-w-md w-full p-6 sm:p-8 relative shadow-2xl">
+   <div class="sky-surface border rounded-2xl max-w-md w-full p-6 relative shadow-2xl">
     <button type="button" onclick="closeAuthModal()" aria-label="إغلاق" class="absolute top-4 left-4 text-gray-300 hover:text-white sky-card border w-8 h-8 rounded-lg flex items-center justify-center cursor-pointer">✕</button>
-    <div class="text-center mb-5">
-     <div class="w-12 h-12 rounded-2xl sky-btn flex items-center justify-center font-black text-2xl mx-auto mb-2">M</div>
-     <h3 class="text-xl font-extrabold text-white">بوابة عملاء Migo AI</h3>
-     <p class="text-xs text-gray-400 mt-1">سجل دخولك لحفظ وتتبع طلباتك</p>
+    <div class="text-center mb-4">
+     <div class="w-10 h-10 rounded-2xl sky-btn flex items-center justify-center font-black text-xl mx-auto mb-1">M</div>
+     <h3 class="text-lg font-extrabold text-white">بوابة عملاء Migo AI</h3>
     </div>
-    <div class="grid grid-cols-2 gap-2 sky-card p-1 rounded-xl mb-5 border border-slate-700">
-     <button type="button" id="tabLoginBtn" onclick="switchAuthTab('login')" class="py-2 text-xs font-bold rounded-lg transition sky-btn cursor-pointer">دخول</button>
-     <button type="button" id="tabRegisterBtn" onclick="switchAuthTab('register')" class="py-2 text-xs font-bold rounded-lg transition text-gray-400 cursor-pointer">تسجيل حساب جديد</button>
+    <div class="grid grid-cols-2 gap-2 sky-card p-1 rounded-xl mb-4 border border-slate-700">
+     <button type="button" id="tabLoginBtn" onclick="switchAuthTab('login')" class="py-1.5 text-xs font-bold rounded-lg transition sky-btn cursor-pointer">دخول</button>
+     <button type="button" id="tabRegisterBtn" onclick="switchAuthTab('register')" class="py-1.5 text-xs font-bold rounded-lg transition text-gray-400 cursor-pointer">تسجيل حساب</button>
     </div>
-    <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
-     <div><label class="block text-xs font-bold text-gray-300 mb-1" for="loginEmail">البريد الإلكتروني:</label><input type="email" id="loginEmail" required class="w-full sky-card border rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none"></div>
-     <div><label class="block text-xs font-bold text-gray-300 mb-1" for="loginPassword">الرقم السري:</label><input type="password" id="loginPassword" required class="w-full sky-card border rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none"></div>
-     <button type="submit" class="w-full sky-btn font-extrabold py-3 rounded-xl text-sm cursor-pointer">دخول الآن</button>
+    <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-3">
+     <div><label class="block text-xs font-bold text-gray-300 mb-1" for="loginEmail">البريد الإلكتروني:</label><input type="email" id="loginEmail" required class="w-full sky-card border rounded-xl px-3 py-2 text-xs text-white focus:outline-none"></div>
+     <div><label class="block text-xs font-bold text-gray-300 mb-1" for="loginPassword">الرقم السري:</label><input type="password" id="loginPassword" required class="w-full sky-card border rounded-xl px-3 py-2 text-xs text-white focus:outline-none"></div>
+     <button type="submit" class="w-full sky-btn font-extrabold py-2.5 rounded-xl text-xs cursor-pointer">دخول الآن</button>
     </form>
-    <form id="registerForm" onsubmit="handleRegister(event)" class="space-y-3.5 hidden">
-     <div><label class="block text-xs font-bold text-gray-300 mb-1" for="regName">الاسم الكامل:</label><input type="text" id="regName" required minlength="3" class="w-full sky-card border rounded-xl px-4 py-2 text-sm text-white"></div>
-     <div><label class="block text-xs font-bold text-gray-300 mb-1" for="regEmail">البريد الإلكتروني:</label><input type="email" id="regEmail" required class="w-full sky-card border rounded-xl px-4 py-2 text-sm text-white font-mono"></div>
-     <div><label class="block text-xs font-bold text-gray-300 mb-1" for="regPhone">رقم الهاتف:</label><input type="tel" id="regPhone" required class="w-full sky-card border rounded-xl px-4 py-2 text-sm text-white font-mono"></div>
-     <div><label class="block text-xs font-bold text-gray-300 mb-1" for="regPassword">الرقم السري:</label><input type="password" id="regPassword" required minlength="6" class="w-full sky-card border rounded-xl px-4 py-2 text-sm text-white font-mono"></div>
-     <button type="submit" class="w-full sky-btn font-extrabold py-3 rounded-xl text-sm cursor-pointer">تسجيل حساب موثق</button>
+    <form id="registerForm" onsubmit="handleRegister(event)" class="space-y-3 hidden">
+     <div><label class="block text-xs font-bold text-gray-300 mb-1" for="regName">الاسم الكامل:</label><input type="text" id="regName" required minlength="3" class="w-full sky-card border rounded-xl px-3 py-2 text-xs text-white"></div>
+     <div><label class="block text-xs font-bold text-gray-300 mb-1" for="regEmail">البريد الإلكتروني:</label><input type="email" id="regEmail" required class="w-full sky-card border rounded-xl px-3 py-2 text-xs text-white font-mono"></div>
+     <div><label class="block text-xs font-bold text-gray-300 mb-1" for="regPhone">رقم الهاتف:</label><input type="tel" id="regPhone" required class="w-full sky-card border rounded-xl px-3 py-2 text-xs text-white font-mono"></div>
+     <div><label class="block text-xs font-bold text-gray-300 mb-1" for="regPassword">الرقم السري:</label><input type="password" id="regPassword" required minlength="6" class="w-full sky-card border rounded-xl px-3 py-2 text-xs text-white font-mono"></div>
+     <button type="submit" class="w-full sky-btn font-extrabold py-2.5 rounded-xl text-xs cursor-pointer">تسجيل الحساب</button>
     </form>
    </div>
   </div>
 
-  <!-- Cart Modal -->
   <div id="cartModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-   <div class="sky-surface border rounded-2xl max-w-lg w-full p-5 sm:p-6 relative shadow-2xl flex flex-col max-h-[90vh]">
-    <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-3">
-     <h3 class="text-xl font-extrabold text-white flex items-center gap-2">🛒 سلة المشتريات</h3>
-     <button type="button" onclick="closeCartModal()" aria-label="إغلاق السلة" class="text-gray-400 hover:text-white sky-card border w-8 h-8 rounded-lg flex items-center justify-center cursor-pointer">✕</button>
+   <div class="sky-surface border rounded-2xl max-w-lg w-full p-5 relative shadow-2xl flex flex-col max-h-[90vh]">
+    <div class="flex justify-between items-center mb-3 border-b border-slate-700 pb-2">
+     <h3 class="text-lg font-extrabold text-white flex items-center gap-2">🛒 سلة المشتريات</h3>
+     <button type="button" onclick="closeCartModal()" aria-label="إغلاق" class="text-gray-400 hover:text-white sky-card border w-8 h-8 rounded-lg flex items-center justify-center cursor-pointer">✕</button>
     </div>
     
-    <div id="cartItemsContainer" class="flex-1 overflow-y-auto custom-scrollbar space-y-3 mb-4 pr-1 min-h-[140px]"></div>
+    <div id="cartItemsContainer" class="flex-1 overflow-y-auto custom-scrollbar space-y-2 mb-3 min-h-[140px]"></div>
 
-    <div class="border-t border-slate-700 pt-4 space-y-3">
+    <div class="border-t border-slate-700 pt-3 space-y-2">
      <div class="flex gap-2">
       <label for="cartCouponInput" class="sr-only">كود الخصم</label>
       <input type="text" id="cartCouponInput" placeholder="كود الخصم (SIAFFC15 أو MIGO15)" class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono focus:outline-none uppercase">
-      <button type="button" onclick="applyCartCoupon()" class="sky-btn text-xs font-bold px-4 py-2 rounded-xl cursor-pointer">تفعيل</button>
+      <button type="button" onclick="applyCartCoupon()" class="sky-btn text-xs font-bold px-3 py-2 rounded-xl cursor-pointer">تفعيل</button>
      </div>
      <div id="cartCouponStatus" class="hidden text-[10px] font-bold"></div>
      
-     <div class="bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm">
+     <div class="bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs">
       <div class="flex justify-between text-gray-400 mb-1"><span>المجموع الفرعي:</span> <span id="cartSubtotal" class="font-mono">0 ج.م</span></div>
-      <div class="flex justify-between text-emerald-400 mb-2 hidden" id="cartDiscountRow"><span>الخصم:</span> <span id="cartDiscountAmount" class="font-mono">-0 ج.م</span></div>
-      <div class="flex justify-between text-white font-black text-lg border-t border-slate-800 pt-2 mt-1"><span>الإجمالي المطلوب:</span> <span id="cartTotal" class="text-sky-400 font-mono">0 ج.م</span></div>
+      <div class="flex justify-between text-emerald-400 mb-1 hidden" id="cartDiscountRow"><span>الخصم:</span> <span id="cartDiscountAmount" class="font-mono">-0 ج.م</span></div>
+      <div class="flex justify-between text-white font-black text-base border-t border-slate-800 pt-1 mt-1"><span>الإجمالي:</span> <span id="cartTotal" class="text-sky-400 font-mono">0 ج.م</span></div>
      </div>
-     <button type="button" onclick="proceedToCheckout()" class="w-full sky-btn font-extrabold py-3.5 rounded-xl text-sm cursor-pointer shadow-lg flex items-center justify-center gap-2">
-      متابعة الدفع <span class="text-lg">💳</span>
+     <button type="button" onclick="proceedToCheckout()" class="w-full sky-btn font-extrabold py-3 rounded-xl text-xs cursor-pointer shadow">
+      متابعة الدفع 💳
      </button>
     </div>
    </div>
   </div>
 
-  <!-- Checkout Modal -->
   <div id="checkoutModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 hidden items-center justify-center p-4">
-   <div class="sky-surface border border-sky-500/30 rounded-2xl max-w-lg w-full p-5 sm:p-6 relative shadow-2xl max-h-[95vh] overflow-y-auto custom-scrollbar">
-    <div class="flex justify-between items-center mb-4 pb-3 border-b border-slate-700">
-     <h3 class="text-xl font-extrabold text-white">💳 تأكيد وسيلة الدفع</h3>
+   <div class="sky-surface border border-sky-500/30 rounded-2xl max-w-lg w-full p-5 relative shadow-2xl max-h-[95vh] overflow-y-auto custom-scrollbar">
+    <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-700">
+     <h3 class="text-lg font-extrabold text-white">💳 تأكيد وسيلة الدفع</h3>
      <button type="button" onclick="closeCheckoutModal()" aria-label="إغلاق" class="text-gray-400 hover:text-white sky-card border w-8 h-8 rounded-lg flex items-center justify-center cursor-pointer">✕</button>
     </div>
     
-    <p class="text-xs text-gray-300 mb-3">اختر المحفظة أو وسيلة الدفع لإتمام طلبك (الإجمالي: <b id="checkoutTotalText" class="text-sky-400 font-mono"></b>):</p>
+    <p class="text-xs text-gray-300 mb-3">اختر المحفظة لإتمام الطلب (المبلغ: <b id="checkoutTotalText" class="text-sky-400 font-mono"></b>):</p>
     
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-5">
-     <button type="button" onclick="selectPaymentMethod('vodafone', '📱 فودافون كاش', this)" class="pay-method-btn sky-card border p-2.5 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-red-500 transition">
-      <div class="w-8 h-8 bg-red-600 rounded-full flex items-center justify-center text-white font-black text-xs shadow">V</div>
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
+     <button type="button" onclick="selectPaymentMethod('vodafone', '📱 فودافون كاش', this)" class="pay-method-btn sky-card border p-2 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-red-500">
+      <div class="w-7 h-7 bg-red-600 rounded-full flex items-center justify-center text-white font-bold text-xs">V</div>
       <span class="text-[10px] font-bold text-white">فودافون كاش</span>
      </button>
-     <button type="button" onclick="selectPaymentMethod('instapay', '⚡ إنستاباي (InstaPay)', this)" class="pay-method-btn sky-card border p-2.5 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-purple-500 transition">
-      <div class="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center text-white font-black text-xs shadow">IP</div>
+     <button type="button" onclick="selectPaymentMethod('instapay', '⚡ إنستاباي (InstaPay)', this)" class="pay-method-btn sky-card border p-2 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-purple-500">
+      <div class="w-7 h-7 bg-purple-600 rounded-full flex items-center justify-center text-white font-bold text-xs">IP</div>
       <span class="text-[10px] font-bold text-white">إنستاباي</span>
      </button>
-     <button type="button" onclick="selectPaymentMethod('etisalat', '🟢 اتصالات كاش', this)" class="pay-method-btn sky-card border p-2.5 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-green-500 transition">
-      <div class="w-8 h-8 bg-emerald-600 rounded-full flex items-center justify-center text-white font-black text-[9px] shadow">اتصالات</div>
+     <button type="button" onclick="selectPaymentMethod('etisalat', '🟢 اتصالات كاش', this)" class="pay-method-btn sky-card border p-2 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-green-500">
+      <div class="w-7 h-7 bg-emerald-600 rounded-full flex items-center justify-center text-white font-bold text-[9px]">اتصالات</div>
       <span class="text-[10px] font-bold text-white">اتصالات كاش</span>
      </button>
-     <button type="button" onclick="selectPaymentMethod('valu', '🔵 فاليو (Valu)', this)" class="pay-method-btn sky-card border p-2.5 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-blue-500 transition">
-      <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-black text-xs shadow">V</div>
-      <span class="text-[10px] font-bold text-white">Valu</span>
-     </button>
-     <button type="button" onclick="selectPaymentMethod('visa', '💳 فيزا / ماستركارد', this)" class="pay-method-btn sky-card border p-2.5 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-sky-400 transition">
-      <div class="w-8 h-8 bg-slate-800 rounded-full flex items-center justify-center text-white font-black text-xs shadow">💳</div>
-      <span class="text-[10px] font-bold text-white">فيزا بنكية</span>
-     </button>
-     <button type="button" onclick="selectPaymentMethod('aman', '🟢 أمان', this)" class="pay-method-btn sky-card border p-2.5 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-green-400 transition">
-      <div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white font-black text-[9px] shadow">أمان</div>
-      <span class="text-[10px] font-bold text-white">أمان</span>
-     </button>
-     <button type="button" onclick="selectPaymentMethod('souhola', '🟣 سهولة', this)" class="pay-method-btn sky-card border p-2.5 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-purple-400 transition">
-      <div class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white font-black text-[9px] shadow">سهولة</div>
-      <span class="text-[10px] font-bold text-white">سهولة</span>
-     </button>
-     <button type="button" onclick="selectPaymentMethod('forsa', '🟠 فرصة', this)" class="pay-method-btn sky-card border p-2.5 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-orange-400 transition">
-      <div class="w-8 h-8 bg-orange-500 rounded-full flex items-center justify-center text-white font-black text-[9px] shadow">فرصة</div>
-      <span class="text-[10px] font-bold text-white">فرصة</span>
+     <button type="button" onclick="selectPaymentMethod('valu', '🔵 فاليو (Valu)', this)" class="pay-method-btn sky-card border p-2 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-blue-500">
+      <div class="w-7 h-7 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-xs">Valu</div>
+      <span class="text-[10px] font-bold text-white">فاليو</span>
      </button>
     </div>
 
-    <div id="checkoutDetailsBox" class="hidden bg-slate-950 border border-slate-700 p-4 rounded-xl text-center mb-5">
-     <h4 id="checkoutPayTitle" class="text-sm font-bold text-gray-200 mb-2"></h4>
-     <div id="checkoutPayContent" class="text-xs text-gray-300 leading-relaxed"></div>
+    <div id="checkoutDetailsBox" class="hidden bg-slate-950 border border-slate-700 p-3.5 rounded-xl text-center mb-4">
+     <h4 id="checkoutPayTitle" class="text-xs font-bold text-gray-200 mb-1.5"></h4>
+     <div id="checkoutPayContent" class="text-xs text-gray-300"></div>
     </div>
 
-    <button type="button" id="confirmPaymentBtn" onclick="finalizeOrderWhatsApp()" class="hidden w-full bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold py-3.5 rounded-xl text-sm cursor-pointer shadow-lg items-center justify-center gap-2 transition">
-     تم الدفع، أرسل الفاتورة عبر واتساب 💬
+    <button type="button" id="confirmPaymentBtn" onclick="finalizeOrderWhatsApp()" class="hidden w-full bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold py-3 rounded-xl text-xs cursor-pointer shadow transition">
+     تم التحويل، إرسال الفاتورة عبر واتساب 💬
     </button>
    </div>
   </div>
