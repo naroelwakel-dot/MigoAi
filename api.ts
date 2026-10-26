@@ -1,3 +1,8 @@
+// ==============================================================================
+// Migo AI Solution - Verification Engine API (Deno Server)
+// Multi-Game & Multi-Platform Account Lookup & Avatar Resolver
+// ==============================================================================
+
 const CORS_HEADERS = {
   "Content-Type": "application/json; charset=utf-8",
   "Access-Control-Allow-Origin": "*",
@@ -5,11 +10,11 @@ const CORS_HEADERS = {
   "Access-Control-Allow-Headers": "Content-Type",
 };
 
-// مفتاح RapidAPI الخاص بك
-const RAPIDAPI_KEY = "04c7fee3aamshd0586dcb6ccc650p1d66f2jsne4624799cc03";
+// سحب مفتاح RapidAPI بأمان من متغيرات البيئة مع الاحتياطي
+const RAPIDAPI_KEY = Deno.env.get("RAPIDAPI_KEY") || "04c7fee3aamshd0586dcb6ccc650p1d66f2jsne4624799cc03";
 const RAPIDAPI_HOST = "id-game-checker.p.rapidapi.com";
 
-async function safeFetchJson(url: string, options: RequestInit = {}): Promise<any> {
+async function safeFetchJson(url, options = {}) {
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 4500);
@@ -23,7 +28,7 @@ async function safeFetchJson(url: string, options: RequestInit = {}): Promise<an
   }
 }
 
-function extractPlayerName(data: any): string {
+function extractPlayerName(data) {
   if (!data) return "";
   if (typeof data === "string") return data.trim();
   if (typeof data.data === "string") return data.data.trim();
@@ -38,7 +43,7 @@ function extractPlayerName(data: any): string {
 }
 
 // دالة فحص حساب تيك توك بالاسم وجلب الصورة والاسم الظاهر
-async function resolveTikTokUser(username: string): Promise<{ name: string; avatar: string }> {
+async function resolveTikTokUser(username) {
   const clean = username.replace(/^@/, "").trim().toLowerCase();
   try {
     const controller = new AbortController();
@@ -84,7 +89,7 @@ async function resolveTikTokUser(username: string): Promise<{ name: string; avat
 }
 
 // دالة فحص تليجرام
-async function resolveTelegramUser(username: string): Promise<{ name: string; avatar: string }> {
+async function resolveTelegramUser(username) {
   const clean = username.replace(/^@/, "").trim();
   try {
     const controller = new AbortController();
@@ -110,7 +115,7 @@ async function resolveTelegramUser(username: string): Promise<{ name: string; av
   return { name: `@${clean}`, avatar: "" };
 }
 
-Deno.serve(async (req: Request): Promise<Response> => {
+Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 204, headers: CORS_HEADERS });
   }
@@ -227,7 +232,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
 
     // 8. برامج البث المباشر (Live Apps)
     else if (["bigo", "poppo", "chamet", "yalla", "sugo", "meyo"].includes(game)) {
-      const appTitles: Record<string, string> = {
+      const appTitles = {
         bigo: "BIGO Live",
         poppo: "Poppo Live",
         chamet: "Chamet",
@@ -245,7 +250,7 @@ Deno.serve(async (req: Request): Promise<Response> => {
       }
     }
 
-    // الرد النهائي الموحد والمتوافق مع الواجهة
+    // الرد النهائي الموحد
     if (foundName) {
       return new Response(
         JSON.stringify({
