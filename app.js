@@ -1,8 +1,7 @@
 // ==============================================================================
-// تطبيق Migo AI Solution - المحرك الرئيسي الشامل والواجهة السينمائية
+// تطبيق Migo AI Solution - المحرك البصري المصحح (Glitch Store Standard)
 // ==============================================================================
 
-// المتغيرات العامة للحالة
 let cart = [];
 let appliedCoupon = null;
 let currentSelectedPaymentMethod = null;
@@ -12,7 +11,6 @@ let slideInterval = null;
 let activeCinematicGame = null;
 let activeCinematicPackage = null;
 
-// التهيئة عند تحميل الصفحة
 document.addEventListener("DOMContentLoaded", () => {
   loadCartFromStorage();
   initAuth();
@@ -20,8 +18,8 @@ document.addEventListener("DOMContentLoaded", () => {
   initAutoSlider();
   initSocialProofSystem();
 
-  // رسم كافة الأقسام من ملفات البيانات المستقلة
-  renderGamesCards();
+  // رسم المعارض والخدمات
+  renderGlitchGamesGrid();
   renderTiktokAndTelegram();
   renderLiveApps();
   renderVccCards();
@@ -33,45 +31,39 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // ==============================================================================
-// 1. قسم شحن الألعاب: شبكة البوسترات السينمائية (طراز Glitch Store)
+// 1. شبكة بوسترات الألعاب - مطابقة 100% لطراز Glitch Store المضغوط
 // ==============================================================================
 
-function renderGamesCards() {
+function renderGlitchGamesGrid() {
   const container = document.getElementById("gamesCardsContainer");
   if (!container || typeof allGames === "undefined") return;
 
   container.innerHTML = allGames.map(game => `
     <div onclick="openGameCinematicModal('${game.id}')" 
-         class="poster-card relative h-72 sm:h-80 rounded-3xl overflow-hidden border border-slate-700/80 bg-[#0e1422] shadow-xl flex flex-col justify-between p-3 group cursor-pointer hover:border-purple-500/80">
+         class="poster-card relative h-52 sm:h-64 rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-800 bg-[#0e1422] shadow-xl flex flex-col justify-between p-2.5 sm:p-3 group cursor-pointer hover:border-purple-500/80 transition-all duration-300">
       
-      <!-- صورة غلاف اللعبة الرأسي الكامل -->
+      <!-- غلاف اللعبة الرأسي الكامل مع معالج أخطاء التحميل -->
       <img src="${game.banner}" alt="${game.name}" 
-           class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+           onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=600&auto=format&fit=crop';"
+           class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-108">
       
-      <!-- تدرج لوني سينمائي داكن لحماية النصوص -->
-      <div class="absolute inset-0 bg-gradient-to-t from-[#0b1120] via-[#0b1120]/40 to-black/30 pointer-events-none"></div>
+      <!-- تدرج لوني سينمائي داكن ناعم -->
+      <div class="absolute inset-0 bg-gradient-to-t from-[#07090e] via-[#07090e]/40 to-black/30 pointer-events-none"></div>
 
-      <!-- الشارة العلوية -->
+      <!-- الشارة العلوية المدمجة -->
       <div class="relative z-10 flex justify-between items-center">
-        <span class="bg-gradient-to-r from-purple-600 to-indigo-600 text-white text-[9px] font-black px-2.5 py-0.5 rounded-full backdrop-blur-sm border border-purple-400/40">
-          ${game.badge || "🔥 الأكثر طلباً"}
+        <span class="bg-purple-600/90 text-white text-[9px] font-black px-2 py-0.5 rounded-full backdrop-blur-sm border border-purple-400/30">
+          ${game.badge || "👑 Top"}
         </span>
-        <span class="text-[10px] text-amber-400 bg-black/60 px-2 py-0.5 rounded-lg backdrop-blur-sm border border-white/10 font-mono">5.0 ★</span>
+        <span class="text-[9px] text-amber-400 bg-black/60 px-1.5 py-0.5 rounded-md backdrop-blur-sm font-mono">5.0 ★</span>
       </div>
 
-      <!-- بطاقة اللعبة السفلية المدمجة -->
-      <div class="relative z-10 bg-slate-900/90 backdrop-blur-md border border-white/10 p-2.5 rounded-2xl">
-        <div class="flex items-center gap-2 mb-1.5">
-          <div class="w-8 h-8 rounded-lg bg-slate-950 border border-purple-500/50 p-0.5 overflow-hidden shrink-0 shadow-inner flex items-center justify-center">
-            <img src="${game.icon}" alt="${game.name}" class="w-full h-full object-cover rounded-md">
-          </div>
-          <div class="min-w-0 text-right">
-            <h3 class="text-xs font-black text-white truncate">${game.name}</h3>
-            <span class="text-[9px] text-emerald-400 font-bold block">تسليم فوري بالـ ID</span>
-          </div>
-        </div>
-        <div class="text-[10px] text-center bg-purple-600/20 border border-purple-500/30 text-purple-300 py-1 rounded-xl font-extrabold group-hover:bg-purple-600 group-hover:text-white transition">
-          عرض الباقات والأسعار ⚡
+      <!-- كبسولة الاسم السفلية النظيفة مثل Glitch Store تماماً -->
+      <div class="relative z-10 bg-slate-950/85 backdrop-blur-md border border-white/10 px-2.5 py-2 rounded-xl text-right">
+        <h3 class="text-xs font-black text-white truncate leading-tight">${game.name}</h3>
+        <div class="flex items-center justify-between mt-1 text-[10px]">
+          <span class="text-gray-300 font-medium">Top-Up</span>
+          <span class="text-emerald-400 font-bold font-mono">⚡ فوري</span>
         </div>
       </div>
 
@@ -80,7 +72,7 @@ function renderGamesCards() {
 }
 
 // ==============================================================================
-// 2. النافذة السينمائية المخصصة للألعاب (Game Cinematic Modal)
+// 2. النافذة السينمائية المخصصة لاختيار الباقة والـ ID
 // ==============================================================================
 
 function openGameCinematicModal(gameId) {
@@ -90,11 +82,21 @@ function openGameCinematicModal(gameId) {
   activeCinematicGame = game;
   activeCinematicPackage = game.packages[0] || null;
 
-  document.getElementById("gModalBanner").src = game.banner;
+  const modalBanner = document.getElementById("gModalBanner");
+  modalBanner.src = game.banner;
+  modalBanner.onerror = () => { modalBanner.src = "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=800&auto=format&fit=crop"; };
+
   document.getElementById("gModalBadge").innerText = game.badge || "شحن فوري رسمي";
   document.getElementById("gModalTitle").innerText = game.name;
   document.getElementById("gModalSummaryName").innerText = game.name;
-  document.getElementById("gModalIcon").src = game.icon;
+
+  // معالجة صورة أيقونة النافذة لمنع أي خطأ تالف
+  const modalIcon = document.getElementById("gModalIcon");
+  modalIcon.src = game.icon;
+  modalIcon.onerror = function() {
+    this.onerror = null;
+    this.parentElement.innerHTML = `<span class="text-xl">🎮</span>`;
+  };
 
   const zoneGroup = document.getElementById("gModalZoneGroup");
   if (game.requireZone) {
@@ -169,7 +171,7 @@ function updateCinematicSelectedSummary() {
   summary.innerHTML = `${activeCinematicPackage.name} <span class="text-white">•</span> <b class="text-amber-400">${activeCinematicPackage.price} ج.م</b>`;
 }
 
-// فحص المعرف لحظياً بالسيرفر Deno API من داخل النافذة السينمائية
+// فحص المعرف لحظياً
 async function verifyCinematicPlayerAccount() {
   if (!activeCinematicGame) return;
   const playerId = document.getElementById("gModalPlayerId").value.trim();
@@ -192,7 +194,7 @@ async function verifyCinematicPlayerAccount() {
   verifyBtn.disabled = true;
 
   statusBox.className = "p-2 rounded-xl text-xs font-bold text-center border bg-slate-900 text-sky-400 border-sky-500/30 block";
-  statusBox.innerText = "🔍 جارٍ التحقق من الحساب بالاسم الحقيقي...";
+  statusBox.innerText = "🔍 جارٍ استرجاع اسم اللاعب بالاسم الحقيقي...";
 
   try {
     const response = await fetch("https://migoai-72.naroelwakel-dot.deno.net/api/verify", {
@@ -211,20 +213,19 @@ async function verifyCinematicPlayerAccount() {
       nameInput.value = data.username;
       statusBox.className = "p-2 rounded-xl text-xs font-bold text-center border bg-emerald-950/60 text-emerald-300 border-emerald-500/40 block";
       statusBox.innerText = `✓ تم التحقق بنجاح! اسم اللاعب: ${data.username}`;
-      showToast(`✓ مرحباً يا كابتن: ${data.username}`, "success");
+      showToast(`✓ مرحباً: ${data.username}`, "success");
     } else {
       throw new Error(data.message || "تعذر العثور على المعرف");
     }
   } catch (err) {
     statusBox.className = "p-2 rounded-xl text-xs font-bold text-center border bg-amber-950/60 text-amber-300 border-amber-500/40 block";
-    statusBox.innerText = "ℹ️ تعذر استرجاع الاسم تلقائياً. يمكنك كتابة اسمك يدوياً وإتمام الشحن.";
+    statusBox.innerText = "ℹ️ لم يتم استرجاع الاسم تلقائياً. اكتب اسمك يدوياً واضغط إتمام الشحن.";
   } finally {
     verifyBtn.innerHTML = `<span>فحص</span> 🔍`;
     verifyBtn.disabled = false;
   }
 }
 
-// تنفيذ الطلب من النافذة السينمائية
 function submitCinematicOrder(isInstant) {
   if (!activeCinematicGame || !activeCinematicPackage) {
     showToast("⚠️ يرجى اختيار الباقة المطلوبة", "error");
@@ -273,7 +274,7 @@ function submitCinematicOrder(isInstant) {
 }
 
 // ==============================================================================
-// 3. قسم كوينز تيك توك ونجوم تليجرام
+// 3. باقي الأقسام والخدمات
 // ==============================================================================
 
 function renderTiktokAndTelegram() {
@@ -281,13 +282,13 @@ function renderTiktokAndTelegram() {
   const telegramContainer = document.getElementById("telegramStarsGrid");
 
   if (tiktokContainer && typeof tiktokPackages !== "undefined") {
-    tiktokContainer.innerHTML = tiktokPackages.map((pkg, idx) => `
+    tiktokContainer.innerHTML = tiktokPackages.map(pkg => `
       <div class="sky-surface border border-slate-700 p-2.5 rounded-xl flex items-center justify-between">
         <div>
           <div class="text-xs font-black text-white">${pkg.coins} كوينز</div>
           <div class="text-[11px] text-pink-400 font-bold font-mono">${pkg.price} ج.م</div>
         </div>
-        <button type="button" onclick="openPlayerModalForCustom('tiktok', 'عملات تيك توك', '${pkg.coins} كوينز', ${pkg.price}, 'https://upload.wikimedia.org/wikipedia/en/thumb/a/a9/TikTok_logo.svg/250px-TikTok_logo.svg.png')" 
+        <button type="button" onclick="openPlayerModalForCustom('tiktok', 'عملات تيك توك', '${pkg.coins} كوينز', ${pkg.price}, 'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?q=80&w=200&auto=format&fit=crop')" 
                 class="bg-pink-600 hover:bg-pink-500 text-white text-[10px] font-black px-3 py-1.5 rounded-lg transition cursor-pointer">
           شحن ⚡
         </button>
@@ -296,13 +297,13 @@ function renderTiktokAndTelegram() {
   }
 
   if (telegramContainer && typeof telegramPackages !== "undefined") {
-    telegramContainer.innerHTML = telegramPackages.map((pkg, idx) => `
+    telegramContainer.innerHTML = telegramPackages.map(pkg => `
       <div class="sky-surface border border-slate-700 p-2.5 rounded-xl flex items-center justify-between">
         <div>
           <div class="text-xs font-black text-white">${pkg.stars} نجمة</div>
           <div class="text-[11px] text-sky-400 font-bold font-mono">${pkg.price} ج.م</div>
         </div>
-        <button type="button" onclick="openPlayerModalForCustom('telegram', 'نجوم تليجرام', '${pkg.stars} نجمة', ${pkg.price}, 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Telegram_logo.svg/240px-Telegram_logo.svg.png')" 
+        <button type="button" onclick="openPlayerModalForCustom('telegram', 'نجوم تليجرام', '${pkg.stars} نجمة', ${pkg.price}, 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=200&auto=format&fit=crop')" 
                 class="sky-btn text-[10px] font-black px-3 py-1.5 rounded-lg transition cursor-pointer">
           شحن ⚡
         </button>
@@ -311,10 +312,6 @@ function renderTiktokAndTelegram() {
   }
 }
 
-// ==============================================================================
-// 4. قسم برامج البث المباشر (Live Apps)
-// ==============================================================================
-
 function renderLiveApps() {
   const container = document.getElementById("liveAppsContainer");
   if (!container || typeof liveAppsData === "undefined") return;
@@ -322,15 +319,15 @@ function renderLiveApps() {
   container.innerHTML = liveAppsData.map(app => `
     <div class="sky-card border p-3.5 rounded-2xl flex flex-col justify-between">
       <div class="flex items-center gap-3 mb-3">
-        <div class="w-12 h-12 rounded-xl bg-slate-950 border border-slate-700 p-1 flex items-center justify-center shrink-0">
-          <img src="${app.icon}" alt="${app.name}" class="w-full h-full object-cover rounded-lg">
+        <div class="w-11 h-11 rounded-xl bg-slate-950 border border-slate-700 p-1 flex items-center justify-center shrink-0">
+          <img src="${app.icon}" alt="${app.name}" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?q=80&w=200&auto=format&fit=crop';" class="w-full h-full object-cover rounded-lg">
         </div>
         <div>
           <h3 class="text-xs sm:text-sm font-black text-white">${app.name}</h3>
           <span class="text-[10px] text-rose-400 font-bold block">${app.chargeType}</span>
         </div>
       </div>
-      <div class="space-y-1.5 mb-3">
+      <div class="space-y-1.5 mb-2">
         ${app.packages.map(pkg => `
           <div class="bg-slate-950 border border-slate-800 px-2.5 py-1.5 rounded-xl flex justify-between items-center text-xs">
             <span class="font-bold text-gray-200">${pkg.name}</span>
@@ -348,17 +345,12 @@ function renderLiveApps() {
   `).join("");
 }
 
-// ==============================================================================
-// 5. قسم البطاقات الافتراضية (VCC)
-// ==============================================================================
-
 function renderVccCards() {
   const container = document.getElementById("vccCardsContainer");
   if (!container || typeof vccCardsData === "undefined") return;
 
   container.innerHTML = vccCardsData.map(card => `
     <div class="sky-card border border-amber-500/30 p-4 rounded-2xl flex flex-col justify-between text-center relative overflow-hidden group">
-      <div class="absolute -top-6 -right-6 w-16 h-16 bg-amber-500/10 rounded-full blur-xl group-hover:bg-amber-500/20 transition"></div>
       <div>
         <span class="bg-amber-500/20 text-amber-300 border border-amber-500/40 text-[9px] font-black px-2.5 py-0.5 rounded-full inline-block mb-2">فيزا دولية</span>
         <h3 class="text-base font-black text-white">${card.name}</h3>
@@ -400,7 +392,7 @@ function submitVccModal(isInstant) {
   const purpose = document.getElementById("vccPurposeInput").value.trim();
 
   if (!email || !email.includes("@")) {
-    showToast("⚠️ يرجى إدخال بريد إلكتروني صحيح لاستلام البطاقة", "error");
+    showToast("⚠️ يرجى إدخال بريد إلكتروني صحيح", "error");
     return;
   }
 
@@ -426,13 +418,9 @@ function submitVccModal(isInstant) {
     cart.push(item);
     saveCartToStorage();
     updateCartUI();
-    showToast(`🛒 تمت إضافة ${name} إلى السلة بنجاح`, "success");
+    showToast(`🛒 تمت إضافة ${name} إلى السلة`, "success");
   }
 }
-
-// ==============================================================================
-// 6. أدوات الإنتاجية، الترفيه، و الذكاء الاصطناعي
-// ==============================================================================
 
 function renderProductivityTools() {
   const container = document.getElementById("productivityContainer");
@@ -449,7 +437,7 @@ function renderProductivityTools() {
           <span class="text-[10px] text-cyan-400 font-bold block">${tool.tag}</span>
         </div>
       </div>
-      <div class="space-y-1 mb-3">
+      <div class="space-y-1 mb-2">
         ${tool.packages.map(pkg => `
           <div class="bg-slate-950 border border-slate-800 px-2 py-1.5 rounded-xl flex justify-between items-center text-xs">
             <span class="text-gray-300 font-bold text-[11px]">${pkg.duration}</span>
@@ -548,10 +536,6 @@ function addToCartDirect(title, pkgName, price, icon) {
   showToast(`🛒 تمت إضافة ${title} (${pkgName}) إلى السلة`, "success");
 }
 
-// ==============================================================================
-// 7. نافذة فحص المعرفات المخصصة لتطبيقات اللايف وتيك توك
-// ==============================================================================
-
 let activeCustomModalData = null;
 
 function openPlayerModalForCustom(id, name, pkg, price, iconUrl) {
@@ -564,7 +548,7 @@ function openPlayerModalForCustom(id, name, pkg, price, iconUrl) {
     `).join("");
   }
 
-  document.getElementById("modalTargetIcon").innerHTML = `<img src="${iconUrl}" class="w-full h-full object-cover rounded-lg">`;
+  document.getElementById("modalTargetIcon").innerHTML = `<img src="${iconUrl}" onerror="this.src='https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=200&auto=format&fit=crop';" class="w-full h-full object-cover rounded-lg">`;
   document.getElementById("modalTargetTitle").innerText = name;
   document.getElementById("modalTargetPkg").innerText = `الباقة: ${pkg} • ${price} ج.م`;
 
@@ -622,7 +606,7 @@ async function verifyPlayerAccount() {
   verifyBtn.disabled = true;
 
   statusBox.className = "p-2.5 rounded-xl text-xs font-bold text-center border bg-slate-900 text-sky-400 border-sky-500/30 block";
-  statusBox.innerText = "🔍 جارٍ استرجاع اسم الحساب بالاسم الرسمي والصورة...";
+  statusBox.innerText = "🔍 جارٍ استرجاع اسم الحساب بالاسم الرسمي...";
 
   try {
     const res = await fetch("https://migoai-72.naroelwakel-dot.deno.net/api/verify", {
@@ -680,7 +664,7 @@ function submitCustomPlayerOrder() {
 }
 
 // ==============================================================================
-// 8. محرك خدمات السوشيال ميديا الشامل (SMM)
+// 4. السوشيال ميديا
 // ==============================================================================
 
 let currentSMMPlatform = null;
@@ -813,16 +797,14 @@ function expressCheckoutSMM() {
 }
 
 // ==============================================================================
-// 9. إدارة السلة وتطبيق الكوبونات
+// 5. السلة والدفع
 // ==============================================================================
 
 function loadCartFromStorage() {
   try {
     const saved = localStorage.getItem("migo_cart");
     cart = saved ? JSON.parse(saved) : [];
-  } catch (e) {
-    cart = [];
-  }
+  } catch (e) { cart = []; }
   updateCartUI();
 }
 
@@ -852,7 +834,7 @@ function updateCartUI() {
     <div class="bg-slate-950 border border-slate-800 p-2.5 rounded-xl flex items-center justify-between text-xs">
       <div class="flex items-center gap-2.5">
         <div class="w-8 h-8 rounded-lg bg-slate-900 border border-slate-700 flex items-center justify-center overflow-hidden shrink-0">
-          ${item.image && item.image.startsWith("http") ? `<img src="${item.image}" class="w-full h-full object-cover">` : item.image || "⚡"}
+          ${item.image && item.image.startsWith("http") ? `<img src="${item.image}" onerror="this.src='https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=150&auto=format&fit=crop';" class="w-full h-full object-cover">` : item.image || "⚡"}
         </div>
         <div class="text-right">
           <div class="font-extrabold text-white truncate max-w-[170px]">${item.title}</div>
@@ -968,10 +950,6 @@ function closeCheckoutModal() {
   modal.classList.remove("flex");
 }
 
-// ==============================================================================
-// 10. بوابات الدفع الـ 14 وتأكيد الطلب عبر واتساب
-// ==============================================================================
-
 function selectPaymentMethod(key, title, btnElement) {
   currentSelectedPaymentMethod = { key, title };
 
@@ -989,7 +967,6 @@ function selectPaymentMethod(key, title, btnElement) {
   confirmBtn.classList.remove("hidden");
   payTitle.innerText = title;
 
-  // استدعاء معلومات الدفع المستقلة من ملف payments.js
   if (typeof PAYMENT_DETAILS !== "undefined" && PAYMENT_DETAILS[key]) {
     payContent.innerHTML = PAYMENT_DETAILS[key];
   } else {
@@ -1013,7 +990,7 @@ function finalizeOrderWhatsApp() {
 
   const senderAccount = document.getElementById("senderAccountInput").value.trim();
   if (!senderAccount) {
-    showToast("⚠️ يرجى كتابة رقم المحفظة أو الحساب الذي قمت بالتحويل منه", "error");
+    showToast("⚠️ يرجى كتابة رقم المحفظة أو الحساب الذي حوّلت منه", "error");
     return;
   }
 
@@ -1049,7 +1026,6 @@ function finalizeOrderWhatsApp() {
   const waUrl = `https://wa.me/201060934020?text=${encodeURIComponent(message)}`;
   window.open(waUrl, "_blank");
 
-  // تفريغ السلة بعد نجاح التوجيه
   cart = [];
   saveCartToStorage();
   updateCartUI();
@@ -1058,7 +1034,7 @@ function finalizeOrderWhatsApp() {
 }
 
 // ==============================================================================
-// 11. الأدوات المساعدة، التنبيهات، والبحث المباشر
+// 6. الأدوات المساعدة والإشعارات
 // ==============================================================================
 
 function showToast(message, type = "info") {
@@ -1113,7 +1089,7 @@ function handleLiveSearch(query) {
   }
 
   if (results.length === 0) {
-    dropdown.innerHTML = `<div class="p-3 text-xs text-gray-400 text-center">لا توجد نتائج مطابقة لبحثك</div>`;
+    dropdown.innerHTML = `<div class="p-3 text-xs text-gray-400 text-center">لا توجد نتائج مطابقة</div>`;
   } else {
     dropdown.innerHTML = results.slice(0, 6).map((res, i) => `
       <div onclick="executeSearchResult(${i})" class="p-2.5 rounded-xl hover:bg-slate-800 transition cursor-pointer flex items-center justify-between text-xs border-b border-slate-800 last:border-0">
@@ -1137,7 +1113,6 @@ function executeSearchResult(index) {
   }
 }
 
-// القائمة الجانبية والشريط التلقائي
 function toggleSidebar() {
   const sidebar = document.getElementById("sidebarContainer");
   sidebar.classList.toggle("hidden");
@@ -1227,7 +1202,6 @@ function renderReviews() {
   `).join("");
 }
 
-// المصادقة البسيطة
 function initAuth() {
   try {
     const user = localStorage.getItem("migo_user");
