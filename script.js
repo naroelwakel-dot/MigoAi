@@ -964,7 +964,7 @@ function expressCheckout(item) {
 }
 
 // ------------------------------------------------------------------------------
-// 10. Checkout & Complete Payment Gateways (Orange Cash Deleted 100%)
+// 10. Checkout & Complete Payment Gateways (Accurate Live Credentials Integrated)
 // ------------------------------------------------------------------------------
 let selectedPayment = null;
 function proceedToCheckout() {
@@ -984,25 +984,46 @@ function closeCheckoutModal() {
 }
 function copyTextToClipboard(txt) {
     if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(txt).then(() => showToast('تم نسخ الرقم'));
+        navigator.clipboard.writeText(txt).then(() => showToast('تم نسخ البيانات بنجاح 📋'));
     }
 }
+
 function selectPaymentMethod(method, name, btnElement) {
-    selectedPayment = method;
+    selectedPayment = name;
     document.querySelectorAll('.pay-method-btn').forEach(btn => btn.classList.remove('border-sky-400', 'bg-slate-800'));
     if (btnElement) btnElement.classList.add('border-sky-400', 'bg-slate-800');
+    
     const box = document.getElementById('checkoutDetailsBox');
     const title = document.getElementById('checkoutPayTitle');
     const content = document.getElementById('checkoutPayContent');
     box.classList.remove('hidden');
     title.innerText = name;
-    const copyBtn = (txt) => `<button type="button" onclick="copyTextToClipboard('${txt}')" class="mt-2 bg-slate-800 border border-slate-600 px-3 py-1 rounded-lg text-white font-mono text-xs cursor-pointer">📋 نسخ: ${txt}</button>`;
-    
-    if (method === 'vodafone') content.innerHTML = `يرجى تحويل المبلغ لمحفظة فودافون كاش التالية:<br>${copyBtn('01020323432')}`;
-    else if (method === 'instapay') content.innerHTML = `يرجى تحويل المبلغ عبر إنستاباي للحساب التالي:<br>${copyBtn('01146691073')}`;
-    else if (method === 'etisalat') content.innerHTML = `يرجى تحويل المبلغ لمحفظة اتصالات كاش التالية:<br>${copyBtn('01146691073')}`;
-    else if (method === 'card') content.innerHTML = `الدفع عبر البطاقات البنكية المباشرة متاح عبر البوابة الآمنة. سيتم تزويدك بالرابط فوراً على واتساب.`;
-    else content.innerHTML = `الدفع عبر <b>${name}</b> متاح. اضغط على الزر وسنزودك برابط الفاتورة المباشر فوراً على واتساب.`;
+
+    const copyBtn = (txt) => `<button type="button" onclick="copyTextToClipboard('${txt}')" class="mt-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 px-3 py-1.5 rounded-lg text-white font-mono text-xs cursor-pointer shadow transition inline-flex items-center gap-1.5"><span>📋 نسخ:</span> <b>${txt}</b></button>`;
+
+    if (method === 'vodafone') {
+        content.innerHTML = `يرجى تحويل المبلغ لمحفظة فودافون كاش الرسمية:<br>${copyBtn('01020323432')}`;[span_1](start_span)[span_1](end_span)
+    } else if (method === 'etisalat') {
+        content.innerHTML = `يرجى تحويل المبلغ لمحفظة اتصالات كاش الرسمية:<br>${copyBtn('01146691073')}`;[span_2](start_span)[span_2](end_span)
+    } else if (method === 'instapay') {
+        content.innerHTML = `يرجى تحويل المبلغ عبر تطبيق إنستاباي (InstaPay) للرقم:<br>${copyBtn('01146691073')}`;[span_3](start_span)[span_3](end_span)
+    } else if (method === 'telda') {
+        content.innerHTML = `يرجى تحويل المبلغ لحساب تيلدا (Telda) التالي:<br>${copyBtn('@saherbeh')}`;[span_4](start_span)[span_4](end_span)
+    } else if (method === 'binance') {
+        content.innerHTML = `
+            الدفع عبر باينانس باي (Binance Pay) متاح بالعملات الرقمية (USDT)[span_5](start_span)[span_5](end_span).<br>
+            <span class="text-amber-400 font-bold block mt-1">امسح رمز الـ QR من البطاقة أو اطلب الـ Pay ID عبر واتساب للمتابعة[span_6](start_span)[span_6](end_span).</span>
+        `;
+    } else if (method === 'redotpay') {
+        content.innerHTML = `يرجى التحويل لمعرف حساب ريدوت باي (RedotPay ID):<br>${copyBtn('1217212555')}`;[span_7](start_span)[span_7](end_span)
+    } else if (method === 'paypal') {
+        content.innerHTML = `يرجى إرسال المبلغ عبر باي بال (PayPal) إلى:<br>${copyBtn('sahermohamed123456@gmail.com')}`;[span_8](start_span)[span_8](end_span)
+    } else {
+        content.innerHTML = `
+            الدفع المباشر بالبطاقات (Visa / Mastercard / Apple Pay) أو التقسيط عبر (فاليو، تابي، تمارة، سهولة، فرصة، أمان) متاح[span_9](start_span)[span_9](end_span).<br>
+            <span class="text-sky-300 block mt-1 font-bold">اضغط تأكيد وسيتم تزويدك برابط الدفع المباشر (Payment Link) فوراً عبر واتساب[span_10](start_span)[span_10](end_span).</span>
+        `;
+    }
 
     document.getElementById('confirmPaymentBtn').classList.remove('hidden');
 }
