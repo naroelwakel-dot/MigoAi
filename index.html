@@ -475,9 +475,10 @@
 
     <!-- كارت المنصة التفاعلي بالبانر الأفقي الواقعي والأيقونة المعتمدة -->
     <div class="sky-card border rounded-3xl overflow-hidden shadow-2xl">
-     <!-- بانر المنصة الأفقي مثل كروت الألعاب -->
-     <div id="selectedPlatformBanner" class="h-28 sm:h-36 relative bg-cover bg-center transition-all duration-300">
-      <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent p-4 flex flex-col justify-between">
+     <!-- بانر المنصة الأفقي بصورة حقيقية ومضمونة مثل كروت الألعاب -->
+     <div class="h-32 sm:h-40 relative overflow-hidden">
+      <img id="selectedPlatformBannerImg" src="" alt="Banner" class="absolute inset-0 w-full h-full object-cover object-center transition-all duration-500">
+      <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/65 to-transparent p-4 flex flex-col justify-between z-10">
        <div class="flex justify-between items-start">
         <span class="text-[10px] font-bold text-sky-300 bg-sky-500/20 px-2.5 py-0.5 rounded-full border border-sky-500/40 backdrop-blur-md">
          سيرفر موثق ⚡
@@ -955,11 +956,11 @@
   </div>
 
   <!-- استدعاء ملفات السكربت مع تمرير المعرف للنسخة لمنع تخزين الكاش القديم -->
-  <script src="payments.js?v=2026.11"></script>
-  <script src="games.js?v=2026.11"></script>
-  <script src="live-coins.js?v=2026.11"></script>
-  <script src="subscriptions.js?v=2026.11"></script>
-  <script src="smm.js?v=2026.11"></script>
-  <script src="app.js?v=2026.11" defer></script>
+  <script src="payments.js?v=2026.12"></script>
+  <script src="games.js?v=2026.12"></script>
+  <script src="live-coins.js?v=2026.12"></script>
+  <script src="subscriptions.js?v=2026.12"></script>
+  <script src="smm.js?v=2026.12"></script>
+  <script src="app.js?v=2026.12" defer></script>
  </body>
 </html>
