@@ -1,57 +1,341 @@
 // ==============================================================================
-// برامج التصميم، الإنتاجية والترفيه الرقمي الشامل
+// Migo AI Solution - subscriptions.js
+// قاعدة بيانات الاشتراكات والبرامج (26 خدمة كاملة) - مطابقة 100% للمتجر الحي
 // ==============================================================================
 
-const productivityProducts = [
-    // عائلة أدوبي كريتيف
-    { id: 'prod_adobe_cc_1m', name: 'Adobe Creative Cloud (شهر)', tag: 'جميع التطبيقات 20+', price: 490, desc: 'حساب رسمي يشمل Photoshop, Illustrator, Premiere ومساحة سحابية', keywords: 'ادوبي كريتيف فوتوشوب اليستريتور بريمير افتر افكت ديزاين adobe photoshop illustrator premiere' },
-    { id: 'prod_adobe_cc_3m', name: 'Adobe Creative Cloud (3 شهور)', tag: 'الحزمة الكاملة VIP', price: 1350, desc: 'تفعيل رسمي على بريدك الشخصي بضمان كامل المدة', keywords: 'ادوبي ٣ شهور كريتيف فوتوشوب adobe' },
-    { id: 'prod_adobe_cc_12m', name: 'Adobe Creative Cloud (سنة)', tag: 'اشتراك سنوي شامل', price: 4400, desc: 'خطة جميع تطبيقات أدوبي الأصلية لمدة 12 شهر مع السحابة', keywords: 'ادوبي سنة كامل فوتوشوب اليستريتور adobe annual' },
-    { id: 'prod_adobe_sub_single', name: 'Adobe Single App (سنة)', tag: 'برنامج فردي مخصص', price: 1950, desc: 'تفعيل سنوي لبرنامج تختاره (Photoshop أو Illustrator)', keywords: 'فوتوشوب سنوي اليستريتور سنوي برنامج ادوبي واحد single app' },
-    { id: 'prod_adobe', name: 'Adobe Express (12 شهر)', tag: 'أدوبي للتصميم', price: 180, desc: 'تفعيل رسمي لسنة كاملة لتصميم السوشيال ميديا والريلز', keywords: 'ادوبي اكسبريس اكسبرس express adobe express تصاميم' },
+const subscriptionsData = [
+  // --- 1. برامج وأدوات الذكاء الاصطناعي (AI Tools) ---
+  {
+    id: "chatgpt",
+    name: "ChatGPT Plus",
+    provider: "OpenAI الرسمي",
+    category: "ai",
+    badge: "الأكثر طلباً 🔥",
+    banner: "https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=1200&q=80",
+    description: "حساب رسمي ببريد خاص Gmail NW لتفعيل فوري وآمن.",
+    packages: [
+      { id: "chatgpt_1m", name: "شهر واحد — 835 ج.م", duration: "شهر واحد", price: 835 }
+    ]
+  },
+  {
+    id: "gemini_pro",
+    name: "Google Gemini Pro",
+    provider: "Google الرسمي",
+    category: "ai",
+    badge: "عرض حصري ⚡",
+    banner: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80",
+    description: "اشتراك رسمي متكامل مع وصول دائم لأحدث النماذج المتقدمة.",
+    packages: [
+      { id: "gemini_18m", name: "18 شهر — 245 ج.م", duration: "18 شهر", price: 245 }
+    ]
+  },
+  {
+    id: "super_grok",
+    name: "Super Grok",
+    provider: "xAI الرسمي",
+    category: "ai",
+    badge: "أحدث إصدار ⚡",
+    banner: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=1200&q=80",
+    description: "أحدث نموذج ذكاء اصطناعي فائق الذكاء من منصة xAI.",
+    packages: [
+      { id: "grok_7d", name: "7 أيام — 410 ج.م", duration: "7 أيام", price: 410 }
+    ]
+  },
+  {
+    id: "elevenlabs",
+    name: "Elevenlabs Credits",
+    provider: "Elevenlabs الرسمي",
+    category: "ai",
+    badge: "صوتيات احترافية 🎙️",
+    banner: "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&w=1200&q=80",
+    description: "توليد أصوات بشرية طبيعية ومحاكاة النبرات بأعلى دقة.",
+    packages: [
+      { id: "eleven_10k", name: "رصيد 10k Credits — 110 ج.م", duration: "رصيد دائم", price: 110 }
+    ]
+  },
+  {
+    id: "capcut_pro",
+    name: "CapCut Pro + AI",
+    provider: "Bytedance / CapCut",
+    category: "ai",
+    badge: "مونتاج وذكاء اصطناعي 🎬",
+    banner: "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=1200&q=80",
+    description: "مونتاج فيديو احترافي، إزالة خلفيات، وفلاتر ذكية بلا حدود.",
+    packages: [
+      { id: "capcut_7d", name: "7 أيام — 55 ج.م", duration: "7 أيام", price: 55 },
+      { id: "capcut_1m", name: "شهر + 1600 رصيد — 275 ج.م", duration: "شهر + 1600 رصيد", price: 275 }
+    ]
+  },
+  {
+    id: "lovable_pro",
+    name: "Lovable Pro Lite",
+    provider: "Lovable AI",
+    category: "ai",
+    badge: "تطوير ويب بالذكاء 💻",
+    banner: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&q=80",
+    description: "بناء وتطوير تطبيقات ومواقع كاملة عبر الأوامر النصية المباشرة.",
+    packages: [
+      { id: "lovable_12m", name: "12 شهر (سنة) — 665 ج.م", duration: "سنة واحدة", price: 665 }
+    ]
+  },
+  {
+    id: "framer_ai",
+    name: "Framer AI",
+    provider: "Framer الرسمي",
+    category: "ai",
+    badge: "تصميم مواقع تفاعلية 🌐",
+    banner: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1200&q=80",
+    description: "تصميم ونشر مواقع ويب حديثة وسريعة الاستجابة بالذكاء الاصطناعي.",
+    packages: [
+      { id: "framer_1y", name: "سنة واحدة — 480 ج.م", duration: "سنة واحدة", price: 480 }
+    ]
+  },
+  {
+    id: "muse_ai",
+    name: "Muse AI",
+    provider: "Muse الرسمي",
+    category: "ai",
+    badge: "ذكاء اصطناعي متقدم 🧠",
+    banner: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80",
+    description: "مساعد فيديو ووسائط متقدم مدعوم بنماذج الذكاء الاصطناعي.",
+    packages: [
+      { id: "muse_full", name: "اشتراك كامل — 140 ج.م", duration: "اشتراك كامل", price: 140 }
+    ]
+  },
 
-    // أدوات التصميم العالمية المستعادة
-    { id: 'prod_envato', name: 'Envato Elements (شهر)', tag: 'تحميلات غير محدودة', price: 590, desc: 'مكتبة القوالب، الفيديوهات، والمؤثرات الصوتية الشاملة للمصممين', keywords: 'انفاتو انفانتو عناصر ملفات قوالب تمبلت envato elements' },
-    { id: 'prod_freepik', name: 'Freepik Premium (شهر)', tag: 'بنك التصميم الأول', price: 360, desc: 'تحميل الفيكتور، الصور الحصرية وملفات PSD بدون حدود', keywords: 'فريبيك فريبك فيكتور صور تصميم freepik psd vector' },
-    { id: 'prod_canva_adm', name: 'Canva Pro Admin', tag: 'تحكم إداري كامل', price: 340, desc: 'موثق بالمستندات مع صلاحية إضافة أعضاء', keywords: 'كانفا ادمن كانفا برو كانفا تيم canva admin pro' },
-    { id: 'prod_canva_personal', name: 'Canva Pro (سنة على إيميلك)', tag: 'اشتراك سنوي فردي', price: 180, desc: 'تفعيل رسمي على بريدك الشخصي بضمان 365 يوم', keywords: 'كانفا برو سنة كانفا شخصي canva pro personal' },
-    { id: 'prod_capcut_1m', name: 'CapCut Pro (شهر)', tag: 'جاهز وثابت 30 يوم', price: 120, desc: 'يدعم جهازين وضمان كامل', keywords: 'كاب كات كابكت مونتاج فيديو capcut pro' },
-    { id: 'prod_capcut_6m', name: 'CapCut Pro (6 شهور)', tag: 'اشتراك 6 شهور', price: 690, desc: 'حساب ثابت نصف سنوي', keywords: 'كاب كات ٦ شهور كابكت capcut' },
-    { id: 'prod_capcut_cred', name: 'CapCut Pro 1600 نقطة', tag: 'رصيد توليد AI', price: 150, desc: 'رصيد نقاط إضافي لتأثيرات الذكاء الاصطناعي', keywords: 'نقاط كاب كات توكنز كابكت capcut credits' },
-    { id: 'prod_framer', name: 'Framer AI (سنة)', tag: 'كود ترقية رسمي', price: 490, desc: 'خطة Basic السنوية لتصميم المواقع', keywords: 'فرايمر فريمر تصميم مواقع framer ai web' },
-    { id: 'prod_figma', name: 'Figma Pro Edu (سنتين)', tag: 'اشتراك سنتين', price: 360, desc: 'أدوات التصميم والـ UI/UX كاملة', keywords: 'فيجما فجما واجهات يوزر انترفيس figma pro ui ux' },
+  // --- 2. برامج التصميم والإنتاجية (Design & Productivity) ---
+  {
+    id: "adobe_cc",
+    name: "Adobe Creative Cloud",
+    provider: "Adobe الرسمي",
+    category: "design",
+    badge: "الحزمة الشاملة 🎨",
+    banner: "https://images.unsplash.com/photo-1626785774573-4b799315345d?auto=format&fit=crop&w=1200&q=80",
+    description: "جميع برامج أدوبي الرسمية مع تفعيل خاص واشتراكات مدعومة.",
+    packages: [
+      { id: "adobe_1m", name: "شهر واحد (خاص) — 699 ج.م", duration: "شهر واحد", price: 699 },
+      { id: "adobe_3m", name: "3 شهور (خاص) — 1099 ج.م", duration: "3 شهور", price: 1099 },
+      { id: "adobe_4m", name: "4 شهور (خاص) — 1399 ج.م", duration: "4 شهور", price: 1399 },
+      { id: "adobe_5m", name: "5 شهور (خاص) — 1799 ج.م", duration: "5 شهور", price: 1799 },
+      { id: "adobe_6m", name: "6 شهور (خاص) — 2199 ج.م", duration: "6 شهور", price: 2199 },
+      { id: "adobe_shared_4m", name: "اشتراك Shared (جهاز واحد - 4 شهور) — 899 ج.م", duration: "4 شهور Shared", price: 899 }
+    ]
+  },
+  {
+    id: "adobe_express",
+    name: "Adobe Express",
+    provider: "Adobe الرسمي",
+    category: "design",
+    badge: "تفعيل رسمي مباشر ✒️",
+    banner: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80",
+    description: "رابط تفعيل رسمي مباشر لإنشاء تصاميم السوشيال ميديا بسرعة.",
+    packages: [
+      { id: "adobe_exp_12m", name: "12 شهر — 120 ج.م", duration: "12 شهر", price: 120 }
+    ]
+  },
+  {
+    id: "figma_pro",
+    name: "Figma Pro Edu",
+    provider: "Figma الرسمي",
+    category: "design",
+    badge: "تصميم واجهات UI/UX 📐",
+    banner: "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=1200&q=80",
+    description: "خطة سنتين مع 3000 رصيد لتصميم المواقع والتطبيقات.",
+    packages: [
+      { id: "figma_2y", name: "سنتان — 345 ج.م", duration: "سنتان", price: 345 }
+    ]
+  },
+  {
+    id: "canva_pro",
+    name: "Canva Pro",
+    provider: "Canva الرسمي",
+    category: "design",
+    badge: "الأكثر مبيعاً 🖌️",
+    banner: "https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?auto=format&fit=crop&w=1200&q=80",
+    description: "خيارات متعددة للتفعيل لفتح كافة الميزات والقوالب المدفوعة.",
+    packages: [
+      { id: "canva_2y_fw", name: "سنتان (FW) — 130 ج.م", duration: "سنتان (FW)", price: 130 },
+      { id: "canva_1m_pers", name: "شهر شخصي — 130 ج.م", duration: "شهر شخصي", price: 130 },
+      { id: "canva_admin", name: "حساب Admin (500 دعوة) — 345 ج.م", duration: "حساب Admin", price: 345 }
+    ]
+  },
+  {
+    id: "notion_plus",
+    name: "Notion Plus",
+    provider: "Notion Labs",
+    category: "productivity",
+    badge: "إدارة المشاريع 📖",
+    banner: "https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?auto=format&fit=crop&w=1200&q=80",
+    description: "إدارة المهام والملاحظات وقواعد البيانات باحترافية تامة.",
+    packages: [
+      { id: "notion_1y", name: "سنة واحدة — 135 ج.م", duration: "سنة واحدة", price: 135 }
+    ]
+  },
+  {
+    id: "ms_office_365",
+    name: "Microsoft Office 365",
+    provider: "Microsoft الرسمي",
+    category: "productivity",
+    badge: "حزمة أوفيس كاملة 📊",
+    banner: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=1200&q=80",
+    description: "جميع برامج أوفيس الرسمية (Word, Excel, PowerPoint) وتخزين سحابي.",
+    packages: [
+      { id: "office_1y", name: "سنة واحدة — 160 ج.م", duration: "سنة واحدة", price: 160 }
+    ]
+  },
+  {
+    id: "ilovepdf",
+    name: "iLovePDF Premium",
+    provider: "iLovePDF الرسمي",
+    category: "productivity",
+    badge: "أدوات PDF شاملة 📄",
+    banner: "https://images.unsplash.com/photo-1568667256549-094345857637?auto=format&fit=crop&w=1200&q=80",
+    description: "تعديل وتحويل ودمج وضغط ملفات الـ PDF بلا قيود.",
+    packages: [
+      { id: "ilovepdf_1y", name: "سنة واحدة — 105 ج.م", duration: "سنة واحدة", price: 105 }
+    ]
+  },
+  {
+    id: "linkedin_career",
+    name: "LinkedIn Career",
+    provider: "LinkedIn الرسمي",
+    category: "productivity",
+    badge: "تطوير مهني وتوظيف 💼",
+    banner: "https://images.unsplash.com/photo-1616469829941-c7200edec809?auto=format&fit=crop&w=1200&q=80",
+    description: "ترقية الحساب للحصول على ميزات التوظيف ودورات التعلم.",
+    packages: [
+      { id: "linkedin_3m", name: "3 أشهر — 185 ج.م", duration: "3 أشهر", price: 185 }
+    ]
+  },
+  {
+    id: "duolingo_super",
+    name: "Duolingo Super",
+    provider: "Duolingo الرسمي",
+    category: "productivity",
+    badge: "تعلم لغات 🗣️",
+    banner: "https://images.unsplash.com/photo-1546410531-bb4caa6b424d?auto=format&fit=crop&w=1200&q=80",
+    description: "تعلم اللغات بدون إعلانات وبقلوب غير محدودة ومراجعة الأخطاء.",
+    packages: [
+      { id: "duolingo_12m", name: "12 شهر — 110 ج.م", duration: "12 شهر", price: 110 }
+    ]
+  },
+  {
+    id: "miro_panel",
+    name: "Miro Lifetime Panel",
+    provider: "Miro الرسمي",
+    category: "productivity",
+    badge: "لوحة عمل مدى الحياة 📋",
+    banner: "https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=1200&q=80",
+    description: "لوحة عمل مرئية وتفاعلية للعصف الذهني والفرق ومدى الحياة.",
+    packages: [
+      { id: "miro_life", name: "مدى الحياة — 685 ج.م", duration: "مدى الحياة", price: 685 }
+    ]
+  },
+  {
+    id: "gmail_accounts",
+    name: "حسابات Gmail جاهزة",
+    provider: "Google الموثق",
+    category: "productivity",
+    badge: "حساب موثق ✉️",
+    banner: "https://images.unsplash.com/photo-1596526131083-e8c633c948d2?auto=format&fit=crop&w=1200&q=80",
+    description: "حساب جاهز وموثق بالكامل للتسليم الفوري والاستخدام المباشر.",
+    packages: [
+      { id: "gmail_1acc", name: "حساب واحد — 55 ج.م", duration: "حساب دائم", price: 55 }
+    ]
+  },
+  {
+    id: "outlook_accounts",
+    name: "حسابات Outlook / Hotmail",
+    provider: "Microsoft الموثق",
+    category: "productivity",
+    badge: "تفعيل فوري 📭",
+    banner: "https://images.unsplash.com/photo-1557200134-90327ee9fafa?auto=format&fit=crop&w=1200&q=80",
+    description: "حساب مايكروسوفت رسمي جاهز وموثق للتسليم الفوري.",
+    packages: [
+      { id: "outlook_1acc", name: "حساب واحد — 5 ج.م", duration: "حساب دائم", price: 5 }
+    ]
+  },
 
-    // أنظمة التشغيل، الإنتاجية والتدقيق
-    { id: 'prod_win_pro', name: 'مفتاح Windows 10/11 Pro أصلي', tag: 'مدى الحياة OEM', price: 220, desc: 'سيريال رقمي رسمي يربط بجهازك مدى الحياة مع التحديثات', keywords: 'ويندوز سيريال مفتاح تنشيط ويندوز 10 11 برو windows 10 11 pro key' },
-    { id: 'prod_office', name: 'Office 365 Plus (سنة)', tag: 'مايكروسوفت أوفيس', price: 65, desc: 'حزمة برامج كاملة مع سحابة OneDrive', keywords: 'اوفيس ميكروسوفت وورد اكسل ون درايف office 365 word excel onedrive' },
-    { id: 'prod_grammarly', name: 'Grammarly Premium (سنة)', tag: 'تدقيق لغوي احترافي', price: 390, desc: 'تصحيح القواعد، النبرة، وفحص الاقتباس والسرقة الأدبية', keywords: 'جرامرلي جرامر تصحيح انجليزي grammarly' },
-    { id: 'prod_notion', name: 'Notion Plus (12 شهر)', tag: 'تسليم فوري Outlook', price: 125, desc: 'حساب مخصص ومفعل لسنة كاملة', keywords: 'نوشن تنظيم ملاحظات notion plus' },
-    { id: 'prod_miro', name: 'Miro Lifetime Panel', tag: 'مدى الحياة', price: 690, desc: 'إدارة فريق رسمي حتى 100 عضو', keywords: 'ميرو لوحة تخطيط miro' },
-    { id: 'prod_ilovepdf', name: 'iLovePDF Premium (سنة)', tag: 'شامل 2000 رصيد AI', price: 95, desc: 'توقيعات رقمية وتعديل كامل', keywords: 'بي دي اف تعديل دمج pdf ilovepdf' },
-
-    // الجيمينج والمحادثات
-    { id: 'prod_discord_nitro_m', name: 'Discord Nitro (شهر)', tag: 'مع 2 بوست سيرفر', price: 340, desc: 'إيموجي مخصص في كل مكان، ستريم 4K وبث بجودة فائقة', keywords: 'ديسكورد دسكورد نيترو قيمنق العاب سيرفر discord nitro' },
-    { id: 'prod_discord_nitro_y', name: 'Discord Nitro (سنة)', tag: 'اشتراك سنوي كامل', price: 2950, desc: 'تفعيل رسمي على حسابك لعام كامل مع كافة المميزات', keywords: 'دسكورد سنة نيترو سنة discord nitro year' },
-    { id: 'prod_xbox_pass', name: 'Xbox Game Pass Ultimate (شهر)', tag: 'PC & Console', price: 390, desc: 'مكتبة تضم أكثر من 400 لعبة تشمل EA Play والألعاب فور صدورها', keywords: 'اكس بوكس جيم باس قيم باس العاب كمبيوتر كونسول xbox game pass ultimate' },
-
-    // الحسابات والشبكات
-    { id: 'prod_gmail', name: 'حسابات Gmail جاهزة', tag: 'مع أكواد الاسترداد', price: 60, desc: 'تسليم: البريد | الباسورد | كود 8 أرقام', keywords: 'جيميل ايميل جوجل ايميلات جاهزة gmail google email' },
-    { id: 'prod_hotmail', name: 'حسابات Outlook / Hotmail', tag: 'جاهزة وفورية', price: 10, desc: 'إيميلات نظيفة للاستخدام الفوري', keywords: 'هوتميل اوتلوك ايميلات outlook hotmail email' },
-    { id: 'prod_vpn_nord', name: 'NordVPN (3 شهور)', tag: 'حماية وVPN', price: 230, desc: 'تشفير فائق وحماية للتصفح', keywords: 'في بي ان نورد حماية تصفح nordvpn vpn' },
-    { id: 'prod_vpn_express', name: 'ExpressVPN (شهر)', tag: 'أعلى سرعة VPN', price: 130, desc: 'حساب مفعل شهر كامل', keywords: 'اكسبريس في بي ان سريع expressvpn vpn' }
+  // --- 3. خدمات البث والترفيه (Entertainment & Streaming) ---
+  {
+    id: "shahid_vip",
+    name: "شاهد VIP",
+    provider: "MBC / Shahid الرسمي",
+    category: "entertainment",
+    badge: "بث ترفيهي عربي 📺",
+    banner: "https://images.unsplash.com/photo-1522869635100-9f4c5e86aa37?auto=format&fit=crop&w=1200&q=80",
+    description: "اشتراك رسمي لمتابعة أحدث الأعمال والمسلسلات العربية الحصرية.",
+    packages: [
+      { id: "shahid_1m", name: "شهر واحد — 205 ج.م", duration: "شهر واحد", price: 205 }
+    ]
+  },
+  {
+    id: "youtube_premium",
+    name: "YouTube Premium",
+    provider: "Google / YouTube",
+    category: "entertainment",
+    badge: "بدون إعلانات ▶️",
+    banner: "https://images.unsplash.com/photo-1611162616475-46b635cb6868?auto=format&fit=crop&w=1200&q=80",
+    description: "مشاهدة بدون فواصل إعلانية، تشغيل في الخلفية، واشتراك Music.",
+    packages: [
+      { id: "yt_1m", name: "شهر واحد — 115 ج.م", duration: "شهر واحد", price: 115 },
+      { id: "yt_3m", name: "3 أشهر — 275 ج.م", duration: "3 أشهر", price: 275 }
+    ]
+  },
+  {
+    id: "prime_video",
+    name: "Amazon Prime Video",
+    provider: "Amazon الرسمي",
+    category: "entertainment",
+    badge: "أفلام ومسلسلات 🍿",
+    banner: "https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?auto=format&fit=crop&w=1200&q=80",
+    description: "مكتبة سينمائية ضخمة بجودة 4K على حساب رسمي ومضمون.",
+    packages: [
+      { id: "prime_6m", name: "6 أشهر — 275 ج.م", duration: "6 أشهر", price: 275 }
+    ]
+  },
+  {
+    id: "apple_music",
+    name: "Apple Music",
+    provider: "Apple الرسمي",
+    category: "entertainment",
+    badge: "صوت مكاني فائق 🎧",
+    banner: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1200&q=80",
+    description: "استماع لملايين المقاطع الموسيقية بنقاء Spatial Audio وبدون إعلانات.",
+    packages: [
+      { id: "apple_music_5m", name: "5 أشهر — 175 ج.م", duration: "5 أشهر", price: 175 }
+    ]
+  },
+  {
+    id: "spotify_premium",
+    name: "Spotify Premium",
+    provider: "Spotify الرسمي",
+    category: "entertainment",
+    badge: "موسيقى بدون قيود 🎵",
+    banner: "https://images.unsplash.com/photo-1614680376593-902f749f7ffc?auto=format&fit=crop&w=1200&q=80",
+    description: "استماع وتحميل بلا اتصال بالإنترنت وتخطي لا محدود للمسارات.",
+    packages: [
+      { id: "spotify_3m_link", name: "3 أشهر (رابط) — 60 ج.م", duration: "3 أشهر (رابط)", price: 60 },
+      { id: "spotify_1m_acc", name: "شهر واحد (حساب) — 140 ج.م", duration: "شهر واحد (حساب)", price: 140 }
+    ]
+  },
+  {
+    id: "netflix_premium",
+    name: "Netflix Premium",
+    provider: "Netflix الرسمي",
+    category: "entertainment",
+    badge: "حساب Admin بضمان 🎬",
+    banner: "https://images.unsplash.com/photo-1522869635100-9f4c5e86aa37?auto=format&fit=crop&w=1200&q=80",
+    description: "حساب مسؤول Admin رسمي كامل بدقة Ultra HD 4K مع ضمان الاستمرارية.",
+    packages: [
+      { id: "netflix_full", name: "حساب كامل — 310 ج.م", duration: "حساب كامل", price: 310 }
+    ]
+  }
 ];
 
-const entertainmentProducts = [
-    { id: 'sub_netflix', name: 'Netflix Premium', label: 'حساب كامل برمز خاص 4K', price: 320, desc: 'ضمان كامل طوال المدة', keywords: 'نتفلكس نتفليكس افلام مسلسلات netflix 4k' },
-    { id: 'sub_shahid', name: 'شاهد VIP', label: 'شهر واحد باقة المسلسلات', price: 220, desc: 'أحدث المسلسلات بدون إعلانات وبأعلى جودة', keywords: 'شاهد مسلسلات عربي vip shahid' },
-    { id: 'sub_watchit', name: 'Watch IT (شهر)', label: 'المنصة المصرية الأولى', price: 140, desc: 'حساب رسمي لمتابعة الدراما المصرية الحصرية بدون فواصل', keywords: 'واتش ات وتش ات واتشت مسلسلات مصرية watch it watchit' },
-    { id: 'sub_tod', name: 'TOD / beIN Sports (شهر)', label: 'الباقة الرياضية الشاملة', price: 520, desc: 'بث مباشر لجميع البطولات والدوريات العالمية بدون تقطيع', keywords: 'تود بي ان سبورت بين كورة مباريات دوري ابطال tod bein sports football' },
-    { id: 'sub_disney', name: 'Disney+ (شهر)', label: 'مارفل، ستار وورز وديزني', price: 220, desc: 'أحدث الأفلام والرسوم المتحركة بدقة 4K مع الترجمة والدبلجة', keywords: 'ديزني دزني مارفل افلام اطفال كرتون disney plus disney+' },
-    { id: 'sub_osn', name: 'OSN+ (شهر)', label: 'أعمال HBO الحصرية', price: 230, desc: 'مسلسلات House of the Dragon و The Last of Us بجودة فائقة', keywords: 'او اس ان مسلسلات اجنبي hbo osn osn+' },
-    { id: 'sub_prime', name: 'Prime Video (6 شهور)', label: 'وصول كامل للإيميل', price: 280, desc: 'حساب خاص بضمان شهرين', keywords: 'برايم امازون فيديو prime video amazon' },
-    { id: 'sub_crunchyroll', name: 'Crunchyroll Mega Fan (شهر)', label: 'عالم الأنمي بالكامل', price: 110, desc: 'مشاهدة بدون إعلانات وتحميل أوفلاين بعد ساعة من العرض باليابان', keywords: 'كرانشي رول كرنشي انمي ون بيس سحر crunchyroll anime' },
-    { id: 'sub_youtube', name: 'YouTube Premium', label: 'شهر واحد على إيميلك', price: 125, desc: 'تشغيل بالخلفية وبدون إعلانات مع YT Music', keywords: 'يوتيوب بريميوم بدون اعلانات ميوزك youtube premium' },
-    { id: 'sub_spotify', name: 'Spotify Premium', label: 'شهر واحد حساب خاص', price: 100, desc: 'موسيقى بجودة فائقة بدون فواصل', keywords: 'سبوتيفاي سبوتفاي اغاني موسيقى spotify' },
-    { id: 'sub_anghami', name: 'Anghami Plus (شهر)', label: 'أنغامي الموسيقية الذهبية', price: 90, desc: 'تحميل وسماع بدون نت وتخطي لا نهائي للأغاني', keywords: 'انغامي انغام انغامي بلس anghami plus' },
-    { id: 'sub_appletv', name: 'Apple TV (12 شهر)', label: 'سنة كاملة', price: 150, desc: 'وصول لمكتبة آبل سينما الأصلية', keywords: 'ابل تي في سينما افلام apple tv apple' }
-];
+// إتاحة البيانات للواجهة
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = { subscriptionsData };
+} else {
+  window.subscriptionsData = subscriptionsData;
+}
