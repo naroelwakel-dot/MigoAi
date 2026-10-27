@@ -727,7 +727,7 @@ function renderSMMPlatforms() {
     }
 }
 
-// 2. عند اختيار منصة: تحديث العنوان والأيقونة والبانر واستخراج الأقسام تلقائياً
+// 2. عند اختيار منصة: تحديث العنوان والأيقونة وصورة البانر واستخراج الأقسام تلقائياً
 function selectSMMPlatform(pid) {
     if (typeof smmPlatforms === 'undefined' || !smmPlatforms.length) return;
     currentSMMPlatform = smmPlatforms.find(p => p.id === pid) || smmPlatforms[0];
@@ -735,7 +735,7 @@ function selectSMMPlatform(pid) {
 
     const titleEl = document.getElementById('selectedPlatformTitle');
     const iconContainer = document.getElementById('selectedPlatformIconContainer');
-    const bannerEl = document.getElementById('selectedPlatformBanner');
+    const bannerImg = document.getElementById('selectedPlatformBannerImg');
     const catSelect = document.getElementById('smmCategorySelect');
 
     if (titleEl) titleEl.innerText = currentSMMPlatform.name;
@@ -746,9 +746,9 @@ function selectSMMPlatform(pid) {
         iconContainer.innerHTML = `<i class="${iconClass} text-xl"></i>`;
     }
 
-    // حقن البانر الأفقي الخاص بالمنصة
-    if (bannerEl && currentSMMPlatform.banner) {
-        bannerEl.style.backgroundImage = `url('${currentSMMPlatform.banner}')`;
+    // حقن صورة البانر الأفقي بشكل مضمون ومباشر
+    if (bannerImg && currentSMMPlatform.banner) {
+        bannerImg.src = currentSMMPlatform.banner;
     }
 
     if (catSelect && currentSMMPlatform.services) {
