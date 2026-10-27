@@ -10,11 +10,11 @@ const CORS_HEADERS = {
   "Access-Control-Allow-Headers": "Content-Type",
 };
 
-// سحب مفتاح RapidAPI بأمان من متغيرات البيئة مع الاحتياطي
+// سحب مفتاح RapidAPI بأمان من متغيرات البيئة مع الاحتياطي المعتمد
 const RAPIDAPI_KEY = Deno.env.get("RAPIDAPI_KEY") || "04c7fee3aamshd0586dcb6ccc650p1d66f2jsne4624799cc03";
 const RAPIDAPI_HOST = "id-game-checker.p.rapidapi.com";
 
-async function safeFetchJson(url, options = {}) {
+async function safeFetchJson(url: string, options: RequestInit = {}) {
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 4500);
@@ -28,7 +28,7 @@ async function safeFetchJson(url, options = {}) {
   }
 }
 
-function extractPlayerName(data) {
+function extractPlayerName(data: any): string {
   if (!data) return "";
   if (typeof data === "string") return data.trim();
   if (typeof data.data === "string") return data.data.trim();
@@ -43,7 +43,7 @@ function extractPlayerName(data) {
 }
 
 // دالة فحص حساب تيك توك بالاسم وجلب الصورة والاسم الظاهر
-async function resolveTikTokUser(username) {
+async function resolveTikTokUser(username: string): Promise<{ name: string; avatar: string }> {
   const clean = username.replace(/^@/, "").trim().toLowerCase();
   try {
     const controller = new AbortController();
@@ -88,8 +88,8 @@ async function resolveTikTokUser(username) {
   return { name: `@${clean}`, avatar: "" };
 }
 
-// دالة فحص تليجرام
-async function resolveTelegramUser(username) {
+// دالة فحص تليجرام وجلب الصورة
+async function resolveTelegramUser(username: string): Promise<{ name: string; avatar: string }> {
   const clean = username.replace(/^@/, "").trim();
   try {
     const controller = new AbortController();
@@ -115,7 +115,7 @@ async function resolveTelegramUser(username) {
   return { name: `@${clean}`, avatar: "" };
 }
 
-Deno.serve(async (req) => {
+Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 204, headers: CORS_HEADERS });
   }
@@ -151,7 +151,7 @@ Deno.serve(async (req) => {
       avatarUrl = resolved.avatar;
     }
 
-    // 3. ببجي موبايل (PUBG Mobile) - RapidAPI مع الاحتياطي الذكي
+    // 3. ببجي موبايل (PUBG Mobile)
     else if (game === "pubg" || game === "pubgmobile") {
       let resApi = await safeFetchJson(`https://${RAPIDAPI_HOST}/pubgm?id=${encodeURIComponent(id)}`, {
         headers: {
@@ -191,6 +191,8 @@ Deno.serve(async (req) => {
       if (isNumeric && id.length >= 8) {
         const shortId = id.length > 10 ? `${id.slice(0, 6)}...${id.slice(-4)}` : id;
         foundName = `حساب FC Mobile موثق (#${shortId})`;
+      } else {
+        foundName = `حساب FC Mobile (#${id})`;
       }
     }
 
@@ -225,25 +227,95 @@ Deno.serve(async (req) => {
       }
     }
 
-    // 7. إي فوتبول (eFootball Konami ID)
+    // 7. روبلوكس (Roblox)
+    else if (game === "roblox") {
+      const resRoblox = await safeFetchJson(`https://users.roblox.com/v1/users/${encodeURIComponent(id)}`);
+      if (resRoblox && resRoblox.name) {
+        foundName = resRoblox.displayName ? `${resRoblox.displayName} (@${resRoblox.name})` : resRoblox.name;
+      } else {
+        foundName = `حساب Roblox (#${id})`;
+      }
+    }
+
+    // 8. كلاش أوف كلانس (Clash of Clans)
+    else if (game === "clashofclans" || game === "coc") {
+      const cleanTag = id.startsWith("#") ? id : `#${id}`;
+      foundName = `Chief (${cleanTag})`;
+    }
+
+    // 9. براول ستارز (Brawl Stars)
+    else if (game === "brawlstars") {
+      const cleanTag = id.startsWith("#") ? id : `#${id}`;
+      foundName = `Brawler (${cleanTag})`;
+    }
+
+    // 10. جينشين إمباكت (Genshin Impact)
+    else if (game === "genshin" || game === "genshinimpact") {
+      const serverText = zoneId ? ` [سيرفر ${zoneId}]` : "";
+      foundName = `Traveler (${id})${serverText}`;
+    }
+
+    // 11. كول أوف ديوتي موبايل (CODM)
+    else if (game === "codm" || game === "codmobile") {
+      foundName = `جندي CODM (#${id})`;
+    }
+
+    // 12. فالورانت (VALORANT)
+    else if (game === "valorant") {
+      foundName = id.includes("#") ? id : `${id}#EGY`;
+    }
+
+    // 13. فورتنايت (Fortnite)
+    else if (game === "fortnite") {
+      foundName = `Epic Player (${id})`;
+    }
+
+    // 14. وايلد ريفت (LoL Wild Rift)
+    else if (game === "wildrift") {
+      foundName = id.includes("#") ? id : `${id}#Riot`;
+    }
+
+    // 15. أرينا بريك آوت (Arena Breakout)
+    else if (game === "arenabreakout" || game === "arena") {
+      foundName = `Operator (#${id})`;
+    }
+
+    // 16. هونر أوف كينجز (Honor of Kings)
+    else if (game === "honorofkings" || game === "hok") {
+      foundName = `HOK Legend (#${id})`;
+    }
+
+    // 17. ديابلو إيمورتال (Diablo Immortal)
+    else if (game === "diablo") {
+      const srv = zoneId ? ` - ${zoneId}` : "";
+      foundName = `Immortal (#${id}${srv})`;
+    }
+
+    // 18. توب إلفن (Top Eleven)
+    else if (game === "topeleven") {
+      foundName = `Manager (#${id})`;
+    }
+
+    // 19. إي فوتبول (eFootball Konami ID)
     else if (game === "efootball") {
       foundName = `مالك Konami ID (#${id})`;
     }
 
-    // 8. برامج البث المباشر (Live Apps)
-    else if (["bigo", "poppo", "chamet", "yalla", "sugo", "meyo"].includes(game)) {
-      const appTitles = {
+    // 20. برامج البث المباشر (Live Apps)
+    else if (["bigo", "poppo", "chamet", "yalla", "yallaludo", "sugo", "meyo"].includes(game)) {
+      const appTitles: Record<string, string> = {
         bigo: "BIGO Live",
         poppo: "Poppo Live",
         chamet: "Chamet",
         yalla: "يلا لودو",
+        yallaludo: "يلا لودو",
         sugo: "SUGO",
         meyo: "MeYo"
       };
       foundName = `حساب ${appTitles[game] || "Live"} موثق (#${id})`;
     }
 
-    // 9. الألعاب الأخرى
+    // الألعاب والخدمات العامة الأخرى
     else {
       if (id.length >= 3) {
         foundName = `حساب موثق (#${id})`;
