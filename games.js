@@ -1,255 +1,270 @@
 // ==============================================================================
-// ملف 1: قاعدة بيانات الألعاب الرسمية الشاملة (18 لعبة بالبوسترات والشعارات الأصلية)
+// Migo AI Solution - games.js
+// قاعدة بيانات الألعاب الـ 16 المعتمدة بالكامل - مطابقة 100% للمتجر الحي
 // ==============================================================================
 
-const allGames = [
+const gamesData = [
   {
     id: "pubg",
-    name: "بابجي موبايل (PUBG Mobile)",
-    badge: "🔥 الأكثر طلباً",
-    banner: "https://upload.wikimedia.org/wikipedia/en/thumb/5/52/Battlegrounds_Mobile_India_logo.png/640px-Battlegrounds_Mobile_India_logo.png",
-    icon: "https://upload.wikimedia.org/wikipedia/en/thumb/5/52/Battlegrounds_Mobile_India_logo.png/200px-Battlegrounds_Mobile_India_logo.png",
-    requireZone: false,
+    name: "بابجي موبايل (PUBG)",
+    provider: "Midasbuy الرسمي",
+    banner: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80",
+    badge: "تسليم فوري بالـ ID ⚡",
+    hasZoneId: false,
+    apiServiceId: "pubg_mobile",
+    idPlaceholder: "أدخل معرّف اللاعب (Player ID)",
     packages: [
-      { name: "60 UC", price: 55 },
-      { name: "325 UC", price: 270 },
-      { name: "660 UC", price: 540 },
-      { name: "1800 UC", price: 1450 },
-      { name: "3850 UC", price: 3100 },
-      { name: "8100 UC", price: 6150 }
+      { id: "pubg_60", name: "60 UC", price: 62 },
+      { id: "pubg_325", name: "325 UC", price: 310 },
+      { id: "pubg_660", name: "660 UC", price: 620 },
+      { id: "pubg_1800", name: "1800 UC", price: 1550 },
+      { id: "pubg_3850", name: "3850 UC", price: 3100 },
+      { id: "pubg_8100", name: "8100 UC", price: 6200 }
+    ]
+  },
+  {
+    id: "roblox",
+    name: "روبلوكس (Roblox)",
+    provider: "Codashop / Razer",
+    banner: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80",
+    badge: "شحن فوري بالـ ID ⚡",
+    hasZoneId: false,
+    apiServiceId: "roblox",
+    idPlaceholder: "أدخل معرّف أو اسم المستخدم",
+    packages: [
+      { id: "rbx_80", name: "80 Robux", price: 62 },
+      { id: "rbx_400", name: "400 Robux", price: 310 },
+      { id: "rbx_800", name: "800 Robux", price: 620 },
+      { id: "rbx_1700", name: "1700 Robux", price: 1240 }
     ]
   },
   {
     id: "freefire",
     name: "فري فاير (Free Fire)",
-    badge: "⚡ شحن فوري",
-    banner: "https://upload.wikimedia.org/wikipedia/en/thumb/1/12/Garena_Free_Fire_Logo.png/640px-Garena_Free_Fire_Logo.png",
-    icon: "https://upload.wikimedia.org/wikipedia/en/thumb/1/12/Garena_Free_Fire_Logo.png/200px-Garena_Free_Fire_Logo.png",
-    requireZone: false,
+    provider: "تسليم فوري بالـ ID",
+    banner: "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1200&q=80",
+    badge: "تسليم فوري بالـ ID ⚡",
+    hasZoneId: false,
+    apiServiceId: "free_fire",
+    idPlaceholder: "أدخل معرّف اللاعب (Player ID)",
     packages: [
-      { name: "100+10 جوهرة", price: 65 },
-      { name: "310+31 جوهرة", price: 185 },
-      { name: "520+52 جوهرة", price: 310 },
-      { name: "1060+106 جوهرة", price: 610 },
-      { name: "2180+218 جوهرة", price: 1220 }
+      { id: "ff_110", name: "110 Diamonds", price: 55 },
+      { id: "ff_231", name: "231 Diamonds", price: 110 },
+      { id: "ff_583", name: "583 Diamonds", price: 265 },
+      { id: "ff_1188", name: "1188 Diamonds", price: 530 },
+      { id: "ff_2420", name: "2420 Diamonds", price: 1050 }
     ]
   },
   {
-    id: "mlbb",
-    name: "موبايل ليجندز (Mobile Legends)",
-    badge: "🛡️ معتمد بالـ Zone",
-    banner: "https://upload.wikimedia.org/wikipedia/en/thumb/a/a3/Mobile_Legends_Bang_Bang_logo.png/640px-Mobile_Legends_Bang_Bang_logo.png",
-    icon: "https://upload.wikimedia.org/wikipedia/en/thumb/a/a3/Mobile_Legends_Bang_Bang_logo.png/200px-Mobile_Legends_Bang_Bang_logo.png",
-    requireZone: true,
-    packages: [
-      { name: "86 ماسة", price: 65 },
-      { name: "257 ماسة", price: 185 },
-      { name: "706 ماسات", price: 490 },
-      { name: "2195 ماسة", price: 1450 }
-    ]
-  },
-  {
-    id: "efmc",
-    name: "إي فوتبول (eFootball PES)",
-    badge: "⚽ رسمي كوانمي",
-    banner: "https://upload.wikimedia.org/wikipedia/en/thumb/0/07/EFootball_logo.svg/640px-EFootball_logo.svg.png",
-    icon: "https://upload.wikimedia.org/wikipedia/en/thumb/0/07/EFootball_logo.svg/200px-EFootball_logo.svg.png",
-    requireZone: false,
-    packages: [
-      { name: "130 كوينز", price: 65 },
-      { name: "550 كوينز", price: 260 },
-      { name: "1040 كوينز", price: 490 },
-      { name: "2130 كوينز", price: 970 }
-    ]
-  },
-  {
-    id: "roblox",
-    name: "روبلوكس (Roblox Robux)",
-    badge: "💎 تسليم فوري",
-    banner: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Roblox_player_icon_black.svg/640px-Roblox_player_icon_black.svg.png",
-    icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Roblox_player_icon_black.svg/200px-Roblox_player_icon_black.svg.png",
-    requireZone: false,
-    packages: [
-      { name: "80 روبوكس", price: 65 },
-      { name: "400 روبوكس", price: 270 },
-      { name: "800 روبوكس", price: 530 },
-      { name: "1700 روبوكس", price: 1050 }
-    ]
-  },
-  {
-    id: "pool8",
-    name: "8 Ball Pool",
-    badge: "🎱 كاش فوري",
-    banner: "https://upload.wikimedia.org/wikipedia/en/thumb/3/32/8_Ball_Pool_Logo.png/640px-8_Ball_Pool_Logo.png",
-    icon: "https://upload.wikimedia.org/wikipedia/en/thumb/3/32/8_Ball_Pool_Logo.png/200px-8_Ball_Pool_Logo.png",
-    requireZone: false,
-    packages: [
-      { name: "110 كاش", price: 65 },
-      { name: "250 كاش", price: 135 },
-      { name: "550 كاش", price: 270 },
-      { name: "1200 كاش", price: 540 }
-    ]
-  },
-  {
-    id: "coc",
+    id: "clashofclans",
     name: "كلاش أوف كلانس (Clash of Clans)",
-    badge: "⚔️ سوبر سيل",
-    banner: "https://upload.wikimedia.org/wikipedia/en/thumb/7/74/Clash_of_Clans_Logo.png/640px-Clash_of_Clans_Logo.png",
-    icon: "https://upload.wikimedia.org/wikipedia/en/thumb/7/74/Clash_of_Clans_Logo.png/200px-Clash_of_Clans_Logo.png",
-    requireZone: false,
+    provider: "Supercell الرسمي",
+    banner: "https://images.unsplash.com/photo-1563089145-599997674d42?auto=format&fit=crop&w=1200&q=80",
+    badge: "شحن آمن بالـ Tag ⚡",
+    hasZoneId: false,
+    apiServiceId: "clash_of_clans",
+    idPlaceholder: "أدخل علامة اللاعب (Player Tag مثل #XXXXXX)",
     packages: [
-      { name: "80 جوهرة", price: 65 },
-      { name: "500 جوهرة", price: 270 },
-      { name: "1200 جوهرة", price: 540 },
-      { name: "2500 جوهرة", price: 1050 }
+      { id: "coc_80", name: "80 جواهر", price: 60 },
+      { id: "coc_500", name: "500 جواهر", price: 285 },
+      { id: "coc_1200", name: "1200 جواهر", price: 570 },
+      { id: "coc_pass", name: "تذكرة ذهبية Gold Pass", price: 430 }
     ]
   },
   {
-    id: "fifam",
-    name: "فيفا موبايل (EA SPORTS FC)",
-    badge: "🏆 FC Points",
-    banner: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/EA_Sports_FC_Mobile_logo.svg/640px-EA_Sports_FC_Mobile_logo.svg.png",
-    icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/EA_Sports_FC_Mobile_logo.svg/200px-EA_Sports_FC_Mobile_logo.svg.png",
-    requireZone: false,
+    id: "fcmobile",
+    name: "فيفا موبايل (FC Mobile)",
+    provider: "EA Sports",
+    banner: "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=1200&q=80",
+    badge: "تسليم فوري بالـ ID ⚡",
+    hasZoneId: false,
+    apiServiceId: "fc_mobile",
+    idPlaceholder: "أدخل معرّف اللاعب (UID)",
     packages: [
-      { name: "100 FC Points", price: 65 },
-      { name: "500 FC Points", price: 270 },
-      { name: "1050 FC Points", price: 530 },
-      { name: "2200 FC Points", price: 1050 }
+      { id: "fc_40", name: "40 FC Points", price: 35 },
+      { id: "fc_100", name: "100 FC Points", price: 88 },
+      { id: "fc_small", name: "حزمة صغيرة (إضافية)", price: 115 },
+      { id: "fc_med", name: "حزمة متوسطة (إضافية)", price: 230 },
+      { id: "fc_big", name: "حزمة كبيرة (إضافية)", price: 345 }
     ]
   },
   {
     id: "brawlstars",
     name: "براول ستارز (Brawl Stars)",
-    badge: "💥 جواهر فورية",
-    banner: "https://upload.wikimedia.org/wikipedia/en/thumb/5/52/Brawl_Stars_logo.png/640px-Brawl_Stars_logo.png",
-    icon: "https://upload.wikimedia.org/wikipedia/en/thumb/5/52/Brawl_Stars_logo.png/200px-Brawl_Stars_logo.png",
-    requireZone: false,
+    provider: "Supercell ID",
+    banner: "https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?auto=format&fit=crop&w=1200&q=80",
+    badge: "شحن فوري بالـ Tag ⚡",
+    hasZoneId: false,
+    apiServiceId: "brawl_stars",
+    idPlaceholder: "أدخل Player Tag",
     packages: [
-      { name: "30 جوهرة", price: 110 },
-      { name: "80 جوهرة", price: 270 },
-      { name: "170 جوهرة", price: 540 },
-      { name: "360 جوهرة", price: 1050 }
+      { id: "bs_30", name: "30 جواهر", price: 115 },
+      { id: "bs_80", name: "80 جواهر", price: 285 },
+      { id: "bs_170", name: "170 جواهر", price: 570 },
+      { id: "bs_pass", name: "Brawl Pass الفوري", price: 530 }
     ]
   },
   {
     id: "genshin",
     name: "جينشين إمباكت (Genshin Impact)",
-    badge: "✨ كريستال رسمي",
-    banner: "https://upload.wikimedia.org/wikipedia/en/thumb/5/5d/Genshin_Impact_logo.svg/640px-Genshin_Impact_logo.svg.png",
-    icon: "https://upload.wikimedia.org/wikipedia/en/thumb/5/5d/Genshin_Impact_logo.svg/200px-Genshin_Impact_logo.svg.png",
-    requireZone: true,
+    provider: "Codashop المعتمد",
+    banner: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80",
+    badge: "يتطلب اختيار السيرفر 🌐",
+    hasZoneId: true,
+    zoneLabel: "اختر السيرفر (Server)",
+    zoneOptions: ["Asia", "America", "Europe", "TW/HK/MO"],
+    apiServiceId: "genshin_impact",
+    idPlaceholder: "أدخل معرّف اللعبة (UID)",
     packages: [
-      { name: "60 كريستال", price: 65 },
-      { name: "300+30 كريستال", price: 270 },
-      { name: "980+110 كريستال", price: 820 },
-      { name: "1980+260 كريستال", price: 1600 }
+      { id: "gi_60", name: "60 كريستال", price: 62 },
+      { id: "gi_330", name: "300+30 كريستال", price: 310 },
+      { id: "gi_moon", name: "بركة القمر (Welkin Moon)", price: 305 },
+      { id: "gi_1090", name: "980+110 كريستال", price: 950 }
+    ]
+  },
+  {
+    id: "mlbb",
+    name: "موبايل ليجندز (MLBB)",
+    provider: "تسليم فوري",
+    banner: "https://images.unsplash.com/photo-1542751110-97427bbecf20?auto=format&fit=crop&w=1200&q=80",
+    badge: "يتطلب Zone ID 🎯",
+    hasZoneId: true,
+    zoneLabel: "معرّف السيرفر (Zone ID)",
+    zonePlaceholder: "مثال: 1234",
+    apiServiceId: "mobile_legends",
+    idPlaceholder: "أدخل معرّف اللاعب (User ID)",
+    packages: [
+      { id: "ml_86", name: "86 Diamonds", price: 55 },
+      { id: "ml_172", name: "172 Diamonds", price: 110 },
+      { id: "ml_257", name: "257 Diamonds", price: 160 },
+      { id: "ml_706", name: "706 Diamonds", price: 425 }
     ]
   },
   {
     id: "codm",
-    name: "كول أوف ديوتي موبايل (CODM)",
-    badge: "🎖️ CP فوري",
-    banner: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Call_of_Duty_Mobile_logo.png/640px-Call_of_Duty_Mobile_logo.png",
-    icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/6/64/Call_of_Duty_Mobile_logo.png/200px-Call_of_Duty_Mobile_logo.png",
-    requireZone: false,
+    name: "كول أوف ديوتي (CODM)",
+    provider: "Activision",
+    banner: "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=1200&q=80",
+    badge: "شحن CP فوري ⚡",
+    hasZoneId: false,
+    apiServiceId: "cod_mobile",
+    idPlaceholder: "أدخل معرّف اللاعب (Player ID)",
     packages: [
-      { name: "80 CP", price: 65 },
-      { name: "420 CP", price: 270 },
-      { name: "880 CP", price: 540 },
-      { name: "2400 CP", price: 1350 }
+      { id: "cod_80", name: "80 CP", price: 62 },
+      { id: "cod_420", name: "420 CP", price: 265 },
+      { id: "cod_880", name: "880 CP", price: 530 },
+      { id: "cod_2400", name: "2400 CP", price: 1250 }
     ]
   },
   {
     id: "valorant",
-    name: "فالورانت (Valorant VP)",
-    badge: "🎯 نقاط VP",
-    banner: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Valorant_logo_-_pink_color_version.svg/640px-Valorant_logo_-_pink_color_version.svg.png",
-    icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/Valorant_logo_-_pink_color_version.svg/200px-Valorant_logo_-_pink_color_version.svg.png",
-    requireZone: false,
+    name: "فالورانت (VALORANT)",
+    provider: "Riot Games",
+    banner: "https://images.unsplash.com/photo-1624138784614-87fd1b6528f8?auto=format&fit=crop&w=1200&q=80",
+    badge: "نقاط فالورانت VP ⚡",
+    hasZoneId: false,
+    apiServiceId: "valorant",
+    idPlaceholder: "أدخل Riot ID مع التاج (Name#TAG)",
     packages: [
-      { name: "475 VP", price: 270 },
-      { name: "1000 VP", price: 540 },
-      { name: "2050 VP", price: 1050 },
-      { name: "3650 VP", price: 1800 }
+      { id: "val_475", name: "475 VP", price: 160 },
+      { id: "val_1000", name: "1000 VP", price: 315 },
+      { id: "val_2050", name: "2050 VP", price: 630 },
+      { id: "val_3650", name: "3650 VP", price: 1050 }
     ]
   },
   {
     id: "fortnite",
-    name: "فورتنايت (Fortnite V-Bucks)",
-    badge: "⚡ في بوكس",
-    banner: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/FortniteLogo.svg/640px-FortniteLogo.svg.png",
-    icon: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/FortniteLogo.svg/200px-FortniteLogo.svg.png",
-    requireZone: false,
+    name: "فورتنايت (Fortnite)",
+    provider: "Epic Games",
+    banner: "https://images.unsplash.com/photo-1589241062272-c0a000072dfa?auto=format&fit=crop&w=1200&q=80",
+    badge: "شحن فيبوكس V-Bucks ⚡",
+    hasZoneId: false,
+    apiServiceId: "fortnite",
+    idPlaceholder: "أدخل Epic Account ID",
     packages: [
-      { name: "1000 V-Bucks", price: 490 },
-      { name: "2800 V-Bucks", price: 1150 },
-      { name: "5000 V-Bucks", price: 1850 }
-    ]
-  },
-  {
-    id: "farlight84",
-    name: "فارلايت 84 (Farlight 84)",
-    badge: "🚀 شحن مباشر",
-    banner: "https://upload.wikimedia.org/wikipedia/en/thumb/3/36/Farlight_84_logo.png/640px-Farlight_84_logo.png",
-    icon: "https://upload.wikimedia.org/wikipedia/en/thumb/3/36/Farlight_84_logo.png/200px-Farlight_84_logo.png",
-    requireZone: false,
-    packages: [
-      { name: "60 ماسة", price: 65 },
-      { name: "300+30 ماسة", price: 270 },
-      { name: "680+70 ماسة", price: 540 }
+      { id: "fn_1000", name: "1000 V-Bucks", price: 315 },
+      { id: "fn_2800", name: "2800 V-Bucks", price: 790 },
+      { id: "fn_5000", name: "5000 V-Bucks", price: 1250 }
     ]
   },
   {
     id: "wildrift",
-    name: "وايلد ريفت (Wild Rift)",
-    badge: "⚔️ Wild Cores",
-    banner: "https://upload.wikimedia.org/wikipedia/en/thumb/0/04/League_of_Legends_Wild_Rift_logo.png/640px-League_of_Legends_Wild_Rift_logo.png",
-    icon: "https://upload.wikimedia.org/wikipedia/en/thumb/0/04/League_of_Legends_Wild_Rift_logo.png/200px-League_of_Legends_Wild_Rift_logo.png",
-    requireZone: false,
+    name: "وايلد ريفت (LoL Wild Rift)",
+    provider: "Riot ID",
+    banner: "https://images.unsplash.com/photo-1560253023-3ec5d502959f?auto=format&fit=crop&w=1200&q=80",
+    badge: "شحن Wild Cores فوري ⚡",
+    hasZoneId: false,
+    apiServiceId: "wild_rift",
+    idPlaceholder: "أدخل Riot ID (Username#TAG)",
     packages: [
-      { name: "500 Wild Cores", price: 270 },
-      { name: "1050 Wild Cores", price: 540 },
-      { name: "2175 Wild Cores", price: 1050 }
+      { id: "wr_425", name: "425 Wild Cores", price: 170 },
+      { id: "wr_1000", name: "1000 Wild Cores", price: 365 },
+      { id: "wr_2050", name: "2050 Wild Cores", price: 720 }
     ]
   },
   {
     id: "arenabreakout",
-    name: "أرينا بريك آوت (Arena Breakout)",
-    badge: "🔫 Bonds فوري",
-    banner: "https://upload.wikimedia.org/wikipedia/en/thumb/9/90/Arena_Breakout_logo.png/640px-Arena_Breakout_logo.png",
-    icon: "https://upload.wikimedia.org/wikipedia/en/thumb/9/90/Arena_Breakout_logo.png/200px-Arena_Breakout_logo.png",
-    requireZone: false,
+    name: "أرينا بريك آوت (Arena)",
+    provider: "Level Infinite",
+    banner: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1200&q=80",
+    badge: "تسليم فوري بالمعرّف ⚡",
+    hasZoneId: false,
+    apiServiceId: "arena_breakout",
+    idPlaceholder: "أدخل معرّف اللاعب (Character ID)",
     packages: [
-      { name: "60 Bonds", price: 65 },
-      { name: "310 Bonds", price: 270 },
-      { name: "630 Bonds", price: 540 }
+      { id: "ab_basic", name: "باقة أساسية", price: 105 },
+      { id: "ab_tac", name: "باقة تكتيكية", price: 265 },
+      { id: "ab_elite", name: "باقة النخبة", price: 530 }
     ]
   },
   {
     id: "honorofkings",
     name: "هونر أوف كينجز (Honor of Kings)",
-    badge: "👑 توكنز فوري",
-    banner: "https://upload.wikimedia.org/wikipedia/en/thumb/0/02/Honor_of_Kings_logo.png/640px-Honor_of_Kings_logo.png",
-    icon: "https://upload.wikimedia.org/wikipedia/en/thumb/0/02/Honor_of_Kings_logo.png/200px-Honor_of_Kings_logo.png",
-    requireZone: false,
+    provider: "Tencent Games",
+    banner: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80",
+    badge: "شحن توكنز رسمي ⚡",
+    hasZoneId: false,
+    apiServiceId: "honor_of_kings",
+    idPlaceholder: "أدخل UID الحساب",
     packages: [
-      { name: "80 توكنز", price: 65 },
-      { name: "240+17 توكنز", price: 185 },
-      { name: "400+32 توكنز", price: 290 }
+      { id: "hok_starter", name: "باقة المبتدئين", price: 105 },
+      { id: "hok_pro", name: "باقة المحترفين", price: 265 }
     ]
   },
   {
-    id: "top_eleven",
-    name: "توب إلفن (Top Eleven)",
-    badge: "⚽ توكنز المدرب",
-    banner: "https://upload.wikimedia.org/wikipedia/en/thumb/9/9c/Top_Eleven_Football_Manager_logo.png/640px-Top_Eleven_Football_Manager_logo.png",
-    icon: "https://upload.wikimedia.org/wikipedia/en/thumb/9/9c/Top_Eleven_Football_Manager_logo.png/200px-Top_Eleven_Football_Manager_logo.png",
-    requireZone: false,
+    id: "diablo",
+    name: "ديابلو إيمورتال (Diablo)",
+    provider: "Blizzard",
+    banner: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?auto=format&fit=crop&w=1200&q=80",
+    badge: "شحن أوربس وسيرفرات ⚡",
+    hasZoneId: true,
+    zoneLabel: "اسم السيرفر (Server Name)",
+    apiServiceId: "diablo_immortal",
+    idPlaceholder: "أدخل BattleTag أو UID",
     packages: [
-      { name: "37 توكنز", price: 130 },
-      { name: "80 توكنز", price: 270 },
-      { name: "176 توكنز", price: 540 }
+      { id: "db_small", name: "حزمة صغيرة", price: 105 },
+      { id: "db_big", name: "حزمة كبيرة", price: 315 }
+    ]
+  },
+  {
+    id: "topeleven",
+    name: "توب إلفن (Top Eleven)",
+    provider: "Nordeus",
+    banner: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=1200&q=80",
+    badge: "رموز وتوكنز فورية ⚡",
+    hasZoneId: false,
+    apiServiceId: "top_eleven",
+    idPlaceholder: "أدخل معرّف المدرب (Manager ID)",
+    packages: [
+      { id: "te_basic", name: "رموز أساسية", price: 105 },
+      { id: "te_prem", name: "رموز مميزة", price: 265 }
     ]
   }
 ];
+
+// تصدير أو إتاحة البيانات عالمياً للاستخدام في المتجر
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = { gamesData };
+} else {
+  window.gamesData = gamesData;
+}
