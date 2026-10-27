@@ -1,96 +1,68 @@
 // ==============================================================================
-// بيانات وسائل الدفع الرسمية (14 وسيلة مستقلة بالكامل)
+// ملف 2: وسائل الدفع والتحويلات الرسمية الكاملة للمتجر (مطابقة للصورة المعتمدة)
 // ==============================================================================
 
-const WHATSAPP_NUMBER = "201060934020";
+const PAYMENT_DETAILS = {
+  vodafone: `
+    <p class="font-bold text-rose-400">🔴 فودافون كاش (Vodafone Cash):</p>
+    <div class="bg-slate-900 p-2.5 rounded-xl border border-slate-700 flex justify-between items-center my-1.5 font-mono text-white text-xs">
+      <span>01020323432</span>
+      <button type="button" onclick="copyPaymentInfo('01020323432', 'تم نسخ رقم فودافون كاش')" class="bg-rose-600 text-white text-[10px] px-2.5 py-1 rounded cursor-pointer">نسخ</button>
+    </div>
+  `,
+  etisalat: `
+    <p class="font-bold text-emerald-400">🟢 اتصالات كاش (Etisalat Cash):</p>
+    <div class="bg-slate-900 p-2.5 rounded-xl border border-slate-700 flex justify-between items-center my-1.5 font-mono text-white text-xs">
+      <span>01146691073</span>
+      <button type="button" onclick="copyPaymentInfo('01146691073', 'تم نسخ رقم اتصالات كاش')" class="bg-emerald-600 text-white text-[10px] px-2.5 py-1 rounded cursor-pointer">نسخ</button>
+    </div>
+  `,
+  instapay: `
+    <p class="font-bold text-purple-400">⚡ إنستاباي (InstaPay):</p>
+    <div class="bg-slate-900 p-2.5 rounded-xl border border-slate-700 flex justify-between items-center my-1.5 font-mono text-white text-xs">
+      <span>01146691073</span>
+      <button type="button" onclick="copyPaymentInfo('01146691073', 'تم نسخ رقم إنستاباي')" class="sky-btn text-[10px] px-2.5 py-1 rounded cursor-pointer">نسخ</button>
+    </div>
+  `,
+  telda: `
+    <p class="font-bold text-teal-400">🔹 تلدا (Telda):</p>
+    <div class="bg-slate-900 p-2.5 rounded-xl border border-slate-700 flex justify-between items-center my-1.5 font-mono text-white text-xs">
+      <span>@saherbeh</span>
+      <button type="button" onclick="copyPaymentInfo('@saherbeh', 'تم نسخ حساب تلدا')" class="bg-teal-600 text-white text-[10px] px-2.5 py-1 rounded cursor-pointer">نسخ</button>
+    </div>
+  `,
+  binance: `
+    <p class="font-bold text-amber-400">🟡 بايننس باي (Binance Pay - QR كود):</p>
+    <p class="text-[11px] text-gray-300 my-1">امسح الـ QR كود المعتمد للدفع السريع والآمن عبر منصة بايننس.</p>
+  `,
+  paypal: `
+    <p class="font-bold text-sky-400">💙 باي بال (PayPal):</p>
+    <div class="bg-slate-900 p-2.5 rounded-xl border border-slate-700 flex justify-between items-center my-1.5 font-mono text-white text-xs">
+      <span>sahermohamed123456@gmail.com</span>
+      <button type="button" onclick="copyPaymentInfo('sahermohamed123456@gmail.com', 'تم نسخ إيميل باي بال')" class="bg-sky-600 text-white text-[10px] px-2.5 py-1 rounded cursor-pointer">نسخ</button>
+    </div>
+  `,
+  redotpay: `
+    <p class="font-bold text-red-400">💳 ريدوت باي (RedotPay):</p>
+    <div class="bg-slate-900 p-2.5 rounded-xl border border-slate-700 flex justify-between items-center my-1.5 font-mono text-white text-xs">
+      <span>User ID: 1217212555</span>
+      <button type="button" onclick="copyPaymentInfo('1217212555', 'تم نسخ معرف ريدوت باي')" class="bg-red-600 text-white text-[10px] px-2.5 py-1 rounded cursor-pointer">نسخ</button>
+    </div>
+  `,
+  cards: `
+    <p class="font-bold text-blue-400">💳 البطاقات المباشرة والائتمانية:</p>
+    <p class="text-[11px] text-gray-300">تدعم (Visa, Mastercard, G Pay, Apple Pay) للدفع الفوري الآمن.</p>
+  `,
+  bnpl: `
+    <p class="font-bold text-indigo-400">🔄 خدمات الشراء الآن والدفع لاحقاً والائتمان:</p>
+    <p class="text-[11px] text-gray-300 mb-1">(تابي Tabby, تمارا Tamara, فاليو Valu, سهولة Souhoola, فرصة Forsa, أمان Aman)</p>
+    <p class="text-xs text-amber-300 font-bold mt-1">(Contact me to get link)</p>
+  `
+};
 
-const PAYMENT_METHODS_DATA = {
-    vodafone: {
-        title: '📱 فودافون كاش',
-        type: 'copy',
-        value: '01020323432',
-        instruction: 'يرجى تحويل المبلغ لمحفظة فودافون كاش الرسمية:'
-    },
-    etisalat: {
-        title: '🟢 اتصالات كاش',
-        type: 'copy',
-        value: '01146691073',
-        instruction: 'يرجى تحويل المبلغ لمحفظة اتصالات كاش الرسمية:'
-    },
-    instapay: {
-        title: '⚡ إنستاباي (InstaPay)',
-        type: 'copy',
-        value: '01146691073',
-        instruction: 'يرجى تحويل المبلغ عبر تطبيق إنستاباي (InstaPay) للرقم:'
-    },
-    telda: {
-        title: '🟣 تيلدا (Telda)',
-        type: 'copy',
-        value: '@saherbeh',
-        instruction: 'يرجى تحويل المبلغ لحساب تيلدا (Telda) التالي:'
-    },
-    redotpay: {
-        title: '🔴 ريدوت باي (RedotPay)',
-        type: 'copy',
-        value: '1217212555',
-        instruction: 'يرجى التحويل لمعرف حساب ريدوت باي (RedotPay ID):'
-    },
-    paypal: {
-        title: '🔵 باي بال (PayPal)',
-        type: 'copy',
-        value: 'sahermohamed123456@gmail.com',
-        instruction: 'يرجى إرسال المبلغ عبر باي بال (PayPal) إلى:'
-    },
-    binance: {
-        title: '🟡 باينانس باي (Binance Pay)',
-        type: 'info',
-        html: `
-            <div class="flex flex-col items-center justify-center gap-2">
-                <span class="text-xs text-gray-300">امسح كود الـ QR عبر تطبيق Binance للدفع بـ (USDT):</span>
-                <div class="bg-white p-2.5 rounded-2xl border-2 border-amber-400 shadow-2xl inline-block my-1">
-                    <img src="binance-qr.png.jpg" 
-                         onerror="this.onerror=null; this.src='https://raw.githubusercontent.com/naroelwakel-dot/MigoAi/main/binance-qr.png.jpg';" 
-                         alt="Binance Pay QR" 
-                         class="w-48 h-48 object-contain rounded-lg block mx-auto">
-                </div>
-                <a href="https://raw.githubusercontent.com/naroelwakel-dot/MigoAi/main/binance-qr.png.jpg" target="_blank" class="text-[11px] text-sky-400 underline hover:text-sky-300">فتح الكود بحجم كامل 🔍</a>
-                <span class="text-amber-400 font-bold text-[11px] block mt-0.5">تأكد من إتمام التحويل ثم اكتب رقم العملية أو حسابك بالأسفل</span>
-            </div>
-        `
-    },
-    cards: {
-        title: '💳 بطاقة بنكية (Visa / Apple Pay)',
-        type: 'info',
-        html: `الدفع المباشر ببطاقات (Visa / Mastercard / Google Pay / Apple Pay) متاح.<br><span class="text-sky-300 block mt-1 font-bold">اضغط تأكيد وسيتم تزويدك برابط الفاتورة المباشرة عبر واتساب.</span>`
-    },
-    valu: {
-        title: '⚡ فاليو (valU)',
-        type: 'bnpl',
-        text: 'خدمة التقسيط عبر <b>فاليو (valU)</b> متاحة.'
-    },
-    tamara: {
-        title: '🟠 تمارة (Tamara)',
-        type: 'bnpl',
-        text: 'خدمة التقسيط عبر <b>تمارة (Tamara)</b> متاحة.'
-    },
-    tabby: {
-        title: '🟢 تابي (Tabby)',
-        type: 'bnpl',
-        text: 'خدمة التقسيط عبر <b>تابي (Tabby)</b> متاحة.'
-    },
-    souhoola: {
-        title: '🟣 سهولة (Souhoola)',
-        type: 'bnpl',
-        text: 'خدمة التقسيط عبر <b>سهولة (Souhoola)</b> متاحة.'
-    },
-    forsa: {
-        title: '🟢 فرصة (Forsa)',
-        type: 'bnpl',
-        text: 'خدمة التقسيط عبر <b>فرصة (Forsa)</b> متاحة.'
-    },
-    aman: {
-        title: '🔵 أمان (Aman)',
-        type: 'bnpl',
-        text: 'خدمة التقسيط عبر <b>أمان (Aman)</b> متاحة.'
-    }
+// قائمة الكوبونات المعتمدة للمتجر
+const VALID_COUPONS = {
+  "SIAFFC15": 15,
+  "SIAF15": 15,
+  "SIAFGAMING15": 15
 };
