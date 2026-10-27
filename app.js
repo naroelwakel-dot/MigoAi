@@ -10,7 +10,7 @@ const CART_STORAGE_KEY = 'migo_cart_v2';
 const DENO_API_URL = "https://migoai-72.naroelwakel-dot.deno.net";
 const WHATSAPP_NUMBER = "201060934020";
 
-// تهيئة المتغيرات بأمان لتجنب أي ReferenceError
+// تهيئة المتغيرات بأمان لتجنب ReferenceError
 let currentSMMPlatform = null;
 let currentSlide = 0;
 let cart = [];
@@ -44,7 +44,7 @@ const PAYMENT_METHODS_DATA = {
         instruction: "قم بالتحويل إلى رقم محفظة اتصالات كاش المعتمد:"
     },
     instapay: {
-        title: "إنستاباي",
+        title: "إنستاباي (InstaPay)",
         type: "copy",
         value: "01146691073",
         instruction: "قم بالتحويل عبر تطبيق إنستاباي إلى الرقم التالي:"
@@ -98,7 +98,7 @@ const PAYMENT_METHODS_DATA = {
         notice: "(Contact me to get link)"
     },
     valu: {
-        title: "فاليو valu",
+        title: "فاليو valU",
         type: "bnpl",
         text: "خدمة تقسيط المشتريات عبر فاليو valu بدون دفعة أولى أو فوائد حسب خطتك.",
         notice: "(Contact me to get link)"
@@ -152,11 +152,11 @@ const purchaseTemplates = [
     { act: "تفعيل اشتراك Canva Pro", icon: '🖌️' },
     { act: "شحن 848 ماسة بيجو لايف", icon: '🔴' },
     { act: "تفعيل اشتراك شاهد VIP", icon: '📺' },
-    { act: "شحن 110 كوينز تيك توك", icon: '🪙' },
+    { act: "شحن 1400 كوينز تيك توك", icon: '🪙' },
     { act: "شحن 500 نجمة تليجرام", icon: '⭐' }
 ];
 
-// دالة التنبيهات السريعة (Toast Notification)
+// دالة التنبيهات السريعة (Toast)
 function showToast(msg, type = 'success') {
     const container = document.getElementById('toastContainer');
     if (!container) return;
@@ -226,7 +226,7 @@ function initVisitorCounter() {
     if (counterEl) counterEl.innerText = Number(count).toLocaleString();
 }
 
-// إدارة سلة المشتريات والذاكرة المحلية
+// إدارة سلة المشتريات
 function loadCartFromStorage() {
     try { cart = JSON.parse(localStorage.getItem(CART_STORAGE_KEY)) || []; } catch (e) { cart = []; }
     updateCartUI();
@@ -318,100 +318,7 @@ function calculateCartTotal() {
     }
 }
 
-// عرض الألعاب الـ 16 بالبانرات الأفقية الواقعية
-function renderGames() {
-    const gamesList = (typeof gamesData !== 'undefined') ? gamesData : ((typeof allGames !== 'undefined') ? allGames : []);
-    const container = document.getElementById('gamesCardsContainer');
-    if (!container || !gamesList.length) return;
-
-    container.innerHTML = gamesList.map(g => {
-        const pkgs = g.packages || g.pkgs || [];
-        const bannerUrl = g.banner || "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80";
-        const badgeText = g.badge || g.tag || "شحن فوري ⚡";
-        const gameKey = g.id || g.key || "pubg";
-
-        return `
-            <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg">
-                <!-- بانر اللعبة الأفقي الرسمي -->
-                <div class="h-28 sm:h-32 relative bg-cover bg-center" style="background-image: url('${bannerUrl}');">
-                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent p-3 flex flex-col justify-between">
-                        <div class="flex justify-between items-start">
-                            <span class="text-[9px] font-bold text-emerald-300 bg-emerald-500/20 px-2.5 py-0.5 rounded-full border border-emerald-500/40 backdrop-blur-md">
-                                ${badgeText}
-                            </span>
-                        </div>
-                        <h3 class="font-extrabold text-sm sm:text-base text-white drop-shadow-md">${g.name}</h3>
-                    </div>
-                </div>
-
-                <!-- باقات الشحن -->
-                <div class="p-3 space-y-1.5 flex-1 bg-slate-900/60">
-                    ${pkgs.map(pkg => {
-                        const label = pkg.name || pkg.l;
-                        const price = pkg.price || pkg.p;
-                        return `
-                            <div class="flex items-center justify-between p-1.5 rounded-xl bg-slate-950 border border-slate-800 hover:border-sky-500/40 transition">
-                                <span class="text-[11px] font-bold text-gray-200">${label}</span>
-                                <div class="flex items-center gap-1.5">
-                                    <span class="text-xs font-extrabold text-amber-400 font-mono">${price.toLocaleString()} ج.م</span>
-                                    <button onclick="openPlayerIdModal('${g.name}', '${label}', ${price}, true, '${gameKey}')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-[9px] px-2 py-1 rounded-md cursor-pointer transition">⚡</button>
-                                    <button onclick="openPlayerIdModal('${g.name}', '${label}', ${price}, false, '${gameKey}')" class="sky-btn font-bold text-[9px] px-2 py-1 rounded-md cursor-pointer transition">🛒</button>
-                                </div>
-                            </div>
-                        `;
-                    }).join('')}
-                </div>
-            </div>
-        `;
-    }).join('');
-}
-
-// عرض تطبيقات البث المباشر (Live Apps)
-function renderLiveApps() {
-    const liveList = (typeof liveCoinsData !== 'undefined') ? liveCoinsData : ((typeof liveAppsCatalog !== 'undefined') ? liveAppsCatalog : []);
-    const container = document.getElementById('liveAppsContainer');
-    if (!container || !liveList.length) return;
-
-    container.innerHTML = liveList.map(app => {
-        const pkgs = app.packages || app.pkgs || [];
-        const bannerUrl = app.banner || "https://images.unsplash.com/photo-1516251193007-45ef944ab0c6?auto=format&fit=crop&w=1200&q=80";
-        const badgeText = app.badge || app.tag || "بث مباشر 🔴";
-        const appKey = app.id || app.key || "live";
-
-        return `
-            <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg">
-                <div class="h-28 sm:h-32 relative bg-cover bg-center" style="background-image: url('${bannerUrl}');">
-                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent p-3 flex flex-col justify-between">
-                        <div>
-                            <span class="text-[9px] font-bold text-rose-300 bg-rose-500/20 px-2.5 py-0.5 rounded-full border border-rose-500/40 backdrop-blur-md">
-                                ${badgeText}
-                            </span>
-                        </div>
-                        <h3 class="font-extrabold text-sm sm:text-base text-white drop-shadow-md">${app.name}</h3>
-                    </div>
-                </div>
-                <div class="p-3 space-y-1.5 flex-1 bg-slate-900/60">
-                    ${pkgs.map(pkg => {
-                        const label = pkg.name || pkg.l;
-                        const price = pkg.price || pkg.p;
-                        return `
-                            <div class="flex items-center justify-between p-1.5 rounded-xl bg-slate-950 border border-slate-800 hover:border-sky-500/40 transition">
-                                <span class="text-[11px] font-bold text-gray-200">${label}</span>
-                                <div class="flex items-center gap-1.5">
-                                    <span class="text-xs font-extrabold text-amber-400 font-mono">${price.toLocaleString()} ج.م</span>
-                                    <button onclick="openPlayerIdModal('${app.name}', '${label}', ${price}, true, '${appKey}')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-[9px] px-2 py-1 rounded-md cursor-pointer transition">⚡</button>
-                                    <button onclick="openPlayerIdModal('${app.name}', '${label}', ${price}, false, '${appKey}')" class="sky-btn font-bold text-[9px] px-2 py-1 rounded-md cursor-pointer transition">🛒</button>
-                                </div>
-                            </div>
-                        `;
-                    }).join('')}
-                </div>
-            </div>
-        `;
-    }).join('');
-}
-
-// عرض عملات تيك توك ونجوم تليجرام
+// عرض باقات كوينز تيك توك ونجوم تليجرام
 function renderCoinsAndStars() {
     if (typeof tiktokCoinsList !== 'undefined') {
         const ttContainer = document.getElementById('tiktokCoinsGrid');
@@ -420,7 +327,7 @@ function renderCoinsAndStars() {
                 <div class="flex items-center justify-between p-2 rounded-xl bg-slate-950 border border-slate-700">
                     <span class="text-xs font-bold text-gray-200">🪙 ${c.coins.toLocaleString()} عملة</span>
                     <div class="flex items-center gap-1.5">
-                        <span class="text-xs font-extrabold text-amber-400 font-mono">${c.price} ج.م</span>
+                        <span class="text-xs font-extrabold text-amber-400 font-mono">${c.price.toLocaleString()} ج.م</span>
                         <button onclick="openPlayerIdModal('تيك توك كوينز', '${c.coins} عملة', ${c.price}, true, 'tiktok')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-[10px] px-2 py-1 rounded-lg cursor-pointer">⚡</button>
                         <button onclick="openPlayerIdModal('تيك توك كوينز', '${c.coins} عملة', ${c.price}, false, 'tiktok')" class="sky-btn font-bold text-[10px] px-2 py-1 rounded-lg cursor-pointer">🛒</button>
                     </div>
@@ -435,7 +342,7 @@ function renderCoinsAndStars() {
                 <div class="flex items-center justify-between p-2 rounded-xl bg-slate-950 border border-slate-700">
                     <span class="text-xs font-bold text-gray-200">⭐ ${s.stars.toLocaleString()} نجمة</span>
                     <div class="flex items-center gap-1.5">
-                        <span class="text-xs font-extrabold text-amber-400 font-mono">${s.price} ج.م</span>
+                        <span class="text-xs font-extrabold text-amber-400 font-mono">${s.price.toLocaleString()} ج.م</span>
                         <button onclick="openPlayerIdModal('نجوم تليجرام', '${s.stars} نجمة', ${s.price}, true, 'telegram')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-[10px] px-2 py-1 rounded-lg cursor-pointer">⚡</button>
                         <button onclick="openPlayerIdModal('نجوم تليجرام', '${s.stars} نجمة', ${s.price}, false, 'telegram')" class="sky-btn font-bold text-[10px] px-2 py-1 rounded-lg cursor-pointer">🛒</button>
                     </div>
@@ -445,21 +352,104 @@ function renderCoinsAndStars() {
     }
 }
 
+// عرض الألعاب الـ 16 بالبانرات الأفقية الواقعية
+function renderGames() {
+    const gamesList = (typeof gamesData !== 'undefined') ? gamesData : [];
+    const container = document.getElementById('gamesCardsContainer');
+    if (!container || !gamesList.length) return;
+
+    container.innerHTML = gamesList.map(g => {
+        const pkgs = g.packages || [];
+        const bannerUrl = g.banner || "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80";
+        const badgeText = g.badge || "شحن فوري ⚡";
+        const gameKey = g.id || "pubg";
+
+        return `
+            <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg">
+                <div class="h-28 sm:h-32 relative bg-cover bg-center" style="background-image: url('${bannerUrl}');">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent p-3 flex flex-col justify-between">
+                        <div class="flex justify-between items-start">
+                            <span class="text-[9px] font-bold text-emerald-300 bg-emerald-500/20 px-2.5 py-0.5 rounded-full border border-emerald-500/40 backdrop-blur-md">
+                                ${badgeText}
+                            </span>
+                        </div>
+                        <h3 class="font-extrabold text-sm sm:text-base text-white drop-shadow-md">${g.name}</h3>
+                    </div>
+                </div>
+
+                <div class="p-3 space-y-1.5 flex-1 bg-slate-900/60">
+                    ${pkgs.map(pkg => `
+                        <div class="flex items-center justify-between p-1.5 rounded-xl bg-slate-950 border border-slate-800 hover:border-sky-500/40 transition">
+                            <span class="text-[11px] font-bold text-gray-200">${pkg.name}</span>
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-xs font-extrabold text-amber-400 font-mono">${pkg.price.toLocaleString()} ج.م</span>
+                                <button onclick="openPlayerIdModal('${g.name}', '${pkg.name}', ${pkg.price}, true, '${gameKey}')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-[9px] px-2 py-1 rounded-md cursor-pointer transition">⚡</button>
+                                <button onclick="openPlayerIdModal('${g.name}', '${pkg.name}', ${pkg.price}, false, '${gameKey}')" class="sky-btn font-bold text-[9px] px-2 py-1 rounded-md cursor-pointer transition">🛒</button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// عرض تطبيقات البث المباشر (Live Apps)
+function renderLiveApps() {
+    const liveList = (typeof liveCoinsData !== 'undefined') ? liveCoinsData : [];
+    const container = document.getElementById('liveAppsContainer');
+    if (!container || !liveList.length) return;
+
+    container.innerHTML = liveList.map(app => {
+        const pkgs = app.packages || [];
+        const bannerUrl = app.banner || "https://images.unsplash.com/photo-1516251193007-45ef944ab0c6?auto=format&fit=crop&w=1200&q=80";
+        const badgeText = app.badge || "بث مباشر 🔴";
+        const appKey = app.id || "live";
+
+        return `
+            <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg">
+                <div class="h-28 sm:h-32 relative bg-cover bg-center" style="background-image: url('${bannerUrl}');">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent p-3 flex flex-col justify-between">
+                        <div>
+                            <span class="text-[9px] font-bold text-rose-300 bg-rose-500/20 px-2.5 py-0.5 rounded-full border border-rose-500/40 backdrop-blur-md">
+                                ${badgeText}
+                            </span>
+                        </div>
+                        <h3 class="font-extrabold text-sm sm:text-base text-white drop-shadow-md">${app.name}</h3>
+                    </div>
+                </div>
+                <div class="p-3 space-y-1.5 flex-1 bg-slate-900/60">
+                    ${pkgs.map(pkg => `
+                        <div class="flex items-center justify-between p-1.5 rounded-xl bg-slate-950 border border-slate-800 hover:border-sky-500/40 transition">
+                            <span class="text-[11px] font-bold text-gray-200">${pkg.name}</span>
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-xs font-extrabold text-amber-400 font-mono">${pkg.price.toLocaleString()} ج.م</span>
+                                <button onclick="openPlayerIdModal('${app.name}', '${pkg.name}', ${pkg.price}, true, '${appKey}')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-[9px] px-2 py-1 rounded-md cursor-pointer transition">⚡</button>
+                                <button onclick="openPlayerIdModal('${app.name}', '${pkg.name}', ${pkg.price}, false, '${appKey}')" class="sky-btn font-bold text-[9px] px-2 py-1 rounded-md cursor-pointer transition">🛒</button>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
 // عرض بطاقات الـ VCC الافتراضية
 function renderVccCards() {
-    const list = (typeof vccData !== 'undefined') ? vccData : ((typeof vccCatalog !== 'undefined') ? vccCatalog : []);
+    const list = (typeof vccData !== 'undefined') ? vccData : [];
     const container = document.getElementById('vccCardsContainer');
     if (!container || !list.length) return;
 
     container.innerHTML = list.map(v => {
-        const price = v.priceEgp || v.price;
+        const price = v.priceEgp || 0;
         const bannerUrl = v.banner || "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=1200&q=80";
         return `
             <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg">
                 <div class="h-28 relative bg-cover bg-center" style="background-image: url('${bannerUrl}');">
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent p-3 flex flex-col justify-between">
                         <span class="text-[9px] bg-amber-500/20 text-amber-300 border border-amber-500/40 px-2.5 py-0.5 rounded-full font-bold w-fit">
-                            ${v.badge || v.tag || 'فيزا دولية'}
+                            ${v.badge || 'فيزا دولية'}
                         </span>
                         <h3 class="font-bold text-sm text-white">${v.name}</h3>
                     </div>
@@ -477,10 +467,10 @@ function renderVccCards() {
 }
 
 function openVccModal(vccId) {
-    const list = (typeof vccData !== 'undefined') ? vccData : ((typeof vccCatalog !== 'undefined') ? vccCatalog : []);
+    const list = (typeof vccData !== 'undefined') ? vccData : [];
     selectedVccItem = list.find(x => x.id === vccId);
     if (!selectedVccItem) return;
-    const price = selectedVccItem.priceEgp || selectedVccItem.price;
+    const price = selectedVccItem.priceEgp || 0;
 
     const t = document.getElementById('vccModalTitle');
     const p = document.getElementById('vccModalPrice');
@@ -505,7 +495,7 @@ function submitVccModal(isExpress) {
     const purpose = pu ? pu.value.trim() : '';
     if (!email) return showToast('أدخل البريد الإلكتروني لاستلام بيانات البطاقة', 'error');
 
-    const price = selectedVccItem.priceEgp || selectedVccItem.price;
+    const price = selectedVccItem.priceEgp || 0;
     const item = {
         id: selectedVccItem.id + '_' + Date.now(),
         name: selectedVccItem.name,
@@ -522,12 +512,12 @@ function submitVccModal(isExpress) {
 function renderProductivity() {
     const subList = (typeof subscriptionsData !== 'undefined') 
         ? subscriptionsData.filter(s => s.category === 'design' || s.category === 'productivity')
-        : ((typeof productivityProducts !== 'undefined') ? productivityProducts : []);
+        : [];
     const container = document.getElementById('productivityContainer');
     if (!container || !subList.length) return;
 
     container.innerHTML = subList.map(p => {
-        const pkgs = p.packages || [{ name: p.name, price: p.price }];
+        const pkgs = p.packages || [{ name: p.name, price: 0 }];
         const defaultPrice = pkgs[0].price;
         const bannerUrl = p.banner || "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=1200&q=80";
 
@@ -536,13 +526,13 @@ function renderProductivity() {
                 <div class="h-24 relative bg-cover bg-center" style="background-image: url('${bannerUrl}');">
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent p-2.5 flex flex-col justify-between">
                         <span class="text-[9px] bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 px-2 py-0.5 rounded-full font-bold w-fit">
-                            ${p.badge || p.tag || 'إنتاجية'}
+                            ${p.badge || 'إنتاجية'}
                         </span>
                         <h3 class="font-bold text-xs sm:text-sm text-white">${p.name}</h3>
                     </div>
                 </div>
                 <div class="p-3 bg-slate-900/60 flex-1 flex flex-col justify-between">
-                    <p class="text-[10px] text-gray-400 mb-2">${p.description || p.desc || ''}</p>
+                    <p class="text-[10px] text-gray-400 mb-2">${p.description || ''}</p>
                     
                     ${pkgs.length > 1 ? `
                         <select id="prod_pkg_${p.id}" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-1 text-[10px] text-sky-300 font-bold mb-2">
@@ -567,12 +557,12 @@ function renderProductivity() {
 function renderEntertainment() {
     const subList = (typeof subscriptionsData !== 'undefined') 
         ? subscriptionsData.filter(s => s.category === 'entertainment')
-        : ((typeof entertainmentProducts !== 'undefined') ? entertainmentProducts : []);
+        : [];
     const container = document.getElementById('entertainmentCardsContainer');
     if (!container || !subList.length) return;
 
     container.innerHTML = subList.map(e => {
-        const pkgs = e.packages || [{ name: e.name, price: e.price }];
+        const pkgs = e.packages || [{ name: e.name, price: 0 }];
         const defaultPrice = pkgs[0].price;
         const bannerUrl = e.banner || "https://images.unsplash.com/photo-1522869635100-9f4c5e86aa37?auto=format&fit=crop&w=1200&q=80";
 
@@ -581,13 +571,13 @@ function renderEntertainment() {
                 <div class="h-24 relative bg-cover bg-center" style="background-image: url('${bannerUrl}');">
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent p-2.5 flex flex-col justify-between">
                         <span class="text-[9px] bg-purple-500/20 text-purple-300 border border-purple-500/40 px-2 py-0.5 rounded-full font-bold w-fit">
-                            ${e.badge || e.label || 'ترفيه وبث'}
+                            ${e.badge || 'ترفيه وبث'}
                         </span>
                         <h4 class="font-bold text-xs sm:text-sm text-white">${e.name}</h4>
                     </div>
                 </div>
                 <div class="p-3 bg-slate-900/60 flex-1 flex flex-col justify-between">
-                    <p class="text-[10px] text-gray-400 mb-2">${e.description || e.desc || ''}</p>
+                    <p class="text-[10px] text-gray-400 mb-2">${e.description || ''}</p>
 
                     ${pkgs.length > 1 ? `
                         <select id="ent_pkg_${e.id}" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-1 text-[10px] text-purple-300 font-bold mb-2">
@@ -612,12 +602,12 @@ function renderEntertainment() {
 function renderAI() {
     const aiList = (typeof subscriptionsData !== 'undefined') 
         ? subscriptionsData.filter(s => s.category === 'ai')
-        : ((typeof aiProducts !== 'undefined') ? aiProducts : []);
+        : [];
     const container = document.getElementById('aiCardsContainer');
     if (!container || !aiList.length) return;
 
     container.innerHTML = aiList.map(a => {
-        const pkgs = a.packages || [{ name: a.name, price: a.price }];
+        const pkgs = a.packages || [{ name: a.name, price: 0 }];
         const defaultPrice = pkgs[0].price;
         const bannerUrl = a.banner || "https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=1200&q=80";
 
@@ -626,13 +616,13 @@ function renderAI() {
                 <div class="h-24 relative bg-cover bg-center" style="background-image: url('${bannerUrl}');">
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent p-2.5 flex flex-col justify-between">
                         <span class="text-[9px] bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 px-2 py-0.5 rounded-full font-bold w-fit">
-                            ${a.badge || a.tag || 'ذكاء اصطناعي'}
+                            ${a.badge || 'ذكاء اصطناعي'}
                         </span>
                         <h4 class="font-bold text-xs sm:text-sm text-white">${a.name}</h4>
                     </div>
                 </div>
                 <div class="p-3 bg-slate-900/60 flex-1 flex flex-col justify-between">
-                    <p class="text-[10px] text-gray-400 mb-2">${a.description || a.desc || ''}</p>
+                    <p class="text-[10px] text-gray-400 mb-2">${a.description || ''}</p>
 
                     ${pkgs.length > 1 ? `
                         <select id="ai_pkg_${a.id}" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-1 text-[10px] text-indigo-300 font-bold mb-2">
@@ -789,15 +779,39 @@ function expressCheckoutSMM() {
     expressCheckout(item);
 }
 
+// تعبئة قائمة الألعاب والخدمات في نافذة فحص الـ ID تلقائياً
+function populateModalGamesList() {
+    const select = document.getElementById('modalSelectGame');
+    if (!select) return;
+    
+    let optionsHtml = '';
+    if (typeof gamesData !== 'undefined') {
+        optionsHtml += gamesData.map(g => `<option value="${g.id}">${g.name}</option>`).join('');
+    }
+    if (typeof liveCoinsData !== 'undefined') {
+        optionsHtml += liveCoinsData.map(app => `<option value="${app.id}">${app.name}</option>`).join('');
+    }
+    optionsHtml += `<option value="tiktok">تيك توك كوينز</option><option value="telegram">نجوم تليجرام</option>`;
+    select.innerHTML = optionsHtml;
+}
+
 // نافذة فحص الـ ID المربوطة بسيرفر Deno
 function openPlayerIdModal(targetName, pkgLabel, price, isExpress = false, iconKey = 'pubg') {
     currentModalItem = { name: `${targetName} - ${pkgLabel}`, price: price, targetName: targetName, pkgLabel: pkgLabel, gameKey: iconKey };
     isExpressModal = isExpress;
     
+    populateModalGamesList();
+    
     const titleEl = document.getElementById('modalTargetTitle');
     const pkgEl = document.getElementById('modalTargetPkg');
     if (titleEl) titleEl.innerText = targetName;
     if (pkgEl) pkgEl.innerText = `الباقة: ${pkgLabel} (${price.toLocaleString()} ج.م)`;
+    
+    const select = document.getElementById('modalSelectGame');
+    if (select) {
+        select.value = iconKey;
+        select.disabled = true;
+    }
     
     const idInp = document.getElementById('modalInputPlayerId');
     const nameInp = document.getElementById('modalInputPlayerName');
@@ -809,7 +823,6 @@ function openPlayerIdModal(targetName, pkgLabel, price, isExpress = false, iconK
     if (nameInp) nameInp.value = '';
     if (zoneInp) zoneInp.value = '';
     
-    // الألعاب التي تتطلب Zone ID
     const requiresZone = ['mlbb', 'mobilelegends', 'genshin', 'diablo'];
     if (zoneGroup) {
         if (requiresZone.includes(iconKey.toLowerCase())) zoneGroup.classList.remove('hidden');
@@ -843,6 +856,25 @@ function closePlayerIdModal() {
     const modal = document.getElementById('playerIdModal');
     if (modal) { modal.classList.add('hidden'); modal.classList.remove('flex'); }
     currentModalItem = null;
+}
+
+function onModalGameSelectChange() {
+    const select = document.getElementById('modalSelectGame');
+    if (!select) return;
+    const selectedKey = select.value;
+    const zoneGroup = document.getElementById('modalZoneGroup');
+    const idLabel = document.getElementById('modalIdLabel');
+    const requiresZone = ['mlbb', 'mobilelegends', 'genshin', 'diablo'];
+
+    if (idLabel) {
+        if (selectedKey === 'tiktok' || selectedKey === 'telegram') idLabel.innerText = "اسم المستخدم (Username بدون @)";
+        else idLabel.innerText = "معرف اللاعب أو التطبيق (Player ID)";
+    }
+
+    if (zoneGroup) {
+        if (requiresZone.includes(selectedKey.toLowerCase())) zoneGroup.classList.remove('hidden');
+        else zoneGroup.classList.add('hidden');
+    }
 }
 
 // دالة فحص واستعلام الحساب الحقيقية المربوطة بسيرفر Deno API
@@ -1046,6 +1078,22 @@ function handleLiveSearch(query) {
         }
     });
 
+    // البحث في كوينز تيك توك ونجوم تليجرام
+    if (typeof tiktokCoinsList !== 'undefined') {
+        tiktokCoinsList.forEach(c => {
+            if (`تيك توك كوينز tiktok ${c.coins}`.toLowerCase().includes(query)) {
+                results.push({ name: `تيك توك (${c.coins} عملة)`, price: c.price, type: 'coin_tiktok', coins: c.coins });
+            }
+        });
+    }
+    if (typeof telegramStarsList !== 'undefined') {
+        telegramStarsList.forEach(s => {
+            if (`تليجرام نجوم telegram ${s.stars}`.toLowerCase().includes(query)) {
+                results.push({ name: `تليجرام (${s.stars} نجمة)`, price: s.price, type: 'coin_tg', stars: s.stars });
+            }
+        });
+    }
+
     // البحث في الاشتراكات
     const subList = (typeof subscriptionsData !== 'undefined') ? subscriptionsData : [];
     subList.forEach(sub => {
@@ -1087,6 +1135,10 @@ function onGlobalSearchClick(encodedItem) {
     
     if (item.type === 'game' || item.type === 'live') {
         openPlayerIdModal(item.name.split(' (')[0], item.pkg, item.price, true, item.key);
+    } else if (item.type === 'coin_tiktok') {
+        openPlayerIdModal('تيك توك كوينز', `${item.coins} عملة`, item.price, true, 'tiktok');
+    } else if (item.type === 'coin_tg') {
+        openPlayerIdModal('نجوم تليجرام', `${item.stars} نجمة`, item.price, true, 'telegram');
     } else if (item.type === 'vcc') {
         openVccModal(item.id);
     } else if (item.type === 'sub') {
