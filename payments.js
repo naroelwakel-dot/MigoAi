@@ -1,96 +1,191 @@
 // ==============================================================================
-// بيانات وسائل الدفع الرسمية (14 وسيلة مستقلة بالكامل)
+// Migo AI Solution - payments.js
+// بوابة وسائل الدفع الرسمية المعتمدة والكوبونات - مطابقة 100%
 // ==============================================================================
 
-const WHATSAPP_NUMBER = "201060934020";
-
-const PAYMENT_METHODS_DATA = {
-    vodafone: {
-        title: '📱 فودافون كاش',
-        type: 'copy',
-        value: '01020323432',
-        instruction: 'يرجى تحويل المبلغ لمحفظة فودافون كاش الرسمية:'
+const paymentsConfig = {
+  // 1. المحافظ الإلكترونية المحلية (Local Wallets)
+  localWallets: [
+    {
+      id: "vodafone_cash",
+      name: "فودافون كاش (Vodafone Cash)",
+      number: "01020323432",
+      badge: "دفع محلي فوري ⚡",
+      icon: "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=300&q=80",
+      instruction: "قم بتحويل المبلغ إلى رقم فودافون كاش الموضح، ثم احتفظ بصورة التحويل لتأكيد الطلب."
     },
-    etisalat: {
-        title: '🟢 اتصالات كاش',
-        type: 'copy',
-        value: '01146691073',
-        instruction: 'يرجى تحويل المبلغ لمحفظة اتصالات كاش الرسمية:'
+    {
+      id: "etisalat_cash",
+      name: "اتصالات كاش (Etisalat Cash)",
+      number: "01146691073",
+      badge: "دفع محلي فوري ⚡",
+      icon: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=300&q=80",
+      instruction: "قم بالتحويل لرقم محفظة اتصالات كاش أعلاه، وأرسل لقطة الشاشة للتأكيد الفوري."
     },
-    instapay: {
-        title: '⚡ إنستاباي (InstaPay)',
-        type: 'copy',
-        value: '01146691073',
-        instruction: 'يرجى تحويل المبلغ عبر تطبيق إنستاباي (InstaPay) للرقم:'
+    {
+      id: "instapay",
+      name: "إنستاباي (InstaPay)",
+      number: "01146691073",
+      badge: "تحويل بنكي لحظي ⚡",
+      icon: "https://images.unsplash.com/photo-1556742049-0a67c5574f73?auto=format&fit=crop&w=300&q=80",
+      instruction: "التحويل متاح لحظياً عبر تطبيق إنستاباي باستخدام رقم الهاتف الموضح."
     },
-    telda: {
-        title: '🟣 تيلدا (Telda)',
-        type: 'copy',
-        value: '@saherbeh',
-        instruction: 'يرجى تحويل المبلغ لحساب تيلدا (Telda) التالي:'
-    },
-    redotpay: {
-        title: '🔴 ريدوت باي (RedotPay)',
-        type: 'copy',
-        value: '1217212555',
-        instruction: 'يرجى التحويل لمعرف حساب ريدوت باي (RedotPay ID):'
-    },
-    paypal: {
-        title: '🔵 باي بال (PayPal)',
-        type: 'copy',
-        value: 'sahermohamed123456@gmail.com',
-        instruction: 'يرجى إرسال المبلغ عبر باي بال (PayPal) إلى:'
-    },
-    binance: {
-        title: '🟡 باينانس باي (Binance Pay)',
-        type: 'info',
-        html: `
-            <div class="flex flex-col items-center justify-center gap-2">
-                <span class="text-xs text-gray-300">امسح كود الـ QR عبر تطبيق Binance للدفع بـ (USDT):</span>
-                <div class="bg-white p-2.5 rounded-2xl border-2 border-amber-400 shadow-2xl inline-block my-1">
-                    <img src="binance-qr.png.jpg" 
-                         onerror="this.onerror=null; this.src='https://raw.githubusercontent.com/naroelwakel-dot/MigoAi/main/binance-qr.png.jpg';" 
-                         alt="Binance Pay QR" 
-                         class="w-48 h-48 object-contain rounded-lg block mx-auto">
-                </div>
-                <a href="https://raw.githubusercontent.com/naroelwakel-dot/MigoAi/main/binance-qr.png.jpg" target="_blank" class="text-[11px] text-sky-400 underline hover:text-sky-300">فتح الكود بحجم كامل 🔍</a>
-                <span class="text-amber-400 font-bold text-[11px] block mt-0.5">تأكد من إتمام التحويل ثم اكتب رقم العملية أو حسابك بالأسفل</span>
-            </div>
-        `
-    },
-    cards: {
-        title: '💳 بطاقة بنكية (Visa / Apple Pay)',
-        type: 'info',
-        html: `الدفع المباشر ببطاقات (Visa / Mastercard / Google Pay / Apple Pay) متاح.<br><span class="text-sky-300 block mt-1 font-bold">اضغط تأكيد وسيتم تزويدك برابط الفاتورة المباشرة عبر واتساب.</span>`
-    },
-    valu: {
-        title: '⚡ فاليو (valU)',
-        type: 'bnpl',
-        text: 'خدمة التقسيط عبر <b>فاليو (valU)</b> متاحة.'
-    },
-    tamara: {
-        title: '🟠 تمارة (Tamara)',
-        type: 'bnpl',
-        text: 'خدمة التقسيط عبر <b>تمارة (Tamara)</b> متاحة.'
-    },
-    tabby: {
-        title: '🟢 تابي (Tabby)',
-        type: 'bnpl',
-        text: 'خدمة التقسيط عبر <b>تابي (Tabby)</b> متاحة.'
-    },
-    souhoola: {
-        title: '🟣 سهولة (Souhoola)',
-        type: 'bnpl',
-        text: 'خدمة التقسيط عبر <b>سهولة (Souhoola)</b> متاحة.'
-    },
-    forsa: {
-        title: '🟢 فرصة (Forsa)',
-        type: 'bnpl',
-        text: 'خدمة التقسيط عبر <b>فرصة (Forsa)</b> متاحة.'
-    },
-    aman: {
-        title: '🔵 أمان (Aman)',
-        type: 'bnpl',
-        text: 'خدمة التقسيط عبر <b>أمان (Aman)</b> متاحة.'
+    {
+      id: "telda",
+      name: "تلدا (Telda)",
+      handle: "@saherbeh",
+      badge: "تحويل مباشر ⚡",
+      icon: "https://images.unsplash.com/photo-1589758438368-0ad531db3366?auto=format&fit=crop&w=300&q=80",
+      instruction: "أرسل المبلغ مباشرة عبر تطبيق تلدا إلى المعرف الشخصي (@saherbeh)."
     }
+  ],
+
+  // 2. وسائل الدفع الرقمية العالمية (Global & Crypto Payments)
+  globalPayments: [
+    {
+      id: "binance_pay",
+      name: "بايننس باي (Binance Pay)",
+      qrCodeImage: "binance-qr.png.jpg",
+      badge: "دفع رقمي فوري (USDT) 🪙",
+      instruction: "امسح رمز الاستجابة السريعة (QR Code) عبر تطبيق بايننس لإتمام الدفع الفوري بدون رسوم."
+    },
+    {
+      id: "paypal",
+      name: "باي بال (PayPal)",
+      email: "sahermohamed123456@gmail.com",
+      badge: "دفع دولي معتمد 🌐",
+      instruction: "أرسل الدفعة إلى بريد PayPal المعتمد (مع تحديد خيار Friends & Family إن أمكن)."
+    },
+    {
+      id: "redotpay",
+      name: "ريدوت باي (RedotPay)",
+      userId: "1217212555",
+      badge: "تحويل داخلي فوري ⚡",
+      instruction: "التحويل المباشر من حسابك في RedotPay إلى معرف المستخدم ID: 1217212555."
+    }
+  ],
+
+  // 3. البطاقات البنكية المباشرة (Credit & Debit Cards)
+  cardPayments: [
+    {
+      id: "cards_direct",
+      name: "البطاقات المباشرة والائتمانية",
+      supported: ["Visa", "Mastercard", "Google Pay", "Apple Pay"],
+      badge: "دفع آمن ومباشر 💳",
+      instruction: "دعم لكافة البطاقات البنكية المعتمدة للدفع الرقمي."
+    }
+  ],
+
+  // 4. خدمات الشراء الآن والدفع لاحقاً والائتمان (BNPL & Installments)
+  installmentsBNPL: [
+    {
+      id: "bnpl_services",
+      name: "خدمات التقسيط والشراء الآن والدفع لاحقاً",
+      services: ["تابي (Tabby)", "تمارا (Tamara)", "فاليو (Valu)", "سهولة (Souhoola)", "فرصة (Forsa)", "أمان (Aman)"],
+      actionNotice: "Contact me to get link",
+      badge: "تقسيط مريح 🛍️",
+      instruction: "اختر جهة التقسيط وتواصل معنا مباشرة عبر واتساب للحصول على رابط الدفع المخصص (Contact me to get link)."
+    }
+  ],
+
+  // 5. أكواد الخصم الرسمية المعتمدة (Promo Codes)
+  coupons: [
+    {
+      code: "SIAFFC15",
+      discountPercent: 15,
+      active: true,
+      description: "خصم حصري 15% على إجمالي الطلب"
+    },
+    {
+      code: "SIAF15",
+      discountPercent: 15,
+      active: true,
+      description: "خصم ترويجي 15% على كافة الخدمات"
+    },
+    {
+      code: "SIAFGAMING15",
+      discountPercent: 15,
+      active: true,
+      description: "خصم خاص 15% لشحن الألعاب والخدمات الرقمية"
+    }
+  ]
 };
+
+// دالة تطبيق كود الخصم والتحقق من صلاحيته
+function applyCouponCode(code, subtotal) {
+  if (!code || typeof code !== "string") {
+    return { valid: false, discountAmount: 0, finalTotal: subtotal, message: "يرجى إدخال الكوبون" };
+  }
+
+  const cleanCode = code.trim().toUpperCase();
+  const coupon = paymentsConfig.coupons.find(c => c.code === cleanCode && c.active);
+
+  if (!coupon) {
+    return { valid: false, discountAmount: 0, finalTotal: subtotal, message: "كود الخصم غير صالح أو منتهي الصلاحية" };
+  }
+
+  const discountAmount = Math.round((subtotal * (coupon.discountPercent / 100)) * 100) / 100;
+  const finalTotal = Math.max(0, Math.round((subtotal - discountAmount) * 100) / 100);
+
+  return {
+    valid: true,
+    code: coupon.code,
+    discountPercent: coupon.discountPercent,
+    discountAmount: discountAmount,
+    finalTotal: finalTotal,
+    message: `تم تطبيق خصم ${coupon.discountPercent}% بنجاح!`
+  };
+}
+
+// دالة توليد نص الفاتورة الرسمية لإرسالها عبر واتساب
+function generateOrderInvoice(cartItems, paymentMethodName, couponCode = null) {
+  if (!cartItems || cartItems.length === 0) {
+    return "";
+  }
+
+  const subtotal = cartItems.reduce((acc, item) => acc + (item.price || 0), 0);
+  let discountText = "";
+  let finalPrice = subtotal;
+
+  if (couponCode) {
+    const couponResult = applyCouponCode(couponCode, subtotal);
+    if (couponResult.valid) {
+      discountText = `\n🎁 كود الخصم (${couponResult.code}): -${couponResult.discountAmount} ج.م`;
+      finalPrice = couponResult.finalTotal;
+    }
+  }
+
+  let itemsDetails = cartItems.map((item, index) => {
+    let details = `${index + 1}. ${item.name} - ${item.price} ج.م`;
+    if (item.account) details += `\n   📍 معرّف الحساب (ID): ${item.account}`;
+    if (item.zone) details += `\n   🌐 السيرفر (Zone ID): ${item.zone}`;
+    if (item.quantity) details += `\n   📊 الكمية: ${item.quantity.toLocaleString()}`;
+    return details;
+  }).join("\n\n");
+
+  const message = `مرحباً متجر Migo AI Solution 👋
+أرغب في تأكيد وتفعيل طلبي التالي:
+
+📦 تفاصيل الطلب:
+${itemsDetails}
+
+💰 الحساب المالي:
+- المجموع الفرعي: ${subtotal} ج.م${discountText}
+- الإجمالي النهائي للدفع: ${finalPrice} ج.م
+
+💳 وسيلة الدفع المختارة:
+- ${paymentMethodName}
+
+يرجى تأكيد الاستلام وبدء التنفيذ الفوري ⚡`;
+
+  return encodeURIComponent(message);
+}
+
+// إتاحة البيانات والوظائف للواجهة
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = { paymentsConfig, applyCouponCode, generateOrderInvoice };
+} else {
+  window.paymentsConfig = paymentsConfig;
+  window.applyCouponCode = applyCouponCode;
+  window.generateOrderInvoice = generateOrderInvoice;
+}
