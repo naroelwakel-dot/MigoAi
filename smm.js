@@ -1,193 +1,488 @@
 // ==============================================================================
-// محرك السوشيال ميديا الشامل (18 منصة تفاعلية)
+// Migo AI Solution - smm.js
+// محرك السوشيال ميديا (18 منصة) + البطاقات الافتراضية VCC - مطابق 100% للمتجر الحي
 // ==============================================================================
 
-const SVG_LOGOS = {
-    tiktok: `<svg class="w-5 h-5 fill-current text-white" viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-1.01-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.24 1.07-.14 1.61.24 1.64 1.82 2.89 3.5 2.76 1.44-.03 2.74-.93 3.22-2.29.21-.59.27-1.23.26-1.86.03-5.26.01-10.53.02-15.79z"/></svg>`,
-    facebook: `<svg class="w-5 h-5 fill-current text-blue-500" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>`,
-    instagram: `<svg class="w-5 h-5 fill-current text-pink-500" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>`,
-    telegram: `<svg class="w-5 h-5 fill-current text-sky-400" viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.295-.6.295-.002 0-.003 0-.005 0l.213-3.054 5.56-5.022c.24-.213-.054-.334-.373-.121l-6.869 4.326-2.96-.924c-.64-.203-.658-.64.135-.954l11.566-4.458c.538-.196 1.006.128.832.949z"/></svg>`,
-    youtube: `<svg class="w-5 h-5 fill-current text-red-500" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>`,
-    twitter: `<svg class="w-5 h-5 fill-current text-white" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>`,
-    whatsapp: `<svg class="w-5 h-5 fill-current text-emerald-400" viewBox="0 0 24 24"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.04 14.69 2 12.04 2M12.05 3.67C14.25 3.67 16.31 4.53 17.87 6.09C19.42 7.65 20.28 9.72 20.28 11.92C20.28 16.46 16.58 20.15 12.04 20.15C10.56 20.15 9.11 19.76 7.85 19L7.55 18.83L4.43 19.65L5.26 16.61L5.06 16.29C4.24 15 3.8 13.47 3.8 11.91C3.81 7.37 7.5 3.67 12.05 3.67Z"/></svg>`,
-    snapchat: `<svg class="w-5 h-5 fill-current text-yellow-400" viewBox="0 0 24 24"><path d="M12 2C7.58 2 4 5.58 4 10c0 2.65 1.34 4.98 3.39 6.36-.14.62-.48 1.46-1.39 2.05-.18.12-.25.35-.16.55.08.19.28.31.49.29 2.11-.14 3.67-1.11 4.37-1.63.42.06.85.1 1.3.1 4.42 0 8-3.58 8-8s-3.58-8-8-8z"/></svg>`,
-    linkedin: `<svg class="w-5 h-5 fill-current text-blue-400" viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 8.76a1.45 1.45 0 1 0 0-2.9 1.45 1.45 0 0 0 0 2.9m1.37 9.74v-8.37H5.09v8.37h2.74z"/></svg>`,
-    spotify: `<svg class="w-5 h-5 fill-current text-emerald-500" viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10A10 10 0 0 0 12 2zm4.586 14.424c-.18.295-.563.387-.857.207-2.35-1.435-5.308-1.76-8.792-.963-.335.077-.67-.133-.746-.468-.077-.334.132-.67.467-.746 3.808-.87 7.076-.496 9.721 1.114.294.18.387.563.207.856zm1.223-2.724c-.226.367-.707.482-1.074.256-2.69-1.654-6.79-2.134-9.97-1.168-.413.125-.85-.107-.975-.52-.125-.414.107-.851.52-.976 3.633-1.103 8.147-.568 11.243 1.334.367.226.482.707.256 1.074zm.105-2.835C14.692 8.95 8.085 8.73 4.708 9.756c-.495.15-1.022-.13-1.172-.625-.15-.495.13-1.022.625-1.172 3.945-1.198 11.23-.944 15.05 1.324.446.265.592.845.327 1.291-.265.446-.845.592-1.291.327z"/></svg>`,
-    traffic: `<svg class="w-5 h-5 fill-current text-cyan-400" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 17.93V17a1 1 0 0 0-2 0v2.93A8 8 0 0 1 4.07 13H7a1 1 0 0 0 0-2H4.07A8 8 0 0 1 11 4.07V7a1 1 0 0 0 2 0V4.07A8 8 0 0 1 19.93 11H17a1 1 0 0 0 0 2h2.93A8 8 0 0 1 13 19.93z"/></svg>`,
-    google: `<svg class="w-5 h-5 fill-current text-amber-400" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm3.66 13.5a5.1 5.1 0 1 1 .15-7.14l-1.57 1.51a3 3 0 1 0-.17 4.12l1.59 1.51z"/></svg>`,
-    discord: `<svg class="w-5 h-5 fill-current text-indigo-400" viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.929 1.793 8.18 1.793 12.061 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.894.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.028zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>`,
-    twitch: `<svg class="w-5 h-5 fill-current text-purple-400" viewBox="0 0 24 24"><path d="M2.149 0l-1.612 4.119v16.036h5.051v3.845l3.845-3.845h3.042l6.417-6.418v-13.737h-16.743zm14.912 12.449l-2.812 2.812h-3.328l-2.444v-2.444h-2.906v-12.787h11.49v9.975zm-6.071-6.19h1.794v5.127h-1.794v-5.127zm4.359 0h1.795v5.127h-1.795v-5.127z"/></svg>`,
-    threads: `<svg class="w-5 h-5 fill-current text-white" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 14.5c-2.49 0-4.5-2.01-4.5-4.5S9.51 7.5 12 7.5s4.5 2.01 4.5 4.5v.5h-1.8v-.5c0-1.5-1.2-2.7-2.7-2.7s-2.7 1.2-2.7 2.7 1.2 2.7 2.7 2.7c.9 0 1.69-.44 2.18-1.12.42.31.91.51 1.45.58-.87 1.46-2.44 2.44-4.23 2.44z"/></svg>`,
-    kick: `<svg class="w-5 h-5 fill-current text-emerald-400" viewBox="0 0 24 24"><path d="M3 2h5v7.2L13.8 2H20l-7.2 8.2L21 22h-6.2l-6.8-8.2V22H3V2z"/></svg>`,
-    pinterest: `<svg class="w-5 h-5 fill-current text-red-500" viewBox="0 0 24 24"><path d="M12 0a12 12 0 0 0-4.37 23.18c-.06-.99-.11-2.51.02-3.6.13-1.02.87-3.7.87-3.7s-.22-.45-.22-1.12c0-1.05.61-1.83 1.36-1.83.64 0 .95.48.95 1.06 0 .65-.41 1.62-.63 2.51-.18.75.38 1.36 1.12 1.36 1.34 0 2.38-1.42 2.38-3.46 0-1.81-1.3-3.08-3.16-3.08-2.15 0-3.41 1.61-3.41 3.28 0 .65.25 1.35.56 1.73.06.08.07.14.05.22-.06.26-.2.83-.23.95-.04.16-.13.2-.3.12-1.11-.52-1.81-2.14-1.81-3.45 0-2.8 2.04-5.38 5.88-5.38 3.09 0 5.49 2.2 5.49 5.14 0 3.07-1.93 5.54-4.62 5.54-.9 0-1.75-.47-2.04-1.02l-.56 2.12c-.2.78-.75 1.75-1.12 2.35A12 12 0 1 0 12 0z"/></svg>`,
-    kwai: `<svg class="w-5 h-5 fill-current text-orange-500" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 14.5v-3.8l3.2 2.2-1.2 2.1-2-.5zm-4.2-2.1l3.2-2.2V16.5l-2 .5-1.2-2.1zm.2-4.9c0-1.4 1.1-2.5 2.5-2.5s2.5 1.1 2.5 2.5-1.1 2.5-2.5 2.5-2.5-1.1-2.5-2.5z"/></svg>`
-};
-
-const smmPlatforms = [
-    { 
-        id: 'tiktok', name: 'تيك توك', svg: SVG_LOGOS.tiktok,
-        categories: [
-            { 
-                name: 'تيك توك - لايكات وإعجابات', 
-                services: [
-                    { id: 2218, title: 'لايكات فورية | 10k/يوم | ضمان 30 يوم ♻️', baseUSD: 1.85, min: 10, max: 1000000 },
-                    { id: 2221, title: 'لايكات فائقة السرعة | 20k/يوم | بدون ضمان 🔥', baseUSD: 1.14, min: 10, max: 500000 },
-                    { id: 2222, title: 'لايكات فائق السرعة | 30k/يوم | ضمان 15 يوم', baseUSD: 1.85, min: 10, max: 750000 },
-                    { id: 1665, title: 'لايكات جودة عالية | بدون نقص | ضمان سنة كاملة 365 يوم', baseUSD: 1.42, min: 10, max: 1000000 },
-                    { id: 2100, title: 'لايكات اقتصادية | ضمان 365 يوم', baseUSD: 0.71, min: 10, max: 1000000 }
-                ] 
-            },
-            { 
-                name: 'تيك توك - متابعين', 
-                services: [
-                    { id: 2410, title: 'متابعين حقيقيين | ضمان 30 يوم', baseUSD: 2.90, min: 100, max: 100000 },
-                    { id: 2415, title: 'متابعين فوري فائق السرعة', baseUSD: 3.50, min: 100, max: 50000 }
-                ] 
-            },
-            { 
-                name: 'تيك توك - مشاهدات وبث مباشر', 
-                services: [
-                    { id: 2301, title: 'مشاهدات فيديو فورية (اكسبلور)', baseUSD: 0.15, min: 1000, max: 10000000 },
-                    { id: 2305, title: 'مشاهدات بث مباشر (Live Stream)', baseUSD: 2.40, min: 100, max: 50000 }
-                ] 
-            },
-            { 
-                name: 'تيك توك - شير وحفظ المنشورات (Save)', 
-                services: [
-                    { id: 2350, title: 'حفظ المنشورات (سيف) عالي الجودة', baseUSD: 0.30, min: 100, max: 500000 },
-                    { id: 2360, title: 'مشاركات وإكسبلور (شير)', baseUSD: 0.40, min: 100, max: 500000 }
-                ] 
-            }
-        ] 
-    },
-    { 
-        id: 'facebook', name: 'فيسبوك', svg: SVG_LOGOS.facebook,
-        categories: [
-            { 
-                name: 'مشاهدات بث مباشر [اقتصادي]', 
-                services: [
-                    { id: 1913, title: 'مشاهدات بث مباشر | 15 دقيقة', baseUSD: 1.72, min: 50, max: 20000 },
-                    { id: 1914, title: 'مشاهدات بث مباشر | 30 دقيقة', baseUSD: 3.45, min: 50, max: 20000 },
-                    { id: 1915, title: 'مشاهدات بث مباشر | 60 دقيقة', baseUSD: 6.89, min: 50, max: 20000 },
-                    { id: 1916, title: 'مشاهدات بث مباشر | 90 دقيقة', baseUSD: 10.34, min: 50, max: 20000 },
-                    { id: 1917, title: 'مشاهدات بث مباشر | 120 دقيقة', baseUSD: 13.75, min: 50, max: 20000 }
-                ] 
-            },
-            { 
-                name: 'تفاعلات المنشورات (Love, Care, Wow)', 
-                services: [
-                    { id: 1960, title: 'تفاعلات بوستات منوعة مخصصة', baseUSD: 0.95, min: 100, max: 50000 }
-                ] 
-            },
-            { 
-                name: 'متابعين صفحات وحسابات', 
-                services: [
-                    { id: 1950, title: 'متابعين صفحات وحسابات شخصية | ضمان', baseUSD: 1.85, min: 100, max: 500000 }
-                ] 
-            },
-            { 
-                name: 'ساعات المشاهدة وتفعيل الأرباح', 
-                services: [
-                    { id: 1990, title: 'باقة تفعيل ساعات مشاهدة الفيديوهات والريلز', baseUSD: 12.00, min: 1000, max: 60000 }
-                ] 
-            }
-        ] 
-    },
-    { 
-        id: 'instagram', name: 'انستقرام', svg: SVG_LOGOS.instagram,
-        categories: [
-            { name: 'متابعين', services: [{ id: 2510, title: 'متابعين ضمان 365 يوم', baseUSD: 1.65, min: 100, max: 500000 }] },
-            { name: 'ريلز ولايكات', services: [{ id: 2520, title: 'لايكات فورية حقيقية', baseUSD: 0.45, min: 100, max: 100000 }] }
-        ] 
-    },
-    { 
-        id: 'youtube', name: 'يوتيوب', svg: SVG_LOGOS.youtube,
-        categories: [
-            { name: 'تفاعل ومشاهدات', services: [{ id: 3205, title: 'مشتركين قنوات حقيقيين', baseUSD: 8.50, min: 100, max: 50000 }, { id: 3201, title: 'مشاهدات فيديو حقيقية', baseUSD: 1.90, min: 1000, max: 1000000 }] }
-        ] 
-    },
-    { 
-        id: 'telegram', name: 'تليجرام', svg: SVG_LOGOS.telegram,
-        categories: [
-            { name: 'قنوات ومجموعات', services: [{ id: 3101, title: 'أعضاء قنوات وجروبات ثبات', baseUSD: 1.75, min: 100, max: 200000 }] }
-        ] 
-    },
-    { 
-        id: 'twitter', name: 'إكس (تويتر)', svg: SVG_LOGOS.twitter,
-        categories: [
-            { name: 'تفاعل', services: [{ id: 3301, title: 'لايكات وإعادة نشر (Retweet)', baseUSD: 1.40, min: 100, max: 100000 }] }
-        ] 
-    },
-    { 
-        id: 'whatsapp', name: 'واتساب', svg: SVG_LOGOS.whatsapp,
-        categories: [
-            { name: 'قنوات ومجموعات', services: [{ id: 4101, title: 'أعضاء قنوات واتساب رسمية', baseUSD: 2.50, min: 100, max: 50000 }] }
-        ] 
-    },
-    { 
-        id: 'snapchat', name: 'سناب شات', svg: SVG_LOGOS.snapchat,
-        categories: [
-            { name: 'متابعين ومشاهدات', services: [{ id: 4201, title: 'متابعين منصة الأضواء وحسابات', baseUSD: 4.80, min: 100, max: 20000 }] }
-        ] 
-    },
-    { 
-        id: 'linkedin', name: 'لينكد إن', svg: SVG_LOGOS.linkedin,
-        categories: [
-            { name: 'متابعين وتفاعل', services: [{ id: 4301, title: 'متابعين حسابات شخصية وشركات', baseUSD: 7.50, min: 100, max: 25000 }] }
-        ] 
-    },
-    { 
-        id: 'spotify_smm', name: 'سبوتيفاي', svg: SVG_LOGOS.spotify,
-        categories: [
-            { name: 'استماعات ومتابعين', services: [{ id: 4401, title: 'استماعات أغاني حقيقية (Plays)', baseUSD: 1.20, min: 1000, max: 1000000 }] }
-        ] 
-    },
-    { 
-        id: 'traffic', name: 'زيارات مواقع', svg: SVG_LOGOS.traffic,
-        categories: [
-            { name: 'زيارات الويب', services: [{ id: 4501, title: 'زيارات جوجل عضوية حقيقية', baseUSD: 0.85, min: 1000, max: 1000000 }] }
-        ] 
-    },
-    { 
-        id: 'google_reviews', name: 'خرائط جوجل', svg: SVG_LOGOS.google,
-        categories: [
-            { name: 'تقييمات', services: [{ id: 4601, title: 'تقييمات 5 نجوم مع تعليقات مخصصة', baseUSD: 18.00, min: 10, max: 500 }] }
-        ] 
-    },
-    { 
-        id: 'discord', name: 'ديسكورد', svg: SVG_LOGOS.discord,
-        categories: [
-            { name: 'أعضاء سيرفرات', services: [{ id: 4701, title: 'أعضاء سيرفرات ديسكورد حقيقيين', baseUSD: 3.20, min: 100, max: 50000 }] }
-        ] 
-    },
-    { 
-        id: 'twitch', name: 'تويتش', svg: SVG_LOGOS.twitch,
-        categories: [
-            { name: 'متابعين ومشاهدات', services: [{ id: 4801, title: 'متابعين قنوات تويتش', baseUSD: 1.80, min: 100, max: 50000 }] }
-        ] 
-    },
-    { 
-        id: 'threads', name: 'ثريدز', svg: SVG_LOGOS.threads,
-        categories: [
-            { name: 'متابعين ولايكات', services: [{ id: 4901, title: 'متابعين ثريدز حقيقيين', baseUSD: 2.10, min: 100, max: 50000 }] }
-        ] 
-    },
-    { 
-        id: 'kick', name: 'كيك (Kick)', svg: SVG_LOGOS.kick,
-        categories: [
-            { name: 'متابعين وبث', services: [{ id: 5001, title: 'متابعين ومشاهدات بثوث Kick', baseUSD: 2.50, min: 100, max: 50000 }] }
-        ] 
-    },
-    { 
-        id: 'pinterest', name: 'بينترست', svg: SVG_LOGOS.pinterest,
-        categories: [
-            { name: 'متابعين وإعجابات', services: [{ id: 5101, title: 'متابعين لوحات وحسابات بينترست', baseUSD: 2.30, min: 100, max: 50000 }] }
-        ] 
-    },
-    { 
-        id: 'kwai', name: 'كواي (Kwai)', svg: SVG_LOGOS.kwai,
-        categories: [
-            { name: 'تفاعل', services: [{ id: 5201, title: 'متابعين ومشاهدات كواي فورية', baseUSD: 1.50, min: 100, max: 100000 }] }
-        ] 
-    }
+// 1. البطاقات الافتراضية الدولية (Virtual Credit Cards - VCC)
+const vccData = [
+  {
+    id: "vcc_10",
+    name: "بطاقة VCC دولية (10$)",
+    balanceUsd: 10,
+    priceEgp: 620,
+    banner: "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=1200&q=80",
+    badge: "تفعيل فوري 💳",
+    description: "صالحة للشراء الدولي وتفعيل الاشتراكات والإعلانات."
+  },
+  {
+    id: "vcc_25",
+    name: "بطاقة VCC دولية (25$)",
+    balanceUsd: 25,
+    priceEgp: 1550,
+    banner: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=1200&q=80",
+    badge: "الأكثر طلباً 🔥",
+    description: "مشحونة برصيد 25 دولار ومقبولة في مختلف المنصات العالمية."
+  },
+  {
+    id: "vcc_50",
+    name: "بطاقة VCC دولية (50$)",
+    balanceUsd: 50,
+    priceEgp: 3100,
+    banner: "https://images.unsplash.com/photo-1556742049-0a67c5574f73?auto=format&fit=crop&w=1200&q=80",
+    badge: "رصيد مميز ⚡",
+    description: "مثالية للمدفوعات والحملات الإعلانية واشتراكات المطورين."
+  },
+  {
+    id: "vcc_100",
+    name: "بطاقة VCC دولية (100$)",
+    balanceUsd: 100,
+    priceEgp: 6200,
+    banner: "https://images.unsplash.com/photo-1589758438368-0ad531db3366?auto=format&fit=crop&w=1200&q=80",
+    badge: "باقة النخبة 💎",
+    description: "بطاقة دفع رقمية برصيد 100 دولار كاملة مع كود التحقق 3DS."
+  }
 ];
+
+// 2. محرك خدمات السوشيال ميديا للمنصات الـ 18
+const smmPlatforms = [
+  {
+    id: "tiktok",
+    name: "تيك توك (TikTok)",
+    banner: "https://images.unsplash.com/photo-1611605698335-8b1569810432?auto=format&fit=crop&w=1200&q=80",
+    services: [
+      {
+        id: "2410",
+        name: "متابعين حقيقيين | ضمان عدم النقص 30 يوم",
+        category: "متابعين",
+        pricePer1k: 359.60,
+        min: 1000,
+        max: 100000,
+        speed: "فوري وتلقائي ⚡",
+        description: "سيرفر سريع بضمان عدم النقص لمدة شهر كامل."
+      },
+      {
+        id: "2415",
+        name: "متابعين فوري فائق السرعة",
+        category: "متابعين",
+        pricePer1k: 434.00,
+        min: 1000,
+        max: 50000,
+        speed: "سرعة قصوى 🚀",
+        description: "بدء فوري خلال دقائق بمعدل تدفق عالي."
+      },
+      {
+        id: "2420",
+        name: "لايكات تيك توك لحسابات حقيقية",
+        category: "لايكات",
+        pricePer1k: 75.00,
+        min: 1000,
+        max: 200000,
+        speed: "فوري ⚡",
+        description: "رفع التفاعل والوصول لإكسبلور."
+      },
+      {
+        id: "2430",
+        name: "مشاهدات فيديو تيك توك صاروخية",
+        category: "مشاهدات",
+        pricePer1k: 15.00,
+        min: 1000,
+        max: 1000000,
+        speed: "فائق السرعة ⚡",
+        description: "تسليم فوري بملايين المشاهدات لدعم التريند."
+      }
+    ]
+  },
+  {
+    id: "facebook",
+    name: "فيسبوك (Facebook)",
+    banner: "https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&w=1200&q=80",
+    services: [
+      {
+        id: "3101",
+        name: "متابعين وتفاعل صفحات وبيجات (Page Followers)",
+        category: "متابعين",
+        pricePer1k: 240.00,
+        min: 1000,
+        max: 100000,
+        speed: "مستقر ⚡",
+        description: "زيادة موثوقة لصفحات الأعمال والبروفايلات الاحترافية."
+      },
+      {
+        id: "3105",
+        name: "لايكات ورياكشنات منوعات بوستات",
+        category: "لايكات",
+        pricePer1k: 95.00,
+        min: 1000,
+        max: 50000,
+        speed: "فوري ⚡",
+        description: "إمكانية توزيع التفاعلات على المنشورات."
+      }
+    ]
+  },
+  {
+    id: "instagram",
+    name: "انستقرام (Instagram)",
+    banner: "https://images.unsplash.com/photo-1611262588024-d12430b98920?auto=format&fit=crop&w=1200&q=80",
+    services: [
+      {
+        id: "4101",
+        name: "متابعين إنستغرام بضمان وجودة فائقة",
+        category: "متابعين",
+        pricePer1k: 195.00,
+        min: 1000,
+        max: 150000,
+        speed: "سريع ⚡",
+        description: "حسابات بمظهر حقيقي لتعزيز موثوقية الصفحة."
+      },
+      {
+        id: "4105",
+        name: "إعجابات ريلز وبوستات إنستغرام",
+        category: "لايكات",
+        pricePer1k: 45.00,
+        min: 1000,
+        max: 100000,
+        speed: "فوري ⚡",
+        description: "تفاعل مباشر لتحسين ظهور الريلز في التوصيات."
+      }
+    ]
+  },
+  {
+    id: "youtube",
+    name: "يوتيوب (YouTube)",
+    banner: "https://images.unsplash.com/photo-1611162616475-46b635cb6868?auto=format&fit=crop&w=1200&q=80",
+    services: [
+      {
+        id: "5101",
+        name: "مشتركين قنوات يوتيوب غير قابل للنقص",
+        category: "مشتركين",
+        pricePer1k: 850.00,
+        min: 1000,
+        max: 50000,
+        speed: "آمن للقناة 🛡️",
+        description: "مشتركون بجودة عالية للمساعدة في تحقيق شروط الربح."
+      },
+      {
+        id: "5105",
+        name: "مشاهدات يوتيوب حقيقية لتحقيق 4000 ساعة",
+        category: "مشاهدات",
+        pricePer1k: 220.00,
+        min: 1000,
+        max: 500000,
+        speed: "طبيعي وآمن ⚡",
+        description: "مشاهدات باحتفاظ عالي آمنة تماماً على إعلانات أدسنس."
+      }
+    ]
+  },
+  {
+    id: "telegram",
+    name: "تليجرام (Telegram)",
+    banner: "https://images.unsplash.com/photo-1614680376593-902f749f7ffc?auto=format&fit=crop&w=1200&q=80",
+    services: [
+      {
+        id: "6101",
+        name: "أعضاء قنوات وجروبات تليجرام",
+        category: "أعضاء",
+        pricePer1k: 110.00,
+        min: 1000,
+        max: 200000,
+        speed: "فوري ⚡",
+        description: "إضافة فورية لقنوات البث ومجموعات النقاش."
+      },
+      {
+        id: "6105",
+        name: "مشاهدات منشورات القنوات (آخر 10 بوستات)",
+        category: "مشاهدات",
+        pricePer1k: 25.00,
+        min: 1000,
+        max: 100000,
+        speed: "تلقائي ⚡",
+        description: "توزيع المشاهدات تلقائياً على المنشورات الجديدة."
+      }
+    ]
+  },
+  {
+    id: "twitter",
+    name: "إكس / تويتر (Twitter / X)",
+    banner: "https://images.unsplash.com/photo-1611605698335-8b1569810432?auto=format&fit=crop&w=1200&q=80",
+    services: [
+      {
+        id: "7101",
+        name: "متابعين إكس (تويتر) بجودة عالية",
+        category: "متابعين",
+        pricePer1k: 580.00,
+        min: 1000,
+        max: 50000,
+        speed: "مستقر ⚡",
+        description: "حسابات بروفايل بصور وسيرة ذاتية."
+      },
+      {
+        id: "7105",
+        name: "إعادة تغريد (Retweet) ولايكات",
+        category: "تفاعل",
+        pricePer1k: 180.00,
+        min: 1000,
+        max: 20000,
+        speed: "سريع ⚡",
+        description: "دفع التغريدات للتريند وزيادة مدى الوصول."
+      }
+    ]
+  },
+  {
+    id: "snapchat",
+    name: "سناب شات (Snapchat)",
+    banner: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80",
+    services: [
+      {
+        id: "8101",
+        name: "متابعين منصة الأضواء والملفات العامة",
+        category: "متابعين",
+        pricePer1k: 720.00,
+        min: 1000,
+        max: 25000,
+        speed: "آمن ⚡",
+        description: "توسيع انتشار الستوري وملف التعريف العام."
+      }
+    ]
+  },
+  {
+    id: "twitch",
+    name: "تويتش (Twitch)",
+    banner: "https://images.unsplash.com/photo-1542751110-97427bbecf20?auto=format&fit=crop&w=1200&q=80",
+    services: [
+      {
+        id: "9101",
+        name: "متابعين قنوات تويتش للبث",
+        category: "متابعين",
+        pricePer1k: 160.00,
+        min: 1000,
+        max: 50000,
+        speed: "فوري ⚡",
+        description: "شروط شريك تويتش (Twitch Affiliate)."
+      }
+    ]
+  },
+  {
+    id: "kwai",
+    name: "كواي (Kwai)",
+    banner: "https://images.unsplash.com/photo-1516251193007-45ef944ab0c6?auto=format&fit=crop&w=1200&q=80",
+    services: [
+      {
+        id: "10101",
+        name: "متابعين ولايكات منصة كواي",
+        category: "متابعين",
+        pricePer1k: 140.00,
+        min: 1000,
+        max: 50000,
+        speed: "سريع ⚡",
+        description: "دعم المقاطع القصيرة في كواي."
+      }
+    ]
+  },
+  {
+    id: "linkedin",
+    name: "لينكد إن (LinkedIn)",
+    banner: "https://images.unsplash.com/photo-1616469829941-c7200edec809?auto=format&fit=crop&w=1200&q=80",
+    services: [
+      {
+        id: "11101",
+        name: "متابعين وتوصيات صفحات الشركات والبروفايل",
+        category: "متابعين",
+        pricePer1k: 950.00,
+        min: 1000,
+        max: 20000,
+        speed: "احترافي ⚡",
+        description: "بناء ثقة الأعمال والمظهر المهني الموثوق."
+      }
+    ]
+  },
+  {
+    id: "discord",
+    name: "ديسكورد (Discord)",
+    banner: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80",
+    services: [
+      {
+        id: "12101",
+        name: "أعضاء سيرفرات ديسكورد (Online / Offline)",
+        category: "أعضاء",
+        pricePer1k: 260.00,
+        min: 1000,
+        max: 30000,
+        speed: "فوري ⚡",
+        description: "تنشيط وزيادة عدد مجتمع السيرفر."
+      }
+    ]
+  },
+  {
+    id: "spotify_smm",
+    name: "سبوتيفاي (Spotify)",
+    banner: "https://images.unsplash.com/photo-1614680376593-902f749f7ffc?auto=format&fit=crop&w=1200&q=80",
+    services: [
+      {
+        id: "13101",
+        name: "استماعات أغاني وقوائم تشغيل ومتابعين فنانين",
+        category: "استماعات",
+        pricePer1k: 120.00,
+        min: 1000,
+        max: 500000,
+        speed: "مستقر ⚡",
+        description: "رفع ترتيب التراك في خوارزميات الاستماع."
+      }
+    ]
+  },
+  {
+    id: "soundcloud",
+    name: "ساوند كلاود (SoundCloud)",
+    banner: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1200&q=80",
+    services: [
+      {
+        id: "14101",
+        name: "تشغيلات ومتابعين ساوند كلاود",
+        category: "استماعات",
+        pricePer1k: 40.00,
+        min: 1000,
+        max: 200000,
+        speed: "فوري ⚡",
+        description: "زيادة بلاي ليست وتفاعل الأغاني."
+      }
+    ]
+  },
+  {
+    id: "pinterest",
+    name: "بينترست (Pinterest)",
+    banner: "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=1200&q=80",
+    services: [
+      {
+        id: "15101",
+        name: "متابعين لوحات وحسابات بينترست",
+        category: "متابعين",
+        pricePer1k: 180.00,
+        min: 1000,
+        max: 30000,
+        speed: "طبيعي ⚡",
+        description: "زيادة حفظ وتداول البنز والتصاميم."
+      }
+    ]
+  },
+  {
+    id: "threads",
+    name: "ثريدز (Threads)",
+    banner: "https://images.unsplash.com/photo-1611262588024-d12430b98920?auto=format&fit=crop&w=1200&q=80",
+    services: [
+      {
+        id: "16101",
+        name: "متابعين ثريدز ولايكات منشورات",
+        category: "متابعين",
+        pricePer1k: 290.00,
+        min: 1000,
+        max: 50000,
+        speed: "فوري ⚡",
+        description: "تنمية وتوسيع قاعدة المتابعين لحسابات ثريدز."
+      }
+    ]
+  },
+  {
+    id: "reddit",
+    name: "ريديت (Reddit)",
+    banner: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80",
+    services: [
+      {
+        id: "17101",
+        name: "أبفوت بوستات وكارما (Upvotes & Karma)",
+        category: "تفاعل",
+        pricePer1k: 880.00,
+        min: 500,
+        max: 10000,
+        speed: "حقيقي ⚡",
+        description: "رفع البوستات في الصب ريديتس المستهدفة."
+      }
+    ]
+  },
+  {
+    id: "kick",
+    name: "كيك (Kick)",
+    banner: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80",
+    services: [
+      {
+        id: "18101",
+        name: "متابعين قنوات كيك ومشاهدات بث مباشر",
+        category: "متابعين",
+        pricePer1k: 320.00,
+        min: 1000,
+        max: 40000,
+        speed: "سريع ⚡",
+        description: "تسريع التوثيق والانضمام لبرنامج صناع محتوى Kick."
+      }
+    ]
+  },
+  {
+    id: "trovo",
+    name: "تروفو (Trovo)",
+    banner: "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=1200&q=80",
+    services: [
+      {
+        id: "19101",
+        name: "متابعين ومشاهدي قنوات Trovo Live",
+        category: "متابعين",
+        pricePer1k: 210.00,
+        min: 1000,
+        max: 30000,
+        speed: "فوري ⚡",
+        description: "دعم قنوات الجيمنج والبث التفاعلي على تروفو."
+      }
+    ]
+  }
+];
+
+// دالة حساب السعر التفاعلي بناءً على معرف الخدمة والكمية
+function calculateSmmCost(serviceId, quantity) {
+  let targetService = null;
+  for (const plat of smmPlatforms) {
+    const s = plat.services.find(srv => srv.id === serviceId);
+    if (s) {
+      targetService = s;
+      break;
+    }
+  }
+
+  if (!targetService) {
+    return { valid: false, message: "الخدمة غير موجودة", totalCost: 0 };
+  }
+
+  const qty = parseInt(quantity, 10);
+  if (isNaN(qty) || qty < targetService.min) {
+    return {
+      valid: false,
+      message: `الحد الأدنى للطلب هو ${targetService.min.toLocaleString()}`,
+      totalCost: 0
+    };
+  }
+
+  if (qty > targetService.max) {
+    return {
+      valid: false,
+      message: `الحد الأقصى للطلب هو ${targetService.max.toLocaleString()}`,
+      totalCost: 0
+    };
+  }
+
+  // حساب التكلفة الدقيقة بالجنيه المصري لكل 1000 وحدة
+  const cost = ((qty / 1000) * targetService.pricePer1k);
+  const roundedCost = Math.round(cost * 100) / 100;
+
+  return {
+    valid: true,
+    serviceName: targetService.name,
+    pricePer1k: targetService.pricePer1k,
+    quantity: qty,
+    totalCost: roundedCost
+  };
+}
+
+// إتاحة البيانات عالمياً
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = { vccData, smmPlatforms, calculateSmmCost };
+} else {
+  window.vccData = vccData;
+  window.smmPlatforms = smmPlatforms;
+  window.calculateSmmCost = calculateSmmCost;
+}
