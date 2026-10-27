@@ -1,6 +1,6 @@
 // ==============================================================================
-// Migo AI Solution - Core Application Engine (Full Production File)
-// المحرك التشغيلي الرئيسي المتكامل - متطابق 100% مع index.html و smm.js
+// Migo AI Solution - Core Application Engine (Full Complete File)
+// المحرك التشغيلي الرئيسي المتكامل - بدون أي اختصار أو حذف لسطر واحد
 // ==============================================================================
 
 const USD_TO_EGP = 62; 
@@ -10,7 +10,7 @@ const CART_STORAGE_KEY = 'migo_cart_v2';
 const DENO_API_URL = "https://migoai-72.naroelwakel-dot.deno.net";
 const WHATSAPP_NUMBER = "201060934020";
 
-// تهيئة المتغيرات بأمان لتجنب ReferenceError
+// تهيئة المتغيرات التشغيلية
 let currentSMMPlatform = null;
 let currentSlide = 0;
 let cart = [];
@@ -20,7 +20,7 @@ let isExpressModal = false;
 let selectedVccItem = null;
 let selectedPayment = null;
 
-// أكواد الخصم الرسمية المعتمدة
+// أكواد الخصم المعتمدة
 const validCoupons = {
     'SIAFFC15': { discount: 0.15 },
     'SIAF15': { discount: 0.15 },
@@ -29,7 +29,29 @@ const validCoupons = {
     'WELCOME10': { discount: 0.10 }
 };
 
-// بيانات وسائل الدفع المعتمدة بدقة 100%
+// خريطة أيقونات المنصات الـ 18 لإظهار الشعارات الرسمية الملونة بدقة
+const SMM_ICONS = {
+    tiktok: "fab fa-tiktok text-pink-400",
+    facebook: "fab fa-facebook text-blue-500",
+    instagram: "fab fa-instagram text-rose-400",
+    youtube: "fab fa-youtube text-red-500",
+    telegram: "fab fa-telegram text-sky-400",
+    twitter: "fab fa-x-twitter text-gray-200",
+    snapchat: "fab fa-snapchat text-yellow-400",
+    twitch: "fab fa-twitch text-purple-400",
+    kwai: "fas fa-video text-orange-400",
+    linkedin: "fab fa-linkedin text-sky-600",
+    discord: "fab fa-discord text-indigo-400",
+    spotify_smm: "fab fa-spotify text-emerald-400",
+    soundcloud: "fab fa-soundcloud text-amber-500",
+    pinterest: "fab fa-pinterest text-red-600",
+    threads: "fas fa-at text-gray-200",
+    reddit: "fab fa-reddit text-orange-500",
+    kick: "fas fa-play-circle text-emerald-400",
+    trovo: "fas fa-gamepad text-green-500"
+};
+
+// بيانات وسائل الدفع المعتمدة الـ 14 بدقة 100%
 const PAYMENT_METHODS_DATA = {
     vodafone: {
         title: "فودافون كاش",
@@ -192,6 +214,7 @@ function updateSlider() {
     const dots = document.querySelectorAll('.dot');
     dots.forEach((dot, idx) => dot.classList.toggle('active', idx === currentSlide));
 }
+
 function goToSlide(index) { 
     currentSlide = index; 
     updateSlider(); 
@@ -231,20 +254,24 @@ function loadCartFromStorage() {
     try { cart = JSON.parse(localStorage.getItem(CART_STORAGE_KEY)) || []; } catch (e) { cart = []; }
     updateCartUI();
 }
+
 function saveCartToStorage() {
     localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
     updateCartUI();
 }
+
 function addToCart(item) {
     cart.push({ ...item, cartId: Date.now() + Math.random() });
     saveCartToStorage();
     showToast(`تمت إضافة "${item.name}" إلى السلة 🛒`);
 }
+
 function removeFromCart(cartId) {
     cart = cart.filter(i => i.cartId !== cartId);
     saveCartToStorage();
     showToast('تم حذف العنصر من السلة');
 }
+
 function openCartModal() {
     const m = document.getElementById('cartModal');
     if (!m) return;
@@ -252,12 +279,14 @@ function openCartModal() {
     m.classList.add('flex');
     updateCartUI();
 }
+
 function closeCartModal() {
     const m = document.getElementById('cartModal');
     if (!m) return;
     m.classList.add('hidden');
     m.classList.remove('flex');
 }
+
 function updateCartUI() {
     const badge = document.getElementById('cartBadge');
     if (badge) badge.innerText = cart.length;
@@ -282,6 +311,7 @@ function updateCartUI() {
     }
     calculateCartTotal();
 }
+
 function applyCartCoupon() {
     const inp = document.getElementById('cartCouponInput');
     if (!inp) return;
@@ -298,6 +328,7 @@ function applyCartCoupon() {
     }
     calculateCartTotal();
 }
+
 function calculateCartTotal() {
     let subtotal = cart.reduce((sum, item) => sum + Number(item.price), 0);
     const subEl = document.getElementById('cartSubtotal');
@@ -483,11 +514,13 @@ function openVccModal(vccId) {
     const m = document.getElementById('vccModal');
     if (m) { m.classList.remove('hidden'); m.classList.add('flex'); }
 }
+
 function closeVccModal() {
     const m = document.getElementById('vccModal');
     if (m) { m.classList.add('hidden'); m.classList.remove('flex'); }
     selectedVccItem = null;
 }
+
 function submitVccModal(isExpress) {
     const em = document.getElementById('vccEmailInput');
     const pu = document.getElementById('vccPurposeInput');
@@ -671,44 +704,55 @@ function handleSubscriptionAction(itemId, isExpress = false) {
 }
 
 // ==============================================================================
-// محرك السوشيال ميديا للمنصات الـ 18 - متوافق مباشرة مع هيكل smm.js و index.html
+// محرك السوشيال ميديا للمنصات الـ 18 - متوافق مباشرة مع index.html و smm.js
 // ==============================================================================
 
+// 1. رسم شبكة أزرار المنصات بالأيقونات الرسمية الملونة بدلاً من إيموجي الهاتف
 function renderSMMPlatforms() {
     if (typeof smmPlatforms === 'undefined' || !smmPlatforms.length) return;
     if (!currentSMMPlatform) currentSMMPlatform = smmPlatforms[0];
 
     const grid = document.getElementById('smmPlatformsGrid');
     if (grid) {
-        grid.innerHTML = smmPlatforms.map(p => `
-            <button type="button" onclick="selectSMMPlatform('${p.id}')" class="p-2 rounded-xl ${p.id === currentSMMPlatform.id ? 'sky-active-tab' : 'sky-card border'} text-center transition flex flex-col items-center justify-center gap-1 cursor-pointer">
-                <span class="text-sm font-bold text-sky-400">📱</span>
-                <span class="text-[10px] font-bold text-white truncate max-w-full">${p.name.split(' ')[0]}</span>
-            </button>
-        `).join('');
+        grid.innerHTML = smmPlatforms.map(p => {
+            const iconClass = SMM_ICONS[p.id] || p.icon || "fas fa-share-alt text-sky-400";
+            const isActive = currentSMMPlatform && p.id === currentSMMPlatform.id;
+            return `
+                <button type="button" onclick="selectSMMPlatform('${p.id}')" class="p-2 rounded-xl ${isActive ? 'sky-active-tab' : 'sky-card border'} text-center transition flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-sky-400">
+                    <i class="${iconClass} text-base"></i>
+                    <span class="text-[10px] font-bold text-white truncate max-w-full">${p.name.split(' ')[0]}</span>
+                </button>
+            `;
+        }).join('');
     }
 }
 
-// عند اختيار منصة: استخراج الأقسام الفريدة ديناميكياً من الخدمات
+// 2. عند اختيار منصة: تحديث العنوان والأيقونة وإعادة إظهار الكارت واستخراج الأقسام تلقائياً
 function selectSMMPlatform(pid) {
     if (typeof smmPlatforms === 'undefined' || !smmPlatforms.length) return;
     currentSMMPlatform = smmPlatforms.find(p => p.id === pid) || smmPlatforms[0];
     renderSMMPlatforms();
 
     const titleEl = document.getElementById('selectedPlatformTitle');
+    const iconContainer = document.getElementById('selectedPlatformIconContainer');
     const catSelect = document.getElementById('smmCategorySelect');
 
     if (titleEl) titleEl.innerText = currentSMMPlatform.name;
+    
+    if (iconContainer) {
+        const iconClass = SMM_ICONS[currentSMMPlatform.id] || currentSMMPlatform.icon || "fas fa-share-alt text-sky-400";
+        iconContainer.innerHTML = `<i class="${iconClass} text-xl"></i>`;
+    }
 
     if (catSelect && currentSMMPlatform.services) {
-        // استخراج قائمة الأقسام الفريدة تلقائياً من الخدمات (مثل: متابعين، لايكات، مشاهدات)
+        // استخراج الأقسام الفريدة تلقائياً من الخدمات (مثل: متابعين، لايكات، مشاهدات...)
         const categories = [...new Set(currentSMMPlatform.services.map(s => s.category || "عام"))];
         catSelect.innerHTML = categories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
     }
     onSMMCategoryChange();
 }
 
-// عند تغيير القسم: عرض الخدمات التابعة لهذا القسم فقط
+// 3. عند تغيير القسم: ملء الخدمات التابعة لهذا القسم فقط
 function onSMMCategoryChange() {
     if (!currentSMMPlatform || !currentSMMPlatform.services) return;
     const catEl = document.getElementById('smmCategorySelect');
@@ -728,7 +772,7 @@ function onSMMCategoryChange() {
     onSMMServiceChange();
 }
 
-// جلب كائن الخدمة المحددة حالياً من معرفها
+// 4. جلب الخدمة المحددة حالياً
 function getCurrentSMMService() {
     if (!currentSMMPlatform || !currentSMMPlatform.services) return null;
     const srvEl = document.getElementById('smmServiceSelect');
@@ -737,7 +781,7 @@ function getCurrentSMMService() {
     return currentSMMPlatform.services.find(s => s.id === selectedId) || currentSMMPlatform.services[0];
 }
 
-// تحديث البادج والحدود والميتا عند تغيير الخدمة
+// 5. تحديث البادج والحدود والميتا للخدمة
 function onSMMServiceChange() {
     const srv = getCurrentSMMService();
     if (!srv) return;
@@ -757,7 +801,7 @@ function onSMMServiceChange() {
     calculateSMMCost();
 }
 
-// حساب تكلفة السوشيال ميديا بالجنيه
+// 6. حساب تكلفة السوشيال ميديا بالجنيه
 function calculateSMMCost() {
     const srv = getCurrentSMMService();
     if (!srv) return 0;
@@ -769,6 +813,7 @@ function calculateSMMCost() {
     return totalEGP;
 }
 
+// 7. إضافة السوشيال ميديا إلى السلة
 function addSMMToCart() {
     const linkInp = document.getElementById('smmLinkInput');
     const qtyInp = document.getElementById('smmQtyInput');
@@ -789,6 +834,7 @@ function addSMMToCart() {
     if (linkInp) linkInp.value = '';
 }
 
+// 8. الشراء الفوري للسوشيال ميديا
 function expressCheckoutSMM() {
     const linkInp = document.getElementById('smmLinkInput');
     const qtyInp = document.getElementById('smmQtyInput');
@@ -1085,7 +1131,7 @@ function finalizeOrderWhatsApp() {
     window.location.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
 }
 
-// محرك البحث اللحظي والشامل لجميع الخدمات
+// محرك البحث اللحظي والشامل لجميع الخدمات دون نقص
 function handleLiveSearch(query) {
     const dropdown = document.getElementById('searchResultsDropdown');
     if (!dropdown) return;
@@ -1094,23 +1140,25 @@ function handleLiveSearch(query) {
 
     let results = [];
     
-    // البحث في الألعاب
-    const gamesList = (typeof gamesData !== 'undefined') ? gamesData : [];
-    gamesList.forEach(g => {
-        if (g.name.toLowerCase().includes(query)) {
-            g.packages.forEach(pkg => results.push({ name: `${g.name} (${pkg.name})`, price: pkg.price, type: 'game', key: g.id, pkg: pkg.name }));
-        }
-    });
+    // 1. البحث في الألعاب الـ 16
+    if (typeof gamesData !== 'undefined') {
+        gamesData.forEach(g => {
+            if (g.name.toLowerCase().includes(query)) {
+                g.packages.forEach(pkg => results.push({ name: `${g.name} (${pkg.name})`, price: pkg.price, type: 'game', key: g.id, pkg: pkg.name }));
+            }
+        });
+    }
 
-    // البحث في برامج اللايف
-    const liveList = (typeof liveCoinsData !== 'undefined') ? liveCoinsData : [];
-    liveList.forEach(app => {
-        if (app.name.toLowerCase().includes(query)) {
-            app.packages.forEach(pkg => results.push({ name: `${app.name} (${pkg.name})`, price: pkg.price, type: 'live', key: app.id, pkg: pkg.name }));
-        }
-    });
+    // 2. البحث في برامج اللايف الـ 6
+    if (typeof liveCoinsData !== 'undefined') {
+        liveCoinsData.forEach(app => {
+            if (app.name.toLowerCase().includes(query)) {
+                app.packages.forEach(pkg => results.push({ name: `${app.name} (${pkg.name})`, price: pkg.price, type: 'live', key: app.id, pkg: pkg.name }));
+            }
+        });
+    }
 
-    // البحث في كوينز تيك توك ونجوم تليجرام
+    // 3. البحث في كوينز تيك توك
     if (typeof tiktokCoinsList !== 'undefined') {
         tiktokCoinsList.forEach(c => {
             if (`تيك توك كوينز tiktok ${c.coins}`.toLowerCase().includes(query)) {
@@ -1118,6 +1166,8 @@ function handleLiveSearch(query) {
             }
         });
     }
+
+    // 4. البحث في نجوم تليجرام
     if (typeof telegramStarsList !== 'undefined') {
         telegramStarsList.forEach(s => {
             if (`تليجرام نجوم telegram ${s.stars}`.toLowerCase().includes(query)) {
@@ -1126,32 +1176,34 @@ function handleLiveSearch(query) {
         });
     }
 
-    // البحث في السوشيال ميديا
+    // 5. البحث في خدمات السوشيال ميديا الـ 18
     if (typeof smmPlatforms !== 'undefined') {
         smmPlatforms.forEach(p => {
             if (p.name.toLowerCase().includes(query)) {
                 p.services.forEach(srv => {
-                    results.push({ name: `${p.name} - ${srv.name}`, price: srv.pricePer1k, type: 'smm', platformId: p.id, service: srv });
+                    results.push({ name: `${p.name} - ${srv.name}`, price: srv.pricePer1k, type: 'smm', platformId: p.id });
                 });
             }
         });
     }
 
-    // البحث في الاشتراكات
-    const subList = (typeof subscriptionsData !== 'undefined') ? subscriptionsData : [];
-    subList.forEach(sub => {
-        if (sub.name.toLowerCase().includes(query) || (sub.description && sub.description.toLowerCase().includes(query))) {
-            results.push({ name: sub.name, price: sub.packages[0].price, type: 'sub', id: sub.id });
-        }
-    });
+    // 6. البحث في الاشتراكات الـ 26
+    if (typeof subscriptionsData !== 'undefined') {
+        subscriptionsData.forEach(sub => {
+            if (sub.name.toLowerCase().includes(query) || (sub.description && sub.description.toLowerCase().includes(query))) {
+                results.push({ name: sub.name, price: sub.packages[0].price, type: 'sub', id: sub.id });
+            }
+        });
+    }
 
-    // البحث في بطاقات VCC
-    const vccList = (typeof vccData !== 'undefined') ? vccData : [];
-    vccList.forEach(v => {
-        if (v.name.toLowerCase().includes(query)) {
-            results.push({ name: v.name, price: v.priceEgp, type: 'vcc', id: v.id });
-        }
-    });
+    // 7. البحث في بطاقات VCC
+    if (typeof vccData !== 'undefined') {
+        vccData.forEach(v => {
+            if (v.name.toLowerCase().includes(query)) {
+                results.push({ name: v.name, price: v.priceEgp, type: 'vcc', id: v.id });
+            }
+        });
+    }
 
     if (results.length === 0) {
         dropdown.innerHTML = '<div class="text-center py-3 text-xs text-gray-400">لا توجد نتائج مطابقة لبحثك</div>';
@@ -1178,6 +1230,9 @@ function onGlobalSearchClick(encodedItem) {
     
     if (item.type === 'game' || item.type === 'live') {
         openPlayerIdModal(item.name.split(' (')[0], item.pkg, item.price, true, item.key);
+    } else if (item.type === 'smm') {
+        selectSMMPlatform(item.platformId);
+        window.location.href = '#sec-social';
     } else if (item.type === 'coin_tiktok') {
         openPlayerIdModal('تيك توك كوينز', `${item.coins} عملة`, item.price, true, 'tiktok');
     } else if (item.type === 'coin_tg') {
@@ -1220,10 +1275,12 @@ function openAuthModal(mode) {
     if (modal) { modal.classList.remove('hidden'); modal.classList.add('flex'); }
     switchAuthTab(mode || 'login');
 }
+
 function closeAuthModal() {
     const modal = document.getElementById('authModal');
     if (modal) { modal.classList.add('hidden'); modal.classList.remove('flex'); }
 }
+
 function switchAuthTab(mode) {
     const lf = document.getElementById('loginForm');
     const rf = document.getElementById('registerForm');
@@ -1234,6 +1291,7 @@ function switchAuthTab(mode) {
     if (tl) tl.className = (mode === 'login') ? 'py-1.5 text-xs font-bold rounded-lg transition sky-btn cursor-pointer' : 'py-1.5 text-xs font-bold rounded-lg transition text-gray-400 cursor-pointer';
     if (tr) tr.className = (mode !== 'login') ? 'py-1.5 text-xs font-bold rounded-lg transition sky-btn cursor-pointer' : 'py-1.5 text-xs font-bold rounded-lg transition text-gray-400 cursor-pointer';
 }
+
 function handleRegister(e) {
     e.preventDefault();
     const emailEl = document.getElementById('regEmail');
@@ -1256,6 +1314,7 @@ function handleRegister(e) {
     closeAuthModal();
     showToast('تم التسجيل بنجاح');
 }
+
 function handleLogin(e) {
     e.preventDefault();
     const emailEl = document.getElementById('loginEmail');
@@ -1269,11 +1328,13 @@ function handleLogin(e) {
     closeAuthModal();
     showToast(`أهلاً بك ${user.name}`);
 }
+
 function handleLogout() {
     localStorage.removeItem(SESSION_STORAGE_KEY);
     updateNavbarAuthUI();
     showToast('تم الخروج');
 }
+
 function updateNavbarAuthUI() {
     let session = null;
     try { session = JSON.parse(localStorage.getItem(SESSION_STORAGE_KEY)); } catch (e) {}
