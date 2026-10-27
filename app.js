@@ -1,6 +1,6 @@
 // ==============================================================================
 // Migo AI Solution - Core Application Engine (Full Production File)
-// المحرك التشغيلي الرئيسي المتكامل - مطابق 100% للبيانات الحية وخادم Deno
+// المحرك التشغيلي الرئيسي المتكامل - متطابق 100% مع smm.js والبيانات الحية
 // ==============================================================================
 
 const USD_TO_EGP = 62; 
@@ -670,7 +670,10 @@ function handleSubscriptionAction(itemId, isExpress = false) {
     else addToCart(cartItem);
 }
 
-// محرك السوشيال ميديا للمنصات الـ 18
+// ==============================================================================
+// محرك السوشيال ميديا للمنصات الـ 18 - متوافق مباشرة مع هيكل smm.js
+// ==============================================================================
+
 function renderSMMPlatforms() {
     if (typeof smmPlatforms === 'undefined' || !smmPlatforms.length) return;
     if (!currentSMMPlatform) currentSMMPlatform = smmPlatforms[0];
@@ -679,59 +682,88 @@ function renderSMMPlatforms() {
     if (grid) {
         grid.innerHTML = smmPlatforms.map(p => `
             <button type="button" onclick="selectSMMPlatform('${p.id}')" class="p-2 rounded-xl ${p.id === currentSMMPlatform.id ? 'sky-active-tab' : 'sky-card border'} text-center transition flex flex-col items-center justify-center gap-1 cursor-pointer">
-                <span class="text-base">${p.icon || '📱'}</span>
+                <span class="text-sm font-bold text-sky-400">📱</span>
                 <span class="text-[10px] font-bold text-white truncate max-w-full">${p.name.split(' ')[0]}</span>
             </button>
         `).join('');
     }
 }
 
+// عند اختيار منصة: استخراج الأقسام الفريدة ديناميكياً من الخدمات
 function selectSMMPlatform(pid) {
     if (typeof smmPlatforms === 'undefined' || !smmPlatforms.length) return;
     currentSMMPlatform = smmPlatforms.find(p => p.id === pid) || smmPlatforms[0];
     renderSMMPlatforms();
+
     const titleEl = document.getElementById('selectedPlatformTitle');
-    const srvSelect = document.getElementById('smmServiceSelect');
+    const catSelect = document.getElementById('smmCategorySelect');
+
     if (titleEl) titleEl.innerText = currentSMMPlatform.name;
-    
-    if (srvSelect && currentSMMPlatform.services) {
-        srvSelect.innerHTML = currentSMMPlatform.services.map((srv, i) => `
-            <option value="${i}">#${srv.id} - ${srv.name} (${srv.pricePer1k} ج.م / 1k)</option>
-        `).join('');
+
+    if (catSelect && currentSMMPlatform.services) {
+        // استخراج قائمة الأقسام الفريدة تلقائياً من الخدمات (مثل: متابعين، لايكات، مشاهدات)
+        const categories = [...new Set(currentSMMPlatform.services.map(s => s.category || "عام"))];
+        catSelect.innerHTML = categories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
+    }
+    onSMMCategoryChange();
+}
+
+// عند تغيير القسم: عرض الخدمات التابعة لهذا القسم فقط
+function onSMMCategoryChange() {
+    if (!currentSMMPlatform || !currentSMMPlatform.services) return;
+    const catEl = document.getElementById('smmCategorySelect');
+    const selectedCat = catEl ? catEl.value : null;
+    const srvSelect = document.getElementById('smmServiceSelect');
+
+    let availableServices = currentSMMPlatform.services;
+    if (selectedCat) {
+        availableServices = currentSMMPlatform.services.filter(s => (s.category || "عام") === selectedCat);
+    }
+
+    if (srvSelect) {
+        srvSelect.innerHTML = availableServices.map(srv => {
+            return `<option value="${srv.id}">#${srv.id} - ${srv.name} (${srv.pricePer1k} ج.م / 1k)</option>`;
+        }).join('');
     }
     onSMMServiceChange();
 }
 
+// جلب كائن الخدمة المحددة حالياً من معرفها
 function getCurrentSMMService() {
     if (!currentSMMPlatform || !currentSMMPlatform.services) return null;
     const srvEl = document.getElementById('smmServiceSelect');
-    const idx = srvEl ? parseInt(srvEl.value, 10) || 0 : 0;
-    return currentSMMPlatform.services[idx] || currentSMMPlatform.services[0];
+    const selectedId = srvEl ? srvEl.value : null;
+    if (!selectedId) return currentSMMPlatform.services[0] || null;
+    return currentSMMPlatform.services.find(s => s.id === selectedId) || currentSMMPlatform.services[0];
 }
 
+// تحديث البادج والحدود والميتا عند تغيير الخدمة
 function onSMMServiceChange() {
     const srv = getCurrentSMMService();
     if (!srv) return;
+
     const badgeId = document.getElementById('selectedServiceBadgeId');
     const limits = document.getElementById('smmLimitsNote');
     const meta = document.getElementById('smmServiceMeta');
+
     if (badgeId) badgeId.innerText = 'ID: #' + srv.id;
     if (limits) limits.innerText = `الحدود: ${srv.min.toLocaleString()} - ${srv.max.toLocaleString()}`;
     if (meta) {
         meta.innerHTML = `
             <span class="bg-amber-500/15 text-amber-400 border border-amber-500/30 px-2.5 py-0.5 rounded-lg font-mono font-bold">لكل 1,000: ${srv.pricePer1k} ج.م</span>
-            <span class="text-gray-400 text-[10px]">${srv.speed || 'بدء فوري وتلقائي'}</span>
+            <span class="text-gray-400 text-[10px]">${srv.speed || 'بدء فوري وتلقائي ⚡'}</span>
         `;
     }
     calculateSMMCost();
 }
 
+// حساب تكلفة السوشيال ميديا بالجنيه
 function calculateSMMCost() {
     const srv = getCurrentSMMService();
     if (!srv) return 0;
     const qtyInp = document.getElementById('smmQtyInput');
     const qty = Math.max(srv.min, parseFloat(qtyInp ? qtyInp.value : srv.min) || srv.min);
-    const totalEGP = (qty / 1000) * srv.pricePer1k;
+    const totalEGP = Math.round(((qty / 1000) * srv.pricePer1k) * 100) / 100;
     const priceEl = document.getElementById('smmPriceEGP');
     if (priceEl) priceEl.innerText = totalEGP.toFixed(2) + ' ج.م';
     return totalEGP;
@@ -1095,7 +1127,9 @@ function handleLiveSearch(query) {
     }
 
     // البحث في الاشتراكات
-    const subList = (typeof subscriptionsData !== 'undefined') ? subscriptionsData : [];
+    const subList = (typeof subscriptionsData !== 'undefined') 
+        ? subscriptionsData 
+        : [];
     subList.forEach(sub => {
         if (sub.name.toLowerCase().includes(query) || (sub.description && sub.description.toLowerCase().includes(query))) {
             results.push({ name: sub.name, price: sub.packages[0].price, type: 'sub', id: sub.id });
