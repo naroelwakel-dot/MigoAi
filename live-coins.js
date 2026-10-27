@@ -1,39 +1,104 @@
 // ==============================================================================
-// كوينز تيك توك، نجوم تليجرام، بطاقات VCC وتطبيقات اللايف الـ 8
+// ملف 3: تطبيقات البث المباشر والدردشة (8 تطبيقات) وعملات تيك توك ونجوم تليجرام
 // ==============================================================================
 
-const tiktokCoinsList = [
-    { coins: 70, price: 65 },
-    { coins: 350, price: 295 },
-    { coins: 700, price: 575 },
-    { coins: 1400, price: 1100 },
-    { coins: 3500, price: 2680 },
-    { coins: 7000, price: 5250 },
-    { coins: 17500, price: 12950 }
-];
-
-const telegramStarsList = [
-    { stars: 50, price: 85 },
-    { stars: 100, price: 165 },
-    { stars: 250, price: 395 },
-    { stars: 500, price: 770 },
-    { stars: 1000, price: 1490 }
-];
-
-const vccCatalog = [
-    { id: 'vcc_10', name: 'بطاقة افتراضية (10 دولار)', price: 700, tag: 'تفعيل سريع' },
-    { id: 'vcc_25', name: 'بطاقة افتراضية (25 دولار)', price: 1650, tag: 'الأكثر طلباً' },
-    { id: 'vcc_50', name: 'بطاقة افتراضية (50 دولار)', price: 3250, tag: 'ممتازة للإعلانات' },
-    { id: 'vcc_100', name: 'بطاقة افتراضية (100 دولار)', price: 6400, tag: 'للشركات والمواقع' }
-];
-
-const liveAppsCatalog = [
-    { key: 'bigo', name: "بيجو لايف (BIGO Live)", tag: "شحن فوري بالـ ID", pkgs: [{l: "42 ماسة", p: 60}, {l: "210 ماسة", p: 295}, {l: "840 ماسة", p: 1180}, {l: "2100 ماسة", p: 2950}] },
-    { key: 'poppo', name: "بوبو لايف (Poppo Live)", tag: "فوري بالمعرف", pkgs: [{l: "7,000 نقطة", p: 65}, {l: "35,000 نقطة", p: 310}, {l: "70,000 نقطة", p: 620}, {l: "140,000 نقطة", p: 1240}] },
-    { key: 'tango', name: "تانجو لايف (Tango Live)", tag: "كوينز البثوث المباشرة", pkgs: [{l: "1,200 كوينز", p: 190}, {l: "6,000 كوينز", p: 920}, {l: "12,500 كوينز", p: 1850}] },
-    { key: 'likee', name: "لايكي (Likee App)", tag: "ماسات لايكي الرسمية", pkgs: [{l: "84 ماسة", p: 110}, {l: "420 ماسة", p: 540}, {l: "840 ماسة", p: 1080}] },
-    { key: 'chamet', name: "تشاميت (Chamet)", tag: "فوري بالـ ID", pkgs: [{l: "1,000 ماسة", p: 75}, {l: "5,000 ماسة", p: 360}, {l: "10,000 ماسة", p: 710}, {l: "20,000 ماسة", p: 1400}] },
-    { key: 'yalla', name: "يلا لودو (Yalla Ludo)", tag: "الماس ودايموند", pkgs: [{l: "50 دايموند", p: 60}, {l: "250 دايموند", p: 285}, {l: "500 دايموند", p: 560}, {l: "1,000 دايموند", p: 1100}] },
-    { key: 'sugo', name: "سوجو (SUGO)", tag: "عملات الدردشة", pkgs: [{l: "حزمة أساسية", p: 70}, {l: "حزمة متوسطة", p: 340}, {l: "حزمة VIP", p: 680}] },
-    { key: 'meyo', name: "ميو (MeYo)", tag: "رصيد المكالمات", pkgs: [{l: "100 عملة", p: 65}, {l: "500 عملة", p: 320}, {l: "1,000 عملة", p: 630}] }
-];
+const liveAndCoinsData = {
+  streamingApps: [
+    {
+      id: "bigolive",
+      name: "بيجو لايف (Bigo Live)",
+      badge: "⭐ شحن بالـ ID",
+      requireZone: false,
+      packages: [
+        { name: "باقة جواهر بيجو الأساسية", price: 100 }
+      ]
+    },
+    {
+      id: "bubolive",
+      name: "بوبو لايف (Bubo Live)",
+      badge: "🎥 شحن فوري",
+      requireZone: false,
+      packages: [
+        { name: "عملات بوبو لايف", price: 100 }
+      ]
+    },
+    {
+      id: "tangolive",
+      name: "تانجو لايف (Tango Live)",
+      badge: "🌟 جواهر تانجو",
+      requireZone: false,
+      packages: [
+        { name: "جواهر تانجو لايف", price: 100 }
+      ]
+    },
+    {
+      id: "likee",
+      name: "لايكي (Likee)",
+      badge: "💎 الماس لايكي",
+      requireZone: false,
+      packages: [
+        { name: "الماس لايكي", price: 100 }
+      ]
+    },
+    {
+      id: "chamet",
+      name: "تشاميت (Chamet)",
+      badge: "💬 شحن بالـ ID",
+      requireZone: false,
+      packages: [
+        { name: "رصيد تشاميت", price: 100 }
+      ]
+    },
+    {
+      id: "yallaludo",
+      name: "يلا لودو (Yalla Ludo)",
+      badge: "🎲 جواهر وخدمات لودو",
+      requireZone: false,
+      packages: [
+        { name: "جواهر يلا لودو", price: 100 }
+      ]
+    },
+    {
+      id: "sugo",
+      name: "سوجو (SuGO)",
+      badge: "🎤 غرف الصوت",
+      requireZone: false,
+      packages: [
+        { name: "عملات سوجو", price: 100 }
+      ]
+    },
+    {
+      id: "mico",
+      name: "ميو (Mico)",
+      badge: "🌍 دردشة وبث",
+      requireZone: false,
+      packages: [
+        { name: "عملات ميو", price: 100 }
+      ]
+    }
+  ],
+  coinsAndStars: [
+    {
+      id: "tiktok_coins",
+      name: "عملات تيك توك (TikTok Coins)",
+      badge: "🎵 شحن فوري",
+      packages: [
+        { name: "70 كوينز", price: 50 },
+        { name: "350 كوينز", price: 240 },
+        { name: "700 كوينز", price: 480 },
+        { name: "1400 كوينز", price: 950 }
+      ]
+    },
+    {
+      id: "telegram_stars",
+      name: "نجوم تليجرام (Telegram Stars)",
+      badge: "⭐ نجوم رسمية",
+      packages: [
+        { name: "50 نجمة", price: 60 },
+        { name: "100 نجمة", price: 120 },
+        { name: "250 نجمة", price: 300 },
+        { name: "500 نجمة", price: 580 }
+      ]
+    }
+  ]
+};
