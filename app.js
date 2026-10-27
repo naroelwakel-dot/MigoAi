@@ -1,6 +1,6 @@
 // ==============================================================================
 // Migo AI Solution - Core Application Engine (Full Production File)
-// المحرك التشغيلي الرئيسي المتكامل - متطابق 100% مع smm.js والبيانات الحية
+// المحرك التشغيلي الرئيسي المتكامل - متطابق 100% مع index.html و smm.js
 // ==============================================================================
 
 const USD_TO_EGP = 62; 
@@ -671,7 +671,7 @@ function handleSubscriptionAction(itemId, isExpress = false) {
 }
 
 // ==============================================================================
-// محرك السوشيال ميديا للمنصات الـ 18 - متوافق مباشرة مع هيكل smm.js
+// محرك السوشيال ميديا للمنصات الـ 18 - متوافق مباشرة مع هيكل smm.js و index.html
 // ==============================================================================
 
 function renderSMMPlatforms() {
@@ -1126,10 +1126,19 @@ function handleLiveSearch(query) {
         });
     }
 
+    // البحث في السوشيال ميديا
+    if (typeof smmPlatforms !== 'undefined') {
+        smmPlatforms.forEach(p => {
+            if (p.name.toLowerCase().includes(query)) {
+                p.services.forEach(srv => {
+                    results.push({ name: `${p.name} - ${srv.name}`, price: srv.pricePer1k, type: 'smm', platformId: p.id, service: srv });
+                });
+            }
+        });
+    }
+
     // البحث في الاشتراكات
-    const subList = (typeof subscriptionsData !== 'undefined') 
-        ? subscriptionsData 
-        : [];
+    const subList = (typeof subscriptionsData !== 'undefined') ? subscriptionsData : [];
     subList.forEach(sub => {
         if (sub.name.toLowerCase().includes(query) || (sub.description && sub.description.toLowerCase().includes(query))) {
             results.push({ name: sub.name, price: sub.packages[0].price, type: 'sub', id: sub.id });
