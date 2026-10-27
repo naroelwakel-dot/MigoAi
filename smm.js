@@ -1,6 +1,6 @@
 // ==============================================================================
 // Migo AI Solution - smm.js
-// محرك السوشيال ميديا (18 منصة) + البطاقات الافتراضية VCC - مطابق 100% للمتجر الحي
+// محرك السوشيال ميديا (18 منصة ببانرات أفقية واقعية مخصصة) + البطاقات الافتراضية VCC
 // ==============================================================================
 
 // 1. البطاقات الافتراضية الدولية (Virtual Credit Cards - VCC)
@@ -43,11 +43,12 @@ const vccData = [
   }
 ];
 
-// 2. محرك خدمات السوشيال ميديا للمنصات الـ 18
+// 2. محرك خدمات السوشيال ميديا للمنصات الـ 18 (بانرات مخصصة لكل تطبيق)
 const smmPlatforms = [
   {
     id: "tiktok",
     name: "تيك توك (TikTok)",
+    icon: "fab fa-tiktok",
     banner: "https://images.unsplash.com/photo-1611605698335-8b1569810432?auto=format&fit=crop&w=1200&q=80",
     services: [
       {
@@ -95,6 +96,7 @@ const smmPlatforms = [
   {
     id: "facebook",
     name: "فيسبوك (Facebook)",
+    icon: "fab fa-facebook",
     banner: "https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&w=1200&q=80",
     services: [
       {
@@ -122,6 +124,7 @@ const smmPlatforms = [
   {
     id: "instagram",
     name: "انستقرام (Instagram)",
+    icon: "fab fa-instagram",
     banner: "https://images.unsplash.com/photo-1611262588024-d12430b98920?auto=format&fit=crop&w=1200&q=80",
     services: [
       {
@@ -149,6 +152,7 @@ const smmPlatforms = [
   {
     id: "youtube",
     name: "يوتيوب (YouTube)",
+    icon: "fab fa-youtube",
     banner: "https://images.unsplash.com/photo-1611162616475-46b635cb6868?auto=format&fit=crop&w=1200&q=80",
     services: [
       {
@@ -176,6 +180,7 @@ const smmPlatforms = [
   {
     id: "telegram",
     name: "تليجرام (Telegram)",
+    icon: "fab fa-telegram",
     banner: "https://images.unsplash.com/photo-1614680376593-902f749f7ffc?auto=format&fit=crop&w=1200&q=80",
     services: [
       {
@@ -203,7 +208,8 @@ const smmPlatforms = [
   {
     id: "twitter",
     name: "إكس / تويتر (Twitter / X)",
-    banner: "https://images.unsplash.com/photo-1611605698335-8b1569810432?auto=format&fit=crop&w=1200&q=80",
+    icon: "fab fa-x-twitter",
+    banner: "https://images.unsplash.com/photo-1611605698323-b1e99cfd37ea?auto=format&fit=crop&w=1200&q=80",
     services: [
       {
         id: "7101",
@@ -230,7 +236,8 @@ const smmPlatforms = [
   {
     id: "snapchat",
     name: "سناب شات (Snapchat)",
-    banner: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80",
+    icon: "fab fa-snapchat",
+    banner: "https://images.unsplash.com/photo-1579869847514-7c1a19d2d2ad?auto=format&fit=crop&w=1200&q=80",
     services: [
       {
         id: "8101",
@@ -247,6 +254,7 @@ const smmPlatforms = [
   {
     id: "twitch",
     name: "تويتش (Twitch)",
+    icon: "fab fa-twitch",
     banner: "https://images.unsplash.com/photo-1542751110-97427bbecf20?auto=format&fit=crop&w=1200&q=80",
     services: [
       {
@@ -264,6 +272,7 @@ const smmPlatforms = [
   {
     id: "kwai",
     name: "كواي (Kwai)",
+    icon: "fas fa-video",
     banner: "https://images.unsplash.com/photo-1516251193007-45ef944ab0c6?auto=format&fit=crop&w=1200&q=80",
     services: [
       {
@@ -281,6 +290,7 @@ const smmPlatforms = [
   {
     id: "linkedin",
     name: "لينكد إن (LinkedIn)",
+    icon: "fab fa-linkedin",
     banner: "https://images.unsplash.com/photo-1616469829941-c7200edec809?auto=format&fit=crop&w=1200&q=80",
     services: [
       {
@@ -298,6 +308,7 @@ const smmPlatforms = [
   {
     id: "discord",
     name: "ديسكورد (Discord)",
+    icon: "fab fa-discord",
     banner: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80",
     services: [
       {
@@ -315,7 +326,8 @@ const smmPlatforms = [
   {
     id: "spotify_smm",
     name: "سبوتيفاي (Spotify)",
-    banner: "https://images.unsplash.com/photo-1614680376593-902f749f7ffc?auto=format&fit=crop&w=1200&q=80",
+    icon: "fab fa-spotify",
+    banner: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&w=1200&q=80",
     services: [
       {
         id: "13101",
@@ -332,7 +344,8 @@ const smmPlatforms = [
   {
     id: "soundcloud",
     name: "ساوند كلاود (SoundCloud)",
-    banner: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1200&q=80",
+    icon: "fab fa-soundcloud",
+    banner: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=1200&q=80",
     services: [
       {
         id: "14101",
@@ -349,6 +362,7 @@ const smmPlatforms = [
   {
     id: "pinterest",
     name: "بينترست (Pinterest)",
+    icon: "fab fa-pinterest",
     banner: "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=1200&q=80",
     services: [
       {
@@ -366,7 +380,8 @@ const smmPlatforms = [
   {
     id: "threads",
     name: "ثريدز (Threads)",
-    banner: "https://images.unsplash.com/photo-1611262588024-d12430b98920?auto=format&fit=crop&w=1200&q=80",
+    icon: "fas fa-at",
+    banner: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80",
     services: [
       {
         id: "16101",
@@ -383,6 +398,7 @@ const smmPlatforms = [
   {
     id: "reddit",
     name: "ريديت (Reddit)",
+    icon: "fab fa-reddit",
     banner: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80",
     services: [
       {
@@ -400,7 +416,8 @@ const smmPlatforms = [
   {
     id: "kick",
     name: "كيك (Kick)",
-    banner: "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80",
+    icon: "fas fa-play-circle",
+    banner: "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1200&q=80",
     services: [
       {
         id: "18101",
@@ -417,6 +434,7 @@ const smmPlatforms = [
   {
     id: "trovo",
     name: "تروفو (Trovo)",
+    icon: "fas fa-gamepad",
     banner: "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=1200&q=80",
     services: [
       {
