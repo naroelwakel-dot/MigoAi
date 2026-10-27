@@ -727,7 +727,7 @@ function renderSMMPlatforms() {
     }
 }
 
-// 2. عند اختيار منصة: تحديث العنوان والأيقونة وإعادة إظهار الكارت واستخراج الأقسام تلقائياً
+// 2. عند اختيار منصة: تحديث العنوان والأيقونة والبانر واستخراج الأقسام تلقائياً
 function selectSMMPlatform(pid) {
     if (typeof smmPlatforms === 'undefined' || !smmPlatforms.length) return;
     currentSMMPlatform = smmPlatforms.find(p => p.id === pid) || smmPlatforms[0];
@@ -735,13 +735,20 @@ function selectSMMPlatform(pid) {
 
     const titleEl = document.getElementById('selectedPlatformTitle');
     const iconContainer = document.getElementById('selectedPlatformIconContainer');
+    const bannerEl = document.getElementById('selectedPlatformBanner');
     const catSelect = document.getElementById('smmCategorySelect');
 
     if (titleEl) titleEl.innerText = currentSMMPlatform.name;
     
+    // حقن الأيقونة الرسمية المعتمدة داخل المربع
+    const iconClass = SMM_ICONS[currentSMMPlatform.id] || currentSMMPlatform.icon || "fas fa-share-alt text-sky-400";
     if (iconContainer) {
-        const iconClass = SMM_ICONS[currentSMMPlatform.id] || currentSMMPlatform.icon || "fas fa-share-alt text-sky-400";
         iconContainer.innerHTML = `<i class="${iconClass} text-xl"></i>`;
+    }
+
+    // حقن البانر الأفقي الخاص بالمنصة
+    if (bannerEl && currentSMMPlatform.banner) {
+        bannerEl.style.backgroundImage = `url('${currentSMMPlatform.banner}')`;
     }
 
     if (catSelect && currentSMMPlatform.services) {
