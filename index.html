@@ -119,7 +119,6 @@
       50% { transform: scale(1.2); opacity: 0.7; }
     }
     .anim-pulse { animation: anim-pulse-fast 1.5s infinite ease-in-out; transform-origin: center; }
-    .pulse-badge { animation: anim-pulse-fast 2s infinite ease-in-out; }
   </style>
  </head>
  <body class="min-h-screen selection:bg-sky-500 selection:text-white pb-24">
@@ -139,7 +138,7 @@
     <svg class="w-7 h-7 fill-current" viewBox="0 0 24 24"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.04 14.69 2 12.04 2M12.05 3.67C14.25 3.67 16.31 4.53 17.87 6.09C19.42 7.65 20.28 9.72 20.28 11.92C20.28 16.46 16.58 20.15 12.04 20.15C10.56 20.15 9.11 19.76 7.85 19L7.55 18.83L4.43 19.65L5.26 16.61L5.06 16.29C4.24 15 3.8 13.47 3.8 11.91C3.81 7.37 7.5 3.67 12.05 3.67Z"/></svg>
   </a>
 
-  <!-- الترويسة المطورة -->
+  <!-- الترويسة المطورة بهوية تقنية قوية -->
   <header class="border-b sky-surface sticky top-0 z-50 backdrop-blur-md bg-[#070b14]/95 shadow-2xl transition-all">
    <div class="max-w-7xl mx-auto px-4 py-3.5 flex justify-between items-center gap-3">
     
@@ -151,10 +150,12 @@
      </button>
      
      <a href="#" class="flex items-center gap-2.5 min-w-0 group"> 
-      <div class="w-10 h-10 shrink-0 rounded-2xl sky-btn flex items-center justify-center font-black text-xl shadow-sky-500/30 group-hover:scale-105 transition">M</div> 
+      <div class="w-10 h-10 shrink-0 rounded-2xl bg-gradient-to-tr from-sky-600 via-indigo-600 to-purple-600 border border-sky-400/40 flex items-center justify-center text-white shadow-lg shadow-sky-500/30 group-hover:scale-105 transition">
+        <i class="fa-solid fa-microchip text-sky-200 text-lg"></i>
+      </div> 
       <div class="truncate text-right">
        <span class="text-sm sm:text-lg font-black tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-white via-sky-200 to-gray-300 block truncate">Migo AI Solution</span>
-       <span class="text-[10px] text-sky-400 font-extrabold tracking-wide block truncate">منصة الخدمات الرقمية المتكاملة</span>
+       <span class="text-[10px] text-sky-400 font-extrabold tracking-wide block truncate">منصة الخدمات الرقمية والذكاء الاصطناعي</span>
       </div> 
      </a>
     </div>
@@ -201,60 +202,54 @@
     </div>
   </div>
 
-  <!-- القسم الترحيبي وشريط العرض المؤقت المطور -->
+  <!-- القسم الترحيبي والسلايدر المطور (بدون عداد وبملء كامل بدون فراغات) -->
   <section class="max-w-6xl mx-auto px-4 pt-6 pb-2 text-center">
    
-   <div class="inline-flex flex-wrap items-center justify-center gap-3 px-5 py-2 sky-card border border-amber-500/50 rounded-full mb-4 text-xs font-bold shadow-xl shadow-amber-500/5">
-    <span class="bg-gradient-to-r from-amber-500 to-orange-500 text-slate-950 px-3 py-1 rounded-full text-[11px] font-black pulse-badge shadow-md">عرض اليوم 🔥</span>
-    <span class="text-gray-200">ينتهي العرض المؤقت خلال:</span>
-    <span id="promoCountdown" class="font-mono text-amber-400 font-black tracking-widest text-sm bg-black/40 px-3 py-0.5 rounded-lg border border-amber-500/30">05:42:19</span>
-   </div>
-
    <h1 class="text-3xl sm:text-5xl font-black mb-3 text-white tracking-tight">منصة <span class="bg-clip-text text-transparent bg-gradient-to-r from-sky-400 via-blue-400 to-amber-300 drop-shadow-lg">Migo AI Solution</span> المتكاملة</h1>
-   <p class="text-gray-300 text-xs sm:text-sm max-w-2xl mx-auto mb-8 leading-relaxed">الدفع محلياً بالجنيه المصري عبر المحافظ الإلكترونية، إنستاباي، والبطاقات مع تسليم فوري ونظام فحص الحساب المسبق بالاسم والصورة.</p>
+   <p class="text-gray-300 text-xs sm:text-sm max-w-2xl mx-auto mb-6 leading-relaxed">الدفع محلياً بالجنيه المصري عبر المحافظ الإلكترونية، إنستاباي، والبطاقات مع تسليم فوري ونظام فحص الحساب المسبق بالاسم والصورة.</p>
    
-   <div class="relative w-full max-w-3xl mx-auto overflow-hidden rounded-3xl mb-8 shadow-2xl border border-slate-700/80 bg-slate-900/50 backdrop-blur-xl" dir="rtl">
+   <div class="relative w-full max-w-3xl mx-auto overflow-hidden rounded-3xl mb-6 shadow-2xl border border-slate-700/80 bg-slate-900/50 backdrop-blur-xl" dir="rtl">
     <div id="sliderTrack" class="flex transition-transform duration-700 ease-in-out">
         
-        <div class="w-full shrink-0 p-1">
-            <div class="relative bg-cover bg-center border border-pink-500/40 p-8 rounded-3xl text-center overflow-hidden shadow-2xl" style="background-image: linear-gradient(rgba(7, 11, 20, 0.85), rgba(11, 17, 32, 0.92)), url('images (6).jpeg');">
+        <div class="w-full shrink-0 p-0">
+            <div class="relative bg-cover bg-center border border-pink-500/40 p-6 sm:p-8 rounded-3xl text-center overflow-hidden shadow-2xl min-h-[220px] flex flex-col justify-center items-center" style="background-image: linear-gradient(rgba(7, 11, 20, 0.85), rgba(11, 17, 32, 0.92)), url('images (6).jpeg');">
                 <span class="absolute top-0 right-0 bg-gradient-to-r from-pink-600 to-rose-500 text-white text-xs font-black px-4 py-1.5 rounded-bl-3xl z-10 shadow-lg">فحص الاسم فوري 🎵</span>
-                <div class="relative z-10 py-6">
+                <div class="relative z-10">
                   <h3 class="text-2xl sm:text-3xl font-black text-white mb-2 drop-shadow-md">شحن كوينز تيك توك الرسمية</h3>
-                  <p class="text-xs sm:text-sm text-gray-200 mb-4 drop-shadow max-w-lg mx-auto">شحن فوري بالاسم الرسمي للحساب لدعم البثوث وإرسال الهدايا بأمان تام.</p>
-                  <div class="text-xl font-black text-pink-400 mb-5 font-mono drop-shadow">تبدأ من 65 ج.م فقط</div>
-                  <a href="#sec-coins" class="bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-500 hover:to-rose-500 text-white font-extrabold py-3 px-8 rounded-2xl text-xs transition inline-block shadow-xl hover:scale-105">اشحن الآن ⚡</a>
+                  <p class="text-xs sm:text-sm text-gray-200 mb-3 drop-shadow max-w-lg mx-auto">شحن فوري بالاسم الرسمي للحساب لدعم البثوث وإرسال الهدايا بأمان تام.</p>
+                  <div class="text-xl font-black text-pink-400 mb-4 font-mono drop-shadow">تبدأ من 65 ج.م فقط</div>
+                  <a href="#sec-coins" class="bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-500 hover:to-rose-500 text-white font-extrabold py-2.5 px-7 rounded-2xl text-xs transition inline-block shadow-xl hover:scale-105">اشحن الآن ⚡</a>
                 </div>
             </div>
         </div>
 
-        <div class="w-full shrink-0 p-1">
-            <div class="relative bg-cover bg-center border border-amber-500/40 p-8 rounded-3xl text-center overflow-hidden shadow-2xl" style="background-image: linear-gradient(rgba(7, 11, 20, 0.85), rgba(11, 17, 32, 0.92)), url('Square-VCC-Product-Focused-Blog.jpg');">
+        <div class="w-full shrink-0 p-0">
+            <div class="relative bg-cover bg-center border border-amber-500/40 p-6 sm:p-8 rounded-3xl text-center overflow-hidden shadow-2xl min-h-[220px] flex flex-col justify-center items-center" style="background-image: linear-gradient(rgba(7, 11, 20, 0.85), rgba(11, 17, 32, 0.92)), url('Square-VCC-Product-Focused-Blog.jpg');">
                 <span class="absolute top-0 right-0 bg-gradient-to-r from-amber-500 to-yellow-500 text-slate-950 text-xs font-black px-4 py-1.5 rounded-bl-3xl z-10 shadow-lg">الدفع الدولي 💳</span>
-                <div class="relative z-10 py-6">
+                <div class="relative z-10">
                   <h3 class="text-2xl sm:text-3xl font-black text-white mb-2 drop-shadow-md">البطاقات الافتراضية الدولية (VCC)</h3>
-                  <p class="text-xs sm:text-sm text-gray-200 mb-4 drop-shadow max-w-lg mx-auto">اشترِ من أي موقع عالمي، اربط حساباتك الإعلانية، وفعّل اشتراكاتك بالجنيه.</p>
-                  <div class="text-xl font-black text-amber-400 mb-5 font-mono drop-shadow">تبدأ من 620 ج.م</div>
-                  <a href="#sec-vcc" class="bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-slate-950 font-extrabold py-3 px-8 rounded-2xl text-xs transition inline-block shadow-xl hover:scale-105">احصل على فيزا 💳</a>
+                  <p class="text-xs sm:text-sm text-gray-200 mb-3 drop-shadow max-w-lg mx-auto">اشترِ من أي موقع عالمي، اربط حساباتك الإعلانية، وفعّل اشتراكاتك بالجنيه.</p>
+                  <div class="text-xl font-black text-amber-400 mb-4 font-mono drop-shadow">تبدأ من 620 ج.م</div>
+                  <a href="#sec-vcc" class="bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-slate-950 font-extrabold py-2.5 px-7 rounded-2xl text-xs transition inline-block shadow-xl hover:scale-105">احصل على فيزا 💳</a>
                 </div>
             </div>
         </div>
 
-        <div class="w-full shrink-0 p-1">
-            <div class="relative bg-cover bg-center border border-emerald-500/40 p-8 rounded-3xl text-center overflow-hidden shadow-2xl" style="background-image: linear-gradient(rgba(7, 11, 20, 0.82), rgba(11, 17, 32, 0.88)), url('kv_event390.jpg');">
+        <div class="w-full shrink-0 p-0">
+            <div class="relative bg-cover bg-center border border-emerald-500/40 p-6 sm:p-8 rounded-3xl text-center overflow-hidden shadow-2xl min-h-[220px] flex flex-col justify-center items-center" style="background-image: linear-gradient(rgba(7, 11, 20, 0.82), rgba(11, 17, 32, 0.88)), url('kv_event390.jpg');">
                 <span class="absolute top-0 right-0 bg-gradient-to-r from-emerald-600 to-teal-500 text-white text-xs font-black px-4 py-1.5 rounded-bl-3xl z-10 shadow-lg">Midasbuy المعتمد</span>
-                <div class="relative z-10 py-6">
+                <div class="relative z-10">
                   <h3 class="text-2xl sm:text-3xl font-black text-white mb-2 drop-shadow-md">ببجي موبايل (3850 UC)</h3>
-                  <p class="text-xs sm:text-sm text-gray-200 mb-4 drop-shadow max-w-lg mx-auto">تسليم رسمي وفوري بالـ ID مع فحص اسم اللاعب قبل التحويل مباشرة.</p>
-                  <div class="text-xl font-black text-emerald-400 mb-5 font-mono drop-shadow">3,100 ج.م</div>
-                  <button onclick="openPlayerIdModal('بابجي موبايل (PUBG)', '3850 UC', 3100, true, 'pubg')" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold py-3 px-8 rounded-2xl text-xs transition cursor-pointer shadow-xl hover:scale-105">شحن فوري بالـ ID ⚡</button>
+                  <p class="text-xs sm:text-sm text-gray-200 mb-3 drop-shadow max-w-lg mx-auto">تسليم رسمي وفوري بالـ ID مع فحص اسم اللاعب قبل التحويل مباشرة.</p>
+                  <div class="text-xl font-black text-emerald-400 mb-4 font-mono drop-shadow">3,100 ج.م</div>
+                  <button onclick="openPlayerIdModal('بابجي موبايل (PUBG)', '3850 UC', 3100, true, 'pubg')" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold py-2.5 px-7 rounded-2xl text-xs transition cursor-pointer shadow-xl hover:scale-105">شحن فوري بالـ ID ⚡</button>
                 </div>
             </div>
         </div>
 
     </div>
 
-    <div class="flex justify-center gap-2.5 mt-4 pb-2" id="sliderDots">
+    <div class="flex justify-center gap-2.5 py-3 bg-slate-950/60" id="sliderDots">
         <span class="dot active" onclick="goToSlide(0)"></span>
         <span class="dot" onclick="goToSlide(1)"></span>
         <span class="dot" onclick="goToSlide(2)"></span>
@@ -896,6 +891,32 @@
     </button>
    </div>
   </div>
+
+  <script>
+    // دعم عرض QR كود بينانس مباشرة عند اختيار طريقة الدفع
+    const originalSelectPaymentMethod = window.selectPaymentMethod;
+    window.selectPaymentMethod = function(type, title, el) {
+        if (typeof originalSelectPaymentMethod === 'function') {
+            originalSelectPaymentMethod(type, title, el);
+        }
+        if (type === 'binance') {
+            const box = document.getElementById('checkoutDetailsBox');
+            const content = document.getElementById('checkoutPayContent');
+            const titleEl = document.getElementById('checkoutPayTitle');
+            if(box && content && titleEl) {
+                box.classList.remove('hidden');
+                titleEl.innerText = title;
+                content.innerHTML = `
+                    <p class="mb-2 text-amber-400 font-bold">امسح الكود أدناه عبر تطبيق باينانس (Binance Pay QR):</p>
+                    <div class="bg-white p-2.5 inline-block rounded-2xl mx-auto mb-2 shadow-2xl">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=BinancePayTransferMigoAI" alt="Binance QR Code" class="w-36 h-36 mx-auto rounded-xl">
+                    </div>
+                    <p class="text-[11px] text-gray-300">أو تحويل مباشر إلى Binance Pay ID: <span class="text-amber-400 font-mono font-bold">MigoAI2026</span></p>
+                `;
+            }
+        }
+    };
+  </script>
 
   <script src="games.js?v=2026.25"></script>
   <script src="live-coins.js?v=2026.25"></script>
