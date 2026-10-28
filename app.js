@@ -146,11 +146,14 @@ const purchaseTemplates = [
     { act: "شحن 500 نجمة تليجرام", icon: '⭐' }
 ];
 
-// دالة حساب الأسعار الصحيحة والمباشرة (ضرب السعر الأساسي بالدولار في سعر الصرف الحالي + 5 جنيه هامش)
-function calculateAutoPrice(basePriceUSD) {
-    if (!basePriceUSD || isNaN(basePriceUSD)) return 0;
-    const finalPrice = (basePriceUSD * USD_TO_EGP) + 5;
-    return Math.round(finalPrice);
+// المعادلة الصحيحة المباشرة: إذا كان الرقم مدخلاً بالقيمة المحلية الصحيحة، أو إذا كان سعراً معيارياً
+function calculateAutoPrice(basePrice) {
+    if (!basePrice || isNaN(basePrice)) return 0;
+    
+    // بما أن الأسعار في ملفات البيانات مسعرة بالجنيه المصري كقيمة أساسية قديمة (مبنية على أساس 50 جنيه للدولار تقريباً)
+    // نصححها بقسمتها على 50 ثم ضربها في سعر الدولار الحالي (56.02) وإضافة 5 جنيه هامش
+    const correctPrice = (basePrice / 50) * USD_TO_EGP + 5;
+    return Math.round(correctPrice);
 }
 
 function showToast(msg, type = 'success') {
