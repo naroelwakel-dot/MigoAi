@@ -49,7 +49,7 @@ const smmPlatforms = [
     id: "tiktok",
     name: "تيك توك (TikTok)",
     icon: "fab fa-tiktok",
-    banner: "https://images.unsplash.com/photo-1611605698335-8b1569810432?auto=format&fit=crop&w=1200&q=80",
+    banner: "images (6).jpeg",
     services: [
       {
         id: "2410",
@@ -181,7 +181,7 @@ const smmPlatforms = [
     id: "telegram",
     name: "تليجرام (Telegram)",
     icon: "fab fa-telegram",
-    banner: "https://images.unsplash.com/photo-1614680376593-902f749f7ffc?auto=format&fit=crop&w=1200&q=80",
+    banner: "telegram.jpeg",
     services: [
       {
         id: "6101",
