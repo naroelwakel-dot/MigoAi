@@ -1,6 +1,6 @@
 // ==============================================================================
 // Migo AI Solution - subscriptions.js
-// قاعدة بيانات الاشتراكات والبرامج (26 خدمة كاملة) - مطابقة 100% ومنظمة بقوائم منسدلة وبانرات مخصصة
+// قاعدة بيانات الاشتراكات والبرامج (26 خدمة كاملة) - مطابقة 100% للمتجر الحي
 // ==============================================================================
 
 const subscriptionsData = [
@@ -12,7 +12,7 @@ const subscriptionsData = [
     category: "ai",
     badge: "الأكثر طلباً 🔥",
     banner: "https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=1200&q=80",
-    description: "حساب رسمي ببريد خاص لتفعيل فوري وآمن.",
+    description: "حساب رسمي ببريد خاص Gmail NW لتفعيل فوري وآمن.",
     packages: [
       { id: "chatgpt_1m", name: "شهر واحد — 835 ج.م", duration: "شهر واحد", price: 835 }
     ]
@@ -96,7 +96,7 @@ const subscriptionsData = [
     provider: "Muse الرسمي",
     category: "ai",
     badge: "ذكاء اصطناعي متقدم 🧠",
-    banner: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80",
+    banner: "https://images.unsplash.com/photo-1534972195531-d756b9cfa9f2?auto=format&fit=crop&w=1200&q=80",
     description: "مساعد فيديو ووسائط متقدم مدعوم بنماذج الذكاء الاصطناعي.",
     packages: [
       { id: "muse_full", name: "اشتراك كامل — 140 ج.م", duration: "اشتراك كامل", price: 140 }
@@ -127,7 +127,7 @@ const subscriptionsData = [
     provider: "Adobe الرسمي",
     category: "design",
     badge: "تفعيل رسمي مباشر ✒️",
-    banner: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80",
+    banner: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=1200&q=80",
     description: "رابط تفعيل رسمي مباشر لإنشاء تصاميم السوشيال ميديا بسرعة.",
     packages: [
       { id: "adobe_exp_12m", name: "12 شهر — 120 ج.م", duration: "12 شهر", price: 120 }
@@ -256,14 +256,14 @@ const subscriptionsData = [
     ]
   },
 
-  // --- 3. خدمات البث والترفيه (Entertainment & Streaming) ---
+  // --- 3. خدمات البث والترفيه (Entertainment & Streaming) - بانرات مخصصة وغير متداخلة ---
   {
     id: "shahid_vip",
     name: "شاهد VIP",
     provider: "MBC / Shahid الرسمي",
     category: "entertainment",
     badge: "بث ترفيهي عربي 📺",
-    banner: "https://images.unsplash.com/photo-1522869635100-9f4c5e86aa37?auto=format&fit=crop&w=1200&q=80",
+    banner: "https://images.unsplash.com/photo-1594909122845-11baa439b7bf?auto=format&fit=crop&w=1200&q=80",
     description: "اشتراك رسمي لمتابعة أحدث الأعمال والمسلسلات العربية الحصرية.",
     packages: [
       { id: "shahid_1m", name: "شهر واحد — 205 ج.م", duration: "شهر واحد", price: 205 }
@@ -288,7 +288,7 @@ const subscriptionsData = [
     provider: "Amazon الرسمي",
     category: "entertainment",
     badge: "أفلام ومسلسلات 🍿",
-    banner: "https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?auto=format&fit=crop&w=1200&q=80",
+    banner: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80",
     description: "مكتبة سينمائية ضخمة بجودة 4K على حساب رسمي ومضمون.",
     packages: [
       { id: "prime_6m", name: "6 أشهر — 275 ج.م", duration: "6 أشهر", price: 275 }
@@ -325,7 +325,7 @@ const subscriptionsData = [
     provider: "Netflix الرسمي",
     category: "entertainment",
     badge: "حساب Admin بضمان 🎬",
-    banner: "https://images.unsplash.com/photo-1522869635100-9f4c5e86aa37?auto=format&fit=crop&w=1200&q=80",
+    banner: "https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?auto=format&fit=crop&w=1200&q=80",
     description: "حساب مسؤول Admin رسمي كامل بدقة Ultra HD 4K مع ضمان الاستمرارية.",
     packages: [
       { id: "netflix_full", name: "حساب كامل — 310 ج.م", duration: "حساب كامل", price: 310 }
