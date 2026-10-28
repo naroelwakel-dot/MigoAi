@@ -25,9 +25,9 @@
   <style>
     :root {
         --bg-main: #070b14;      
-        --bg-surface: #0f172a;   
-        --bg-card: #1e293b;      
-        --border-color: #334155; 
+        --bg-surface: #111827;   
+        --bg-card: #162032;      
+        --border-color: #27354f; 
     }
     * { box-sizing: border-box; }
     html, body { font-family: 'Tajawal', sans-serif; scroll-behavior: smooth; background-color: var(--bg-main); color: #f8fafc; overflow-x: hidden; margin: 0; padding: 0; }
@@ -40,8 +40,8 @@
     .sky-surface { background-color: var(--bg-surface); border-color: var(--border-color); }
     .sky-card { background-color: var(--bg-card); border-color: var(--border-color); transition: all 0.25s ease; }
     .sky-card:hover { border-color: #38bdf8; }
-    .sky-btn { background: linear-gradient(135deg, #0284c7, #2563eb); color: #ffffff; box-shadow: 0 4px 15px rgba(2, 132, 199, 0.3); transition: 0.25s; }
-    .sky-btn:hover { background: linear-gradient(135deg, #38bdf8, #3b82f6); transform: translateY(-1px); }
+    .sky-btn { background: linear-gradient(135deg, #0284c7, #7c3aed); color: #ffffff; box-shadow: 0 4px 15px rgba(2, 132, 199, 0.3); transition: 0.25s; }
+    .sky-btn:hover { background: linear-gradient(135deg, #38bdf8, #a855f7); transform: translateY(-1px); }
     .sky-active-tab { border: 2px solid #38bdf8 !important; background: linear-gradient(135deg, rgba(56, 189, 248, 0.15), rgba(30, 41, 59, 0.8)) !important; box-shadow: 0 4px 18px rgba(56, 189, 248, 0.2); }
     select, select option { background-color: var(--bg-surface) !important; color: #ffffff !important; }
     
@@ -118,7 +118,7 @@
   
   <div id="toastContainer" class="fixed top-5 left-5 z-[120] flex flex-col gap-2 pointer-events-none"></div>
 
-  <div id="socialProofPopup" class="fixed bottom-20 left-4 z-40 bg-[#1e293b]/95 border border-sky-500/40 p-3 rounded-2xl shadow-2xl backdrop-blur-md max-w-xs transition-all duration-500 transform translate-y-24 opacity-0 pointer-events-none flex items-center gap-3">
+  <div id="socialProofPopup" class="fixed bottom-20 left-4 z-40 bg-[#111827]/95 border border-sky-500/40 p-3 rounded-2xl shadow-2xl backdrop-blur-md max-w-xs transition-all duration-500 transform translate-y-24 opacity-0 pointer-events-none flex items-center gap-3">
     <div id="proofIcon" class="w-10 h-10 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center p-2 shrink-0 shadow text-lg">⚡</div>
     <div class="text-right">
       <div id="proofUser" class="text-xs font-black text-white"></div>
@@ -131,7 +131,7 @@
     <svg class="w-7 h-7 fill-current" viewBox="0 0 24 24"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.04 14.69 2 12.04 2M12.05 3.67C14.25 3.67 16.31 4.53 17.87 6.09C19.42 7.65 20.28 9.72 20.28 11.92C20.28 16.46 16.58 20.15 12.04 20.15C10.56 20.15 9.11 19.76 7.85 19L7.55 18.83L4.43 19.65L5.26 16.61L5.06 16.29C4.24 15 3.8 13.47 3.8 11.91C3.81 7.37 7.5 3.67 12.05 3.67Z"/></svg>
   </a>
 
-  <header class="border-b sky-surface sticky top-0 z-50 backdrop-blur-md bg-[#0f172a]/95 shadow-xl">
+  <header class="border-b sky-surface sticky top-0 z-50 backdrop-blur-md bg-[#111827]/95 shadow-xl">
    <div class="max-w-7xl mx-auto px-3 sm:px-4 py-3 flex justify-between items-center gap-2">
     <div class="flex items-center gap-2.5 min-w-0">
      <button type="button" onclick="toggleSidebar()" aria-label="القائمة الشاملة" class="w-10 h-10 shrink-0 rounded-xl sky-card border flex flex-col items-center justify-center gap-1.5 cursor-pointer hover:border-sky-400">
@@ -185,8 +185,8 @@
   <div class="max-w-4xl mx-auto px-4 mt-5">
     <div class="relative">
       <label for="liveSearchInput" class="sr-only">بحث في المتجر</label>
-      <input type="text" id="liveSearchInput" oninput="handleLiveSearch(this.value)" placeholder="🔍 ابحث عن كوينز تيك توك، فيزا VCC، كوديكس API، بيجو، ببجي، نتفلكس، كانفا، فري فاير..." class="w-full bg-[#0f172a] border border-slate-600 focus:border-sky-400 rounded-2xl px-5 py-3 text-sm text-white outline-none shadow-xl transition">
-      <div id="searchResultsDropdown" class="hidden absolute top-full left-0 right-0 mt-2 bg-[#0f172a] border border-sky-500/40 rounded-2xl p-2 shadow-2xl z-40 max-h-80 overflow-y-auto custom-scrollbar"></div>
+      <input type="text" id="liveSearchInput" oninput="handleLiveSearch(this.value)" placeholder="🔍 ابحث عن كوينز تيك توك، فيزا VCC، كوديكس API، بيجو، ببجي، نتفلكس، كانفا، فري فاير..." class="w-full bg-[#111827] border border-slate-600 focus:border-sky-400 rounded-2xl px-5 py-3 text-sm text-white outline-none shadow-xl transition">
+      <div id="searchResultsDropdown" class="hidden absolute top-full left-0 right-0 mt-2 bg-[#111827] border border-sky-500/40 rounded-2xl p-2 shadow-2xl z-40 max-h-80 overflow-y-auto custom-scrollbar"></div>
     </div>
   </div>
 
@@ -203,7 +203,7 @@
    <div class="relative w-full max-w-2xl mx-auto overflow-hidden rounded-3xl mb-6 shadow-2xl" dir="rtl">
     <div id="sliderTrack" class="flex transition-transform duration-500 ease-in-out">
         <div class="w-full shrink-0 p-1">
-            <div class="bg-gradient-to-br from-[#1e293b] to-[#0f172a] border border-pink-500/40 p-6 rounded-3xl text-center relative">
+            <div class="bg-gradient-to-br from-[#162032] to-[#0b1120] border border-pink-500/40 p-6 rounded-3xl text-center relative">
                 <span class="absolute top-0 right-0 bg-pink-500 text-white text-[10px] font-black px-3.5 py-1 rounded-bl-2xl">فحص الاسم فوري 🎵</span>
                 <div class="w-12 h-12 mx-auto mb-2 flex items-center justify-center">
                   <svg class="w-10 h-10 anim-coin" viewBox="0 0 40 40">
@@ -226,12 +226,12 @@
         </div>
 
         <div class="w-full shrink-0 p-1">
-            <div class="bg-gradient-to-br from-[#1e293b] to-[#0f172a] border border-amber-500/40 p-6 rounded-3xl text-center relative">
+            <div class="bg-gradient-to-br from-[#162032] to-[#0b1120] border border-amber-500/40 p-6 rounded-3xl text-center relative">
                 <span class="absolute top-0 right-0 bg-amber-500 text-slate-950 text-[10px] font-black px-3.5 py-1 rounded-bl-2xl">الدفع الدولي 💳</span>
                 <div class="w-12 h-12 mx-auto mb-2 flex items-center justify-center">
                   <svg class="w-11 h-8 anim-vcc" viewBox="0 0 44 32">
                     <rect x="2" y="2" width="40" height="28" rx="4" fill="url(#gradVccP)" stroke="#fbbf24" stroke-width="1.5"/>
-                    <rect x="2" y="8" width="40" height="6" fill="#1e293b"/>
+                    <rect x="2" y="8" width="40" height="6" fill="#162032"/>
                     <rect x="6" y="18" width="10" height="7" rx="1.5" fill="#fef08a" stroke="#d97706" stroke-width="0.8"/>
                     <circle cx="34" cy="22" r="4" fill="#ef4444" opacity="0.85"/>
                     <circle cx="28" cy="22" r="4" fill="#f59e0b" opacity="0.85"/>
@@ -251,7 +251,7 @@
         </div>
 
         <div class="w-full shrink-0 p-1">
-            <div class="bg-gradient-to-br from-[#1e293b] to-[#0f172a] border border-emerald-500/40 p-6 rounded-3xl text-center relative">
+            <div class="bg-gradient-to-br from-[#162032] to-[#0b1120] border border-emerald-500/40 p-6 rounded-3xl text-center relative">
                 <span class="absolute top-0 right-0 bg-emerald-500 text-white text-[10px] font-black px-3.5 py-1 rounded-bl-2xl">Midasbuy المعتمد</span>
                 <div class="w-12 h-12 mx-auto mb-2 flex items-center justify-center">
                   <svg class="w-11 h-9 anim-gamepad" viewBox="0 0 44 34">
@@ -334,21 +334,8 @@
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-      <div class="sky-card border p-4 rounded-2xl">
-        <div class="flex items-center gap-2 mb-3">
-          <div class="w-8 h-8 rounded-lg bg-pink-500/10 border border-pink-500/30 flex items-center justify-center text-pink-400 font-bold">🎵</div>
-          <h3 class="font-extrabold text-white text-sm">عملات تيك توك (TikTok Coins)</h3>
-        </div>
-        <div id="tiktokCoinsGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
-      </div>
-
-      <div class="sky-card border p-4 rounded-2xl">
-        <div class="flex items-center gap-2 mb-3">
-          <div class="w-8 h-8 rounded-lg bg-sky-500/10 border border-sky-500/30 flex items-center justify-center text-sky-400 font-bold">⭐</div>
-          <h3 class="font-extrabold text-white text-sm">نجوم تليجرام (Telegram Stars)</h3>
-        </div>
-        <div id="telegramStarsGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
-      </div>
+      <div id="tiktokCoinsGrid"></div>
+      <div id="telegramStarsGrid"></div>
     </div>
    </section>
 
@@ -381,7 +368,7 @@
         <div class="w-10 h-10 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center shrink-0 shadow">
           <svg class="w-8 h-6 anim-vcc" viewBox="0 0 44 32">
             <rect x="2" y="2" width="40" height="28" rx="4" fill="url(#gradVccSec)" stroke="#fbbf24" stroke-width="1.5"/>
-            <rect x="2" y="8" width="40" height="5" fill="#0f172a"/>
+            <rect x="2" y="8" width="40" height="5" fill="#111827"/>
             <rect x="6" y="17" width="9" height="7" rx="1.5" fill="#fde047" stroke="#b45309" stroke-width="0.8"/>
             <circle cx="34" cy="21" r="3.5" fill="#ef4444" opacity="0.85"/>
             <circle cx="29" cy="21" r="3.5" fill="#f59e0b" opacity="0.85"/>
@@ -538,7 +525,7 @@
         <div class="w-10 h-10 rounded-2xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center shrink-0 shadow">
           <svg class="w-7 h-7 anim-film" viewBox="0 0 40 40">
             <circle cx="20" cy="20" r="16" fill="#7e22ce" stroke="#c084fc" stroke-width="1.8"/>
-            <circle cx="20" cy="20" r="5" fill="#0f172a" stroke="#ffffff" stroke-width="1.5"/>
+            <circle cx="20" cy="20" r="5" fill="#111827" stroke="#ffffff" stroke-width="1.5"/>
             <circle cx="20" cy="9" r="2.5" fill="#ffffff"/>
             <circle cx="20" cy="31" r="2.5" fill="#ffffff"/>
             <circle cx="9" cy="20" r="2.5" fill="#ffffff"/>
@@ -617,6 +604,7 @@
     </section>
    </div>
 
+   <!-- ضمان والأمان -->
    <section class="sky-surface border rounded-3xl p-5 shadow-2xl">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
       <div class="p-4 bg-slate-900/60 rounded-2xl border border-slate-800">
@@ -637,6 +625,7 @@
     </div>
    </section>
 
+   <!-- الأسئلة الشائعة -->
    <section class="sky-surface border rounded-3xl p-5 shadow-2xl">
     <h2 class="text-lg font-black text-white mb-3 flex items-center gap-2">❓ الأسئلة الشائعة</h2>
     <div class="space-y-2 text-xs">
@@ -651,6 +640,7 @@
     </div>
    </section>
 
+   <!-- آراء العملاء الموثقين -->
    <section id="reviews" class="sky-surface border rounded-3xl p-4 sm:p-6 shadow-2xl scroll-mt-24">
     <h2 class="text-lg sm:text-xl font-black text-white mb-3">⭐ آراء العملاء الموثقين</h2>
     <div id="reviewsContainer" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3 text-xs"></div>
@@ -670,7 +660,7 @@
       <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 mx-auto flex items-center justify-center mb-2">
         <svg class="w-9 h-7 anim-vcc" viewBox="0 0 44 32">
           <rect x="2" y="2" width="40" height="28" rx="4" fill="url(#gradVccModal)" stroke="#fbbf24" stroke-width="1.5"/>
-          <rect x="2" y="8" width="40" height="5" fill="#0f172a"/>
+          <rect x="2" y="8" width="40" height="5" fill="#111827"/>
           <rect x="6" y="17" width="9" height="7" rx="1.5" fill="#fde047" stroke="#b45309" stroke-width="0.8"/>
           <circle cx="34" cy="21" r="3.5" fill="#ef4444" opacity="0.85"/>
           <circle cx="29" cy="21" r="3.5" fill="#f59e0b" opacity="0.85"/>
@@ -852,6 +842,7 @@
     
     <p class="text-xs text-gray-300 mb-3">اختر المحفظة أو البوابة لإتمام الطلب (المبلغ: <b id="checkoutTotalText" class="text-sky-400 font-mono"></b>):</p>
     
+    <!-- شبكة أزرار الدفع (مع استبعاد أورانج كاش نهائياً) -->
     <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-2 mb-4">
      <button type="button" onclick="selectPaymentMethod('vodafone', '📱 فودافون كاش', this)" class="pay-method-btn sky-card border p-2 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-red-500">
       <div class="w-7 h-7 bg-red-600 rounded-full flex items-center justify-center text-white font-bold text-xs">V</div>
@@ -930,7 +921,7 @@
     </div>
 
     <div class="mb-3 text-right">
-      <label class="block text-xs font-bold text-gray-200 mb-1" for="senderAccountInput">رقم المحفظة / الحساب الذي حوّلت منه (لتأكيد العملية): <span class="text-red-400">*</span></label>
+      <label class="block text-xs font-bold text-gray-200 mb-1" for="senderAccountInput">رقم المحفظة / الحساب الذي قمت بالتحويل منه (لتأكيد العملية): <span class="text-red-400">*</span></label>
       <input type="text" id="senderAccountInput" placeholder="مثال: 010xxxxxxxx أو يوزر إنستاباي / باينانس" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono outline-none focus:border-sky-400">
     </div>
 
@@ -940,11 +931,12 @@
    </div>
   </div>
 
-  <script src="payments.js?v=2026.14"></script>
-  <script src="games.js?v=2026.14"></script>
-  <script src="live-coins.js?v=2026.14"></script>
-  <script src="subscriptions.js?v=2026.14"></script>
-  <script src="smm.js?v=2026.14"></script>
-  <script src="app.js?v=2026.14"></script>
+  <!-- استدعاء ملفات السكربت بالترتيب الصحيح (مع دمج ai-tools.js) -->
+  <script src="games.js?v=2026.15"></script>
+  <script src="live-coins.js?v=2026.15"></script>
+  <script src="subscriptions.js?v=2026.15"></script>
+  <script src="smm.js?v=2026.15"></script>
+  <script src="ai-tools.js?v=2026.15"></script>
+  <script src="app.js?v=2026.15" defer></script>
  </body>
 </html>
