@@ -256,14 +256,14 @@ const subscriptionsData = [
     ]
   },
 
-  // --- 3. خدمات البث والترفيه (Entertainment & Streaming) - بانرات مخصصة وغير متداخلة ---
+  // --- 3. خدمات البث والترفيه (Entertainment & Streaming) - بانرات مخصصة بمستودع GitHub ---
   {
     id: "shahid_vip",
     name: "شاهد VIP",
     provider: "MBC / Shahid الرسمي",
     category: "entertainment",
     badge: "بث ترفيهي عربي 📺",
-    banner: "https://images.unsplash.com/photo-1594909122845-11baa439b7bf?auto=format&fit=crop&w=1200&q=80",
+    banner: "shahidvib.webp",
     description: "اشتراك رسمي لمتابعة أحدث الأعمال والمسلسلات العربية الحصرية.",
     packages: [
       { id: "shahid_1m", name: "شهر واحد — 205 ج.م", duration: "شهر واحد", price: 205 }
@@ -288,7 +288,7 @@ const subscriptionsData = [
     provider: "Amazon الرسمي",
     category: "entertainment",
     badge: "أفلام ومسلسلات 🍿",
-    banner: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=80",
+    banner: "amazonvideo.jpeg",
     description: "مكتبة سينمائية ضخمة بجودة 4K على حساب رسمي ومضمون.",
     packages: [
       { id: "prime_6m", name: "6 أشهر — 275 ج.م", duration: "6 أشهر", price: 275 }
@@ -300,7 +300,7 @@ const subscriptionsData = [
     provider: "Apple الرسمي",
     category: "entertainment",
     badge: "صوت مكاني فائق 🎧",
-    banner: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1200&q=80",
+    banner: "apallemusic.jpeg",
     description: "استماع لملايين المقاطع الموسيقية بنقاء Spatial Audio وبدون إعلانات.",
     packages: [
       { id: "apple_music_5m", name: "5 أشهر — 175 ج.م", duration: "5 أشهر", price: 175 }
@@ -312,7 +312,7 @@ const subscriptionsData = [
     provider: "Spotify الرسمي",
     category: "entertainment",
     badge: "موسيقى بدون قيود 🎵",
-    banner: "https://images.unsplash.com/photo-1614680376593-902f749f7ffc?auto=format&fit=crop&w=1200&q=80",
+    banner: "spotify.png",
     description: "استماع وتحميل بلا اتصال بالإنترنت وتخطي لا محدود للمسارات.",
     packages: [
       { id: "spotify_3m_link", name: "3 أشهر (رابط) — 60 ج.م", duration: "3 أشهر (رابط)", price: 60 },
