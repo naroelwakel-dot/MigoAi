@@ -146,18 +146,10 @@ const purchaseTemplates = [
     { act: "شحن 500 نجمة تليجرام", icon: '⭐' }
 ];
 
-// الدالة المعدلة والمضبوطة تماماً لمنع أي تضخم في الأسعار
+// دالة حساب السعر المباشرة والمضبوطة تماماً (عرض السعر الأساسي + 5 جنيه هامش ثابت دون تضخم)
 function calculateAutoPrice(basePrice) {
     if (!basePrice || isNaN(basePrice)) return 0;
-    
-    // إذا كان السعر المدخل صغيراً (مثل أسعار الـ VCC بالدولار 10 أو 25 أو 50) نضرب مباشرة في سعر الدولار + 5 جنيه
-    if (basePrice < 200) {
-        return Math.round((basePrice * USD_TO_EGP) + 5);
-    }
-    
-    // للأسعار الكبيرة (المسعرة بالجنيه سابقاً)، نقسمها على 50 ونضربها في سعر الدولار الحالي + 5 جنيه
-    const correctPrice = (basePrice / 50) * USD_TO_EGP + 5;
-    return Math.round(correctPrice);
+    return Math.round(Number(basePrice) + 5);
 }
 
 function showToast(msg, type = 'success') {
@@ -541,7 +533,7 @@ function renderVccCards() {
     if (!container || !list.length) return;
 
     container.innerHTML = list.map(v => {
-        const price = calculateAutoPrice(v.balanceUsd || 0);
+        const price = calculateAutoPrice(v.priceEgp || 0);
         const bannerUrl = v.banner || "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=1200&q=80";
         return `
             <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg">
@@ -569,7 +561,7 @@ function openVccModal(vccId) {
     const list = (typeof vccData !== 'undefined') ? vccData : [];
     selectedVccItem = list.find(x => x.id === vccId);
     if (!selectedVccItem) return;
-    const price = calculateAutoPrice(selectedVccItem.balanceUsd || 0);
+    const price = calculateAutoPrice(selectedVccItem.priceEgp || 0);
 
     const t = document.getElementById('vccModalTitle');
     const p = document.getElementById('vccModalPrice');
@@ -596,7 +588,7 @@ function submitVccModal(isExpress) {
     const purpose = pu ? pu.value.trim() : '';
     if (!email) return showToast('أدخل البريد الإلكتروني لاستلام بيانات البطاقة', 'error');
 
-    const price = calculateAutoPrice(selectedVccItem.balanceUsd || 0);
+    const price = calculateAutoPrice(selectedVccItem.priceEgp || 0);
     const item = {
         id: selectedVccItem.id + '_' + Date.now(),
         name: selectedVccItem.name,
@@ -1287,7 +1279,7 @@ function handleLiveSearch(query) {
     if (typeof vccData !== 'undefined') {
         vccData.forEach(v => {
             if (v.name.toLowerCase().includes(query)) {
-                results.push({ name: v.name, price: calculateAutoPrice(v.balanceUsd), type: 'vcc', id: v.id });
+                results.push({ name: v.name, price: calculateAutoPrice(v.priceEgp), type: 'vcc', id: v.id });
             }
         });
     }
@@ -1449,7 +1441,7 @@ window.onload = function() {
     try { loadCartFromStorage(); } catch (e) {}
     try { renderCoinsAndStars(); } catch (e) {}
     try { renderLiveApps(); } catch (e) {}
-    try { renderVccCards(); } catch (e) {}
+    try { renderVccCards(); }
     try { renderGames(); } catch (e) {}
     try { renderProductivity(); } catch (e) {}
     try { renderEntertainment(); } catch (e) {}
