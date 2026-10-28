@@ -311,9 +311,6 @@ function calculateCartTotal() {
     }
 }
 
-// ==============================================================================
-// دالة تحديث أسعار العناصر في البطاقات عند استخدام القوائم المنسدلة (Select Menu)
-// ==============================================================================
 function updateCardPriceDisplay(prefix, itemId) {
     const selectEl = document.getElementById(`${prefix}_pkg_${itemId}`);
     const priceDisplayEl = document.getElementById(`${prefix}_price_${itemId}`);
@@ -326,7 +323,6 @@ function updateCardPriceDisplay(prefix, itemId) {
     }
 }
 
-// عرض باقات كوينز تيك توك ونجوم تليجرام بنظام القائمة المنسدلة
 function renderCoinsAndStars() {
     if (typeof tiktokCoinsList !== 'undefined') {
         const ttContainer = document.getElementById('tiktokCoinsGrid');
@@ -391,7 +387,6 @@ function handleCoinAction(type, isExpress) {
     openPlayerIdModal(name, label, pkg.price, isExpress, type);
 }
 
-// عرض الألعاب الـ 16 بنظام القائمة المنسدلة (Select Menu) داخل البطاقات
 function renderGames() {
     const gamesList = (typeof gamesData !== 'undefined') ? gamesData : [];
     const container = document.getElementById('gamesCardsContainer');
@@ -401,7 +396,6 @@ function renderGames() {
         const pkgs = g.packages || [];
         const bannerUrl = g.banner || "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80";
         const badgeText = g.badge || "شحن فوري ⚡";
-        const gameKey = g.id || "pubg";
         const defaultPrice = pkgs.length ? pkgs[0].price : 0;
 
         return `
@@ -448,7 +442,6 @@ function handleGameAction(gameId, isExpress) {
     openPlayerIdModal(game.name, pkg.name, pkg.price, isExpress, game.id);
 }
 
-// عرض تطبيقات البث المباشر (Live Apps) بنظام القائمة المنسدلة
 function renderLiveApps() {
     const liveList = (typeof liveCoinsData !== 'undefined') ? liveCoinsData : [];
     const container = document.getElementById('liveAppsContainer');
@@ -502,7 +495,6 @@ function handleLiveAction(appId, isExpress) {
     openPlayerIdModal(app.name, pkg.name, pkg.price, isExpress, app.id);
 }
 
-// عرض بطاقات الـ VCC الافتراضية
 function renderVccCards() {
     const list = (typeof vccData !== 'undefined') ? vccData : [];
     const container = document.getElementById('vccCardsContainer');
@@ -577,7 +569,6 @@ function submitVccModal(isExpress) {
     else addToCart(item);
 }
 
-// عرض برامج التصميم والإنتاجية بنظام القائمة المنسدلة الموحد
 function renderProductivity() {
     const subList = (typeof subscriptionsData !== 'undefined') 
         ? subscriptionsData.filter(s => s.category === 'design' || s.category === 'productivity')
@@ -623,7 +614,6 @@ function renderProductivity() {
     }).join('');
 }
 
-// عرض خدمات البث والترفيه بنظام القائمة المنسدلة
 function renderEntertainment() {
     const subList = (typeof subscriptionsData !== 'undefined') 
         ? subscriptionsData.filter(s => s.category === 'entertainment')
@@ -669,13 +659,11 @@ function renderEntertainment() {
     }).join('');
 }
 
-// عرض أدوات الذكاء الاصطناعي وباقات ai-tools.js المدمجة
 function renderAI() {
     let aiList = [];
     if (typeof subscriptionsData !== 'undefined') {
         aiList = subscriptionsData.filter(s => s.category === 'ai');
     }
-    // دمج منتجات aiProducts إضافياً لضمان عدم ضياع أي خدمة من ai-tools.js
     if (typeof aiProducts !== 'undefined') {
         aiProducts.forEach(prod => {
             if (!aiList.find(x => x.id === prod.id)) {
@@ -772,7 +760,7 @@ function handleSubscriptionAction(itemId, isExpress = false) {
 }
 
 // ==============================================================================
-// محرك السوشيال ميديا للمنصات الـ 18 بالشعارات الملونة والبانر الأفقي
+// محرك السوشيال ميديا (مع تصحيح ربط وعرض البانر والأيقونة بدقة تامة لكل منصة)
 // ==============================================================================
 function renderSMMPlatforms() {
     if (typeof smmPlatforms === 'undefined' || !smmPlatforms.length) return;
@@ -807,7 +795,11 @@ function selectSMMPlatform(pid) {
     
     const iconClass = SMM_ICONS[currentSMMPlatform.id] || currentSMMPlatform.icon || "fas fa-share-alt text-sky-400";
     if (iconContainer) iconContainer.innerHTML = `<i class="${iconClass} text-xl"></i>`;
-    if (bannerImg && currentSMMPlatform.banner) bannerImg.src = currentSMMPlatform.banner;
+    
+    // التحديث الفوري والدقيق لبانر المنصة المحددة
+    if (bannerImg && currentSMMPlatform.banner) {
+        bannerImg.src = currentSMMPlatform.banner;
+    }
 
     if (catSelect && currentSMMPlatform.services) {
         const categories = [...new Set(currentSMMPlatform.services.map(s => s.category || "عام"))];
