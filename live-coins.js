@@ -3,27 +3,33 @@
 // قاعدة بيانات تطبيقات البث والعملات والنجوم - مطابقة 100% للمتجر الحي
 // ==============================================================================
 
-// 1. باقات كوينز تيك توك الرسمية بالجنيه المصري
-const tiktokCoinsList = [
-  { coins: 70, price: 65 },
-  { coins: 350, price: 325 },
-  { coins: 700, price: 650 },
-  { coins: 1400, price: 1300 },
-  { coins: 3500, price: 3250 },
-  { coins: 7000, price: 6500 },
-  { coins: 17500, price: 16250 }
-];
+// 1. باقات كوينز تيك توك الرسمية بالجنيه المصري (مع البانر المخصص)
+const tiktokCoinsList = {
+  banner: "images (6).jpeg",
+  packages: [
+    { coins: 70, price: 65 },
+    { coins: 350, price: 325 },
+    { coins: 700, price: 650 },
+    { coins: 1400, price: 1300 },
+    { coins: 3500, price: 3250 },
+    { coins: 7000, price: 6500 },
+    { coins: 17500, price: 16250 }
+  ]
+};
 
-// 2. باقات نجوم تليجرام الرسمية بالجنيه المصري
-const telegramStarsList = [
-  { stars: 50, price: 55 },
-  { stars: 100, price: 110 },
-  { stars: 150, price: 165 },
-  { stars: 250, price: 275 },
-  { stars: 500, price: 550 },
-  { stars: 1000, price: 1100 },
-  { stars: 2500, price: 2750 }
-];
+// 2. باقات نجوم تليجرام الرسمية بالجنيه المصري (مع البانر المخصص)
+const telegramStarsList = {
+  banner: "telegram.jpeg",
+  packages: [
+    { stars: 50, price: 55 },
+    { stars: 100, price: 110 },
+    { stars: 150, price: 165 },
+    { stars: 250, price: 275 },
+    { stars: 500, price: 550 },
+    { stars: 1000, price: 1100 },
+    { stars: 2500, price: 2750 }
+  ]
+};
 
 // 3. تطبيقات البث المباشر الـ 6 المعتمدة بكامل باقاتها وبانراتها
 const liveCoinsData = [
