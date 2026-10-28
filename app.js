@@ -3,7 +3,7 @@
 // المحرك التشغيلي الرئيسي المتكامل - بدون أي اختصار أو حذف لسطر واحد
 // ==============================================================================
 
-const USD_TO_EGP = 62; 
+const USD_TO_EGP = 56.02; // سعر الدولار المحدث من السوق
 const BASE_DOLLAR_RATE = 50; // سعر الصرف المرجعي الثابت الذي قمت بتسعير منتجاتك بناءً عليه
 const USERS_STORAGE_KEY = 'migo_registered_users_v2';
 const SESSION_STORAGE_KEY = 'migo_active_member_v2';
@@ -147,7 +147,7 @@ const purchaseTemplates = [
     { act: "شحن 500 نجمة تليجرام", icon: '⭐' }
 ];
 
-// دالة حساب الأسعار التلقائية بناءً على سعر الدولار الحالي وهامش الـ 5 جنيه
+// دالة حساب الأسعار التلقائية بناءً على السعر الأساسي وسعر الدولار الحالي وهامش الـ 5 جنيه
 function calculateAutoPrice(basePriceEGP) {
     if (!basePriceEGP || isNaN(basePriceEGP)) return 0;
     const adjusted = (basePriceEGP / BASE_DOLLAR_RATE) * USD_TO_EGP;
