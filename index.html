@@ -60,8 +60,8 @@
     .sky-active-tab { border: 2px solid #38bdf8 !important; background: linear-gradient(135deg, rgba(56, 189, 248, 0.15), rgba(30, 41, 59, 0.8)) !important; box-shadow: 0 4px 18px rgba(56, 189, 248, 0.2); }
     select, select option { background-color: var(--bg-surface) !important; color: #ffffff !important; }
     
-    .dot { height: 8px; width: 8px; background-color: #475569; border-radius: 50%; display: inline-block; cursor: pointer; transition: 0.3s; }
-    .dot.active { background-color: #38bdf8; transform: scale(1.35); }
+    .dot { height: 7px; width: 7px; background-color: #475569; border-radius: 50%; display: inline-block; cursor: pointer; transition: 0.3s; }
+    .dot.active { background-color: #38bdf8; transform: scale(1.4); }
 
     @keyframes anim-radar-pulse {
       0% { r: 5; opacity: 1; stroke-width: 2; }
@@ -138,7 +138,7 @@
     <svg class="w-7 h-7 fill-current" viewBox="0 0 24 24"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.04 14.69 2 12.04 2M12.05 3.67C14.25 3.67 16.31 4.53 17.87 6.09C19.42 7.65 20.28 9.72 20.28 11.92C20.28 16.46 16.58 20.15 12.04 20.15C10.56 20.15 9.11 19.76 7.85 19L7.55 18.83L4.43 19.65L5.26 16.61L5.06 16.29C4.24 15 3.8 13.47 3.8 11.91C3.81 7.37 7.5 3.67 12.05 3.67Z"/></svg>
   </a>
 
-  <!-- الترويسة المطورة بهوية تقنية قوية -->
+  <!-- الترويسة التقنية الاحترافية -->
   <header class="border-b sky-surface sticky top-0 z-50 backdrop-blur-md bg-[#070b14]/95 shadow-2xl transition-all">
    <div class="max-w-7xl mx-auto px-4 py-3.5 flex justify-between items-center gap-3">
     
@@ -194,7 +194,7 @@
   </header>
 
   <!-- شريط البحث المطور -->
-  <div class="max-w-3xl mx-auto px-4 mt-6">
+  <div class="max-w-3xl mx-auto px-4 mt-5">
     <div class="relative group">
       <label for="liveSearchInput" class="sr-only">بحث في المتجر</label>
       <input type="text" id="liveSearchInput" oninput="handleLiveSearch(this.value)" placeholder="🔍 ابحث عن كوينز تيك توك، فيزا VCC، كوديكس API، بيجو، ببجي، نتفلكس، كانفا..." class="w-full bg-[#111827]/90 border border-slate-700 group-hover:border-sky-500/60 focus:border-sky-400 rounded-3xl px-6 py-3.5 text-sm text-white outline-none shadow-2xl backdrop-blur-md transition-all">
@@ -202,54 +202,54 @@
     </div>
   </div>
 
-  <!-- القسم الترحيبي والسلايدر المطور (بدون عداد وبملء كامل بدون فراغات) -->
-  <section class="max-w-6xl mx-auto px-4 pt-6 pb-2 text-center">
+  <!-- القسم الترحيبي والسلايدر المدمج (بدون فراغات سفلية وبملء كامل) -->
+  <section class="max-w-6xl mx-auto px-4 pt-4 pb-2 text-center">
    
    <h1 class="text-3xl sm:text-5xl font-black mb-3 text-white tracking-tight">منصة <span class="bg-clip-text text-transparent bg-gradient-to-r from-sky-400 via-blue-400 to-amber-300 drop-shadow-lg">Migo AI Solution</span> المتكاملة</h1>
-   <p class="text-gray-300 text-xs sm:text-sm max-w-2xl mx-auto mb-6 leading-relaxed">الدفع محلياً بالجنيه المصري عبر المحافظ الإلكترونية، إنستاباي، والبطاقات مع تسليم فوري ونظام فحص الحساب المسبق بالاسم والصورة.</p>
+   <p class="text-gray-300 text-xs sm:text-sm max-w-2xl mx-auto mb-5 leading-relaxed">الدفع محلياً بالجنيه المصري عبر المحافظ الإلكترونية، إنستاباي، والبطاقات مع تسليم فوري ونظام فحص الحساب المسبق بالاسم والصورة.</p>
    
-   <div class="relative w-full max-w-3xl mx-auto overflow-hidden rounded-3xl mb-6 shadow-2xl border border-slate-700/80 bg-slate-900/50 backdrop-blur-xl" dir="rtl">
+   <div class="relative w-full max-w-3xl mx-auto overflow-hidden rounded-3xl mb-5 shadow-2xl border border-slate-700/80 bg-slate-900/50 backdrop-blur-xl" dir="rtl">
     <div id="sliderTrack" class="flex transition-transform duration-700 ease-in-out">
         
         <div class="w-full shrink-0 p-0">
-            <div class="relative bg-cover bg-center border border-pink-500/40 p-6 sm:p-8 rounded-3xl text-center overflow-hidden shadow-2xl min-h-[220px] flex flex-col justify-center items-center" style="background-image: linear-gradient(rgba(7, 11, 20, 0.85), rgba(11, 17, 32, 0.92)), url('images (6).jpeg');">
-                <span class="absolute top-0 right-0 bg-gradient-to-r from-pink-600 to-rose-500 text-white text-xs font-black px-4 py-1.5 rounded-bl-3xl z-10 shadow-lg">فحص الاسم فوري 🎵</span>
-                <div class="relative z-10">
-                  <h3 class="text-2xl sm:text-3xl font-black text-white mb-2 drop-shadow-md">شحن كوينز تيك توك الرسمية</h3>
-                  <p class="text-xs sm:text-sm text-gray-200 mb-3 drop-shadow max-w-lg mx-auto">شحن فوري بالاسم الرسمي للحساب لدعم البثوث وإرسال الهدايا بأمان تام.</p>
-                  <div class="text-xl font-black text-pink-400 mb-4 font-mono drop-shadow">تبدأ من 65 ج.م فقط</div>
-                  <a href="#sec-coins" class="bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-500 hover:to-rose-500 text-white font-extrabold py-2.5 px-7 rounded-2xl text-xs transition inline-block shadow-xl hover:scale-105">اشحن الآن ⚡</a>
+            <div class="relative bg-cover bg-center border border-pink-500/40 px-6 py-5 rounded-3xl text-center overflow-hidden shadow-2xl flex flex-col justify-center items-center" style="background-image: linear-gradient(rgba(7, 11, 20, 0.88), rgba(11, 17, 32, 0.94)), url('images (6).jpeg'); min-height: 180px;">
+                <span class="absolute top-0 right-0 bg-gradient-to-r from-pink-600 to-rose-500 text-white text-[11px] font-black px-3.5 py-1 rounded-bl-2xl z-10 shadow">فحص الاسم فوري 🎵</span>
+                <div class="relative z-10 py-2">
+                  <h3 class="text-xl sm:text-2xl font-black text-white mb-1 drop-shadow-md">شحن كوينز تيك توك الرسمية</h3>
+                  <p class="text-xs text-gray-200 mb-2 drop-shadow max-w-md mx-auto">شحن فوري بالاسم الرسمي للحساب لدعم البثوث وإرسال الهدايا بأمان تام.</p>
+                  <div class="text-base sm:text-lg font-black text-pink-400 mb-3 font-mono drop-shadow">تبدأ من 65 ج.م فقط</div>
+                  <a href="#sec-coins" class="bg-gradient-to-r from-pink-600 to-rose-600 hover:from-pink-500 hover:to-rose-500 text-white font-extrabold py-2 px-6 rounded-xl text-xs transition inline-block shadow-lg">اشحن الآن ⚡</a>
                 </div>
             </div>
         </div>
 
         <div class="w-full shrink-0 p-0">
-            <div class="relative bg-cover bg-center border border-amber-500/40 p-6 sm:p-8 rounded-3xl text-center overflow-hidden shadow-2xl min-h-[220px] flex flex-col justify-center items-center" style="background-image: linear-gradient(rgba(7, 11, 20, 0.85), rgba(11, 17, 32, 0.92)), url('Square-VCC-Product-Focused-Blog.jpg');">
-                <span class="absolute top-0 right-0 bg-gradient-to-r from-amber-500 to-yellow-500 text-slate-950 text-xs font-black px-4 py-1.5 rounded-bl-3xl z-10 shadow-lg">الدفع الدولي 💳</span>
-                <div class="relative z-10">
-                  <h3 class="text-2xl sm:text-3xl font-black text-white mb-2 drop-shadow-md">البطاقات الافتراضية الدولية (VCC)</h3>
-                  <p class="text-xs sm:text-sm text-gray-200 mb-3 drop-shadow max-w-lg mx-auto">اشترِ من أي موقع عالمي، اربط حساباتك الإعلانية، وفعّل اشتراكاتك بالجنيه.</p>
-                  <div class="text-xl font-black text-amber-400 mb-4 font-mono drop-shadow">تبدأ من 620 ج.م</div>
-                  <a href="#sec-vcc" class="bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-slate-950 font-extrabold py-2.5 px-7 rounded-2xl text-xs transition inline-block shadow-xl hover:scale-105">احصل على فيزا 💳</a>
+            <div class="relative bg-cover bg-center border border-amber-500/40 px-6 py-5 rounded-3xl text-center overflow-hidden shadow-2xl flex flex-col justify-center items-center" style="background-image: linear-gradient(rgba(7, 11, 20, 0.88), rgba(11, 17, 32, 0.94)), url('Square-VCC-Product-Focused-Blog.jpg'); min-height: 180px;">
+                <span class="absolute top-0 right-0 bg-gradient-to-r from-amber-500 to-yellow-500 text-slate-950 text-[11px] font-black px-3.5 py-1 rounded-bl-2xl z-10 shadow">الدفع الدولي 💳</span>
+                <div class="relative z-10 py-2">
+                  <h3 class="text-xl sm:text-2xl font-black text-white mb-1 drop-shadow-md">البطاقات الافتراضية الدولية (VCC)</h3>
+                  <p class="text-xs text-gray-200 mb-2 drop-shadow max-w-md mx-auto">اشترِ من أي موقع عالمي، اربط حساباتك الإعلانية، وفعّل اشتراكاتك بالجنيه.</p>
+                  <div class="text-base sm:text-lg font-black text-amber-400 mb-3 font-mono drop-shadow">تبدأ من 620 ج.م</div>
+                  <a href="#sec-vcc" class="bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-400 hover:to-yellow-400 text-slate-950 font-extrabold py-2 px-6 rounded-xl text-xs transition inline-block shadow-lg">احصل على فيزا 💳</a>
                 </div>
             </div>
         </div>
 
         <div class="w-full shrink-0 p-0">
-            <div class="relative bg-cover bg-center border border-emerald-500/40 p-6 sm:p-8 rounded-3xl text-center overflow-hidden shadow-2xl min-h-[220px] flex flex-col justify-center items-center" style="background-image: linear-gradient(rgba(7, 11, 20, 0.82), rgba(11, 17, 32, 0.88)), url('kv_event390.jpg');">
-                <span class="absolute top-0 right-0 bg-gradient-to-r from-emerald-600 to-teal-500 text-white text-xs font-black px-4 py-1.5 rounded-bl-3xl z-10 shadow-lg">Midasbuy المعتمد</span>
-                <div class="relative z-10">
-                  <h3 class="text-2xl sm:text-3xl font-black text-white mb-2 drop-shadow-md">ببجي موبايل (3850 UC)</h3>
-                  <p class="text-xs sm:text-sm text-gray-200 mb-3 drop-shadow max-w-lg mx-auto">تسليم رسمي وفوري بالـ ID مع فحص اسم اللاعب قبل التحويل مباشرة.</p>
-                  <div class="text-xl font-black text-emerald-400 mb-4 font-mono drop-shadow">3,100 ج.م</div>
-                  <button onclick="openPlayerIdModal('بابجي موبايل (PUBG)', '3850 UC', 3100, true, 'pubg')" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold py-2.5 px-7 rounded-2xl text-xs transition cursor-pointer shadow-xl hover:scale-105">شحن فوري بالـ ID ⚡</button>
+            <div class="relative bg-cover bg-center border border-emerald-500/40 px-6 py-5 rounded-3xl text-center overflow-hidden shadow-2xl flex flex-col justify-center items-center" style="background-image: linear-gradient(rgba(7, 11, 20, 0.85), rgba(11, 17, 32, 0.92)), url('kv_event390.jpg'); min-height: 180px;">
+                <span class="absolute top-0 right-0 bg-gradient-to-r from-emerald-600 to-teal-500 text-white text-[11px] font-black px-3.5 py-1 rounded-bl-2xl z-10 shadow">Midasbuy المعتمد</span>
+                <div class="relative z-10 py-2">
+                  <h3 class="text-xl sm:text-2xl font-black text-white mb-1 drop-shadow-md">ببجي موبايل (3850 UC)</h3>
+                  <p class="text-xs text-gray-200 mb-2 drop-shadow max-w-md mx-auto">تسليم رسمي وفوري بالـ ID مع فحص اسم اللاعب قبل التحويل مباشرة.</p>
+                  <div class="text-base sm:text-lg font-black text-emerald-400 mb-3 font-mono drop-shadow">3,100 ج.م</div>
+                  <button onclick="openPlayerIdModal('بابجي موبايل (PUBG)', '3850 UC', 3100, true, 'pubg')" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-extrabold py-2 px-6 rounded-xl text-xs transition cursor-pointer shadow-lg">شحن فوري بالـ ID ⚡</button>
                 </div>
             </div>
         </div>
 
     </div>
 
-    <div class="flex justify-center gap-2.5 py-3 bg-slate-950/60" id="sliderDots">
+    <div class="flex justify-center gap-2 py-2 bg-slate-950/60" id="sliderDots">
         <span class="dot active" onclick="goToSlide(0)"></span>
         <span class="dot" onclick="goToSlide(1)"></span>
         <span class="dot" onclick="goToSlide(2)"></span>
