@@ -323,7 +323,7 @@ function updateCardPriceDisplay(prefix, itemId) {
     }
 }
 
-// دمج وعرض صور قسم تيك توك وتليجرام ديناميكياً من البانرات المحددة
+// دمج وعرض صور قسم تيك توك وتليجرام كخلفيات للبطاقات بتصميم دقيق
 function renderCoinsAndStars() {
     if (typeof tiktokCoinsList !== 'undefined') {
         const ttContainer = document.getElementById('tiktokCoinsGrid');
@@ -331,17 +331,24 @@ function renderCoinsAndStars() {
             const ttBanner = tiktokCoinsList.banner || "images (6).jpeg";
             const ttPkgs = tiktokCoinsList.packages || tiktokCoinsList;
             ttContainer.innerHTML = `
-                <div class="sky-card border p-3 rounded-2xl flex flex-col justify-between gap-3 bg-cover bg-center relative overflow-hidden" style="background-image: linear-gradient(rgba(17, 24, 39, 0.90), rgba(17, 24, 39, 0.95)), url('${ttBanner}');">
-                    <div class="flex items-center justify-between relative z-10">
-                        <span class="text-xs font-bold text-white">اختر باقة عملات تيك توك:</span>
-                        <span id="tt_price_display" class="text-xs font-extrabold text-amber-400 font-mono">${ttPkgs[0].price.toLocaleString()} ج.م</span>
-                    </div>
-                    <select id="tt_package_select" onchange="updateCoinPrice('tt')" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-xs text-pink-300 font-bold outline-none relative z-10">
-                        ${ttPkgs.map((c, idx) => `<option value="${idx}" data-price="${c.price}">${c.coins.toLocaleString()} عملة (${c.price} ج.م)</option>`).join('')}
-                    </select>
-                    <div class="flex gap-2 relative z-10">
-                        <button onclick="handleCoinAction('tiktok', true)" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs py-2 rounded-xl cursor-pointer">شحن فوري ⚡</button>
-                        <button onclick="handleCoinAction('tiktok', false)" class="sky-btn font-bold text-xs px-4 py-2 rounded-xl cursor-pointer">🛒 للسلة</button>
+                <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg relative" style="min-height: 180px;">
+                    <div class="absolute inset-0 bg-cover bg-center opacity-40" style="background-image: url('${ttBanner}');"></div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent"></div>
+                    <div class="relative z-10 p-4 flex flex-col justify-between h-full gap-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-pink-400 bg-pink-500/20 px-2.5 py-0.5 rounded-full border border-pink-500/40">عملات تيك توك</span>
+                            <span id="tt_price_display" class="text-xs font-extrabold text-amber-400 font-mono">${ttPkgs[0].price.toLocaleString()} ج.م</span>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-gray-200 mb-1" for="tt_package_select">اختر الباقة:</label>
+                            <select id="tt_package_select" onchange="updateCoinPrice('tt')" class="w-full bg-slate-950/90 border border-slate-700 rounded-xl p-2 text-xs text-pink-300 font-bold outline-none">
+                                ${ttPkgs.map((c, idx) => `<option value="${idx}" data-price="${c.price}">${c.coins.toLocaleString()} عملة (${c.price} ج.م)</option>`).join('')}
+                            </select>
+                        </div>
+                        <div class="flex gap-2 pt-2 border-t border-slate-800/80">
+                            <button onclick="handleCoinAction('tiktok', true)" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs py-2 rounded-xl cursor-pointer shadow">شحن فوري ⚡</button>
+                            <button onclick="handleCoinAction('tiktok', false)" class="sky-btn font-bold text-xs px-4 py-2 rounded-xl cursor-pointer shadow">🛒 للسلة</button>
+                        </div>
                     </div>
                 </div>
             `;
@@ -353,17 +360,24 @@ function renderCoinsAndStars() {
             const tgBanner = telegramStarsList.banner || "telegram.jpeg";
             const tgPkgs = telegramStarsList.packages || telegramStarsList;
             tgContainer.innerHTML = `
-                <div class="sky-card border p-3 rounded-2xl flex flex-col justify-between gap-3 bg-cover bg-center relative overflow-hidden" style="background-image: linear-gradient(rgba(17, 24, 39, 0.90), rgba(17, 24, 39, 0.95)), url('${tgBanner}');">
-                    <div class="flex items-center justify-between relative z-10">
-                        <span class="text-xs font-bold text-white">اختر باقة نجوم تليجرام:</span>
-                        <span id="tg_price_display" class="text-xs font-extrabold text-amber-400 font-mono">${tgPkgs[0].price.toLocaleString()} ج.م</span>
-                    </div>
-                    <select id="tg_package_select" onchange="updateCoinPrice('tg')" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-xs text-sky-300 font-bold outline-none relative z-10">
-                        ${tgPkgs.map((s, idx) => `<option value="${idx}" data-price="${s.price}">${s.stars.toLocaleString()} نجمة (${s.price} ج.م)</option>`).join('')}
-                    </select>
-                    <div class="flex gap-2 relative z-10">
-                        <button onclick="handleCoinAction('telegram', true)" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs py-2 rounded-xl cursor-pointer">شحن فوري ⚡</button>
-                        <button onclick="handleCoinAction('telegram', false)" class="sky-btn font-bold text-xs px-4 py-2 rounded-xl cursor-pointer">🛒 للسلة</button>
+                <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg relative" style="min-height: 180px;">
+                    <div class="absolute inset-0 bg-cover bg-center opacity-40" style="background-image: url('${tgBanner}');"></div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent"></div>
+                    <div class="relative z-10 p-4 flex flex-col justify-between h-full gap-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-sky-400 bg-sky-500/20 px-2.5 py-0.5 rounded-full border border-sky-500/40">نجوم تليجرام</span>
+                            <span id="tg_price_display" class="text-xs font-extrabold text-amber-400 font-mono">${tgPkgs[0].price.toLocaleString()} ج.م</span>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-bold text-gray-200 mb-1" for="tg_package_select">اختر الباقة:</label>
+                            <select id="tg_package_select" onchange="updateCoinPrice('tg')" class="w-full bg-slate-950/90 border border-slate-700 rounded-xl p-2 text-xs text-sky-300 font-bold outline-none">
+                                ${tgPkgs.map((s, idx) => `<option value="${idx}" data-price="${s.price}">${s.stars.toLocaleString()} نجمة (${s.price} ج.م)</option>`).join('')}
+                            </select>
+                        </div>
+                        <div class="flex gap-2 pt-2 border-t border-slate-800/80">
+                            <button onclick="handleCoinAction('telegram', true)" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs py-2 rounded-xl cursor-pointer shadow">شحن فوري ⚡</button>
+                            <button onclick="handleCoinAction('telegram', false)" class="sky-btn font-bold text-xs px-4 py-2 rounded-xl cursor-pointer shadow">🛒 للسلة</button>
+                        </div>
                     </div>
                 </div>
             `;
