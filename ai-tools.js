@@ -1,5 +1,6 @@
 // ==============================================================================
-// باقات الذكاء الاصطناعي و مفاتيح APIs
+// Migo AI Solution - ai-tools.js
+// باقات الذكاء الاصطناعي و مفاتيح APIs (منظمة بالكامل ومتكاملة مع المتجر)
 // ==============================================================================
 
 const aiProducts = [
@@ -31,3 +32,9 @@ const aiProducts = [
     { id: 'ai_elevenlabs', name: 'ElevenLabs Creator', tag: 'دوبلاج وأصوات AI', price: 1350, desc: '100,000 حرف شهرياً واستنساخ الأصوات بدقة بشرية فائقة' },
     { id: 'ai_muse', name: 'Muse AI', tag: 'توليد ومونتاج ذكي', price: 140, desc: 'حساب كامل مخصص للإنتاج المرئي' }
 ];
+
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = { aiProducts };
+} else {
+  window.aiProducts = aiProducts;
+}
