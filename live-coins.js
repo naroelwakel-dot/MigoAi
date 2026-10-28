@@ -31,13 +31,13 @@ const telegramStarsList = {
   ]
 };
 
-// 3. تطبيقات البث المباشر الـ 6 المعتمدة بكامل باقاتها وبانراتها
+// 3. تطبيقات البث المباشر الـ 6 المعتمدة بكامل باقاتها وبانراتها المحلية الدقيقة
 const liveCoinsData = [
   {
     id: "bigo",
     name: "BIGO Live",
     provider: "شحن بالـ ID",
-    banner: "https://images.unsplash.com/photo-1516251193007-45ef944ab0c6?auto=format&fit=crop&w=1200&q=80",
+    banner: "bigolive.png",
     badge: "شحن فوري بالـ ID ⚡",
     hasZoneId: false,
     apiServiceId: "bigo_live",
@@ -53,7 +53,7 @@ const liveCoinsData = [
     id: "chamet",
     name: "Chamet",
     provider: "تسليم فوري",
-    banner: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=1200&q=80",
+    banner: "chamet.jpeg",
     badge: "تسليم فوري بالمعرّف ⚡",
     hasZoneId: false,
     apiServiceId: "chamet",
@@ -69,7 +69,7 @@ const liveCoinsData = [
     id: "poppo",
     name: "Poppo Live",
     provider: "شحن فوري بالمعرف",
-    banner: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1200&q=80",
+    banner: "poppoplive.jpeg",
     badge: "شحن فوري ⚡",
     hasZoneId: false,
     apiServiceId: "poppo_live",
@@ -103,7 +103,7 @@ const liveCoinsData = [
     id: "sugo",
     name: "SUGO (سوجو)",
     provider: "سوجو الرسمي",
-    banner: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80",
+    banner: "sugo.png",
     badge: "تسليم فوري ⚡",
     hasZoneId: false,
     apiServiceId: "sugo",
@@ -119,7 +119,7 @@ const liveCoinsData = [
     id: "meyo",
     name: "MeYo (ميو)",
     provider: "ميو الرسمي",
-    banner: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=1200&q=80",
+    banner: "meyo.jpeg",
     badge: "تسليم فوري ⚡",
     hasZoneId: false,
     apiServiceId: "meyo",
