@@ -893,6 +893,30 @@
   </div>
 
   <script>
+    // نظام التحديث التلقائي للأسعار بناءً على سعر الدولار اللحظي مع هامش 5 جنيهات
+    async function updateStorePricesAutomatically() {
+        try {
+            const response = await fetch('https://open.er-api.com/v6/latest/USD');
+            const data = await response.json();
+            const currentDollarRate = data.rates.EGP; // سعر الدولار الحالي من الـ API
+            const baseDollarRate = 50; // سعر الصرف المرجعي الذي تم بناء الأسعار الأساسية عليه
+
+            const priceElements = document.querySelectorAll('.auto-price-item');
+            priceElements.forEach(element => {
+                const baseEgpPrice = parseFloat(element.getAttribute('data-base-egp')) || 0;
+                if (baseEgpPrice > 0) {
+                    const adjustedPrice = (baseEgpPrice / baseDollarRate) * currentDollarRate;
+                    const finalEgpPrice = Math.round(adjustedPrice + 5); // إضافة هامش 5 جنيهات لحظياً
+                    element.innerText = `${finalEgpPrice.toLocaleString()} ج.م`;
+                }
+            });
+        } catch (error) {
+            console.error("تعذر تحديث الأسعار تلقائياً:", error);
+        }
+    }
+
+    window.addEventListener('DOMContentLoaded', updateStorePricesAutomatically);
+
     // دعم عرض QR كود بينانس مباشرة عند اختيار طريقة الدفع
     const originalSelectPaymentMethod = window.selectPaymentMethod;
     window.selectPaymentMethod = function(type, title, el) {
