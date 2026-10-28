@@ -4,6 +4,7 @@
 // ==============================================================================
 
 const USD_TO_EGP = 62; 
+const BASE_DOLLAR_RATE = 50; // سعر الصرف المرجعي الثابت الذي قمت بتسعير منتجاتك بناءً عليه
 const USERS_STORAGE_KEY = 'migo_registered_users_v2';
 const SESSION_STORAGE_KEY = 'migo_active_member_v2';
 const CART_STORAGE_KEY = 'migo_cart_v2';
@@ -145,6 +146,13 @@ const purchaseTemplates = [
     { act: "شحن 1400 كوينز تيك توك", icon: '🪙' },
     { act: "شحن 500 نجمة تليجرام", icon: '⭐' }
 ];
+
+// دالة حساب الأسعار التلقائية بناءً على سعر الدولار الحالي وهامش الـ 5 جنيه
+function calculateAutoPrice(basePriceEGP) {
+    if (!basePriceEGP || isNaN(basePriceEGP)) return 0;
+    const adjusted = (basePriceEGP / BASE_DOLLAR_RATE) * USD_TO_EGP;
+    return Math.round(adjusted + 5);
+}
 
 function showToast(msg, type = 'success') {
     const container = document.getElementById('toastContainer');
@@ -317,10 +325,10 @@ function updateCardPriceDisplay(prefix, itemId) {
     if (!selectEl || !priceDisplayEl) return;
 
     const selectedOption = selectEl.options[selectEl.selectedIndex];
-    const price = selectedOption.getAttribute('data-price');
-    if (price) {
-        priceDisplayEl.innerText = Number(price).toLocaleString() + ' ج.م';
-    }
+    const basePrice = parseFloat(selectedOption.getAttribute('data-price')) || 0;
+    const finalPrice = calculateAutoPrice(basePrice);
+    
+    priceDisplayEl.innerText = finalPrice.toLocaleString() + ' ج.م';
 }
 
 // دمج وعرض صور قسم تيك توك وتليجرام كخلفيات للبطاقات بتصميم دقيق
@@ -330,6 +338,7 @@ function renderCoinsAndStars() {
         if (ttContainer) {
             const ttBanner = tiktokCoinsList.banner || "images (6).jpeg";
             const ttPkgs = tiktokCoinsList.packages || tiktokCoinsList;
+            const defaultFinalPrice = calculateAutoPrice(ttPkgs[0].price);
             ttContainer.innerHTML = `
                 <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg relative" style="min-height: 180px;">
                     <div class="absolute inset-0 bg-cover bg-center opacity-40" style="background-image: url('${ttBanner}');"></div>
@@ -337,12 +346,12 @@ function renderCoinsAndStars() {
                     <div class="relative z-10 p-4 flex flex-col justify-between h-full gap-3">
                         <div class="flex items-center justify-between">
                             <span class="text-xs font-bold text-pink-400 bg-pink-500/20 px-2.5 py-0.5 rounded-full border border-pink-500/40">عملات تيك توك</span>
-                            <span id="tt_price_display" class="text-xs font-extrabold text-amber-400 font-mono">${ttPkgs[0].price.toLocaleString()} ج.م</span>
+                            <span id="tt_price_display" class="text-xs font-extrabold text-amber-400 font-mono">${defaultFinalPrice.toLocaleString()} ج.م</span>
                         </div>
                         <div>
                             <label class="block text-[11px] font-bold text-gray-200 mb-1" for="tt_package_select">اختر الباقة:</label>
                             <select id="tt_package_select" onchange="updateCoinPrice('tt')" class="w-full bg-slate-950/90 border border-slate-700 rounded-xl p-2 text-xs text-pink-300 font-bold outline-none">
-                                ${ttPkgs.map((c, idx) => `<option value="${idx}" data-price="${c.price}">${c.coins.toLocaleString()} عملة (${c.price} ج.م)</option>`).join('')}
+                                ${ttPkgs.map((c, idx) => `<option value="${idx}" data-price="${c.price}">${c.coins.toLocaleString()} عملة (${calculateAutoPrice(c.price)} ج.م)</option>`).join('')}
                             </select>
                         </div>
                         <div class="flex gap-2 pt-2 border-t border-slate-800/80">
@@ -359,6 +368,7 @@ function renderCoinsAndStars() {
         if (tgContainer) {
             const tgBanner = telegramStarsList.banner || "telegram.jpeg";
             const tgPkgs = telegramStarsList.packages || telegramStarsList;
+            const defaultFinalPrice = calculateAutoPrice(tgPkgs[0].price);
             tgContainer.innerHTML = `
                 <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg relative" style="min-height: 180px;">
                     <div class="absolute inset-0 bg-cover bg-center opacity-40" style="background-image: url('${tgBanner}');"></div>
@@ -366,12 +376,12 @@ function renderCoinsAndStars() {
                     <div class="relative z-10 p-4 flex flex-col justify-between h-full gap-3">
                         <div class="flex items-center justify-between">
                             <span class="text-xs font-bold text-sky-400 bg-sky-500/20 px-2.5 py-0.5 rounded-full border border-sky-500/40">نجوم تليجرام</span>
-                            <span id="tg_price_display" class="text-xs font-extrabold text-amber-400 font-mono">${tgPkgs[0].price.toLocaleString()} ج.م</span>
+                            <span id="tg_price_display" class="text-xs font-extrabold text-amber-400 font-mono">${defaultFinalPrice.toLocaleString()} ج.م</span>
                         </div>
                         <div>
                             <label class="block text-[11px] font-bold text-gray-200 mb-1" for="tg_package_select">اختر الباقة:</label>
                             <select id="tg_package_select" onchange="updateCoinPrice('tg')" class="w-full bg-slate-950/90 border border-slate-700 rounded-xl p-2 text-xs text-sky-300 font-bold outline-none">
-                                ${tgPkgs.map((s, idx) => `<option value="${idx}" data-price="${s.price}">${s.stars.toLocaleString()} نجمة (${s.price} ج.م)</option>`).join('')}
+                                ${tgPkgs.map((s, idx) => `<option value="${idx}" data-price="${s.price}">${s.stars.toLocaleString()} نجمة (${calculateAutoPrice(s.price)} ج.م)</option>`).join('')}
                             </select>
                         </div>
                         <div class="flex gap-2 pt-2 border-t border-slate-800/80">
@@ -389,8 +399,9 @@ function updateCoinPrice(type) {
     const sel = document.getElementById(type === 'tt' ? 'tt_package_select' : 'tg_package_select');
     const disp = document.getElementById(type === 'tt' ? 'tt_price_display' : 'tg_price_display');
     if (!sel || !disp) return;
-    const price = sel.options[sel.selectedIndex].getAttribute('data-price');
-    disp.innerText = Number(price).toLocaleString() + ' ج.م';
+    const basePrice = parseFloat(sel.options[sel.selectedIndex].getAttribute('data-price')) || 0;
+    const finalPrice = calculateAutoPrice(basePrice);
+    disp.innerText = finalPrice.toLocaleString() + ' ج.م';
 }
 
 function handleCoinAction(type, isExpress) {
@@ -403,8 +414,9 @@ function handleCoinAction(type, isExpress) {
     const pkg = list[idx];
     const name = type === 'tiktok' ? 'تيك توك كوينز' : 'نجوم تليجرام';
     const label = type === 'tiktok' ? `${pkg.coins} عملة` : `${pkg.stars} نجمة`;
+    const finalPrice = calculateAutoPrice(pkg.price);
 
-    openPlayerIdModal(name, label, pkg.price, isExpress, type);
+    openPlayerIdModal(name, label, finalPrice, isExpress, type);
 }
 
 function renderGames() {
@@ -416,7 +428,7 @@ function renderGames() {
         const pkgs = g.packages || [];
         const bannerUrl = g.banner || "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80";
         const badgeText = g.badge || "شحن فوري ⚡";
-        const defaultPrice = pkgs.length ? pkgs[0].price : 0;
+        const defaultPrice = pkgs.length ? calculateAutoPrice(pkgs[0].price) : 0;
 
         return `
             <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg">
@@ -438,7 +450,7 @@ function renderGames() {
                             <span id="game_price_${g.id}" class="text-xs font-extrabold text-amber-400 font-mono">${defaultPrice.toLocaleString()} ج.م</span>
                         </div>
                         <select id="game_pkg_${g.id}" onchange="updateCardPriceDisplay('game', '${g.id}')" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-xs text-emerald-300 font-bold outline-none">
-                            ${pkgs.map((pkg, idx) => `<option value="${idx}" data-price="${pkg.price}">${pkg.name} — ${pkg.price} ج.م</option>`).join('')}
+                            ${pkgs.map((pkg, idx) => `<option value="${idx}" data-price="${pkg.price}">${pkg.name} — ${calculateAutoPrice(pkg.price)} ج.م</option>`).join('')}
                         </select>
                     </div>
 
@@ -458,8 +470,9 @@ function handleGameAction(gameId, isExpress) {
     const selectEl = document.getElementById(`game_pkg_${gameId}`);
     const idx = selectEl ? parseInt(selectEl.value, 10) : 0;
     const pkg = game.packages[idx] || game.packages[0];
+    const finalPrice = calculateAutoPrice(pkg.price);
 
-    openPlayerIdModal(game.name, pkg.name, pkg.price, isExpress, game.id);
+    openPlayerIdModal(game.name, pkg.name, finalPrice, isExpress, game.id);
 }
 
 function renderLiveApps() {
@@ -471,7 +484,7 @@ function renderLiveApps() {
         const pkgs = app.packages || [];
         const bannerUrl = app.banner || "https://images.unsplash.com/photo-1516251193007-45ef944ab0c6?auto=format&fit=crop&w=1200&q=80";
         const badgeText = app.badge || "بث مباشر 🔴";
-        const defaultPrice = pkgs.length ? pkgs[0].price : 0;
+        const defaultPrice = pkgs.length ? calculateAutoPrice(pkgs[0].price) : 0;
 
         return `
             <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg">
@@ -492,7 +505,7 @@ function renderLiveApps() {
                             <span id="live_price_${app.id}" class="text-xs font-extrabold text-amber-400 font-mono">${defaultPrice.toLocaleString()} ج.م</span>
                         </div>
                         <select id="live_pkg_${app.id}" onchange="updateCardPriceDisplay('live', '${app.id}')" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-xs text-rose-300 font-bold outline-none">
-                            ${pkgs.map((pkg, idx) => `<option value="${idx}" data-price="${pkg.price}">${pkg.name} — ${pkg.price} ج.م</option>`).join('')}
+                            ${pkgs.map((pkg, idx) => `<option value="${idx}" data-price="${pkg.price}">${pkg.name} — ${calculateAutoPrice(pkg.price)} ج.م</option>`).join('')}
                         </select>
                     </div>
                     <div class="flex gap-2 pt-2 border-t border-slate-800">
@@ -511,8 +524,9 @@ function handleLiveAction(appId, isExpress) {
     const selectEl = document.getElementById(`live_pkg_${appId}`);
     const idx = selectEl ? parseInt(selectEl.value, 10) : 0;
     const pkg = app.packages[idx] || app.packages[0];
+    const finalPrice = calculateAutoPrice(pkg.price);
 
-    openPlayerIdModal(app.name, pkg.name, pkg.price, isExpress, app.id);
+    openPlayerIdModal(app.name, pkg.name, finalPrice, isExpress, app.id);
 }
 
 function renderVccCards() {
@@ -521,7 +535,7 @@ function renderVccCards() {
     if (!container || !list.length) return;
 
     container.innerHTML = list.map(v => {
-        const price = v.priceEgp || 0;
+        const price = calculateAutoPrice(v.priceEgp || 0);
         const bannerUrl = v.banner || "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=1200&q=80";
         return `
             <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg">
@@ -549,7 +563,7 @@ function openVccModal(vccId) {
     const list = (typeof vccData !== 'undefined') ? vccData : [];
     selectedVccItem = list.find(x => x.id === vccId);
     if (!selectedVccItem) return;
-    const price = selectedVccItem.priceEgp || 0;
+    const price = calculateAutoPrice(selectedVccItem.priceEgp || 0);
 
     const t = document.getElementById('vccModalTitle');
     const p = document.getElementById('vccModalPrice');
@@ -576,7 +590,7 @@ function submitVccModal(isExpress) {
     const purpose = pu ? pu.value.trim() : '';
     if (!email) return showToast('أدخل البريد الإلكتروني لاستلام بيانات البطاقة', 'error');
 
-    const price = selectedVccItem.priceEgp || 0;
+    const price = calculateAutoPrice(selectedVccItem.priceEgp || 0);
     const item = {
         id: selectedVccItem.id + '_' + Date.now(),
         name: selectedVccItem.name,
@@ -598,7 +612,7 @@ function renderProductivity() {
 
     container.innerHTML = subList.map(p => {
         const pkgs = p.packages || [{ name: p.name, price: 0 }];
-        const defaultPrice = pkgs[0].price;
+        const defaultPrice = calculateAutoPrice(pkgs[0].price);
         const bannerUrl = p.banner || "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=1200&q=80";
 
         return `
@@ -643,7 +657,7 @@ function renderEntertainment() {
 
     container.innerHTML = subList.map(e => {
         const pkgs = e.packages || [{ name: e.name, price: 0 }];
-        const defaultPrice = pkgs[0].price;
+        const defaultPrice = calculateAutoPrice(pkgs[0].price);
         const bannerUrl = e.banner || "https://images.unsplash.com/photo-1522869635100-9f4c5e86aa37?auto=format&fit=crop&w=1200&q=80";
 
         return `
@@ -706,7 +720,7 @@ function renderAI() {
 
     container.innerHTML = aiList.map(a => {
         const pkgs = a.packages || [{ name: a.name, price: 0 }];
-        const defaultPrice = pkgs[0].price;
+        const defaultPrice = calculateAutoPrice(pkgs[0].price);
         const bannerUrl = a.banner || "https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=1200&q=80";
 
         return `
@@ -767,11 +781,13 @@ function handleSubscriptionAction(itemId, isExpress = false) {
         selectedPkg = item.packages[parseInt(selectEl.value, 10)] || item.packages[0];
     }
 
+    const finalPrice = calculateAutoPrice(selectedPkg.price);
+
     const cartItem = {
         id: `${item.id}_${Date.now()}`,
         name: `${item.name} (${selectedPkg.duration || selectedPkg.name})`,
         type: item.category || 'ai',
-        price: selectedPkg.price,
+        price: finalPrice,
         details: item.description
     };
 
@@ -841,7 +857,8 @@ function onSMMCategoryChange() {
 
     if (srvSelect) {
         srvSelect.innerHTML = availableServices.map(srv => {
-            return `<option value="${srv.id}">#${srv.id} - ${srv.name} (${srv.pricePer1k} ج.م / 1k)</option>`;
+            const adjustedSmmPrice = calculateAutoPrice(srv.pricePer1k);
+            return `<option value="${srv.id}">#${srv.id} - ${srv.name} (${adjustedSmmPrice} ج.م / 1k)</option>`;
         }).join('');
     }
     onSMMServiceChange();
@@ -863,11 +880,13 @@ function onSMMServiceChange() {
     const limits = document.getElementById('smmLimitsNote');
     const meta = document.getElementById('smmServiceMeta');
 
+    const adjustedSmmPrice = calculateAutoPrice(srv.pricePer1k);
+
     if (badgeId) badgeId.innerText = 'ID: #' + srv.id;
     if (limits) limits.innerText = `الحدود: ${srv.min.toLocaleString()} - ${srv.max.toLocaleString()}`;
     if (meta) {
         meta.innerHTML = `
-            <span class="bg-amber-500/15 text-amber-400 border border-amber-500/30 px-2.5 py-0.5 rounded-lg font-mono font-bold">لكل 1,000: ${srv.pricePer1k} ج.م</span>
+            <span class="bg-amber-500/15 text-amber-400 border border-amber-500/30 px-2.5 py-0.5 rounded-lg font-mono font-bold">لكل 1,000: ${adjustedSmmPrice} ج.م</span>
             <span class="text-gray-400 text-[10px]">${srv.speed || 'بدء فوري وتلقائي ⚡'}</span>
         `;
     }
@@ -879,7 +898,10 @@ function calculateSMMCost() {
     if (!srv) return 0;
     const qtyInp = document.getElementById('smmQtyInput');
     const qty = Math.max(srv.min, parseFloat(qtyInp ? qtyInp.value : srv.min) || srv.min);
-    const totalEGP = Math.round(((qty / 1000) * srv.pricePer1k) * 100) / 100;
+    
+    const adjustedSmmPrice = calculateAutoPrice(srv.pricePer1k);
+    const totalEGP = Math.round(((qty / 1000) * adjustedSmmPrice) * 100) / 100;
+    
     const priceEl = document.getElementById('smmPriceEGP');
     if (priceEl) priceEl.innerText = totalEGP.toFixed(2) + ' ج.م';
     return totalEGP;
@@ -1207,7 +1229,7 @@ function handleLiveSearch(query) {
     if (typeof gamesData !== 'undefined') {
         gamesData.forEach(g => {
             if (g.name.toLowerCase().includes(query)) {
-                g.packages.forEach(pkg => results.push({ name: `${g.name} (${pkg.name})`, price: pkg.price, type: 'game', key: g.id, pkg: pkg.name }));
+                g.packages.forEach(pkg => results.push({ name: `${g.name} (${pkg.name})`, price: calculateAutoPrice(pkg.price), type: 'game', key: g.id, pkg: pkg.name }));
             }
         });
     }
@@ -1215,7 +1237,7 @@ function handleLiveSearch(query) {
     if (typeof liveCoinsData !== 'undefined') {
         liveCoinsData.forEach(app => {
             if (app.name.toLowerCase().includes(query)) {
-                app.packages.forEach(pkg => results.push({ name: `${app.name} (${pkg.name})`, price: pkg.price, type: 'live', key: app.id, pkg: pkg.name }));
+                app.packages.forEach(pkg => results.push({ name: `${app.name} (${pkg.name})`, price: calculateAutoPrice(pkg.price), type: 'live', key: app.id, pkg: pkg.name }));
             }
         });
     }
@@ -1224,7 +1246,7 @@ function handleLiveSearch(query) {
         const ttPkgs = tiktokCoinsList.packages || tiktokCoinsList;
         ttPkgs.forEach(c => {
             if (`تيك توك كوينز tiktok ${c.coins}`.toLowerCase().includes(query)) {
-                results.push({ name: `تيك توك (${c.coins} عملة)`, price: c.price, type: 'coin_tiktok', coins: c.coins });
+                results.push({ name: `تيك توك (${c.coins} عملة)`, price: calculateAutoPrice(c.price), type: 'coin_tiktok', coins: c.coins });
             }
         });
     }
@@ -1233,7 +1255,7 @@ function handleLiveSearch(query) {
         const tgPkgs = telegramStarsList.packages || telegramStarsList;
         tgPkgs.forEach(s => {
             if (`تليجرام نجوم telegram ${s.stars}`.toLowerCase().includes(query)) {
-                results.push({ name: `تليجرام (${s.stars} نجمة)`, price: s.price, type: 'coin_tg', stars: s.stars });
+                results.push({ name: `تليجرام (${s.stars} نجمة)`, price: calculateAutoPrice(s.price), type: 'coin_tg', stars: s.stars });
             }
         });
     }
@@ -1242,7 +1264,7 @@ function handleLiveSearch(query) {
         smmPlatforms.forEach(p => {
             if (p.name.toLowerCase().includes(query)) {
                 p.services.forEach(srv => {
-                    results.push({ name: `${p.name} - ${srv.name}`, price: srv.pricePer1k, type: 'smm', platformId: p.id });
+                    results.push({ name: `${p.name} - ${srv.name}`, price: calculateAutoPrice(srv.pricePer1k), type: 'smm', platformId: p.id });
                 });
             }
         });
@@ -1251,7 +1273,7 @@ function handleLiveSearch(query) {
     if (typeof subscriptionsData !== 'undefined') {
         subscriptionsData.forEach(sub => {
             if (sub.name.toLowerCase().includes(query) || (sub.description && sub.description.toLowerCase().includes(query))) {
-                results.push({ name: sub.name, price: sub.packages[0].price, type: 'sub', id: sub.id });
+                results.push({ name: sub.name, price: calculateAutoPrice(sub.packages[0].price), type: 'sub', id: sub.id });
             }
         });
     }
@@ -1259,7 +1281,7 @@ function handleLiveSearch(query) {
     if (typeof vccData !== 'undefined') {
         vccData.forEach(v => {
             if (v.name.toLowerCase().includes(query)) {
-                results.push({ name: v.name, price: v.priceEgp, type: 'vcc', id: v.id });
+                results.push({ name: v.name, price: calculateAutoPrice(v.priceEgp), type: 'vcc', id: v.id });
             }
         });
     }
