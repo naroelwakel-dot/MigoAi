@@ -1349,16 +1349,23 @@ window.onload = function() {
     } catch (e) {}
     try { renderReviews(); } catch (e) {}
 
-    setInterval(() => { 
-        currentSlide = (currentSlide + 1) % 3; 
-        updateSlider(); 
-    }, 5000);
-    setTimeout(triggerSocialProof, 3500);
+setInterval(() => { 
+    currentSlide = (currentSlide + 1) % 3; 
+    updateSlider(); 
+}, 5000);
 
-    document.addEventListener('click', (e) => {
-        if (!e.target.closest('#liveSearchInput') && !e.target.closest('#searchResultsDropdown')) {
-            const dd = document.getElementById('searchResultsDropdown');
-            if (dd) dd.classList.add('hidden');
-        }
-    });
-};
+setTimeout(triggerSocialProof, 3500);
+
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('#liveSearchInput') && !e.target.closest('#searchResultsDropdown')) {
+        const dd = document.getElementById('searchResultsDropdown');
+        if (dd) dd.classList.add('hidden');
+    }
+});
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', window.onload);
+} else {
+    window.onload();
+}
+    
