@@ -51,7 +51,7 @@ const SMM_ICONS = {
     trovo: "fas fa-gamepad text-green-500"
 };
 
-// بيانات وسائل الدفع المعتمدة الـ 13 (مع الحذف التام لأورانج كاش ورقمها)
+// بيانات وسائل الدفع المعتمدة الـ 13
 const PAYMENT_METHODS_DATA = {
     vodafone: {
         title: "فودافون كاش",
@@ -146,10 +146,10 @@ const purchaseTemplates = [
     { act: "شحن 500 نجمة تليجرام", icon: '⭐' }
 ];
 
-// دالة حساب السعر المباشرة والمضبوطة تماماً (عرض السعر الأساسي + 5 جنيه هامش ثابت دون تضخم)
+// دالة حساب السعر المباشرة والمضبوطة تماماً (عرض السعر الأساسي كما هو دون تضخم)
 function calculateAutoPrice(basePrice) {
     if (!basePrice || isNaN(basePrice)) return 0;
-    return Math.round(Number(basePrice) + 5);
+    return Math.round(Number(basePrice));
 }
 
 function showToast(msg, type = 'success') {
@@ -329,7 +329,6 @@ function updateCardPriceDisplay(prefix, itemId) {
     priceDisplayEl.innerText = finalPrice.toLocaleString() + ' ج.م';
 }
 
-// دمج وعرض صور قسم تيك توك وتليجرام كخلفيات للبطاقات بتصميم دقيق
 function renderCoinsAndStars() {
     if (typeof tiktokCoinsList !== 'undefined') {
         const ttContainer = document.getElementById('tiktokCoinsGrid');
@@ -794,7 +793,7 @@ function handleSubscriptionAction(itemId, isExpress = false) {
 }
 
 // ==============================================================================
-// محرك السوشيال ميديا (مع تصحيح ربط وعرض البانر والأيقونة بدقة تامة لكل منصة)
+// محرك السوشيال ميديا
 // ==============================================================================
 function renderSMMPlatforms() {
     if (typeof smmPlatforms === 'undefined' || !smmPlatforms.length) return;
@@ -830,7 +829,6 @@ function selectSMMPlatform(pid) {
     const iconClass = SMM_ICONS[currentSMMPlatform.id] || currentSMMPlatform.icon || "fas fa-share-alt text-sky-400";
     if (iconContainer) iconContainer.innerHTML = `<i class="${iconClass} text-xl"></i>`;
     
-    // التحديث الفوري والدقيق لبانر المنصة المحددة
     if (bannerImg && currentSMMPlatform.banner) {
         bannerImg.src = currentSMMPlatform.banner;
     }
@@ -1253,7 +1251,7 @@ function handleLiveSearch(query) {
         const tgPkgs = telegramStarsList.packages || telegramStarsList;
         tgPkgs.forEach(s => {
             if (`تليجرام نجوم telegram ${s.stars}`.toLowerCase().includes(query)) {
-                results.push({ name: `تليجرام (${s.stars} نجمة)`, price: calculateAutoPrice(c.price), type: 'coin_tg', stars: s.stars });
+                results.push({ name: `تليجرام (${s.stars} نجمة)`, price: calculateAutoPrice(s.price), type: 'coin_tg', stars: s.stars });
             }
         });
     }
@@ -1441,7 +1439,7 @@ window.onload = function() {
     try { loadCartFromStorage(); } catch (e) {}
     try { renderCoinsAndStars(); } catch (e) {}
     try { renderLiveApps(); } catch (e) {}
-    try { renderVccCards(); }
+    try { renderVccCards(); } catch (e) {}
     try { renderGames(); } catch (e) {}
     try { renderProductivity(); } catch (e) {}
     try { renderEntertainment(); } catch (e) {}
