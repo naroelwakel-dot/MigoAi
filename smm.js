@@ -28,7 +28,7 @@ const vccData = [
     name: "بطاقة VCC دولية (50$)",
     balanceUsd: 50,
     priceEgp: 3100,
-    banner: "https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=1200&q=80",
+    banner: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=1200&q=80",
     badge: "رصيد مميز ⚡",
     description: "مثالية للمدفوعات والحملات الإعلانية واشتراكات المطورين."
   },
