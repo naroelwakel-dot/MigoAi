@@ -1,6 +1,6 @@
 // ==============================================================================
 // Migo AI Solution - games.js
-// قاعدة بيانات الألعاب الـ 16 المعتمدة بالكامل - مطابقة دقيقة 100% لأصل ملفك
+// قاعدة بيانات الألعاب الـ 16 المعتمدة بالكامل - مطابقة دقيقة 100%
 // ==============================================================================
 
 const gamesData = [
@@ -126,7 +126,7 @@ const gamesData = [
     id: "mlbb",
     name: "موبايل ليجندز (MLBB)",
     provider: "تسليم فوري",
-    banner: "pubg.jpg",
+    banner: "mobilelegend.jbg",
     badge: "يتطلب Zone ID 🎯",
     hasZoneId: true,
     zoneLabel: "معرّف السيرفر (Zone ID)",
@@ -206,6 +206,7 @@ const gamesData = [
     id: "arenabreakout",
     name: "أرينا بريك آوت (Arena)",
     provider: "Level Infinite",
+    banner: "arena.jbg",
     badge: "تسليم فوري بالمعرّف ⚡",
     hasZoneId: false,
     apiServiceId: "arena_breakout",
@@ -249,7 +250,6 @@ const gamesData = [
     id: "topeleven",
     name: "توب إلفن (Top Eleven)",
     provider: "Nordeus",
-    banner: "efootball.jpg",
     badge: "رموز وتوكنز فورية ⚡",
     hasZoneId: false,
     apiServiceId: "top_eleven",
