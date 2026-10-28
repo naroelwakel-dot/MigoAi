@@ -1,121 +1,109 @@
 // ==============================================================================
 // Migo AI Solution - payments.js
-// بوابة وسائل الدفع الرسمية المعتمدة والكوبونات - مطابقة 100% للصورة المعتمدة
+// بيانات وسائل الدفع المعتمدة بالكامل (بدون أورانج كاش) - مطابقة 100% للمتجر الحي
 // ==============================================================================
 
-const WHATSAPP_INVOICE_NUMBER = "201060934020";
-
-const paymentsConfig = {
-  // 1. المحافظ الإلكترونية المحلية
-  localWallets: [
-    {
-      id: "vodafone_cash",
-      name: "فودافون كاش",
-      number: "01020323432",
-      instruction: "قم بتحويل المبلغ إلى رقم فودافون كاش التالي:"
+const PAYMENT_METHODS_DATA = {
+    vodafone: {
+        title: "فودافون كاش",
+        type: "copy",
+        value: "01020323432",
+        instruction: "قم بالتحويل إلى رقم محفظة فودافون كاش المعتمد:"
     },
-    {
-      id: "etisalat_cash",
-      name: "اتصالات كاش",
-      number: "01146691073",
-      instruction: "قم بتحويل المبلغ إلى رقم اتصالات كاش التالي:"
+    etisalat: {
+        title: "اتصالات كاش",
+        type: "copy",
+        value: "01146691073",
+        instruction: "قم بالتحويل إلى رقم محفظة اتصالات كاش المعتمد:"
     },
-    {
-      id: "instapay",
-      name: "إنستاباي",
-      number: "01146691073",
-      instruction: "قم بالتحويل عبر تطبيق إنستاباي إلى الرقم التالي:"
+    instapay: {
+        title: "إنستاباي (InstaPay)",
+        type: "copy",
+        value: "01146691073",
+        instruction: "قم بالتحويل عبر تطبيق إنستاباي إلى الرقم التالي:"
     },
-    {
-      id: "telda",
-      name: "تيلدا Telda",
-      handle: "@saherbeh",
-      instruction: "أرسل المبلغ عبر تطبيق تلدا إلى المعرف التالي:"
+    telda: {
+        title: "تيلدا Telda",
+        type: "copy",
+        value: "@saherbeh",
+        instruction: "قم بالتحويل عبر تطبيق تلدا إلى المعرّف الشخصي التالي:"
+    },
+    binance: {
+        title: "باينانس باي (Binance Pay)",
+        type: "html",
+        html: `
+            <div class="space-y-2 text-right">
+                <p class="text-xs text-gray-300">الدفع عبر باينانس باي (Binance Pay) متاح بالعملات الرقمية (USDT).</p>
+                <div class="p-3 bg-slate-950 border border-amber-500/30 rounded-xl text-center">
+                    <img src="binance-qr.png.jpg" alt="Binance Pay QR" class="w-36 h-36 mx-auto rounded-lg border border-amber-400 p-1 bg-white mb-2 shadow-lg">
+                    <p class="text-xs text-amber-300 font-extrabold">امسح رمز الـ QR من البطاقة أو اطلب الـ Pay ID عبر واتساب للمتابعة.</p>
+                </div>
+            </div>
+        `
+    },
+    paypal: {
+        title: "PayPal",
+        type: "copy",
+        value: "sahermohamed123456@gmail.com",
+        instruction: "قم بالتحويل إلى بريد PayPal المعتمد (مع تفضيل خيار Friends & Family إن أمكن):"
+    },
+    redotpay: {
+        title: "RedotPay",
+        type: "copy",
+        value: "1217212555",
+        instruction: "قم بالتحويل الداخلي عبر حساب RedotPay إلى معرف المستخدم (User ID):"
+    },
+    cards: {
+        title: "بطاقة بنكية",
+        type: "html",
+        html: `
+            <div class="p-2.5 bg-slate-950 border border-slate-700 rounded-xl text-center">
+                <p class="text-xs text-gray-200 font-bold mb-1">الدفع متاح عبر البطاقات البنكية المباشرة والائتمانية:</p>
+                <p class="text-xs text-sky-400 font-mono font-bold">Visa • Mastercard • Google Pay • Apple Pay</p>
+                <p class="text-[10px] text-gray-400 mt-2">اضغط على زر إرسال الفاتورة عبر واتساب لتزويدك برابط بوابة الدفع الإلكتروني فوراً.</p>
+            </div>
+        `
+    },
+    tamara: {
+        title: "تمارة Tamara",
+        type: "bnpl",
+        text: "خدمة الشراء الآن والدفع لاحقاً عبر تمارة Tamara متاحة بالتقسيط المريح.",
+        notice: "(Contact me to get link)"
+    },
+    valu: {
+        title: "فاليو valU",
+        type: "bnpl",
+        text: "خدمة تقسيط المشتريات عبر فاليو valu بدون دفعة أولى أو فوائد حسب خطتك.",
+        notice: "(Contact me to get link)"
+    },
+    souhoola: {
+        title: "سهولة",
+        type: "bnpl",
+        text: "خدمة التقسيط عبر شركة سهولة Souhoola لجميع الباقات والخدمات.",
+        notice: "(Contact me to get link)"
+    },
+    tabby: {
+        title: "تابي Tabby",
+        type: "bnpl",
+        text: "قسم مشترياتك على 4 دفعات بدون فوائد عبر تابي Tabby.",
+        notice: "(Contact me to get link)"
+    },
+    aman: {
+        title: "أمان Aman",
+        type: "bnpl",
+        text: "خطط تقسيط مرنة عبر خدمات تقسيط أمان Aman.",
+        notice: "(Contact me to get link)"
+    },
+    forsa: {
+        title: "فرصة Forsa",
+        type: "bnpl",
+        text: "شراء وتقسيط فوري لكافة الاشتراكات والألعاب عبر فرصة Forsa.",
+        notice: "(Contact me to get link)"
     }
-  ],
-
-  // 2. وسائل الدفع العالمية والرقمية
-  globalPayments: [
-    {
-      id: "binance_pay",
-      name: "باينانس باي (Binance Pay)",
-      qrImage: "binance-qr.png.jpg",
-      text: "الدفع عبر باينانس باي (Binance Pay) متاح بالعملات الرقمية (USDT).",
-      notice: "امسح رمز الـ QR من البطاقة أو اطلب الـ Pay ID عبر واتساب للمتابعة."
-    },
-    {
-      id: "paypal",
-      name: "PayPal",
-      email: "sahermohamed123456@gmail.com",
-      instruction: "أرسل المبلغ إلى حساب PayPal التالي:"
-    },
-    {
-      id: "redotpay",
-      name: "RedotPay",
-      userId: "1217212555",
-      instruction: "التحويل الداخلي عبر حساب RedotPay إلى User ID التالي:"
-    }
-  ],
-
-  // 3. البطاقات البنكية
-  cardPayments: [
-    {
-      id: "bank_cards",
-      name: "بطاقة بنكية",
-      supported: ["VISA", "Mastercard", "G Pay", "Apple Pay"],
-      instruction: "الدفع متاح عبر جميع البطاقات البنكية المباشرة والائتمانية."
-    }
-  ],
-
-  // 4. خدمات الشراء الآن والدفع لاحقاً والائتمان
-  installmentsBNPL: [
-    {
-      id: "bnpl_services",
-      name: "خدمات الشراء الآن والدفع لاحقاً والائتمان",
-      providers: ["تمارة Tamara", "فاليو valu", "سهولة", "تابي Tabby", "أمان Aman", "فرصة Forsa"],
-      actionNotice: "(Contact me to get link)",
-      instruction: "اختر وسيلة التقسيط وتواصل معنا مباشرة للحصول على الرابط المخصص (Contact me to get link)."
-    }
-  ],
-
-  // 5. أكواد الخصم الرسمية
-  coupons: [
-    { code: "SIAFFC15", discountPercent: 15, active: true },
-    { code: "SIAF15", discountPercent: 15, active: true },
-    { code: "SIAFGAMING15", discountPercent: 15, active: true },
-    { code: "MIGO15", discountPercent: 15, active: true }
-  ]
 };
 
-// دالة فحص وتطبيق كود الخصم
-function applyCouponCode(code, subtotal) {
-  if (!code || typeof code !== "string") {
-    return { valid: false, discountAmount: 0, finalTotal: subtotal, message: "يرجى كتابة الكوبون" };
-  }
-  const cleanCode = code.trim().toUpperCase();
-  const coupon = paymentsConfig.coupons.find(c => c.code === cleanCode && c.active);
-
-  if (!coupon) {
-    return { valid: false, discountAmount: 0, finalTotal: subtotal, message: "كود الخصم غير صحيح" };
-  }
-
-  const discountAmount = Math.round((subtotal * (coupon.discountPercent / 100)) * 100) / 100;
-  const finalTotal = Math.max(0, Math.round((subtotal - discountAmount) * 100) / 100);
-
-  return {
-    valid: true,
-    code: coupon.code,
-    discountPercent: coupon.discountPercent,
-    discountAmount: discountAmount,
-    finalTotal: finalTotal,
-    message: `تم تفعيل خصم ${coupon.discountPercent}% بنجاح`
-  };
-}
-
 if (typeof module !== "undefined" && module.exports) {
-  module.exports = { paymentsConfig, WHATSAPP_INVOICE_NUMBER, applyCouponCode };
+    module.exports = { PAYMENT_METHODS_DATA };
 } else {
-  window.paymentsConfig = paymentsConfig;
-  window.WHATSAPP_INVOICE_NUMBER = WHATSAPP_INVOICE_NUMBER;
-  window.applyCouponCode = applyCouponCode;
+    window.PAYMENT_METHODS_DATA = PAYMENT_METHODS_DATA;
 }
