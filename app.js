@@ -323,20 +323,23 @@ function updateCardPriceDisplay(prefix, itemId) {
     }
 }
 
+// دمج وعرض صور قسم تيك توك وتليجرام ديناميكياً من البانرات المحددة
 function renderCoinsAndStars() {
     if (typeof tiktokCoinsList !== 'undefined') {
         const ttContainer = document.getElementById('tiktokCoinsGrid');
         if (ttContainer) {
+            const ttBanner = tiktokCoinsList.banner || "images (6).jpeg";
+            const ttPkgs = tiktokCoinsList.packages || tiktokCoinsList;
             ttContainer.innerHTML = `
-                <div class="sky-card border p-3 rounded-2xl flex flex-col justify-between gap-3">
-                    <div class="flex items-center justify-between">
+                <div class="sky-card border p-3 rounded-2xl flex flex-col justify-between gap-3 bg-cover bg-center relative overflow-hidden" style="background-image: linear-gradient(rgba(17, 24, 39, 0.90), rgba(17, 24, 39, 0.95)), url('${ttBanner}');">
+                    <div class="flex items-center justify-between relative z-10">
                         <span class="text-xs font-bold text-white">اختر باقة عملات تيك توك:</span>
-                        <span id="tt_price_display" class="text-xs font-extrabold text-amber-400 font-mono">${tiktokCoinsList[0].price.toLocaleString()} ج.م</span>
+                        <span id="tt_price_display" class="text-xs font-extrabold text-amber-400 font-mono">${ttPkgs[0].price.toLocaleString()} ج.م</span>
                     </div>
-                    <select id="tt_package_select" onchange="updateCoinPrice('tt')" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-xs text-pink-300 font-bold outline-none">
-                        ${tiktokCoinsList.map((c, idx) => `<option value="${idx}" data-price="${c.price}">${c.coins.toLocaleString()} عملة (${c.price} ج.م)</option>`).join('')}
+                    <select id="tt_package_select" onchange="updateCoinPrice('tt')" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-xs text-pink-300 font-bold outline-none relative z-10">
+                        ${ttPkgs.map((c, idx) => `<option value="${idx}" data-price="${c.price}">${c.coins.toLocaleString()} عملة (${c.price} ج.م)</option>`).join('')}
                     </select>
-                    <div class="flex gap-2">
+                    <div class="flex gap-2 relative z-10">
                         <button onclick="handleCoinAction('tiktok', true)" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs py-2 rounded-xl cursor-pointer">شحن فوري ⚡</button>
                         <button onclick="handleCoinAction('tiktok', false)" class="sky-btn font-bold text-xs px-4 py-2 rounded-xl cursor-pointer">🛒 للسلة</button>
                     </div>
@@ -347,16 +350,18 @@ function renderCoinsAndStars() {
     if (typeof telegramStarsList !== 'undefined') {
         const tgContainer = document.getElementById('telegramStarsGrid');
         if (tgContainer) {
+            const tgBanner = telegramStarsList.banner || "telegram.jpeg";
+            const tgPkgs = telegramStarsList.packages || telegramStarsList;
             tgContainer.innerHTML = `
-                <div class="sky-card border p-3 rounded-2xl flex flex-col justify-between gap-3">
-                    <div class="flex items-center justify-between">
+                <div class="sky-card border p-3 rounded-2xl flex flex-col justify-between gap-3 bg-cover bg-center relative overflow-hidden" style="background-image: linear-gradient(rgba(17, 24, 39, 0.90), rgba(17, 24, 39, 0.95)), url('${tgBanner}');">
+                    <div class="flex items-center justify-between relative z-10">
                         <span class="text-xs font-bold text-white">اختر باقة نجوم تليجرام:</span>
-                        <span id="tg_price_display" class="text-xs font-extrabold text-amber-400 font-mono">${telegramStarsList[0].price.toLocaleString()} ج.م</span>
+                        <span id="tg_price_display" class="text-xs font-extrabold text-amber-400 font-mono">${tgPkgs[0].price.toLocaleString()} ج.م</span>
                     </div>
-                    <select id="tg_package_select" onchange="updateCoinPrice('tg')" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-xs text-sky-300 font-bold outline-none">
-                        ${telegramStarsList.map((s, idx) => `<option value="${idx}" data-price="${s.price}">${s.stars.toLocaleString()} نجمة (${s.price} ج.م)</option>`).join('')}
+                    <select id="tg_package_select" onchange="updateCoinPrice('tg')" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-xs text-sky-300 font-bold outline-none relative z-10">
+                        ${tgPkgs.map((s, idx) => `<option value="${idx}" data-price="${s.price}">${s.stars.toLocaleString()} نجمة (${s.price} ج.م)</option>`).join('')}
                     </select>
-                    <div class="flex gap-2">
+                    <div class="flex gap-2 relative z-10">
                         <button onclick="handleCoinAction('telegram', true)" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs py-2 rounded-xl cursor-pointer">شحن فوري ⚡</button>
                         <button onclick="handleCoinAction('telegram', false)" class="sky-btn font-bold text-xs px-4 py-2 rounded-xl cursor-pointer">🛒 للسلة</button>
                     </div>
@@ -379,7 +384,8 @@ function handleCoinAction(type, isExpress) {
     const sel = document.getElementById(selId);
     if (!sel) return;
     const idx = parseInt(sel.value, 10);
-    const list = type === 'tiktok' ? tiktokCoinsList : telegramStarsList;
+    const rawList = type === 'tiktok' ? tiktokCoinsList : telegramStarsList;
+    const list = rawList.packages || rawList;
     const pkg = list[idx];
     const name = type === 'tiktok' ? 'تيك توك كوينز' : 'نجوم تليجرام';
     const label = type === 'tiktok' ? `${pkg.coins} عملة` : `${pkg.stars} نجمة`;
@@ -1201,7 +1207,8 @@ function handleLiveSearch(query) {
     }
 
     if (typeof tiktokCoinsList !== 'undefined') {
-        tiktokCoinsList.forEach(c => {
+        const ttPkgs = tiktokCoinsList.packages || tiktokCoinsList;
+        ttPkgs.forEach(c => {
             if (`تيك توك كوينز tiktok ${c.coins}`.toLowerCase().includes(query)) {
                 results.push({ name: `تيك توك (${c.coins} عملة)`, price: c.price, type: 'coin_tiktok', coins: c.coins });
             }
@@ -1209,7 +1216,8 @@ function handleLiveSearch(query) {
     }
 
     if (typeof telegramStarsList !== 'undefined') {
-        telegramStarsList.forEach(s => {
+        const tgPkgs = telegramStarsList.packages || telegramStarsList;
+        tgPkgs.forEach(s => {
             if (`تليجرام نجوم telegram ${s.stars}`.toLowerCase().includes(query)) {
                 results.push({ name: `تليجرام (${s.stars} نجمة)`, price: s.price, type: 'coin_tg', stars: s.stars });
             }
