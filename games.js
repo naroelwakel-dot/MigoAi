@@ -235,7 +235,7 @@ const gamesData = [
     id: "diablo",
     name: "ديابلو إيمورتال (Diablo)",
     provider: "Blizzard",
-    banner: "diabloimmortal.jbg",
+    banner: "diabloimmortal.jpg",
     badge: "شحن أوربس وسيرفرات ⚡",
     hasZoneId: true,
     zoneLabel: "اسم السيرفر (Server Name)",
