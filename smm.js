@@ -451,7 +451,6 @@ const smmPlatforms = [
   }
 ];
 
-// دالة حساب السعر التفاعلي بناءً على معرف الخدمة والكمية
 function calculateSmmCost(serviceId, quantity) {
   let targetService = null;
   for (const plat of smmPlatforms) {
@@ -483,7 +482,6 @@ function calculateSmmCost(serviceId, quantity) {
     };
   }
 
-  // حساب التكلفة الدقيقة بالجنيه المصري لكل 1000 وحدة
   const cost = ((qty / 1000) * targetService.pricePer1k);
   const roundedCost = Math.round(cost * 100) / 100;
 
@@ -496,7 +494,6 @@ function calculateSmmCost(serviceId, quantity) {
   };
 }
 
-// إتاحة البيانات عالمياً
 if (typeof module !== "undefined" && module.exports) {
   module.exports = { vccData, smmPlatforms, calculateSmmCost };
 } else {
