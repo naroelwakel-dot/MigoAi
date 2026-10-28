@@ -10,7 +10,6 @@ const CART_STORAGE_KEY = 'migo_cart_v2';
 const DENO_API_URL = "https://migoai-72.naroelwakel-dot.deno.net";
 const WHATSAPP_NUMBER = "201060934020";
 
-// تهيئة المتغيرات التشغيلية
 let currentSMMPlatform = null;
 let currentSlide = 0;
 let cart = [];
@@ -20,7 +19,6 @@ let isExpressModal = false;
 let selectedVccItem = null;
 let selectedPayment = null;
 
-// أكواد الخصم المعتمدة
 const validCoupons = {
     'SIAFFC15': { discount: 0.15 },
     'SIAF15': { discount: 0.15 },
@@ -29,7 +27,6 @@ const validCoupons = {
     'WELCOME10': { discount: 0.10 }
 };
 
-// خريطة أيقونات المنصات الـ 18 لإظهار الشعارات الرسمية الملونة بدقة
 const SMM_ICONS = {
     tiktok: "fab fa-tiktok text-pink-400",
     facebook: "fab fa-facebook text-blue-500",
@@ -51,7 +48,6 @@ const SMM_ICONS = {
     trovo: "fas fa-gamepad text-green-500"
 };
 
-// بيانات وسائل الدفع المعتمدة (بدون أورانج كاش)
 const PAYMENT_METHODS_DATA = {
     vodafone: {
         title: "فودافون كاش",
@@ -151,7 +147,6 @@ const PAYMENT_METHODS_DATA = {
     }
 };
 
-// تقييمات العملاء الموثقين
 const verifiedReviews = [
     { name: "أحمد عبد الرحمن", service: "ChatGPT Plus", text: "التفعيل تم على إيميلي الشخصي في أقل من نص ساعة، خدمة محترمة ومستقرة.", date: "أكتوبر 2026" },
     { name: "محمد طارق", service: "ببجي 3850 UC", text: "الشدات وصلت فوراً بعد التحويل بالـ ID بس وبدون باسورد.", date: "أكتوبر 2026" },
@@ -161,7 +156,6 @@ const verifiedReviews = [
     { name: "يوسف إبراهيم", service: "Google Gemini Pro", text: "شغال بأعلى كفاءة وبدون VPN، وفر لي الكثير في مشاريع البرمجة والعمل.", date: "أكتوبر 2026" }
 ];
 
-// قوالب إشعارات الشراء المباشرة
 const egyptianNames = ["أحمد م.", "محمد س.", "كريم ع.", "يوسف ط.", "عمر ح.", "سارة م.", "محمود خ.", "زياد ف.", "مصطفى ن.", "نور د."];
 const purchaseTemplates = [
     { act: "طلب Google Gemini Pro (18 شهر)", icon: '✨' },
@@ -178,7 +172,6 @@ const purchaseTemplates = [
     { act: "شحن 500 نجمة تليجرام", icon: '⭐' }
 ];
 
-// دالة التنبيهات السريعة (Toast)
 function showToast(msg, type = 'success') {
     const container = document.getElementById('toastContainer');
     if (!container) return;
@@ -193,7 +186,6 @@ function showToast(msg, type = 'success') {
     }, 3200);
 }
 
-// مؤقت العد التنازلي للخصم
 function initCountdown() {
     let totalSeconds = 5 * 3600 + 42 * 60 + 19;
     setInterval(() => {
@@ -207,7 +199,6 @@ function initCountdown() {
     }, 1000);
 }
 
-// السلايدر العلوي
 function updateSlider() {
     const track = document.getElementById('sliderTrack');
     if (track) track.style.transform = `translateX(${currentSlide * 100}%)`;
@@ -220,7 +211,6 @@ function goToSlide(index) {
     updateSlider(); 
 }
 
-// محاكي إشعارات الشراء المباشرة التلقائية
 function triggerSocialProof() {
     const popup = document.getElementById('socialProofPopup');
     if (!popup) return;
@@ -239,7 +229,6 @@ function triggerSocialProof() {
     setTimeout(triggerSocialProof, Math.floor(Math.random() * 10000) + 12000);
 }
 
-// عداد الزيارات
 function initVisitorCounter() {
     let count = localStorage.getItem('migo_visitors_v4');
     if (!count) count = 1420 + Math.floor(Math.random() * 20);
@@ -249,7 +238,6 @@ function initVisitorCounter() {
     if (counterEl) counterEl.innerText = Number(count).toLocaleString();
 }
 
-// إدارة سلة المشتريات
 function loadCartFromStorage() {
     try { cart = JSON.parse(localStorage.getItem(CART_STORAGE_KEY)) || []; } catch (e) { cart = []; }
     updateCartUI();
@@ -349,7 +337,6 @@ function calculateCartTotal() {
     }
 }
 
-// عرض باقات كوينز تيك توك ونجوم تليجرام
 function renderCoinsAndStars() {
     if (typeof tiktokCoinsList !== 'undefined') {
         const ttContainer = document.getElementById('tiktokCoinsGrid');
@@ -383,7 +370,6 @@ function renderCoinsAndStars() {
     }
 }
 
-// عرض الألعاب الـ 16 بالبانرات الأفقية الواقعية
 function renderGames() {
     const gamesList = (typeof gamesData !== 'undefined') ? gamesData : [];
     const container = document.getElementById('gamesCardsContainer');
@@ -425,7 +411,6 @@ function renderGames() {
     }).join('');
 }
 
-// عرض تطبيقات البث المباشر (Live Apps)
 function renderLiveApps() {
     const liveList = (typeof liveCoinsData !== 'undefined') ? liveCoinsData : [];
     const container = document.getElementById('liveAppsContainer');
@@ -466,7 +451,6 @@ function renderLiveApps() {
     }).join('');
 }
 
-// عرض بطاقات الـ VCC الافتراضية
 function renderVccCards() {
     const list = (typeof vccData !== 'undefined') ? vccData : [];
     const container = document.getElementById('vccCardsContainer');
@@ -541,7 +525,6 @@ function submitVccModal(isExpress) {
     else addToCart(item);
 }
 
-// عرض برامج التصميم والإنتاجية (باستخدام القائمة المنسدلة Select Menu)
 function renderProductivity() {
     const subList = (typeof subscriptionsData !== 'undefined') 
         ? subscriptionsData.filter(s => s.category === 'design' || s.category === 'productivity')
@@ -586,7 +569,6 @@ function renderProductivity() {
     }).join('');
 }
 
-// عرض خدمات البث والترفيه (باستخدام القائمة المنسدلة Select Menu)
 function renderEntertainment() {
     const subList = (typeof subscriptionsData !== 'undefined') 
         ? subscriptionsData.filter(s => s.category === 'entertainment')
@@ -631,7 +613,6 @@ function renderEntertainment() {
     }).join('');
 }
 
-// عرض أدوات الذكاء الاصطناعي (باستخدام القائمة المنسدلة Select Menu)
 function renderAI() {
     const aiList = (typeof subscriptionsData !== 'undefined') 
         ? subscriptionsData.filter(s => s.category === 'ai')
@@ -676,7 +657,6 @@ function renderAI() {
     }).join('');
 }
 
-// دالة تفاعلية لاختيار وتنفيذ باقات الاشتراكات من القائمة المنسدلة
 function handleSubscriptionAction(itemId, isExpress = false) {
     if (typeof subscriptionsData === 'undefined') return;
     const item = subscriptionsData.find(s => s.id === itemId);
@@ -703,9 +683,6 @@ function handleSubscriptionAction(itemId, isExpress = false) {
     else addToCart(cartItem);
 }
 
-// ==============================================================================
-// محرك السوشيال ميديا للمنصات الـ 18
-// ==============================================================================
 function renderSMMPlatforms() {
     if (typeof smmPlatforms === 'undefined' || !smmPlatforms.length) return;
     if (!currentSMMPlatform) currentSMMPlatform = smmPlatforms[0];
@@ -849,7 +826,6 @@ function expressCheckoutSMM() {
     expressCheckout(item);
 }
 
-// نافذة فحص الـ ID المربوطة بسيرفر Deno
 function populateModalGamesList() {
     const select = document.getElementById('modalSelectGame');
     if (!select) return;
@@ -1119,7 +1095,6 @@ function finalizeOrderWhatsApp() {
     window.location.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
 }
 
-// محرك البحث اللحظي والشامل
 function handleLiveSearch(query) {
     const dropdown = document.getElementById('searchResultsDropdown');
     if (!dropdown) return;
@@ -1238,7 +1213,6 @@ function renderReviews() {
     `).join('');
 }
 
-// إدارة العضويات والمستخدمين
 function getRegisteredUsers() { try { return JSON.parse(localStorage.getItem(USERS_STORAGE_KEY)) || []; } catch (e) { return []; } }
 function saveRegisteredUsers(u) { localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(u)); }
 function encodePass(str) { return btoa(unescape(encodeURIComponent('migo_salt_' + str))); }
@@ -1329,7 +1303,7 @@ function toggleSidebar() {
     if (sb) sb.classList.toggle('hidden'); 
 }
 
-// التشغيل الشامل عند تحميل الصفحة
+// التشغيل الشامل عند تحميل الصفحة (بدون أي أخطاء أو أجزاء ناقصة)
 window.onload = function() {
     try { updateNavbarAuthUI(); } catch (e) {}
     try { initVisitorCounter(); } catch (e) {}
@@ -1342,30 +1316,32 @@ window.onload = function() {
     try { renderProductivity(); } catch (e) {}
     try { renderEntertainment(); } catch (e) {}
     try { renderAI(); } catch (e) {}
-    try { renderVccCards(); } catch(e) {}
+    try { renderVccCards(); } catch (e) {}
     try { 
         renderSMMPlatforms(); 
         selectSMMPlatform('tiktok');
     } catch (e) {}
     try { renderReviews(); } catch (e) {}
 
-setInterval(() => { 
-    currentSlide = (currentSlide + 1) % 3; 
-    updateSlider(); 
-}, 5000);
+    setInterval(() => { 
+        currentSlide = (currentSlide + 1) % 3; 
+        updateSlider(); 
+    }, 5000);
+    
+    setTimeout(triggerSocialProof, 3500);
 
-setTimeout(triggerSocialProof, 3500);
-
-document.addEventListener('click', (e) => {
-    if (!e.target.closest('#liveSearchInput') && !e.target.closest('#searchResultsDropdown')) {
-        const dd = document.getElementById('searchResultsDropdown');
-        if (dd) dd.classList.add('hidden');
-    }
-});
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('#liveSearchInput') && !e.target.closest('#searchResultsDropdown')) {
+            const dd = document.getElementById('searchResultsDropdown');
+            if (dd) dd.classList.add('hidden');
+        }
+    });
+};
 
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', window.onload);
+    document.addEventListener('DOMContentLoaded', () => {
+        if (typeof window.onload === 'function') window.onload();
+    });
 } else {
-    window.onload();
+    if (typeof window.onload === 'function') window.onload();
 }
-    
