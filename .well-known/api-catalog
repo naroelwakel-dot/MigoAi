@@ -1,0 +1,13 @@
+{
+  "linkset": [
+    {
+      "anchor": "https://naroelwakel.github.io/MigoAi/",
+      "service-desc": [
+        {
+          "href": "https://naroelwakel.github.io/MigoAi/",
+          "type": "text/html"
+        }
+      ]
+    }
+  ]
+}
