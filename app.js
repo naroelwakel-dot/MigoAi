@@ -4,7 +4,6 @@
 // ==============================================================================
 
 const USD_TO_EGP = 56.02; // سعر الدولار المحدث من السوق
-const BASE_DOLLAR_RATE = 50; // سعر الصرف المرجعي الثابت الذي قمت بتسعير منتجاتك بناءً عليه
 const USERS_STORAGE_KEY = 'migo_registered_users_v2';
 const SESSION_STORAGE_KEY = 'migo_active_member_v2';
 const CART_STORAGE_KEY = 'migo_cart_v2';
@@ -147,11 +146,11 @@ const purchaseTemplates = [
     { act: "شحن 500 نجمة تليجرام", icon: '⭐' }
 ];
 
-// دالة حساب الأسعار التلقائية بناءً على السعر الأساسي وسعر الدولار الحالي وهامش الـ 5 جنيه
-function calculateAutoPrice(basePriceEGP) {
-    if (!basePriceEGP || isNaN(basePriceEGP)) return 0;
-    const adjusted = (basePriceEGP / BASE_DOLLAR_RATE) * USD_TO_EGP;
-    return Math.round(adjusted + 5);
+// دالة حساب الأسعار الصحيحة والمباشرة (ضرب السعر الأساسي بالدولار في سعر الصرف الحالي + 5 جنيه هامش)
+function calculateAutoPrice(basePriceUSD) {
+    if (!basePriceUSD || isNaN(basePriceUSD)) return 0;
+    const finalPrice = (basePriceUSD * USD_TO_EGP) + 5;
+    return Math.round(finalPrice);
 }
 
 function showToast(msg, type = 'success') {
