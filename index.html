@@ -30,27 +30,21 @@
         --border-color: #27354f; 
     }
     * { box-sizing: border-box; }
-    html, body { font-family: 'Tajawal', sans-serif; scroll-behavior: smooth; background-color: var(--bg-main); color: #f8fafc; overflow-x: hidden; margin: 0; padding: 0; }
     
-    .site-bg-video {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        object-fit: cover;
-        z-index: -2;
-        pointer-events: none;
-    }
-    .site-bg-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background: linear-gradient(to bottom, rgba(7, 11, 20, 0.88), rgba(7, 11, 20, 0.94));
-        z-index: -1;
-        pointer-events: none;
+    /* خلفية سينمائية ثابته ومستقرة مستوحاة من أجواء المشهد الأسطوري مع تدرج لاري داكن لضمان وضوح النصوص */
+    body {
+        font-family: 'Tajawal', sans-serif;
+        scroll-behavior: smooth;
+        background-color: var(--bg-main);
+        background-image: linear-gradient(to bottom, rgba(7, 11, 20, 0.85), rgba(7, 11, 20, 0.96)), 
+                          url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1920&auto=format&fit=crop');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        color: #f8fafc;
+        overflow-x: hidden;
+        margin: 0;
+        padding: 0;
     }
 
     .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
@@ -130,12 +124,6 @@
   </style>
  </head>
  <body class="min-h-screen selection:bg-sky-500 selection:text-white pb-24">
-  
-  <!-- فيديو الخلفية باستخدام الرابط المباشر من جيت هاب -->
-  <video autoplay muted loop playsinline class="site-bg-video">
-    <source src="https://github.com/naroelwakel-dot/MigoAi/raw/refs/heads/main/bg.mp4" type="video/mp4">
-  </video>
-  <div class="site-bg-overlay"></div>
 
   <div id="toastContainer" class="fixed top-5 left-5 z-[120] flex flex-col gap-2 pointer-events-none"></div>
 
@@ -905,11 +893,11 @@
    </div>
   </div>
 
-  <script src="games.js?v=2026.21"></script>
-  <script src="live-coins.js?v=2026.21"></script>
-  <script src="subscriptions.js?v=2026.21"></script>
-  <script src="smm.js?v=2026.21"></script>
-  <script src="ai-tools.js?v=2026.21"></script>
-  <script src="app.js?v=2026.21" defer></script>
+  <script src="games.js?v=2026.22"></script>
+  <script src="live-coins.js?v=2026.22"></script>
+  <script src="subscriptions.js?v=2026.22"></script>
+  <script src="smm.js?v=2026.22"></script>
+  <script src="ai-tools.js?v=2026.22"></script>
+  <script src="app.js?v=2026.22" defer></script>
  </body>
 </html>
