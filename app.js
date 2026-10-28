@@ -1,6 +1,5 @@
 // ==============================================================================
-// Migo AI Solution - Core Application Engine (Full Complete File)
-// المحرك التشغيلي الرئيسي المتكامل - بدون أي اختصار أو حذف لسطر واحد
+// Migo AI Solution - Complete Integrated app.js (Includes All Data & Engine)
 // ==============================================================================
 
 const USD_TO_EGP = 62; 
@@ -27,6 +26,576 @@ const validCoupons = {
     'WELCOME10': { discount: 0.10 }
 };
 
+// --- بيانات عملات تيك توك ونجوم تليجرام ---
+const tiktokCoinsList = [
+    { coins: 70, price: 65 },
+    { coins: 350, price: 310 },
+    { coins: 700, price: 620 },
+    { coins: 1400, price: 1230 },
+    { coins: 3500, price: 3050 },
+    { coins: 7000, price: 6100 }
+];
+
+const telegramStarsList = [
+    { stars: 50, price: 110 },
+    { stars: 100, price: 215 },
+    { stars: 250, price: 520 },
+    { stars: 500, price: 1020 },
+    { stars: 1000, price: 2000 }
+];
+
+// --- بيانات بطاقات VCC الدولية ---
+const vccData = [
+    { id: 'vcc_10', name: 'بطاقة افتراضية (10$ USD)', priceEgp: 620, badge: 'فوري وسريع', description: 'مناسبة لتفعيل الاشتراكات البسيطة والمشتريات المصغرة.' },
+    { id: 'vcc_25', name: 'بطاقة افتراضية (25$ USD)', priceEgp: 1550, badge: 'الأكثر طلباً', description: 'مثالية للإعلانات الممولة وتفعيل شات جي بي تي وبرامج التصميم.' },
+    { id: 'vcc_50', name: 'بطاقة افتراضية (50$ USD)', priceEgp: 3100, badge: 'صلاحية كاملة', description: 'لإدارة الحملات الإعلانية والمشتريات الكبرى من المتاجر العالمية.' },
+    { id: 'vcc_100', name: 'بطاقة افتراضية (100$ USD)', priceEgp: 6200, badge: 'للشركات', description: 'مخصصة للمطورين وأصحاب الأعمال والميزانيات الإعلانية الضخمة.' }
+];
+
+// --- بيانات الألعاب الـ 16 ---
+const gamesData = [
+    {
+        id: 'pubg',
+        name: 'ببجي موبايل (PUBG Mobile)',
+        badge: 'Midasbuy رسمي ⚡',
+        banner: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80',
+        packages: [
+            { name: '60 UC', price: 50 },
+            { name: '325 UC', price: 250 },
+            { name: '660 UC', price: 490 },
+            { name: '1800 UC', price: 1350 },
+            { name: '3850 UC', price: 3100 },
+            { name: '8100 UC', price: 6150 }
+        ]
+    },
+    {
+        id: 'freefire',
+        name: 'فري فاير (Free Fire)',
+        badge: 'تسليم بالـ ID 💎',
+        banner: 'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=1200&q=80',
+        packages: [
+            { name: '100 جوهرة', price: 45 },
+            { name: '310 جوهرة', price: 135 },
+            { name: '520 جوهرة', price: 220 },
+            { name: '1060 جوهرة', price: 440 },
+            { name: '2180 جوهرة', price: 890 }
+        ]
+    },
+    {
+        id: 'roblox',
+        name: 'روبلوكس (Roblox Robux)',
+        badge: 'روبوكس فوري 🎮',
+        banner: 'https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?auto=format&fit=crop&w=1200&q=80',
+        packages: [
+            { name: '400 Robux', price: 210 },
+            { name: '800 Robux', price: 410 },
+            { name: '1700 Robux', price: 850 },
+            { name: '4500 Robux', price: 2150 }
+        ]
+    },
+    {
+        id: 'mlbb',
+        name: 'موبايل ليجند (Mobile Legends)',
+        badge: 'Diamonds 💎',
+        banner: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80',
+        packages: [
+            { name: '86 الماسات', price: 65 },
+            { name: '172 الماسات', price: 130 },
+            { name: '257 الماسات', price: 195 },
+            { name: '706 الماسات', price: 520 },
+            { name: '2195 الماسات', price: 1550 }
+        ]
+    },
+    {
+        id: 'cod',
+        name: 'كول أوف ديوتي (Call of Duty)',
+        badge: 'CP رسمي 🔥',
+        banner: 'https://images.unsplash.com/photo-1560253023-3ec5d502959f?auto=format&fit=crop&w=1200&q=80',
+        packages: [
+            { name: '80 CP', price: 60 },
+            { name: '420 CP', price: 290 },
+            { name: '880 CP', price: 580 },
+            { name: '2400 CP', price: 1450 },
+            { name: '5000 CP', price: 2900 }
+        ]
+    },
+    {
+        id: 'brawlstars',
+        name: 'براول ستارز (Brawl Stars)',
+        badge: 'Gems ⚡',
+        banner: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1200&q=80',
+        packages: [
+            { name: '30 جوهرة', price: 90 },
+            { name: '80 جوهرة', price: 220 },
+            { name: '170 جوهرة', price: 430 },
+            { name: '360 جوهرة', price: 890 }
+        ]
+    },
+    {
+        id: 'genshin',
+        name: 'جينشين إمباكت (Genshin Impact)',
+        badge: 'Crystals ✨',
+        banner: 'https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?auto=format&fit=crop&w=1200&q=80',
+        packages: [
+            { name: '60 كريستال', price: 55 },
+            { name: '300 كريستال', price: 260 },
+            { name: '980 كريستال', price: 790 },
+            { name: '1980 كريستال', price: 1550 }
+        ]
+    },
+    {
+        id: 'valorant',
+        name: 'فالورانت (Valorant Points)',
+        badge: 'VP نقاط 🎯',
+        banner: 'https://images.unsplash.com/photo-1542751110-97427bbecf20?auto=format&fit=crop&w=1200&q=80',
+        packages: [
+            { name: '475 VP', price: 230 },
+            { name: '1000 VP', price: 460 },
+            { name: '2050 VP', price: 920 },
+            { name: '3650 VP', price: 1600 }
+        ]
+    },
+    {
+        id: 'fortnite',
+        name: 'فورتنايت (Fortnite V-Bucks)',
+        badge: 'V-Bucks 🌴',
+        banner: 'https://images.unsplash.com/photo-1589241062272-c0a000071dfa?auto=format&fit=crop&w=1200&q=80',
+        packages: [
+            { name: '1000 V-Bucks', price: 380 },
+            { name: '2800 V-Bucks', price: 950 },
+            { name: '5000 V-Bucks', price: 1500 }
+        ]
+    },
+    {
+        id: 'clashofclans',
+        name: 'كلاش أوف كلانس (Clash of Clans)',
+        badge: 'Gems 🛡️',
+        banner: 'https://images.unsplash.com/photo-1534423861386-85a16f5d13fd?auto=format&fit=crop&w=1200&q=80',
+        packages: [
+            { name: '80 جوهرة', price: 60 },
+            { name: '500 جوهرة', price: 320 },
+            { name: '1200 جوهرة', price: 650 },
+            { name: '2500 جوهرة', price: 1300 }
+        ]
+    },
+    {
+        id: 'fifa',
+        name: 'إي إيه سبورتس فيفا (EA Sports FC)',
+        badge: 'FIFA Points ⚽',
+        banner: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=1200&q=80',
+        packages: [
+            { name: '1050 Points', price: 450 },
+            { name: '2200 Points', price: 920 },
+            { name: '4600 Points', price: 1850 }
+        ]
+    },
+    {
+        id: 'wildrift',
+        name: 'ليجندز وايلد ريفت (Wild Rift)',
+        badge: 'Wild Cores 🌀',
+        banner: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1200&q=80',
+        packages: [
+            { name: '500 Cores', price: 220 },
+            { name: '1000 Cores', price: 430 },
+            { name: '2000 Cores', price: 850 }
+        ]
+    },
+    {
+        id: 'arenabreakout',
+        name: 'أرينا بريك آوت (Arena Breakout)',
+        badge: 'Bonds 🔫',
+        banner: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80',
+        packages: [
+            { name: '60 Bonds', price: 55 },
+            { name: '300 Bonds', price: 270 },
+            { name: '680 Bonds', price: 590 }
+        ]
+    },
+    {
+        id: 'honorofkings',
+        name: 'هونر أوف كينجز (Honor of Kings)',
+        badge: 'Tokens 👑',
+        banner: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80',
+        packages: [
+            { name: '80 Tokens', price: 50 },
+            { name: '240 Tokens', price: 150 },
+            { name: '560 Tokens', price: 340 },
+            { name: '1200 Tokens', price: 710 }
+        ]
+    },
+    {
+        id: 'diablo',
+        name: 'ديابلو إيمورتال (Diablo Immortal)',
+        badge: 'Eternal Orbs 🔮',
+        banner: 'https://images.unsplash.com/photo-1560253023-3ec5d502959f?auto=format&fit=crop&w=1200&q=80',
+        packages: [
+            { name: '60 Orbs', price: 65 },
+            { name: '315 Orbs', price: 320 },
+            { name: '630 Orbs', price: 630 }
+        ]
+    },
+    {
+        id: 'topeleven',
+        name: 'توب إلفن (Top Eleven Tokens)',
+        badge: 'Tokens ⚽',
+        banner: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=1200&q=80',
+        packages: [
+            { name: '49 Tokens', price: 120 },
+            { name: '105 Tokens', price: 240 },
+            { name: '220 Tokens', price: 490 }
+        ]
+    }
+];
+
+// --- بيانات برامج اللايف الـ 6 ---
+const liveCoinsData = [
+    {
+        id: 'bigo',
+        name: 'بيجو لايف (BIGO LIVE)',
+        badge: 'ماس فوري 🔴',
+        banner: 'https://images.unsplash.com/photo-1516251193007-45ef944ab0c6?auto=format&fit=crop&w=1200&q=80',
+        packages: [
+            { name: '210 ماسة', price: 75 },
+            { name: '423 ماسة', price: 150 },
+            { name: '848 ماسة', price: 300 },
+            { name: '2120 ماسة', price: 740 },
+            { name: '5300 ماسة', price: 1820 }
+        ]
+    },
+    {
+        id: 'chamet',
+        name: 'شامت (Chamet)',
+        badge: 'شحن بالـ ID ✨',
+        banner: 'https://images.unsplash.com/photo-1522869635100-9f4c5e86aa37?auto=format&fit=crop&w=1200&q=80',
+        packages: [
+            { name: '62,000 كوينز', price: 190 },
+            { name: '310,000 كوينز', price: 920 },
+            { name: '620,000 كوينز', price: 1820 }
+        ]
+    },
+    {
+        id: 'poppo',
+        name: 'بوبو لايف (Poppo Live)',
+        badge: 'كوينزات 🪙',
+        banner: 'https://images.unsplash.com/photo-1579373903781-fd5c0c30c4cd?auto=format&fit=crop&w=1200&q=80',
+        packages: [
+            { name: '7,000 كوينز', price: 45 },
+            { name: '35,000 كوينز', price: 210 },
+            { name: '70,000 كوينز', price: 410 },
+            { name: '350,000 كوينز', price: 2000 }
+        ]
+    },
+    {
+        id: 'yallaludo',
+        name: 'يلا لودو (Yalla Ludo)',
+        badge: 'جواهر وذهب 🎲',
+        banner: 'https://images.unsplash.com/photo-1612287230202-1ff1d85d1bdf?auto=format&fit=crop&w=1200&q=80',
+        packages: [
+            { name: '107 جوهرة', price: 65 },
+            { name: '319 جوهرة', price: 190 },
+            { name: '660 جوهرة', price: 380 },
+            { name: '2211 جوهرة', price: 1250 }
+        ]
+    },
+    {
+        id: 'sugo',
+        name: 'سوجو (SUGO)',
+        badge: 'عملات رسمية 🎙️',
+        banner: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1200&q=80',
+        packages: [
+            { name: '500 عملة', price: 90 },
+            { name: '2000 عملة', price: 350 },
+            { name: '5000 عملة', price: 850 }
+        ]
+    },
+    {
+        id: 'meyo',
+        name: 'مييو (MeYo)',
+        badge: 'شحن فوري 💬',
+        banner: 'https://images.unsplash.com/photo-1560253023-3ec5d502959f?auto=format&fit=crop&w=1200&q=80',
+        packages: [
+            { name: '500 ماسة', price: 85 },
+            { name: '1500 ماسة', price: 250 },
+            { name: '5000 ماسة', price: 820 }
+        ]
+    }
+];
+
+// --- بيانات الاشتراكات والبرامج (الترفيه، الإنتاجية، الذكاء الاصطناعي) ---
+const subscriptionsData = [
+    {
+        id: 'chatgpt_plus',
+        name: 'ChatGPT Plus (شات جي بي تي)',
+        category: 'ai',
+        badge: 'رسمي 100%',
+        banner: 'https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=1200&q=80',
+        description: 'تفعيل اشتراك GPT-4o على إيميلك الشخصي مع ضمان كامل طوال المدة.',
+        packages: [
+            { name: 'اشتراك شهر كامل', price: 650, duration: 'شهر' }
+        ]
+    },
+    {
+        id: 'gemini_advanced',
+        name: 'Google Gemini Advanced',
+        category: 'ai',
+        badge: 'تفعيل شخصي ✨',
+        banner: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80',
+        description: 'أقوى نموذج ذكاء اصطناعي من جوجل مع مساحة 2 تيرابايت.',
+        packages: [
+            { name: 'اشتراك شهري', price: 550, duration: 'شهر' },
+            { name: 'باقة 18 شهر (توفير كبرى)', price: 1850, duration: '18 شهر' }
+        ]
+    },
+    {
+        id: 'claude_pro',
+        name: 'Claude 3.5 Sonnet Pro',
+        category: 'ai',
+        badge: 'للمطورين 🧠',
+        banner: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=1200&q=80',
+        description: 'الحساب الأقوى للبرمجة وكتابة النصوص والأكواد بدقة متناهية.',
+        packages: [
+            { name: 'اشتراك شهر كامل', price: 720, duration: 'شهر' }
+        ]
+    },
+    {
+        id: 'midjourney',
+        name: 'Midjourney AI (تصميم الصور)',
+        category: 'ai',
+        badge: 'تصميم احترافي 🎨',
+        banner: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80',
+        description: 'توليد أروع الصور والتصاميم بالذكاء الاصطناعي.',
+        packages: [
+            { name: 'باقة Basic (شهر)', price: 450, duration: 'شهر' },
+            { name: 'باقة Standard (شهر)', price: 850, duration: 'شهر' }
+        ]
+    },
+    {
+        id: 'canva_pro',
+        name: 'Canva Pro (كانفا برو)',
+        category: 'design',
+        badge: 'أدوات التصميم 🖌️',
+        banner: 'https://images.unsplash.com/photo-1626785774573-4b799315345d?auto=format&fit=crop&w=1200&q=80',
+        description: 'صلاحيات التصميم المفتوحة وقوالب برو الاحترافية.',
+        packages: [
+            { name: 'اشتراك رسمي (سنة كاملة)', price: 250, duration: 'سنة' }
+        ]
+    },
+    {
+        id: 'adobe_cc',
+        name: 'Adobe Creative Cloud',
+        category: 'design',
+        badge: 'برامج أدوبي 💻',
+        banner: 'https://images.unsplash.com/photo-1542744094-3a31246a969f?auto=format&fit=crop&w=1200&q=80',
+        description: 'جميع برامج أدوبي (فوتوشوب، بريمير، إليستريتور) رسمية.',
+        packages: [
+            { name: 'اشتراك شهر كامل', price: 950, duration: 'شهر' }
+        ]
+    },
+    {
+        id: 'netflix',
+        name: 'Netflix Premium (نتفلكس)',
+        category: 'entertainment',
+        badge: 'شاشة خاصة 📺',
+        banner: 'https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?auto=format&fit=crop&w=1200&q=80',
+        description: 'جودة 4K Ultra HD مع شاشة خاصة برقم سري.',
+        packages: [
+            { name: 'شاشة خاصة (شهر)', price: 150, duration: 'شهر' },
+            { name: 'حساب كامل (شهر)', price: 450, duration: 'شهر' }
+        ]
+    },
+    {
+        id: 'shahid_vip',
+        name: 'Shahid VIP (شاهد)',
+        category: 'entertainment',
+        badge: 'مسلسلات وأفلام 🎬',
+        banner: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=1200&q=80',
+        description: 'اشتراك رسمي لمتابعة أحدث الأعمال العربية والعالمية.',
+        packages: [
+            { name: 'اشتراك شهر كامل', price: 120, duration: 'شهر' },
+            { name: 'اشتراك 3 أشهر', price: 320, duration: '3 أشهر' }
+        ]
+    },
+    {
+        id: 'youtube_premium',
+        name: 'YouTube Premium (يوتيوب بريميوم)',
+        category: 'entertainment',
+        badge: 'بدون إعلانات 🎵',
+        banner: 'https://images.unsplash.com/photo-1611162617474-5baf9e8ba09a?auto=format&fit=crop&w=1200&q=80',
+        description: 'يوتيوب بدون إعلانات مع تشغيل في الخلفية وميوزك.',
+        packages: [
+            { name: 'اشتراك شهر', price: 75, duration: 'شهر' },
+            { name: 'اشتراك 6 أشهر', price: 350, duration: '6 أشهر' }
+        ]
+    },
+    {
+        id: 'spotify',
+        name: 'Spotify Premium (سبوتيفاي)',
+        category: 'entertainment',
+        badge: 'موسيقى لاפו 🎧',
+        banner: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1200&q=80',
+        description: 'استماع موسيقى بجودة عالية بدون إعلانات.',
+        packages: [
+            { name: 'اشتراك شهر', price: 80, duration: 'شهر' },
+            { name: 'اشتراك 3 أشهر', price: 210, duration: '3 أشهر' }
+        ]
+    }
+];
+
+// --- بيانات منصات السوشيال ميديا الـ 18 ---
+const smmPlatforms = [
+    {
+        id: 'tiktok',
+        name: 'تيك توك (TikTok)',
+        banner: 'https://images.unsplash.com/photo-1611605698335-8b1569810432?auto=format&fit=crop&w=1200&q=80',
+        services: [
+            { id: '101', name: 'متابعين تيك توك (جودة عالية)', category: 'متابعين', min: 100, max: 50000, pricePer1k: 95 },
+            { id: '102', name: 'لايكات تيك توك متفاعلة', category: 'تفاعل', min: 100, max: 100000, pricePer1k: 35 },
+            { id: '103', name: 'مشاهدات تيك توك (سريع جداً)', category: 'مشاهدات', min: 1000, max: 1000000, pricePer1k: 5 }
+        ]
+    },
+    {
+        id: 'instagram',
+        name: 'انستقرام (Instagram)',
+        banner: 'https://images.unsplash.com/photo-1611262588024-d12430b98920?auto=format&fit=crop&w=1200&q=80',
+        services: [
+            { id: '201', name: 'متابعين انستقرام ضمان 30 يوم', category: 'متابعين', min: 100, max: 20000, pricePer1k: 110 },
+            { id: '202', name: 'لايكات منشورات انستقرام', category: 'تفاعل', min: 50, max: 50000, pricePer1k: 40 },
+            { id: '203', name: 'مشاهدات ريلز انستقرام', category: 'مشاهدات', min: 500, max: 500000, pricePer1k: 10 }
+        ]
+    },
+    {
+        id: 'telegram',
+        name: 'تليجرام (Telegram)',
+        banner: 'https://images.unsplash.com/photo-1614680376593-902f749f7ffc?auto=format&fit=crop&w=1200&q=80',
+        services: [
+            { id: '301', name: 'أعضاء قناة تليجرام حقيقيين', category: 'متابعين', min: 100, max: 30000, pricePer1k: 130 },
+            { id: '302', name: 'مشاهدات منشورات تليجرام', category: 'مشاهدات', min: 100, max: 100000, pricePer1k: 8 }
+        ]
+    },
+    {
+        id: 'youtube',
+        name: 'يوتيوب (YouTube)',
+        banner: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80',
+        services: [
+            { id: '401', name: 'مشتركين قناة يوتيوب', category: 'متابعين', min: 100, max: 10000, pricePer1k: 350 },
+            { id: '402', name: 'ساعات مشاهدة يوتيوب (حقيقية)', category: 'تفاعل', min: 500, max: 4000, pricePer1k: 450 }
+        ]
+    },
+    {
+        id: 'facebook',
+        name: 'فيسبوك (Facebook)',
+        banner: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=1200&q=80',
+        services: [
+            { id: '501', name: 'متابعين صفحة فيسبوك', category: 'متابعين', min: 100, max: 20000, pricePer1k: 150 },
+            { id: '502', name: 'لايكات منشور فيسبوك', category: 'تفاعل', min: 100, max: 10000, pricePer1k: 50 }
+        ]
+    },
+    {
+        id: 'twitter',
+        name: 'إكس / تويتر (X)',
+        banner: 'https://images.unsplash.com/photo-1611605698335-8b1569810432?auto=format&fit=crop&w=1200&q=80',
+        services: [
+            { id: '601', name: 'متابعين إكس (Twitter X)', category: 'متابعين', min: 100, max: 10000, pricePer1k: 180 }
+        ]
+    },
+    {
+        id: 'snapchat',
+        name: 'سناب شات (Snapchat)',
+        banner: 'https://images.unsplash.com/photo-1611262588024-d12430b98920?auto=format&fit=crop&w=1200&q=80',
+        services: [
+            { id: '701', name: 'مشتركين سناب شات', category: 'متابعين', min: 100, max: 10000, pricePer1k: 200 }
+        ]
+    },
+    {
+        id: 'twitch',
+        name: 'تويتش (Twitch)',
+        banner: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80',
+        services: [
+            { id: '801', name: 'متابعين قناة تويتش', category: 'متابعين', min: 100, max: 5000, pricePer1k: 120 }
+        ]
+    },
+    {
+        id: 'kwai',
+        name: 'كواي (Kwai)',
+        banner: 'https://images.unsplash.com/photo-1516251193007-45ef944ab0c6?auto=format&fit=crop&w=1200&q=80',
+        services: [
+            { id: '901', name: 'متابعين كواي', category: 'متابعين', min: 100, max: 10000, pricePer1k: 90 }
+        ]
+    },
+    {
+        id: 'linkedin',
+        name: 'لينكد إن (LinkedIn)',
+        banner: 'https://images.unsplash.com/photo-1616469829941-c7200edec809?auto=format&fit=crop&w=1200&q=80',
+        services: [
+            { id: '1001', name: 'متابعين حساب لينكد إن', category: 'متابعين', min: 50, max: 5000, pricePer1k: 250 }
+        ]
+    },
+    {
+        id: 'discord',
+        name: 'ديسكورد (Discord)',
+        banner: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80',
+        services: [
+            { id: '1101', name: 'أعضاء سيرفر ديسكورد متفاعلين', category: 'متابعين', min: 100, max: 10000, pricePer1k: 140 }
+        ]
+    },
+    {
+        id: 'spotify_smm',
+        name: 'سبوتيفاي (Spotify SMM)',
+        banner: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1200&q=80',
+        services: [
+            { id: '1201', name: 'استماع أغاني سبوتيفاي', category: 'تفاعل', min: 1000, max: 100000, pricePer1k: 30 }
+        ]
+    },
+    {
+        id: 'soundcloud',
+        name: 'ساوند كلاود (SoundCloud)',
+        banner: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1200&q=80',
+        services: [
+            { id: '1301', name: 'استماع تراكات ساوند كلاود', category: 'تفاعل', min: 1000, max: 50000, pricePer1k: 25 }
+        ]
+    },
+    {
+        id: 'pinterest',
+        name: 'بينترست (Pinterest)',
+        banner: 'https://images.unsplash.com/photo-1611262588024-d12430b98920?auto=format&fit=crop&w=1200&q=80',
+        services: [
+            { id: '1401', name: 'متابعين بينترست', category: 'متابعين', min: 100, max: 10000, pricePer1k: 110 }
+        ]
+    },
+    {
+        id: 'threads',
+        name: 'ثريدز (Threads)',
+        banner: 'https://images.unsplash.com/photo-1611605698335-8b1569810432?auto=format&fit=crop&w=1200&q=80',
+        services: [
+            { id: '1501', name: 'متابعين ثريدز', category: 'متابعين', min: 100, max: 10000, pricePer1k: 100 }
+        ]
+    },
+    {
+        id: 'reddit',
+        name: 'ريديت (Reddit)',
+        banner: 'https://images.unsplash.com/photo-1614680376593-902f749f7ffc?auto=format&fit=crop&w=1200&q=80',
+        services: [
+            { id: '1601', name: 'أعضاء ومتابعين ريديت', category: 'متابعين', min: 50, max: 5000, pricePer1k: 160 }
+        ]
+    },
+    {
+        id: 'kick',
+        name: 'كيك (Kick)',
+        banner: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80',
+        services: [
+            { id: '1701', name: 'متابعين قناة كيك (Kick)', category: 'متابعين', min: 100, max: 10000, pricePer1k: 130 }
+        ]
+    },
+    {
+        id: 'trovo',
+        name: 'تروفو (Trovo)',
+        banner: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1200&q=80',
+        services: [
+            { id: '1801', name: 'متابعين تروفو', category: 'متابعين', min: 100, max: 10000, pricePer1k: 110 }
+        ]
+    }
+];
+
 const SMM_ICONS = {
     tiktok: "fab fa-tiktok text-pink-400",
     facebook: "fab fa-facebook text-blue-500",
@@ -48,142 +617,48 @@ const SMM_ICONS = {
     trovo: "fas fa-gamepad text-green-500"
 };
 
+// --- بيانات وسائل الدفع المعتمدة (بدون أورانج كاش) ---
 const PAYMENT_METHODS_DATA = {
-    vodafone: {
-        title: "فودافون كاش",
-        type: "copy",
-        value: "01020323432",
-        instruction: "قم بالتحويل إلى رقم محفظة فودافون كاش المعتمد:"
-    },
-    etisalat: {
-        title: "اتصالات كاش",
-        type: "copy",
-        value: "01146691073",
-        instruction: "قم بالتحويل إلى رقم محفظة اتصالات كاش المعتمد:"
-    },
-    instapay: {
-        title: "إنستاباي (InstaPay)",
-        type: "copy",
-        value: "01146691073",
-        instruction: "قم بالتحويل عبر تطبيق إنستاباي إلى الرقم التالي:"
-    },
-    telda: {
-        title: "تيلدا Telda",
-        type: "copy",
-        value: "@saherbeh",
-        instruction: "قم بالتحويل عبر تطبيق تلدا إلى المعرّف الشخصي التالي:"
-    },
-    binance: {
-        title: "باينانس باي (Binance Pay)",
-        type: "html",
-        html: `
-            <div class="space-y-2 text-right">
-                <p class="text-xs text-gray-300">الدفع عبر باينانس باي (Binance Pay) متاح بالعملات الرقمية (USDT).</p>
-                <div class="p-3 bg-slate-950 border border-amber-500/30 rounded-xl text-center">
-                    <img src="binance-qr.png.jpg" alt="Binance Pay QR" class="w-36 h-36 mx-auto rounded-lg border border-amber-400 p-1 bg-white mb-2 shadow-lg">
-                    <p class="text-xs text-amber-300 font-extrabold">امسح رمز الـ QR من البطاقة أو اطلب الـ Pay ID عبر واتساب للمتابعة.</p>
-                </div>
-            </div>
-        `
-    },
-    paypal: {
-        title: "PayPal",
-        type: "copy",
-        value: "sahermohamed123456@gmail.com",
-        instruction: "قم بالتحويل إلى بريد PayPal المعتمد (مع تفضيل خيار Friends & Family إن أمكن):"
-    },
-    redotpay: {
-        title: "RedotPay",
-        type: "copy",
-        value: "1217212555",
-        instruction: "قم بالتحويل الداخلي عبر حساب RedotPay إلى معرف المستخدم (User ID):"
-    },
-    cards: {
-        title: "بطاقة بنكية",
-        type: "html",
-        html: `
-            <div class="p-2.5 bg-slate-950 border border-slate-700 rounded-xl text-center">
-                <p class="text-xs text-gray-200 font-bold mb-1">الدفع متاح عبر البطاقات البنكية المباشرة والائتمانية:</p>
-                <p class="text-xs text-sky-400 font-mono font-bold">Visa • Mastercard • Google Pay • Apple Pay</p>
-                <p class="text-[10px] text-gray-400 mt-2">اضغط على زر إرسال الفاتورة عبر واتساب لتزويدك برابط بوابة الدفع الإلكتروني فوراً.</p>
-            </div>
-        `
-    },
-    tamara: {
-        title: "تمارة Tamara",
-        type: "bnpl",
-        text: "خدمة الشراء الآن والدفع لاحقاً عبر تمارة Tamara متاحة بالتقسيط المريح.",
-        notice: "(Contact me to get link)"
-    },
-    valu: {
-        title: "فاليو valU",
-        type: "bnpl",
-        text: "خدمة تقسيط المشتريات عبر فاليو valu بدون دفعة أولى أو فوائد حسب خطتك.",
-        notice: "(Contact me to get link)"
-    },
-    souhoola: {
-        title: "سهولة",
-        type: "bnpl",
-        text: "خدمة التقسيط عبر شركة سهولة Souhoola لجميع الباقات والخدمات.",
-        notice: "(Contact me to get link)"
-    },
-    tabby: {
-        title: "تابي Tabby",
-        type: "bnpl",
-        text: "قسم مشترياتك على 4 دفعات بدون فوائد عبر تابي Tabby.",
-        notice: "(Contact me to get link)"
-    },
-    aman: {
-        title: "أمان Aman",
-        type: "bnpl",
-        text: "خطط تقسيط مرنة عبر خدمات تقسيط أمان Aman.",
-        notice: "(Contact me to get link)"
-    },
-    forsa: {
-        title: "فرصة Forsa",
-        type: "bnpl",
-        text: "شراء وتقسيط فوري لكافة الاشتراكات والألعاب عبر فرصة Forsa.",
-        notice: "(Contact me to get link)"
-    }
+    vodafone: { title: "فودافون كاش", type: "copy", value: "01020323432", instruction: "قم بالتحويل إلى رقم محفظة فودافون كاش المعتمد:" },
+    etisalat: { title: "اتصالات كاش", type: "copy", value: "01146691073", instruction: "قم بالتحويل إلى رقم محفظة اتصالات كاش المعتمد:" },
+    instapay: { title: "إنستاباي (InstaPay)", type: "copy", value: "01146691073", instruction: "قم بالتحويل عبر تطبيق إنستاباي إلى الرقم التالي:" },
+    telda: { title: "تيلدا Telda", type: "copy", value: "@saherbeh", instruction: "قم بالتحويل عبر تطبيق تلدا إلى المعرّف الشخصي التالي:" },
+    binance: { title: "باينانس باي", type: "html", html: `<div class="p-3 bg-slate-950 border border-amber-500/30 rounded-xl text-center"><p class="text-xs text-amber-300 font-bold">الدفع عبر Binance Pay متاح بالعملات الرقمية (USDT).</p></div>` },
+    paypal: { title: "PayPal", type: "copy", value: "sahermohamed123456@gmail.com", instruction: "قم بالتحويل إلى بريد PayPal المعتمد:" },
+    redotpay: { title: "RedotPay", type: "copy", value: "1217212555", instruction: "قم بالتحويل الداخلي عبر حساب RedotPay إلى المعرف:" },
+    cards: { title: "بطاقة بنكية", type: "html", html: `<div class="p-2.5 bg-slate-950 rounded-xl text-center"><p class="text-xs text-sky-400 font-bold">Visa • Mastercard • Google Pay • Apple Pay</p></div>` },
+    tamara: { title: "تمارة Tamara", type: "bnpl", text: "الشراء الآن والدفع لاحقاً عبر تمارة." },
+    valu: { title: "فاليو valU", type: "bnpl", text: "خدمة تقسيط المشتريات عبر فاليو." },
+    souhoola: { title: "سهولة", type: "bnpl", text: "خدمة التقسيط عبر سهولة." },
+    tabby: { title: "تابي Tabby", type: "bnpl", text: "قسم مشترياتك على 4 دفعات بدون فوائد." },
+    aman: { title: "أمان Aman", type: "bnpl", text: "خطط تقسيط أمان." },
+    forsa: { title: "فرصة Forsa", type: "bnpl", text: "تقسيط فوري عبر فرصة." }
 };
 
 const verifiedReviews = [
-    { name: "أحمد عبد الرحمن", service: "ChatGPT Plus", text: "التفعيل تم على إيميلي الشخصي في أقل من نص ساعة، خدمة محترمة ومستقرة.", date: "أكتوبر 2026" },
-    { name: "محمد طارق", service: "ببجي 3850 UC", text: "الشدات وصلت فوراً بعد التحويل بالـ ID بس وبدون باسورد.", date: "أكتوبر 2026" },
-    { name: "محمود إبراهيم", service: "بطاقة VCC (50$)", text: "استلمت بيانات الكارت واشتغلت في إعلانات الفيسبوك بدون أي رفض.", date: "أكتوبر 2026" },
-    { name: "سارة م.", service: "Canva Pro Admin", text: "الحساب شغال بصلاحيات الأدمن كاملة وممتاز لفريقي في التصميم.", date: "أكتوبر 2026" },
-    { name: "خالد وائل", service: "بيجو لايف (848 ماسة)", text: "الماسات نزلت في حسابي فوراً بعد الفحص بالـ ID، متجر ثقة.", date: "أكتوبر 2026" },
-    { name: "يوسف إبراهيم", service: "Google Gemini Pro", text: "شغال بأعلى كفاءة وبدون VPN، وفر لي الكثير في مشاريع البرمجة والعمل.", date: "أكتوبر 2026" }
+    { name: "أحمد عبد الرحمن", service: "ChatGPT Plus", text: "التفعيل تم على إيميلي الشخصي في أقل من نص ساعة.", date: "أكتوبر 2026" },
+    { name: "محمد طارق", service: "ببجي 3850 UC", text: "الشدات وصلت فوراً بعد التحويل بالـ ID.", date: "أكتوبر 2026" },
+    { name: "محمود إبراهيم", service: "بطاقة VCC (50$)", text: "استلمت بيانات الكارت واشتغلت في إعلانات الفيسبوك بدون رفض.", date: "أكتوبر 2026" },
+    { name: "سارة م.", service: "Canva Pro Admin", text: "الحساب شغال بصلاحيات الأدمن كاملة.", date: "أكتوبر 2026" }
 ];
 
-const egyptianNames = ["أحمد م.", "محمد س.", "كريم ع.", "يوسف ط.", "عمر ح.", "سارة م.", "محمود خ.", "زياد ف.", "مصطفى ن.", "نور د."];
+const egyptianNames = ["أحمد م.", "محمد س.", "كريم ع.", "يوسف ط.", "عمر ح.", "سارة م.", "محمود خ."];
 const purchaseTemplates = [
-    { act: "طلب Google Gemini Pro (18 شهر)", icon: '✨' },
+    { act: "طلب Google Gemini Pro", icon: '✨' },
     { act: "شحن 3850 UC ببجي موبايل", icon: '🎮' },
-    { act: "شحن 7000 كوينز بوبو لايف", icon: '🔴' },
-    { act: "طلب بطاقة افتراضية VCC (25$)", icon: '💳' },
-    { act: "تفعيل اشتراك ChatGPT Plus", icon: '🤖' },
-    { act: "تفعيل Adobe Creative Cloud (شهر)", icon: '🎨' },
-    { act: "شحن 583 جوهرة فري فاير", icon: '💎' },
-    { act: "تفعيل اشتراك Canva Pro", icon: '🖌️' },
-    { act: "شحن 848 ماسة بيجو لايف", icon: '🔴' },
-    { act: "تفعيل اشتراك شاهد VIP", icon: '📺' },
-    { act: "شحن 1400 كوينز تيك توك", icon: '🪙' },
-    { act: "شحن 500 نجمة تليجرام", icon: '⭐' }
+    { act: "طلب بطاقة افتراضية VCC", icon: '💳' },
+    { act: "تفعيل اشتراك ChatGPT Plus", icon: '🤖' }
 ];
 
 function showToast(msg, type = 'success') {
     const container = document.getElementById('toastContainer');
     if (!container) return;
     const toast = document.createElement('div');
-    toast.className = `p-3 rounded-xl shadow-2xl text-xs font-bold text-white transition-all transform duration-300 -translate-x-full flex items-center gap-2 ${type === 'success' ? 'bg-emerald-600 border border-emerald-400' : 'bg-red-600 border border-red-400'}`;
+    toast.className = `p-3 rounded-xl shadow-2xl text-xs font-bold text-white transition-all transform duration-300 -translate-x-full flex items-center gap-2 ${type === 'success' ? 'bg-emerald-600' : 'bg-red-600'}`;
     toast.innerHTML = `<span>${type === 'success' ? '✅' : '❌'}</span><span>${msg}</span>`;
     container.appendChild(toast);
     setTimeout(() => toast.classList.remove('-translate-x-full'), 10);
-    setTimeout(() => { 
-        toast.classList.add('-translate-x-full'); 
-        setTimeout(() => toast.remove(), 300); 
-    }, 3200);
+    setTimeout(() => { toast.classList.add('-translate-x-full'); setTimeout(() => toast.remove(), 300); }, 3200);
 }
 
 function initCountdown() {
@@ -206,10 +681,7 @@ function updateSlider() {
     dots.forEach((dot, idx) => dot.classList.toggle('active', idx === currentSlide));
 }
 
-function goToSlide(index) { 
-    currentSlide = index; 
-    updateSlider(); 
-}
+function goToSlide(index) { currentSlide = index; updateSlider(); }
 
 function triggerSocialProof() {
     const popup = document.getElementById('socialProofPopup');
@@ -263,16 +735,14 @@ function removeFromCart(cartId) {
 function openCartModal() {
     const m = document.getElementById('cartModal');
     if (!m) return;
-    m.classList.remove('hidden');
-    m.classList.add('flex');
+    m.classList.remove('hidden'); m.classList.add('flex');
     updateCartUI();
 }
 
 function closeCartModal() {
     const m = document.getElementById('cartModal');
     if (!m) return;
-    m.classList.add('hidden');
-    m.classList.remove('flex');
+    m.classList.add('hidden'); m.classList.remove('flex');
 }
 
 function updateCartUI() {
@@ -291,7 +761,7 @@ function updateCartUI() {
                     </div>
                     <div class="text-left shrink-0">
                         <div class="text-xs font-black text-amber-400 font-mono">${Number(item.price).toLocaleString()} ج.م</div>
-                        <button onclick="removeFromCart(${item.cartId})" class="text-[10px] text-red-400 hover:text-red-300 cursor-pointer">حذف</button>
+                        <button onclick="removeFromCart(${item.cartId})" class="text-[10px] text-red-400 cursor-pointer">حذف</button>
                     </div>
                 </div>
             `).join('');
@@ -304,7 +774,6 @@ function applyCartCoupon() {
     const inp = document.getElementById('cartCouponInput');
     if (!inp) return;
     const code = inp.value.trim().toUpperCase();
-    if (!code) return showToast('أدخل كود الخصم أولاً', 'error');
     const coupon = validCoupons[code];
     if (!coupon) return showToast('كود غير صالح', 'error');
     appliedCoupon = { code: code, discount: coupon.discount };
@@ -338,163 +807,117 @@ function calculateCartTotal() {
 }
 
 function renderCoinsAndStars() {
-    if (typeof tiktokCoinsList !== 'undefined') {
-        const ttContainer = document.getElementById('tiktokCoinsGrid');
-        if (ttContainer) {
-            ttContainer.innerHTML = tiktokCoinsList.map(c => `
-                <div class="flex items-center justify-between p-2 rounded-xl bg-slate-950 border border-slate-700">
-                    <span class="text-xs font-bold text-gray-200">🪙 ${c.coins.toLocaleString()} عملة</span>
-                    <div class="flex items-center gap-1.5">
-                        <span class="text-xs font-extrabold text-amber-400 font-mono">${c.price.toLocaleString()} ج.م</span>
-                        <button onclick="openPlayerIdModal('تيك توك كوينز', '${c.coins} عملة', ${c.price}, true, 'tiktok')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-[10px] px-2 py-1 rounded-lg cursor-pointer">⚡</button>
-                        <button onclick="openPlayerIdModal('تيك توك كوينز', '${c.coins} عملة', ${c.price}, false, 'tiktok')" class="sky-btn font-bold text-[10px] px-2 py-1 rounded-lg cursor-pointer">🛒</button>
-                    </div>
+    const ttContainer = document.getElementById('tiktokCoinsGrid');
+    if (ttContainer) {
+        ttContainer.innerHTML = tiktokCoinsList.map(c => `
+            <div class="flex items-center justify-between p-2 rounded-xl bg-slate-950 border border-slate-700">
+                <span class="text-xs font-bold text-gray-200">🪙 ${c.coins.toLocaleString()} عملة</span>
+                <div class="flex items-center gap-1.5">
+                    <span class="text-xs font-extrabold text-amber-400 font-mono">${c.price.toLocaleString()} ج.م</span>
+                    <button onclick="openPlayerIdModal('تيك توك كوينز', '${c.coins} عملة', ${c.price}, true, 'tiktok')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-[10px] px-2 py-1 rounded-lg cursor-pointer">⚡</button>
+                    <button onclick="openPlayerIdModal('تيك توك كوينز', '${c.coins} عملة', ${c.price}, false, 'tiktok')" class="sky-btn font-bold text-[10px] px-2 py-1 rounded-lg cursor-pointer">🛒</button>
                 </div>
-            `).join('');
-        }
+            </div>
+        `).join('');
     }
-    if (typeof telegramStarsList !== 'undefined') {
-        const tgContainer = document.getElementById('telegramStarsGrid');
-        if (tgContainer) {
-            tgContainer.innerHTML = telegramStarsList.map(s => `
-                <div class="flex items-center justify-between p-2 rounded-xl bg-slate-950 border border-slate-700">
-                    <span class="text-xs font-bold text-gray-200">⭐ ${s.stars.toLocaleString()} نجمة</span>
-                    <div class="flex items-center gap-1.5">
-                        <span class="text-xs font-extrabold text-amber-400 font-mono">${s.price.toLocaleString()} ج.م</span>
-                        <button onclick="openPlayerIdModal('نجوم تليجرام', '${s.stars} نجمة', ${s.price}, true, 'telegram')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-[10px] px-2 py-1 rounded-lg cursor-pointer">⚡</button>
-                        <button onclick="openPlayerIdModal('نجوم تليجرام', '${s.stars} نجمة', ${s.price}, false, 'telegram')" class="sky-btn font-bold text-[10px] px-2 py-1 rounded-lg cursor-pointer">🛒</button>
-                    </div>
+    const tgContainer = document.getElementById('telegramStarsGrid');
+    if (tgContainer) {
+        tgContainer.innerHTML = telegramStarsList.map(s => `
+            <div class="flex items-center justify-between p-2 rounded-xl bg-slate-950 border border-slate-700">
+                <span class="text-xs font-bold text-gray-200">⭐ ${s.stars.toLocaleString()} نجمة</span>
+                <div class="flex items-center gap-1.5">
+                    <span class="text-xs font-extrabold text-amber-400 font-mono">${s.price.toLocaleString()} ج.م</span>
+                    <button onclick="openPlayerIdModal('نجوم تليجرام', '${s.stars} نجمة', ${s.price}, true, 'telegram')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-[10px] px-2 py-1 rounded-lg cursor-pointer">⚡</button>
+                    <button onclick="openPlayerIdModal('نجوم تليجرام', '${s.stars} نجمة', ${s.price}, false, 'telegram')" class="sky-btn font-bold text-[10px] px-2 py-1 rounded-lg cursor-pointer">🛒</button>
                 </div>
-            `).join('');
-        }
+            </div>
+        `).join('');
     }
 }
 
 function renderGames() {
-    const gamesList = (typeof gamesData !== 'undefined') ? gamesData : [];
     const container = document.getElementById('gamesCardsContainer');
-    if (!container || !gamesList.length) return;
-
-    container.innerHTML = gamesList.map(g => {
-        const pkgs = g.packages || [];
-        const bannerUrl = g.banner || "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80";
-        const badgeText = g.badge || "شحن فوري ⚡";
-        const gameKey = g.id || "pubg";
-
-        return `
-            <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg">
-                <div class="h-28 sm:h-32 relative bg-cover bg-center" style="background-image: url('${bannerUrl}');">
-                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent p-3 flex flex-col justify-between">
-                        <div class="flex justify-between items-start">
-                            <span class="text-[9px] font-bold text-emerald-300 bg-emerald-500/20 px-2.5 py-0.5 rounded-full border border-emerald-500/40 backdrop-blur-md">
-                                ${badgeText}
-                            </span>
-                        </div>
-                        <h3 class="font-extrabold text-sm sm:text-base text-white drop-shadow-md">${g.name}</h3>
-                    </div>
-                </div>
-
-                <div class="p-3 space-y-1.5 flex-1 bg-slate-900/60">
-                    ${pkgs.map(pkg => `
-                        <div class="flex items-center justify-between p-1.5 rounded-xl bg-slate-950 border border-slate-800 hover:border-sky-500/40 transition">
-                            <span class="text-[11px] font-bold text-gray-200">${pkg.name}</span>
-                            <div class="flex items-center gap-1.5">
-                                <span class="text-xs font-extrabold text-amber-400 font-mono">${pkg.price.toLocaleString()} ج.م</span>
-                                <button onclick="openPlayerIdModal('${g.name}', '${pkg.name}', ${pkg.price}, true, '${gameKey}')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-[9px] px-2 py-1 rounded-md cursor-pointer transition">⚡</button>
-                                <button onclick="openPlayerIdModal('${g.name}', '${pkg.name}', ${pkg.price}, false, '${gameKey}')" class="sky-btn font-bold text-[9px] px-2 py-1 rounded-md cursor-pointer transition">🛒</button>
-                            </div>
-                        </div>
-                    `).join('')}
+    if (!container) return;
+    container.innerHTML = gamesData.map(g => `
+        <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg">
+            <div class="h-28 sm:h-32 relative bg-cover bg-center" style="background-image: url('${g.banner}');">
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent p-3 flex flex-col justify-between">
+                    <span class="text-[9px] font-bold text-emerald-300 bg-emerald-500/20 px-2.5 py-0.5 rounded-full border border-emerald-500/40 w-fit">${g.badge}</span>
+                    <h3 class="font-extrabold text-sm sm:text-base text-white">${g.name}</h3>
                 </div>
             </div>
-        `;
-    }).join('');
+            <div class="p-3 space-y-1.5 flex-1 bg-slate-900/60">
+                ${g.packages.map(pkg => `
+                    <div class="flex items-center justify-between p-1.5 rounded-xl bg-slate-950 border border-slate-800">
+                        <span class="text-[11px] font-bold text-gray-200">${pkg.name}</span>
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-xs font-extrabold text-amber-400 font-mono">${pkg.price.toLocaleString()} ج.م</span>
+                            <button onclick="openPlayerIdModal('${g.name}', '${pkg.name}', ${pkg.price}, true, '${g.id}')" class="bg-amber-500 text-slate-950 font-bold text-[9px] px-2 py-1 rounded-md cursor-pointer">⚡</button>
+                            <button onclick="openPlayerIdModal('${g.name}', '${pkg.name}', ${pkg.price}, false, '${g.id}')" class="sky-btn font-bold text-[9px] px-2 py-1 rounded-md cursor-pointer">🛒</button>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `).join('');
 }
 
 function renderLiveApps() {
-    const liveList = (typeof liveCoinsData !== 'undefined') ? liveCoinsData : [];
     const container = document.getElementById('liveAppsContainer');
-    if (!container || !liveList.length) return;
-
-    container.innerHTML = liveList.map(app => {
-        const pkgs = app.packages || [];
-        const bannerUrl = app.banner || "https://images.unsplash.com/photo-1516251193007-45ef944ab0c6?auto=format&fit=crop&w=1200&q=80";
-        const badgeText = app.badge || "بث مباشر 🔴";
-        const appKey = app.id || "live";
-
-        return `
-            <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg">
-                <div class="h-28 sm:h-32 relative bg-cover bg-center" style="background-image: url('${bannerUrl}');">
-                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent p-3 flex flex-col justify-between">
-                        <div>
-                            <span class="text-[9px] font-bold text-rose-300 bg-rose-500/20 px-2.5 py-0.5 rounded-full border border-rose-500/40 backdrop-blur-md">
-                                ${badgeText}
-                            </span>
-                        </div>
-                        <h3 class="font-extrabold text-sm sm:text-base text-white drop-shadow-md">${app.name}</h3>
-                    </div>
-                </div>
-                <div class="p-3 space-y-1.5 flex-1 bg-slate-900/60">
-                    ${pkgs.map(pkg => `
-                        <div class="flex items-center justify-between p-1.5 rounded-xl bg-slate-950 border border-slate-800 hover:border-sky-500/40 transition">
-                            <span class="text-[11px] font-bold text-gray-200">${pkg.name}</span>
-                            <div class="flex items-center gap-1.5">
-                                <span class="text-xs font-extrabold text-amber-400 font-mono">${pkg.price.toLocaleString()} ج.م</span>
-                                <button onclick="openPlayerIdModal('${app.name}', '${pkg.name}', ${pkg.price}, true, '${appKey}')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-[9px] px-2 py-1 rounded-md cursor-pointer transition">⚡</button>
-                                <button onclick="openPlayerIdModal('${app.name}', '${pkg.name}', ${pkg.price}, false, '${appKey}')" class="sky-btn font-bold text-[9px] px-2 py-1 rounded-md cursor-pointer transition">🛒</button>
-                            </div>
-                        </div>
-                    `).join('')}
+    if (!container) return;
+    container.innerHTML = liveCoinsData.map(app => `
+        <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg">
+            <div class="h-28 sm:h-32 relative bg-cover bg-center" style="background-image: url('${app.banner}');">
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent p-3 flex flex-col justify-between">
+                    <span class="text-[9px] font-bold text-rose-300 bg-rose-500/20 px-2.5 py-0.5 rounded-full border border-rose-500/40 w-fit">${app.badge}</span>
+                    <h3 class="font-extrabold text-sm sm:text-base text-white">${app.name}</h3>
                 </div>
             </div>
-        `;
-    }).join('');
+            <div class="p-3 space-y-1.5 flex-1 bg-slate-900/60">
+                ${app.packages.map(pkg => `
+                    <div class="flex items-center justify-between p-1.5 rounded-xl bg-slate-950 border border-slate-800">
+                        <span class="text-[11px] font-bold text-gray-200">${pkg.name}</span>
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-xs font-extrabold text-amber-400 font-mono">${pkg.price.toLocaleString()} ج.م</span>
+                            <button onclick="openPlayerIdModal('${app.name}', '${pkg.name}', ${pkg.price}, true, '${app.id}')" class="bg-amber-500 text-slate-950 font-bold text-[9px] px-2 py-1 rounded-md cursor-pointer">⚡</button>
+                            <button onclick="openPlayerIdModal('${app.name}', '${pkg.name}', ${pkg.price}, false, '${app.id}')" class="sky-btn font-bold text-[9px] px-2 py-1 rounded-md cursor-pointer">🛒</button>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `).join('');
 }
 
 function renderVccCards() {
-    const list = (typeof vccData !== 'undefined') ? vccData : [];
     const container = document.getElementById('vccCardsContainer');
-    if (!container || !list.length) return;
-
-    container.innerHTML = list.map(v => {
-        const price = v.priceEgp || 0;
-        const bannerUrl = v.banner || "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=1200&q=80";
-        return `
-            <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg">
-                <div class="h-28 relative bg-cover bg-center" style="background-image: url('${bannerUrl}');">
-                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent p-3 flex flex-col justify-between">
-                        <span class="text-[9px] bg-amber-500/20 text-amber-300 border border-amber-500/40 px-2.5 py-0.5 rounded-full font-bold w-fit">
-                            ${v.badge || 'فيزا دولية'}
-                        </span>
-                        <h3 class="font-bold text-sm text-white">${v.name}</h3>
-                    </div>
-                </div>
-                <div class="p-3 bg-slate-900/60 flex-1 flex flex-col justify-between">
-                    <p class="text-[10px] text-gray-400 mb-3">${v.description || 'تقبل الدفع بالمواقع العالمية والإعلانات بدون قيود.'}</p>
-                    <div class="pt-2 border-t border-slate-800 flex items-center justify-between">
-                        <span class="text-sm font-extrabold text-amber-400 font-mono">${price.toLocaleString()} ج.م</span>
-                        <button onclick="openVccModal('${v.id}')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs px-3 py-1.5 rounded-xl cursor-pointer shadow">اطلب 💳</button>
-                    </div>
+    if (!container) return;
+    container.innerHTML = vccData.map(v => `
+        <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg">
+            <div class="h-28 relative bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=1200&q=80');">
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent p-3 flex flex-col justify-between">
+                    <span class="text-[9px] bg-amber-500/20 text-amber-300 border border-amber-500/40 px-2.5 py-0.5 rounded-full font-bold w-fit">${v.badge}</span>
+                    <h3 class="font-bold text-sm text-white">${v.name}</h3>
                 </div>
             </div>
-        `;
-    }).join('');
+            <div class="p-3 bg-slate-900/60 flex-1 flex flex-col justify-between">
+                <p class="text-[10px] text-gray-400 mb-3">${v.description}</p>
+                <div class="pt-2 border-t border-slate-800 flex items-center justify-between">
+                    <span class="text-sm font-extrabold text-amber-400 font-mono">${v.priceEgp.toLocaleString()} ج.م</span>
+                    <button onclick="openVccModal('${v.id}')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs px-3 py-1.5 rounded-xl cursor-pointer">اطلب 💳</button>
+                </div>
+            </div>
+        </div>
+    `).join('');
 }
 
 function openVccModal(vccId) {
-    const list = (typeof vccData !== 'undefined') ? vccData : [];
-    selectedVccItem = list.find(x => x.id === vccId);
+    selectedVccItem = vccData.find(x => x.id === vccId);
     if (!selectedVccItem) return;
-    const price = selectedVccItem.priceEgp || 0;
-
     const t = document.getElementById('vccModalTitle');
     const p = document.getElementById('vccModalPrice');
     if (t) t.innerText = selectedVccItem.name;
-    if (p) p.innerText = `المبلغ: ${price.toLocaleString()} ج.م`;
-    const em = document.getElementById('vccEmailInput');
-    const pu = document.getElementById('vccPurposeInput');
-    if (em) em.value = '';
-    if (pu) pu.value = '';
+    if (p) p.innerText = `المبلغ: ${selectedVccItem.priceEgp.toLocaleString()} ج.م`;
     const m = document.getElementById('vccModal');
     if (m) { m.classList.remove('hidden'); m.classList.add('flex'); }
 }
@@ -507,18 +930,14 @@ function closeVccModal() {
 
 function submitVccModal(isExpress) {
     const em = document.getElementById('vccEmailInput');
-    const pu = document.getElementById('vccPurposeInput');
     const email = em ? em.value.trim() : '';
-    const purpose = pu ? pu.value.trim() : '';
     if (!email) return showToast('أدخل البريد الإلكتروني لاستلام بيانات البطاقة', 'error');
-
-    const price = selectedVccItem.priceEgp || 0;
     const item = {
         id: selectedVccItem.id + '_' + Date.now(),
         name: selectedVccItem.name,
         type: 'vcc',
-        price: price,
-        details: `البريد: ${email} ${purpose ? '| الغرض: ' + purpose : ''}`
+        price: selectedVccItem.priceEgp,
+        details: `البريد: ${email}`
     };
     closeVccModal();
     if (isExpress) expressCheckout(item);
@@ -526,200 +945,140 @@ function submitVccModal(isExpress) {
 }
 
 function renderProductivity() {
-    const subList = (typeof subscriptionsData !== 'undefined') 
-        ? subscriptionsData.filter(s => s.category === 'design' || s.category === 'productivity')
-        : [];
     const container = document.getElementById('productivityContainer');
-    if (!container || !subList.length) return;
-
-    container.innerHTML = subList.map(p => {
-        const pkgs = p.packages || [{ name: p.name, price: 0 }];
-        const defaultPrice = pkgs[0].price;
-        const bannerUrl = p.banner || "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=1200&q=80";
-
-        return `
-            <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg">
-                <div class="h-24 relative bg-cover bg-center" style="background-image: url('${bannerUrl}');">
-                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent p-2.5 flex flex-col justify-between">
-                        <span class="text-[9px] bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 px-2 py-0.5 rounded-full font-bold w-fit">
-                            ${p.badge || 'إنتاجية'}
-                        </span>
-                        <h3 class="font-bold text-xs sm:text-sm text-white">${p.name}</h3>
-                    </div>
+    if (!container) return;
+    const list = subscriptionsData.filter(s => s.category === 'design' || s.category === 'productivity');
+    container.innerHTML = list.map(p => `
+        <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg">
+            <div class="h-24 relative bg-cover bg-center" style="background-image: url('${p.banner}');">
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent p-2.5 flex flex-col justify-between">
+                    <span class="text-[9px] bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 px-2 py-0.5 rounded-full font-bold w-fit">${p.badge}</span>
+                    <h3 class="font-bold text-xs sm:text-sm text-white">${p.name}</h3>
                 </div>
-                <div class="p-3 bg-slate-900/60 flex-1 flex flex-col justify-between">
-                    <p class="text-[10px] text-gray-400 mb-2">${p.description || ''}</p>
-                    
-                    ${pkgs.length > 1 ? `
-                        <select id="prod_pkg_${p.id}" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-1 text-[10px] text-sky-300 font-bold mb-2">
-                            ${pkgs.map((pkg, idx) => `<option value="${idx}">${pkg.name}</option>`).join('')}
-                        </select>
-                    ` : ''}
-
-                    <div class="pt-2 border-t border-slate-800 flex items-center justify-between">
-                        <span class="text-xs font-extrabold text-amber-400 font-mono">${defaultPrice.toLocaleString()} ج.م</span>
-                        <div class="flex gap-1">
-                            <button onclick="handleSubscriptionAction('${p.id}', true)" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-[10px] px-2 py-1 rounded-lg cursor-pointer">⚡</button>
-                            <button onclick="handleSubscriptionAction('${p.id}', false)" class="sky-btn font-bold text-[10px] px-2 py-1 rounded-lg cursor-pointer">🛒</button>
-                        </div>
+            </div>
+            <div class="p-3 bg-slate-900/60 flex-1 flex flex-col justify-between">
+                <p class="text-[10px] text-gray-400 mb-2">${p.description}</p>
+                <select id="prod_pkg_${p.id}" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-1 text-[10px] text-sky-300 font-bold mb-2">
+                    ${p.packages.map((pkg, idx) => `<option value="${idx}">${pkg.name} - ${pkg.price} ج.م</option>`).join('')}
+                </select>
+                <div class="pt-2 border-t border-slate-800 flex items-center justify-between">
+                    <span class="text-xs font-extrabold text-amber-400 font-mono">${p.packages[0].price.toLocaleString()} ج.م</span>
+                    <div class="flex gap-1">
+                        <button onclick="handleSubscriptionAction('${p.id}', true)" class="bg-amber-500 text-slate-950 font-bold text-[10px] px-2 py-1 rounded-lg cursor-pointer">⚡</button>
+                        <button onclick="handleSubscriptionAction('${p.id}', false)" class="sky-btn font-bold text-[10px] px-2 py-1 rounded-lg cursor-pointer">🛒</button>
                     </div>
                 </div>
             </div>
-        `;
-    }).join('');
+        </div>
+    `).join('');
 }
 
 function renderEntertainment() {
-    const subList = (typeof subscriptionsData !== 'undefined') 
-        ? subscriptionsData.filter(s => s.category === 'entertainment')
-        : [];
     const container = document.getElementById('entertainmentCardsContainer');
-    if (!container || !subList.length) return;
-
-    container.innerHTML = subList.map(e => {
-        const pkgs = e.packages || [{ name: e.name, price: 0 }];
-        const defaultPrice = pkgs[0].price;
-        const bannerUrl = e.banner || "https://images.unsplash.com/photo-1522869635100-9f4c5e86aa37?auto=format&fit=crop&w=1200&q=80";
-
-        return `
-            <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg">
-                <div class="h-24 relative bg-cover bg-center" style="background-image: url('${bannerUrl}');">
-                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent p-2.5 flex flex-col justify-between">
-                        <span class="text-[9px] bg-purple-500/20 text-purple-300 border border-purple-500/40 px-2 py-0.5 rounded-full font-bold w-fit">
-                            ${e.badge || 'ترفيه وبث'}
-                        </span>
-                        <h4 class="font-bold text-xs sm:text-sm text-white">${e.name}</h4>
-                    </div>
+    if (!container) return;
+    const list = subscriptionsData.filter(s => s.category === 'entertainment');
+    container.innerHTML = list.map(e => `
+        <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg">
+            <div class="h-24 relative bg-cover bg-center" style="background-image: url('${e.banner}');">
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent p-2.5 flex flex-col justify-between">
+                    <span class="text-[9px] bg-purple-500/20 text-purple-300 border border-purple-500/40 px-2 py-0.5 rounded-full font-bold w-fit">${e.badge}</span>
+                    <h4 class="font-bold text-xs sm:text-sm text-white">${e.name}</h4>
                 </div>
-                <div class="p-3 bg-slate-900/60 flex-1 flex flex-col justify-between">
-                    <p class="text-[10px] text-gray-400 mb-2">${e.description || ''}</p>
-
-                    ${pkgs.length > 1 ? `
-                        <select id="ent_pkg_${e.id}" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-1 text-[10px] text-purple-300 font-bold mb-2">
-                            ${pkgs.map((pkg, idx) => `<option value="${idx}">${pkg.name}</option>`).join('')}
-                        </select>
-                    ` : ''}
-
-                    <div class="pt-2 border-t border-slate-800 flex items-center justify-between">
-                        <span class="text-xs font-black text-amber-400 font-mono">${defaultPrice.toLocaleString()} ج.م</span>
-                        <div class="flex gap-1.5">
-                            <button onclick="handleSubscriptionAction('${e.id}', true)" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-[10px] px-2 py-1 rounded-lg cursor-pointer">⚡</button>
-                            <button onclick="handleSubscriptionAction('${e.id}', false)" class="sky-btn font-bold text-[10px] px-2 py-1 rounded-lg cursor-pointer">🛒</button>
-                        </div>
+            </div>
+            <div class="p-3 bg-slate-900/60 flex-1 flex flex-col justify-between">
+                <p class="text-[10px] text-gray-400 mb-2">${e.description}</p>
+                <select id="ent_pkg_${e.id}" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-1 text-[10px] text-purple-300 font-bold mb-2">
+                    ${e.packages.map((pkg, idx) => `<option value="${idx}">${pkg.name} - ${pkg.price} ج.م</option>`).join('')}
+                </select>
+                <div class="pt-2 border-t border-slate-800 flex items-center justify-between">
+                    <span class="text-xs font-black text-amber-400 font-mono">${e.packages[0].price.toLocaleString()} ج.م</span>
+                    <div class="flex gap-1.5">
+                        <button onclick="handleSubscriptionAction('${e.id}', true)" class="bg-amber-500 text-slate-950 font-bold text-[10px] px-2 py-1 rounded-lg cursor-pointer">⚡</button>
+                        <button onclick="handleSubscriptionAction('${e.id}', false)" class="sky-btn font-bold text-[10px] px-2 py-1 rounded-lg cursor-pointer">🛒</button>
                     </div>
                 </div>
             </div>
-        `;
-    }).join('');
+        </div>
+    `).join('');
 }
 
 function renderAI() {
-    const aiList = (typeof subscriptionsData !== 'undefined') 
-        ? subscriptionsData.filter(s => s.category === 'ai')
-        : [];
     const container = document.getElementById('aiCardsContainer');
-    if (!container || !aiList.length) return;
-
-    container.innerHTML = aiList.map(a => {
-        const pkgs = a.packages || [{ name: a.name, price: 0 }];
-        const defaultPrice = pkgs[0].price;
-        const bannerUrl = a.banner || "https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=1200&q=80";
-
-        return `
-            <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg">
-                <div class="h-24 relative bg-cover bg-center" style="background-image: url('${bannerUrl}');">
-                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent p-2.5 flex flex-col justify-between">
-                        <span class="text-[9px] bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 px-2 py-0.5 rounded-full font-bold w-fit">
-                            ${a.badge || 'ذكاء اصطناعي'}
-                        </span>
-                        <h4 class="font-bold text-xs sm:text-sm text-white">${a.name}</h4>
-                    </div>
+    if (!container) return;
+    const list = subscriptionsData.filter(s => s.category === 'ai');
+    container.innerHTML = list.map(a => `
+        <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg">
+            <div class="h-24 relative bg-cover bg-center" style="background-image: url('${a.banner}');">
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent p-2.5 flex flex-col justify-between">
+                    <span class="text-[9px] bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 px-2 py-0.5 rounded-full font-bold w-fit">${a.badge}</span>
+                    <h4 class="font-bold text-xs sm:text-sm text-white">${a.name}</h4>
                 </div>
-                <div class="p-3 bg-slate-900/60 flex-1 flex flex-col justify-between">
-                    <p class="text-[10px] text-gray-400 mb-2">${a.description || ''}</p>
-
-                    ${pkgs.length > 1 ? `
-                        <select id="ai_pkg_${a.id}" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-1 text-[10px] text-indigo-300 font-bold mb-2">
-                            ${pkgs.map((pkg, idx) => `<option value="${idx}">${pkg.name}</option>`).join('')}
-                        </select>
-                    ` : ''}
-
-                    <div class="pt-2 border-t border-slate-800 flex items-center justify-between">
-                        <span class="text-xs font-black text-amber-400 font-mono">${defaultPrice.toLocaleString()} ج.م</span>
-                        <div class="flex gap-1.5">
-                            <button onclick="handleSubscriptionAction('${a.id}', true)" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-[10px] px-2 py-1 rounded-lg cursor-pointer">⚡</button>
-                            <button onclick="handleSubscriptionAction('${a.id}', false)" class="sky-btn font-bold text-[10px] px-2 py-1 rounded-lg cursor-pointer">🛒</button>
-                        </div>
+            </div>
+            <div class="p-3 bg-slate-900/60 flex-1 flex flex-col justify-between">
+                <p class="text-[10px] text-gray-400 mb-2">${a.description}</p>
+                <select id="ai_pkg_${a.id}" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-1 text-[10px] text-indigo-300 font-bold mb-2">
+                    ${a.packages.map((pkg, idx) => `<option value="${idx}">${pkg.name} - ${pkg.price} ج.م</option>`).join('')}
+                </select>
+                <div class="pt-2 border-t border-slate-800 flex items-center justify-between">
+                    <span class="text-xs font-black text-amber-400 font-mono">${a.packages[0].price.toLocaleString()} ج.م</span>
+                    <div class="flex gap-1.5">
+                        <button onclick="handleSubscriptionAction('${a.id}', true)" class="bg-amber-500 text-slate-950 font-bold text-[10px] px-2 py-1 rounded-lg cursor-pointer">⚡</button>
+                        <button onclick="handleSubscriptionAction('${a.id}', false)" class="sky-btn font-bold text-[10px] px-2 py-1 rounded-lg cursor-pointer">🛒</button>
                     </div>
                 </div>
             </div>
-        `;
-    }).join('');
+        </div>
+    `).join('');
 }
 
 function handleSubscriptionAction(itemId, isExpress = false) {
-    if (typeof subscriptionsData === 'undefined') return;
     const item = subscriptionsData.find(s => s.id === itemId);
     if (!item) return;
-
-    let selectedPkg = item.packages[0];
-    const selectEl = document.getElementById(`prod_pkg_${itemId}`) || 
-                     document.getElementById(`ent_pkg_${itemId}`) || 
-                     document.getElementById(`ai_pkg_${itemId}`);
-
-    if (selectEl) {
-        selectedPkg = item.packages[parseInt(selectEl.value, 10)] || item.packages[0];
-    }
+    const selectEl = document.getElementById(`prod_pkg_${itemId}`) || document.getElementById(`ent_pkg_${itemId}`) || document.getElementById(`ai_pkg_${itemId}`);
+    const pkgIndex = selectEl ? parseInt(selectEl.value, 10) : 0;
+    const selectedPkg = item.packages[pkgIndex] || item.packages[0];
 
     const cartItem = {
         id: `${item.id}_${Date.now()}`,
-        name: `${item.name} (${selectedPkg.duration || selectedPkg.name})`,
+        name: `${item.name} (${selectedPkg.name})`,
         type: item.category,
         price: selectedPkg.price,
         details: item.description
     };
-
     if (isExpress) expressCheckout(cartItem);
     else addToCart(cartItem);
 }
 
 function renderSMMPlatforms() {
-    if (typeof smmPlatforms === 'undefined' || !smmPlatforms.length) return;
+    const grid = document.getElementById('smmPlatformsGrid');
+    if (!grid || !smmPlatforms.length) return;
     if (!currentSMMPlatform) currentSMMPlatform = smmPlatforms[0];
 
-    const grid = document.getElementById('smmPlatformsGrid');
-    if (grid) {
-        grid.innerHTML = smmPlatforms.map(p => {
-            const iconClass = SMM_ICONS[p.id] || p.icon || "fas fa-share-alt text-sky-400";
-            const isActive = currentSMMPlatform && p.id === currentSMMPlatform.id;
-            return `
-                <button type="button" onclick="selectSMMPlatform('${p.id}')" class="p-2 rounded-xl ${isActive ? 'sky-active-tab' : 'sky-card border'} text-center transition flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-sky-400">
-                    <i class="${iconClass} text-base"></i>
-                    <span class="text-[10px] font-bold text-white truncate max-w-full">${p.name.split(' ')[0]}</span>
-                </button>
-            `;
-        }).join('');
-    }
+    grid.innerHTML = smmPlatforms.map(p => {
+        const iconClass = SMM_ICONS[p.id] || "fas fa-share-alt text-sky-400";
+        const isActive = currentSMMPlatform && p.id === currentSMMPlatform.id;
+        return `
+            <button type="button" onclick="selectSMMPlatform('${p.id}')" class="p-2 rounded-xl ${isActive ? 'sky-active-tab' : 'sky-card border'} text-center transition flex flex-col items-center justify-center gap-1 cursor-pointer">
+                <i class="${iconClass} text-base"></i>
+                <span class="text-[10px] font-bold text-white truncate">${p.name.split(' ')[0]}</span>
+            </button>
+        `;
+    }).join('');
 }
 
 function selectSMMPlatform(pid) {
-    if (typeof smmPlatforms === 'undefined' || !smmPlatforms.length) return;
     currentSMMPlatform = smmPlatforms.find(p => p.id === pid) || smmPlatforms[0];
     renderSMMPlatforms();
-
     const titleEl = document.getElementById('selectedPlatformTitle');
     const iconContainer = document.getElementById('selectedPlatformIconContainer');
     const bannerImg = document.getElementById('selectedPlatformBannerImg');
     const catSelect = document.getElementById('smmCategorySelect');
 
     if (titleEl) titleEl.innerText = currentSMMPlatform.name;
-    const iconClass = SMM_ICONS[currentSMMPlatform.id] || currentSMMPlatform.icon || "fas fa-share-alt text-sky-400";
-    if (iconContainer) {
-        iconContainer.innerHTML = `<i class="${iconClass} text-xl"></i>`;
-    }
-    if (bannerImg && currentSMMPlatform.banner) {
-        bannerImg.src = currentSMMPlatform.banner;
-    }
+    const iconClass = SMM_ICONS[currentSMMPlatform.id] || "fas fa-share-alt text-sky-400";
+    if (iconContainer) iconContainer.innerHTML = `<i class="${iconClass} text-xl"></i>`;
+    if (bannerImg && currentSMMPlatform.banner) bannerImg.src = currentSMMPlatform.banner;
+    
     if (catSelect && currentSMMPlatform.services) {
         const categories = [...new Set(currentSMMPlatform.services.map(s => s.category || "عام"))];
         catSelect.innerHTML = categories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
@@ -734,14 +1093,10 @@ function onSMMCategoryChange() {
     const srvSelect = document.getElementById('smmServiceSelect');
 
     let availableServices = currentSMMPlatform.services;
-    if (selectedCat) {
-        availableServices = currentSMMPlatform.services.filter(s => (s.category || "عام") === selectedCat);
-    }
+    if (selectedCat) availableServices = currentSMMPlatform.services.filter(s => (s.category || "عام") === selectedCat);
 
     if (srvSelect) {
-        srvSelect.innerHTML = availableServices.map(srv => {
-            return `<option value="${srv.id}">#${srv.id} - ${srv.name} (${srv.pricePer1k} ج.م / 1k)</option>`;
-        }).join('');
+        srvSelect.innerHTML = availableServices.map(srv => `<option value="${srv.id}">#${srv.id} - ${srv.name} (${srv.pricePer1k} ج.م / 1k)</option>`).join('');
     }
     onSMMServiceChange();
 }
@@ -750,25 +1105,20 @@ function getCurrentSMMService() {
     if (!currentSMMPlatform || !currentSMMPlatform.services) return null;
     const srvEl = document.getElementById('smmServiceSelect');
     const selectedId = srvEl ? srvEl.value : null;
-    if (!selectedId) return currentSMMPlatform.services[0] || null;
     return currentSMMPlatform.services.find(s => s.id === selectedId) || currentSMMPlatform.services[0];
 }
 
 function onSMMServiceChange() {
     const srv = getCurrentSMMService();
     if (!srv) return;
-
     const badgeId = document.getElementById('selectedServiceBadgeId');
     const limits = document.getElementById('smmLimitsNote');
     const meta = document.getElementById('smmServiceMeta');
 
     if (badgeId) badgeId.innerText = 'ID: #' + srv.id;
-    if (limits) limits.innerText = `الحدود: ${srv.min.toLocaleString()} - ${srv.max.toLocaleString()}`;
+    if (limits) limits.innerText = `الحدود: ${srv.min} - ${srv.max}`;
     if (meta) {
-        meta.innerHTML = `
-            <span class="bg-amber-500/15 text-amber-400 border border-amber-500/30 px-2.5 py-0.5 rounded-lg font-mono font-bold">لكل 1,000: ${srv.pricePer1k} ج.م</span>
-            <span class="text-gray-400 text-[10px]">${srv.speed || 'بدء فوري وتلقائي ⚡'}</span>
-        `;
+        meta.innerHTML = `<span class="text-amber-400 font-mono font-bold">لكل 1,000: ${srv.pricePer1k} ج.م</span>`;
     }
     calculateSMMCost();
 }
@@ -790,18 +1140,15 @@ function addSMMToCart() {
     const link = linkInp ? linkInp.value.trim() : '';
     const qty = qtyInp ? parseFloat(qtyInp.value) : 0;
     const srv = getCurrentSMMService();
-    if (!srv) return;
-    if (!link) return showToast('أدخل الرابط أولاً', 'error');
-    if (qty < srv.min || qty > srv.max) return showToast(`الكمية يجب أن تكون بين ${srv.min} و ${srv.max}`, 'error');
+    if (!srv || !link) return showToast('أدخل الرابط أولاً', 'error');
     
     addToCart({ 
         id: 'smm_' + srv.id, 
         name: `${currentSMMPlatform.name} - ${srv.name}`, 
         type: 'smm', 
         price: calculateSMMCost(), 
-        details: `الكمية: ${qty.toLocaleString()} | الرابط: ${link}` 
+        details: `الكمية: ${qty} | الرابط: ${link}` 
     });
-    if (linkInp) linkInp.value = '';
 }
 
 function expressCheckoutSMM() {
@@ -810,41 +1157,29 @@ function expressCheckoutSMM() {
     const link = linkInp ? linkInp.value.trim() : '';
     const qty = qtyInp ? parseFloat(qtyInp.value) : 0;
     const srv = getCurrentSMMService();
-    if (!srv) return;
-    if (!link) return showToast('أدخل الرابط أولاً', 'error');
-    if (qty < srv.min || qty > srv.max) return showToast(`الكمية يجب أن تكون بين ${srv.min} و ${srv.max}`, 'error');
+    if (!srv || !link) return showToast('أدخل الرابط أولاً', 'error');
     
-    const cost = calculateSMMCost();
-    const item = { 
+    expressCheckout({ 
         id: 'smm_' + srv.id, 
         name: `${currentSMMPlatform.name} - ${srv.name}`, 
         type: 'smm', 
-        price: cost, 
-        details: `الكمية: ${qty.toLocaleString()} | الرابط: ${link}` 
-    };
-    if (linkInp) linkInp.value = '';
-    expressCheckout(item);
+        price: calculateSMMCost(), 
+        details: `الكمية: ${qty} | الرابط: ${link}` 
+    });
 }
 
 function populateModalGamesList() {
     const select = document.getElementById('modalSelectGame');
     if (!select) return;
-    
-    let optionsHtml = '';
-    if (typeof gamesData !== 'undefined') {
-        optionsHtml += gamesData.map(g => `<option value="${g.id}">${g.name}</option>`).join('');
-    }
-    if (typeof liveCoinsData !== 'undefined') {
-        optionsHtml += liveCoinsData.map(app => `<option value="${app.id}">${app.name}</option>`).join('');
-    }
+    let optionsHtml = gamesData.map(g => `<option value="${g.id}">${g.name}</option>`).join('');
+    optionsHtml += liveCoinsData.map(app => `<option value="${app.id}">${app.name}</option>`).join('');
     optionsHtml += `<option value="tiktok">تيك توك كوينز</option><option value="telegram">نجوم تليجرام</option>`;
     select.innerHTML = optionsHtml;
 }
 
 function openPlayerIdModal(targetName, pkgLabel, price, isExpress = false, iconKey = 'pubg') {
-    currentModalItem = { name: `${targetName} - ${pkgLabel}`, price: price, targetName: targetName, pkgLabel: pkgLabel, gameKey: iconKey };
+    currentModalItem = { name: `${targetName} - ${pkgLabel}`, price: price, gameKey: iconKey };
     isExpressModal = isExpress;
-    
     populateModalGamesList();
     
     const titleEl = document.getElementById('modalTargetTitle');
@@ -853,46 +1188,8 @@ function openPlayerIdModal(targetName, pkgLabel, price, isExpress = false, iconK
     if (pkgEl) pkgEl.innerText = `الباقة: ${pkgLabel} (${price.toLocaleString()} ج.م)`;
     
     const select = document.getElementById('modalSelectGame');
-    if (select) {
-        select.value = iconKey;
-        select.disabled = true;
-    }
+    if (select) { select.value = iconKey; select.disabled = true; }
     
-    const idInp = document.getElementById('modalInputPlayerId');
-    const nameInp = document.getElementById('modalInputPlayerName');
-    const zoneInp = document.getElementById('modalInputZoneId');
-    const zoneGroup = document.getElementById('modalZoneGroup');
-    const idLabel = document.getElementById('modalIdLabel');
-    
-    if (idInp) idInp.value = '';
-    if (nameInp) nameInp.value = '';
-    if (zoneInp) zoneInp.value = '';
-    
-    const requiresZone = ['mlbb', 'mobilelegends', 'genshin', 'diablo'];
-    if (zoneGroup) {
-        if (requiresZone.includes(iconKey.toLowerCase())) zoneGroup.classList.remove('hidden');
-        else zoneGroup.classList.add('hidden');
-    }
-
-    if (idLabel) {
-        if (iconKey === 'tiktok' || iconKey === 'telegram') idLabel.innerText = "اسم المستخدم (Username بدون @)";
-        else idLabel.innerText = "معرف اللاعب أو التطبيق (Player ID)";
-    }
-
-    const statusBox = document.getElementById('verifyStatusBox');
-    if (statusBox) statusBox.classList.add('hidden');
-
-    const btn = document.getElementById('modalSubmitBtn');
-    if (btn) {
-        if (isExpress) {
-            btn.className = "w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold py-3 rounded-xl text-xs sm:text-sm cursor-pointer shadow";
-            btn.innerHTML = `متابعة الدفع الفوري ⚡ (${price.toLocaleString()} ج.م)`;
-        } else {
-            btn.className = "w-full sky-btn font-extrabold py-3 rounded-xl text-xs sm:text-sm cursor-pointer shadow";
-            btn.innerHTML = `تأكيد وإضافة للسلة 🛒`;
-        }
-        btn.onclick = submitPlayerIdModal;
-    }
     const modal = document.getElementById('playerIdModal');
     if (modal) { modal.classList.remove('hidden'); modal.classList.add('flex'); }
 }
@@ -903,101 +1200,17 @@ function closePlayerIdModal() {
     currentModalItem = null;
 }
 
-function onModalGameSelectChange() {
-    const select = document.getElementById('modalSelectGame');
-    if (!select) return;
-    const selectedKey = select.value;
-    const zoneGroup = document.getElementById('modalZoneGroup');
-    const idLabel = document.getElementById('modalIdLabel');
-    const requiresZone = ['mlbb', 'mobilelegends', 'genshin', 'diablo'];
-
-    if (idLabel) {
-        if (selectedKey === 'tiktok' || selectedKey === 'telegram') idLabel.innerText = "اسم المستخدم (Username بدون @)";
-        else idLabel.innerText = "معرف اللاعب أو التطبيق (Player ID)";
-    }
-
-    if (zoneGroup) {
-        if (requiresZone.includes(selectedKey.toLowerCase())) zoneGroup.classList.remove('hidden');
-        else zoneGroup.classList.add('hidden');
-    }
-}
-
-async function verifyPlayerAccount() {
-    const uidEl = document.getElementById('modalInputPlayerId');
-    const zoneIdEl = document.getElementById('modalInputZoneId');
-    const statusBox = document.getElementById('verifyStatusBox');
-    const nameInput = document.getElementById('modalInputPlayerName');
-    const verifyBtn = document.getElementById('verifyAccountBtn');
-
-    if (!uidEl || !currentModalItem) return;
-    const game = currentModalItem.gameKey;
-    const uid = uidEl.value.trim().replace(/^@/, '');
-    const zoneId = zoneIdEl ? zoneIdEl.value.trim() : '';
-
-    if (!uid) return showToast('أدخل المعرف أو اسم المستخدم أولاً!', 'error');
-
-    if (verifyBtn) { verifyBtn.disabled = true; verifyBtn.innerText = "جاري..."; }
-    if (statusBox) {
-        statusBox.className = "p-2.5 rounded-xl text-xs font-bold text-center border bg-sky-500/15 border-sky-500/40 text-sky-300";
-        statusBox.classList.remove('hidden');
-        statusBox.innerText = "⏳ جاري الاستعلام المباشر من سيرفر Deno...";
-    }
-
-    let query = `/?game=${encodeURIComponent(game)}&id=${encodeURIComponent(uid)}`;
-    if (zoneId) query += `&zoneId=${encodeURIComponent(zoneId)}`;
-
-    try {
-        const response = await fetch(`${DENO_API_URL}${query}`);
-        const data = await response.json();
-        const retrievedName = data.username || data.name || (data.data && (data.data.username || data.data.name));
-        const avatarUrl = data.avatar || data.avatar_url;
-
-        if (data.success && (retrievedName || avatarUrl)) {
-            if (nameInput) nameInput.value = retrievedName || uid;
-            if (statusBox) {
-                statusBox.className = "p-2.5 rounded-xl text-xs font-bold text-center border bg-emerald-500/20 border-emerald-500/50 text-emerald-300";
-                statusBox.innerHTML = `✅ تم التحقق: <span class="text-white font-mono underline">${retrievedName || uid}</span>`;
-            }
-            if (avatarUrl) {
-                const iconBox = document.getElementById('modalTargetIcon');
-                if (iconBox) iconBox.innerHTML = `<img src="${avatarUrl}" class="w-full h-full object-cover rounded-xl" alt="avatar">`;
-            }
-            showToast(`تم التعرف على الحساب: ${retrievedName || uid}`);
-        } else {
-            if (statusBox) {
-                statusBox.className = "p-2.5 rounded-xl text-xs font-bold text-center border bg-red-500/20 border-red-500/50 text-red-300";
-                statusBox.innerText = `❌ ${data.message || 'لم يتم العثور على الحساب، يرجى التأكد من صحة المعرف.'}`;
-            }
-        }
-    } catch (err) {
-        if (statusBox) {
-            statusBox.className = "p-2.5 rounded-xl text-xs font-bold text-center border bg-amber-500/20 border-amber-500/50 text-amber-300";
-            statusBox.innerText = "⚠️ تعذر الفحص اللحظي، يمكنك كتابة اسم حسابك يدوياً وإتمام طلبك مباشرة.";
-        }
-    } finally {
-        if (verifyBtn) { verifyBtn.disabled = false; verifyBtn.innerText = "فحص 🔍"; }
-    }
-}
-
 function submitPlayerIdModal() {
     const idEl = document.getElementById('modalInputPlayerId');
-    const nameEl = document.getElementById('modalInputPlayerName');
-    const zoneEl = document.getElementById('modalInputZoneId');
     const playerId = idEl ? idEl.value.trim() : '';
-    const playerName = nameEl ? nameEl.value.trim() : '';
-    const zoneId = zoneEl ? zoneEl.value.trim() : '';
     if (!playerId) return showToast('يرجى إدخال المعرف المطلوب!', 'error');
-
-    let detailStr = `معرّف/حساب: ${playerId}`;
-    if (zoneId) detailStr += ` (Zone: ${zoneId})`;
-    if (playerName) detailStr += ` | الاسم: ${playerName}`;
 
     const item = { 
         id: 'item_' + Date.now(), 
         name: currentModalItem.name, 
         type: 'game_coin', 
         price: currentModalItem.price, 
-        details: detailStr 
+        details: `معرّف/حساب: ${playerId}` 
     };
     closePlayerIdModal();
     if (isExpressModal) expressCheckout(item);
@@ -1011,7 +1224,7 @@ function expressCheckout(item) {
 }
 
 function proceedToCheckout() {
-    if (cart.length === 0) return showToast('السلة فارغة، اختر خدمات أولاً', 'error');
+    if (cart.length === 0) return showToast('السلة فارغة', 'error');
     const totTxt = document.getElementById('cartTotal');
     const chkTot = document.getElementById('checkoutTotalText');
     if (chkTot && totTxt) chkTot.innerText = totTxt.innerText;
@@ -1024,17 +1237,6 @@ function closeCheckoutModal() {
     const modal = document.getElementById('checkoutModal');
     if (modal) { modal.classList.add('hidden'); modal.classList.remove('flex'); }
     selectedPayment = null;
-    const box = document.getElementById('checkoutDetailsBox');
-    const btn = document.getElementById('confirmPaymentBtn');
-    if (box) box.classList.add('hidden');
-    if (btn) btn.classList.add('hidden');
-    document.querySelectorAll('.pay-method-btn').forEach(btn => btn.classList.remove('border-sky-400', 'bg-slate-800'));
-}
-
-function copyTextToClipboard(txt) {
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(txt).then(() => showToast('تم نسخ البيانات بنجاح 📋'));
-    }
 }
 
 function selectPaymentMethod(methodKey, displayName, btnElement) {
@@ -1049,148 +1251,33 @@ function selectPaymentMethod(methodKey, displayName, btnElement) {
     if (title) title.innerText = displayName;
 
     const methodData = PAYMENT_METHODS_DATA[methodKey];
-    const copyBtn = (txt) => `<button type="button" onclick="copyTextToClipboard('${txt}')" class="mt-2 bg-slate-800 hover:bg-slate-700 border border-slate-600 px-3 py-1.5 rounded-lg text-white font-mono text-xs cursor-pointer shadow transition inline-flex items-center gap-1.5"><span>📋 نسخ:</span> <b>${txt}</b></button>`;
-
     if (content) {
-        if (!methodData) {
-            content.innerHTML = `الدفع عبر <b>${displayName}</b> متاح. اضغط تأكيد وسنزودك بالتفاصيل عبر واتساب.`;
-        } else if (methodData.type === 'copy') {
-            content.innerHTML = `${methodData.instruction}<br>${copyBtn(methodData.value)}`;
-        } else if (methodData.type === 'bnpl') {
-            content.innerHTML = `${methodData.text}<br><span class="text-sky-300 block mt-1 font-bold">${methodData.notice || '(Contact me to get link)'}</span>`;
-        } else {
+        if (methodData && methodData.type === 'copy') {
+            content.innerHTML = `${methodData.instruction}<br><b>${methodData.value}</b>`;
+        } else if (methodData && methodData.html) {
             content.innerHTML = methodData.html;
+        } else {
+            content.innerHTML = `الدفع عبر <b>${displayName}</b> متاح.`;
         }
     }
-
     const confBtn = document.getElementById('confirmPaymentBtn');
     if (confBtn) confBtn.classList.remove('hidden');
 }
 
 function finalizeOrderWhatsApp() {
     if (!selectedPayment) return showToast('اختر وسيلة الدفع أولاً', 'error');
-    
     const senderInput = document.getElementById('senderAccountInput');
     const senderAcc = senderInput ? senderInput.value.trim() : '';
-    if (!senderAcc) return showToast('يرجى إدخال رقم المحفظة أو الحساب الذي قمت بالتحويل منه', 'error');
+    if (!senderAcc) return showToast('أدخل رقم المحفظة أو الحساب المحوّل منه', 'error');
 
-    const totEl = document.getElementById('cartTotal');
-    const orderId = Math.floor(1000 + Math.random() * 9000);
-    let msg = `السلام عليكم، أود تأكيد طلبي الجديد من Migo AI Solution\n`;
-    msg += `*رقم الفاتورة:* #${orderId}\n`;
-    msg += `*طريقة الدفع:* ${selectedPayment}\n`;
-    msg += `*الحساب المُحوّل منه:* ${senderAcc}\n\n`;
-    msg += `*--- تفاصيل الطلب ---*\n`;
+    let msg = `طلب جديد من Migo AI Solution\n*طريقة الدفع:* ${selectedPayment}\n*الحساب المحوّل منه:* ${senderAcc}\n\n`;
     cart.forEach((item, index) => {
-        msg += `${index + 1}. *${item.name}*\n   - السعر: ${Number(item.price).toLocaleString()} ج.م\n   - البيانات: [${item.details || ''}]\n`;
+        msg += `${index + 1}. ${item.name} - ${item.price} ج.م\n`;
     });
-    msg += `\n*الإجمالي المطلوب:* ${totEl ? totEl.innerText : ''}`;
-    if (appliedCoupon) msg += `\n*(كود الخصم المطبق: ${appliedCoupon.code})*`;
-
     cart = [];
-    appliedCoupon = null;
     saveCartToStorage();
     closeCheckoutModal();
-
     window.location.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
-}
-
-function handleLiveSearch(query) {
-    const dropdown = document.getElementById('searchResultsDropdown');
-    if (!dropdown) return;
-    query = query.trim().toLowerCase();
-    if (!query) { dropdown.classList.add('hidden'); return; }
-
-    let results = [];
-    if (typeof gamesData !== 'undefined') {
-        gamesData.forEach(g => {
-            if (g.name.toLowerCase().includes(query)) {
-                g.packages.forEach(pkg => results.push({ name: `${g.name} (${pkg.name})`, price: pkg.price, type: 'game', key: g.id, pkg: pkg.name }));
-            }
-        });
-    }
-    if (typeof liveCoinsData !== 'undefined') {
-        liveCoinsData.forEach(app => {
-            if (app.name.toLowerCase().includes(query)) {
-                app.packages.forEach(pkg => results.push({ name: `${app.name} (${pkg.name})`, price: pkg.price, type: 'live', key: app.id, pkg: pkg.name }));
-            }
-        });
-    }
-    if (typeof tiktokCoinsList !== 'undefined') {
-        tiktokCoinsList.forEach(c => {
-            if (`تيك توك كوينز tiktok ${c.coins}`.toLowerCase().includes(query)) {
-                results.push({ name: `تيك توك (${c.coins} عملة)`, price: c.price, type: 'coin_tiktok', coins: c.coins });
-            }
-        });
-    }
-    if (typeof telegramStarsList !== 'undefined') {
-        telegramStarsList.forEach(s => {
-            if (`تليجرام نجوم telegram ${s.stars}`.toLowerCase().includes(query)) {
-                results.push({ name: `تليجرام (${s.stars} نجمة)`, price: s.price, type: 'coin_tg', stars: s.stars });
-            }
-        });
-    }
-    if (typeof smmPlatforms !== 'undefined') {
-        smmPlatforms.forEach(p => {
-            if (p.name.toLowerCase().includes(query)) {
-                p.services.forEach(srv => {
-                    results.push({ name: `${p.name} - ${srv.name}`, price: srv.pricePer1k, type: 'smm', platformId: p.id });
-                });
-            }
-        });
-    }
-    if (typeof subscriptionsData !== 'undefined') {
-        subscriptionsData.forEach(sub => {
-            if (sub.name.toLowerCase().includes(query) || (sub.description && sub.description.toLowerCase().includes(query))) {
-                results.push({ name: sub.name, price: sub.packages[0].price, type: 'sub', id: sub.id });
-            }
-        });
-    }
-    if (typeof vccData !== 'undefined') {
-        vccData.forEach(v => {
-            if (v.name.toLowerCase().includes(query)) {
-                results.push({ name: v.name, price: v.priceEgp, type: 'vcc', id: v.id });
-            }
-        });
-    }
-
-    if (results.length === 0) {
-        dropdown.innerHTML = '<div class="text-center py-3 text-xs text-gray-400">لا توجد نتائج مطابقة لبحثك</div>';
-    } else {
-        dropdown.innerHTML = results.slice(0, 10).map(res => `
-            <div class="p-2 hover:bg-slate-800 rounded-xl flex items-center justify-between text-xs transition border-b border-slate-700/50 last:border-0">
-                <div class="text-right">
-                    <span class="font-bold text-white block">${res.name}</span>
-                    <span class="text-amber-400 font-mono font-bold">${Number(res.price).toLocaleString()} ج.م</span>
-                </div>
-                <button onclick="onGlobalSearchClick('${encodeURIComponent(JSON.stringify(res))}')" class="sky-btn text-[10px] font-bold px-2.5 py-1 rounded-lg cursor-pointer">طلب ⚡</button>
-            </div>
-        `).join('');
-    }
-    dropdown.classList.remove('hidden');
-}
-
-function onGlobalSearchClick(encodedItem) {
-    const item = JSON.parse(decodeURIComponent(encodedItem));
-    const dd = document.getElementById('searchResultsDropdown');
-    const inp = document.getElementById('liveSearchInput');
-    if (dd) dd.classList.add('hidden');
-    if (inp) inp.value = '';
-    
-    if (item.type === 'game' || item.type === 'live') {
-        openPlayerIdModal(item.name.split(' (')[0], item.pkg, item.price, true, item.key);
-    } else if (item.type === 'smm') {
-        selectSMMPlatform(item.platformId);
-        window.location.href = '#sec-social';
-    } else if (item.type === 'coin_tiktok') {
-        openPlayerIdModal('تيك توك كوينز', `${item.coins} عملة`, item.price, true, 'tiktok');
-    } else if (item.type === 'coin_tg') {
-        openPlayerIdModal('نجوم تليجرام', `${item.stars} نجمة`, item.price, true, 'telegram');
-    } else if (item.type === 'vcc') {
-        openVccModal(item.id);
-    } else if (item.type === 'sub') {
-        handleSubscriptionAction(item.id, true);
-    }
 }
 
 function renderReviews() {
@@ -1213,99 +1300,13 @@ function renderReviews() {
     `).join('');
 }
 
-function getRegisteredUsers() { try { return JSON.parse(localStorage.getItem(USERS_STORAGE_KEY)) || []; } catch (e) { return []; } }
-function saveRegisteredUsers(u) { localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(u)); }
-function encodePass(str) { return btoa(unescape(encodeURIComponent('migo_salt_' + str))); }
-
-function openAuthModal(mode) {
-    const modal = document.getElementById('authModal');
-    if (modal) { modal.classList.remove('hidden'); modal.classList.add('flex'); }
-    switchAuthTab(mode || 'login');
-}
-
-function closeAuthModal() {
-    const modal = document.getElementById('authModal');
-    if (modal) { modal.classList.add('hidden'); modal.classList.remove('flex'); }
-}
-
-function switchAuthTab(mode) {
-    const lf = document.getElementById('loginForm');
-    const rf = document.getElementById('registerForm');
-    const tl = document.getElementById('tabLoginBtn');
-    const tr = document.getElementById('tabRegisterBtn');
-    if (lf) lf.classList.toggle('hidden', mode !== 'login');
-    if (rf) rf.classList.toggle('hidden', mode === 'login');
-    if (tl) tl.className = (mode === 'login') ? 'py-1.5 text-xs font-bold rounded-lg transition sky-btn cursor-pointer' : 'py-1.5 text-xs font-bold rounded-lg transition text-gray-400 cursor-pointer';
-    if (tr) tr.className = (mode !== 'login') ? 'py-1.5 text-xs font-bold rounded-lg transition sky-btn cursor-pointer' : 'py-1.5 text-xs font-bold rounded-lg transition text-gray-400 cursor-pointer';
-}
-
-function handleRegister(e) {
-    e.preventDefault();
-    const emailEl = document.getElementById('regEmail');
-    const nameEl = document.getElementById('regName');
-    const phoneEl = document.getElementById('regPhone');
-    const passEl = document.getElementById('regPassword');
-    const email = emailEl ? emailEl.value.trim().toLowerCase() : '';
-    const users = getRegisteredUsers();
-    if (users.find(u => u.email === email)) return showToast('البريد مسجل بالفعل', 'error');
-    const newUser = { 
-        name: nameEl ? nameEl.value.trim() : '', 
-        email: email, 
-        phone: phoneEl ? phoneEl.value.trim() : '', 
-        passwordHash: encodePass(passEl ? passEl.value : '')
-    };
-    users.push(newUser);
-    saveRegisteredUsers(users);
-    localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(newUser));
-    updateNavbarAuthUI();
-    closeAuthModal();
-    showToast('تم التسجيل بنجاح');
-}
-
-function handleLogin(e) {
-    e.preventDefault();
-    const emailEl = document.getElementById('loginEmail');
-    const passEl = document.getElementById('loginPassword');
-    const email = emailEl ? emailEl.value.trim().toLowerCase() : '';
-    const passHash = encodePass(passEl ? passEl.value : '');
-    const user = getRegisteredUsers().find(u => u.email === email && u.passwordHash === passHash);
-    if (!user) return showToast('بيانات الدخول غير صحيحة', 'error');
-    localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(user));
-    updateNavbarAuthUI();
-    closeAuthModal();
-    showToast(`أهلاً بك ${user.name}`);
-}
-
-function handleLogout() {
-    localStorage.removeItem(SESSION_STORAGE_KEY);
-    updateNavbarAuthUI();
-    showToast('تم الخروج');
-}
-
-function updateNavbarAuthUI() {
-    let session = null;
-    try { session = JSON.parse(localStorage.getItem(SESSION_STORAGE_KEY)); } catch (e) {}
-    const loginBtn = document.getElementById('navLoginBtn');
-    const userBadge = document.getElementById('navUserBadge');
-    const userName = document.getElementById('navUserName');
-    if (session && session.email) {
-        if (loginBtn) loginBtn.classList.add('hidden');
-        if (userBadge) { userBadge.classList.remove('hidden'); userBadge.classList.add('flex'); }
-        if (userName) userName.innerText = session.name.split(' ')[0];
-    } else {
-        if (loginBtn) loginBtn.classList.remove('hidden');
-        if (userBadge) { userBadge.classList.add('hidden'); userBadge.classList.remove('flex'); }
-    }
-}
-
 function toggleSidebar() { 
     const sb = document.getElementById('sidebarContainer');
     if (sb) sb.classList.toggle('hidden'); 
 }
 
-// التشغيل الشامل عند تحميل الصفحة (بدون أي أخطاء أو أجزاء ناقصة)
+// التشغيل الشامل والفوري
 window.onload = function() {
-    try { updateNavbarAuthUI(); } catch (e) {}
     try { initVisitorCounter(); } catch (e) {}
     try { initCountdown(); } catch (e) {}
     try { loadCartFromStorage(); } catch (e) {}
@@ -1316,32 +1317,18 @@ window.onload = function() {
     try { renderProductivity(); } catch (e) {}
     try { renderEntertainment(); } catch (e) {}
     try { renderAI(); } catch (e) {}
-    try { renderVccCards(); } catch (e) {}
-    try { 
-        renderSMMPlatforms(); 
-        selectSMMPlatform('tiktok');
-    } catch (e) {}
+    try { renderSMMPlatforms(); selectSMMPlatform('tiktok'); } catch (e) {}
     try { renderReviews(); } catch (e) {}
 
     setInterval(() => { 
         currentSlide = (currentSlide + 1) % 3; 
         updateSlider(); 
     }, 5000);
-    
     setTimeout(triggerSocialProof, 3500);
-
-    document.addEventListener('click', (e) => {
-        if (!e.target.closest('#liveSearchInput') && !e.target.closest('#searchResultsDropdown')) {
-            const dd = document.getElementById('searchResultsDropdown');
-            if (dd) dd.classList.add('hidden');
-        }
-    });
 };
 
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        if (typeof window.onload === 'function') window.onload();
-    });
+    document.addEventListener('DOMContentLoaded', () => { if (window.onload) window.onload(); });
 } else {
-    if (typeof window.onload === 'function') window.onload();
+    if (window.onload) window.onload();
 }
