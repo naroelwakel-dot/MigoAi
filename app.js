@@ -51,7 +51,7 @@ const SMM_ICONS = {
     trovo: "fas fa-gamepad text-green-500"
 };
 
-// بيانات وسائل الدفع المعتمدة الـ 14 بدقة 100%
+// بيانات وسائل الدفع المعتمدة (بدون أورانج كاش)
 const PAYMENT_METHODS_DATA = {
     vodafone: {
         title: "فودافون كاش",
@@ -541,7 +541,7 @@ function submitVccModal(isExpress) {
     else addToCart(item);
 }
 
-// عرض برامج التصميم والإنتاجية
+// عرض برامج التصميم والإنتاجية (باستخدام القائمة المنسدلة Select Menu)
 function renderProductivity() {
     const subList = (typeof subscriptionsData !== 'undefined') 
         ? subscriptionsData.filter(s => s.category === 'design' || s.category === 'productivity')
@@ -586,7 +586,7 @@ function renderProductivity() {
     }).join('');
 }
 
-// عرض خدمات البث والترفيه
+// عرض خدمات البث والترفيه (باستخدام القائمة المنسدلة Select Menu)
 function renderEntertainment() {
     const subList = (typeof subscriptionsData !== 'undefined') 
         ? subscriptionsData.filter(s => s.category === 'entertainment')
@@ -631,7 +631,7 @@ function renderEntertainment() {
     }).join('');
 }
 
-// عرض أدوات الذكاء الاصطناعي
+// عرض أدوات الذكاء الاصطناعي (باستخدام القائمة المنسدلة Select Menu)
 function renderAI() {
     const aiList = (typeof subscriptionsData !== 'undefined') 
         ? subscriptionsData.filter(s => s.category === 'ai')
@@ -676,7 +676,7 @@ function renderAI() {
     }).join('');
 }
 
-// دالة تفاعلية لاختيار وتنفيذ باقات الاشتراكات
+// دالة تفاعلية لاختيار وتنفيذ باقات الاشتراكات من القائمة المنسدلة
 function handleSubscriptionAction(itemId, isExpress = false) {
     if (typeof subscriptionsData === 'undefined') return;
     const item = subscriptionsData.find(s => s.id === itemId);
@@ -704,10 +704,8 @@ function handleSubscriptionAction(itemId, isExpress = false) {
 }
 
 // ==============================================================================
-// محرك السوشيال ميديا للمنصات الـ 18 - متوافق مباشرة مع index.html و smm.js
+// محرك السوشيال ميديا للمنصات الـ 18
 // ==============================================================================
-
-// 1. رسم شبكة أزرار المنصات بالأيقونات الرسمية الملونة بدلاً من إيموجي الهاتف
 function renderSMMPlatforms() {
     if (typeof smmPlatforms === 'undefined' || !smmPlatforms.length) return;
     if (!currentSMMPlatform) currentSMMPlatform = smmPlatforms[0];
@@ -727,7 +725,6 @@ function renderSMMPlatforms() {
     }
 }
 
-// 2. عند اختيار منصة: تحديث العنوان والأيقونة وصورة البانر واستخراج الأقسام تلقائياً
 function selectSMMPlatform(pid) {
     if (typeof smmPlatforms === 'undefined' || !smmPlatforms.length) return;
     currentSMMPlatform = smmPlatforms.find(p => p.id === pid) || smmPlatforms[0];
@@ -739,27 +736,20 @@ function selectSMMPlatform(pid) {
     const catSelect = document.getElementById('smmCategorySelect');
 
     if (titleEl) titleEl.innerText = currentSMMPlatform.name;
-    
-    // حقن الأيقونة الرسمية المعتمدة داخل المربع
     const iconClass = SMM_ICONS[currentSMMPlatform.id] || currentSMMPlatform.icon || "fas fa-share-alt text-sky-400";
     if (iconContainer) {
         iconContainer.innerHTML = `<i class="${iconClass} text-xl"></i>`;
     }
-
-    // حقن صورة البانر الأفقي بشكل مضمون ومباشر
     if (bannerImg && currentSMMPlatform.banner) {
         bannerImg.src = currentSMMPlatform.banner;
     }
-
     if (catSelect && currentSMMPlatform.services) {
-        // استخراج الأقسام الفريدة تلقائياً من الخدمات (مثل: متابعين، لايكات، مشاهدات...)
         const categories = [...new Set(currentSMMPlatform.services.map(s => s.category || "عام"))];
         catSelect.innerHTML = categories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
     }
     onSMMCategoryChange();
 }
 
-// 3. عند تغيير القسم: ملء الخدمات التابعة لهذا القسم فقط
 function onSMMCategoryChange() {
     if (!currentSMMPlatform || !currentSMMPlatform.services) return;
     const catEl = document.getElementById('smmCategorySelect');
@@ -779,7 +769,6 @@ function onSMMCategoryChange() {
     onSMMServiceChange();
 }
 
-// 4. جلب الخدمة المحددة حالياً
 function getCurrentSMMService() {
     if (!currentSMMPlatform || !currentSMMPlatform.services) return null;
     const srvEl = document.getElementById('smmServiceSelect');
@@ -788,7 +777,6 @@ function getCurrentSMMService() {
     return currentSMMPlatform.services.find(s => s.id === selectedId) || currentSMMPlatform.services[0];
 }
 
-// 5. تحديث البادج والحدود والميتا للخدمة
 function onSMMServiceChange() {
     const srv = getCurrentSMMService();
     if (!srv) return;
@@ -808,7 +796,6 @@ function onSMMServiceChange() {
     calculateSMMCost();
 }
 
-// 6. حساب تكلفة السوشيال ميديا بالجنيه
 function calculateSMMCost() {
     const srv = getCurrentSMMService();
     if (!srv) return 0;
@@ -820,7 +807,6 @@ function calculateSMMCost() {
     return totalEGP;
 }
 
-// 7. إضافة السوشيال ميديا إلى السلة
 function addSMMToCart() {
     const linkInp = document.getElementById('smmLinkInput');
     const qtyInp = document.getElementById('smmQtyInput');
@@ -841,7 +827,6 @@ function addSMMToCart() {
     if (linkInp) linkInp.value = '';
 }
 
-// 8. الشراء الفوري للسوشيال ميديا
 function expressCheckoutSMM() {
     const linkInp = document.getElementById('smmLinkInput');
     const qtyInp = document.getElementById('smmQtyInput');
@@ -864,7 +849,7 @@ function expressCheckoutSMM() {
     expressCheckout(item);
 }
 
-// تعبئة قائمة الألعاب والخدمات في نافذة فحص الـ ID تلقائياً
+// نافذة فحص الـ ID المربوطة بسيرفر Deno
 function populateModalGamesList() {
     const select = document.getElementById('modalSelectGame');
     if (!select) return;
@@ -880,7 +865,6 @@ function populateModalGamesList() {
     select.innerHTML = optionsHtml;
 }
 
-// نافذة فحص الـ ID المربوطة بسيرفر Deno
 function openPlayerIdModal(targetName, pkgLabel, price, isExpress = false, iconKey = 'pubg') {
     currentModalItem = { name: `${targetName} - ${pkgLabel}`, price: price, targetName: targetName, pkgLabel: pkgLabel, gameKey: iconKey };
     isExpressModal = isExpress;
@@ -962,7 +946,6 @@ function onModalGameSelectChange() {
     }
 }
 
-// دالة فحص واستعلام الحساب الحقيقية المربوطة بسيرفر Deno API
 async function verifyPlayerAccount() {
     const uidEl = document.getElementById('modalInputPlayerId');
     const zoneIdEl = document.getElementById('modalInputZoneId');
@@ -1078,7 +1061,6 @@ function copyTextToClipboard(txt) {
     }
 }
 
-// دالة اختيار وسيلة الدفع وعرض تفاصيلها الرسمية
 function selectPaymentMethod(methodKey, displayName, btnElement) {
     selectedPayment = displayName;
     document.querySelectorAll('.pay-method-btn').forEach(btn => btn.classList.remove('border-sky-400', 'bg-slate-800'));
@@ -1109,7 +1091,6 @@ function selectPaymentMethod(methodKey, displayName, btnElement) {
     if (confBtn) confBtn.classList.remove('hidden');
 }
 
-// إتمام الطلب وتوليد الفاتورة إلى رقم الواتساب المعتمد 01060934020
 function finalizeOrderWhatsApp() {
     if (!selectedPayment) return showToast('اختر وسيلة الدفع أولاً', 'error');
     
@@ -1138,7 +1119,7 @@ function finalizeOrderWhatsApp() {
     window.location.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
 }
 
-// محرك البحث اللحظي والشامل لجميع الخدمات دون نقص
+// محرك البحث اللحظي والشامل
 function handleLiveSearch(query) {
     const dropdown = document.getElementById('searchResultsDropdown');
     if (!dropdown) return;
@@ -1146,8 +1127,6 @@ function handleLiveSearch(query) {
     if (!query) { dropdown.classList.add('hidden'); return; }
 
     let results = [];
-    
-    // 1. البحث في الألعاب الـ 16
     if (typeof gamesData !== 'undefined') {
         gamesData.forEach(g => {
             if (g.name.toLowerCase().includes(query)) {
@@ -1155,8 +1134,6 @@ function handleLiveSearch(query) {
             }
         });
     }
-
-    // 2. البحث في برامج اللايف الـ 6
     if (typeof liveCoinsData !== 'undefined') {
         liveCoinsData.forEach(app => {
             if (app.name.toLowerCase().includes(query)) {
@@ -1164,8 +1141,6 @@ function handleLiveSearch(query) {
             }
         });
     }
-
-    // 3. البحث في كوينز تيك توك
     if (typeof tiktokCoinsList !== 'undefined') {
         tiktokCoinsList.forEach(c => {
             if (`تيك توك كوينز tiktok ${c.coins}`.toLowerCase().includes(query)) {
@@ -1173,8 +1148,6 @@ function handleLiveSearch(query) {
             }
         });
     }
-
-    // 4. البحث في نجوم تليجرام
     if (typeof telegramStarsList !== 'undefined') {
         telegramStarsList.forEach(s => {
             if (`تليجرام نجوم telegram ${s.stars}`.toLowerCase().includes(query)) {
@@ -1182,8 +1155,6 @@ function handleLiveSearch(query) {
             }
         });
     }
-
-    // 5. البحث في خدمات السوشيال ميديا الـ 18
     if (typeof smmPlatforms !== 'undefined') {
         smmPlatforms.forEach(p => {
             if (p.name.toLowerCase().includes(query)) {
@@ -1193,8 +1164,6 @@ function handleLiveSearch(query) {
             }
         });
     }
-
-    // 6. البحث في الاشتراكات الـ 26
     if (typeof subscriptionsData !== 'undefined') {
         subscriptionsData.forEach(sub => {
             if (sub.name.toLowerCase().includes(query) || (sub.description && sub.description.toLowerCase().includes(query))) {
@@ -1202,8 +1171,6 @@ function handleLiveSearch(query) {
             }
         });
     }
-
-    // 7. البحث في بطاقات VCC
     if (typeof vccData !== 'undefined') {
         vccData.forEach(v => {
             if (v.name.toLowerCase().includes(query)) {
@@ -1251,7 +1218,6 @@ function onGlobalSearchClick(encodedItem) {
     }
 }
 
-// عرض تقييمات العملاء
 function renderReviews() {
     const container = document.getElementById('reviewsContainer');
     if (!container) return;
@@ -1363,7 +1329,7 @@ function toggleSidebar() {
     if (sb) sb.classList.toggle('hidden'); 
 }
 
-// تشغيل كافة الخدمات عند تحميل الصفحة
+// التشغيل الشامل عند تحميل الصفحة
 window.onload = function() {
     try { updateNavbarAuthUI(); } catch (e) {}
     try { initVisitorCounter(); } catch (e) {}
@@ -1376,6 +1342,7 @@ window.onload = function() {
     try { renderProductivity(); } catch (e) {}
     try { renderEntertainment(); } catch (e) {}
     try { renderAI(); } catch (e) {}
+    try { renderVccCards(); } catch(e) {}
     try { 
         renderSMMPlatforms(); 
         selectSMMPlatform('tiktok');
