@@ -48,13 +48,6 @@
     .dot { height: 8px; width: 8px; background-color: #475569; border-radius: 50%; display: inline-block; cursor: pointer; transition: 0.3s; }
     .dot.active { background-color: #38bdf8; transform: scale(1.35); }
 
-    @keyframes anim-coin-spin {
-      0% { transform: rotateY(0deg) scale(1); }
-      50% { transform: rotateY(180deg) scale(1.08); }
-      100% { transform: rotateY(360deg) scale(1); }
-    }
-    .anim-coin { animation: anim-coin-spin 3s infinite ease-in-out; transform-style: preserve-3d; }
-
     @keyframes anim-radar-pulse {
       0% { r: 5; opacity: 1; stroke-width: 2; }
       100% { r: 18; opacity: 0; stroke-width: 0.5; }
@@ -200,74 +193,49 @@
    <h1 class="text-2xl sm:text-4xl font-black mb-2 text-white">منصة <span class="bg-clip-text text-transparent bg-gradient-to-r from-sky-400 via-blue-400 to-amber-300">Migo AI Solution</span> المتكاملة</h1>
    <p class="text-gray-400 text-xs sm:text-sm max-w-2xl mx-auto mb-6">الدفع محلياً بالجنيه المصري عبر المحافظ الإلكترونية، إنستاباي، والبطاقات مع تسليم فوري ونظام فحص الحساب المسبق بالاسم والصورة.</p>
    
+   <!-- السلايدر المعدل بالصور الخلفية الحقيقية (تيك توك، VCC، ببجي) -->
    <div class="relative w-full max-w-2xl mx-auto overflow-hidden rounded-3xl mb-6 shadow-2xl" dir="rtl">
     <div id="sliderTrack" class="flex transition-transform duration-500 ease-in-out">
+        
+        <!-- الشريحة الأولى: تيك توك -->
         <div class="w-full shrink-0 p-1">
-            <div class="bg-gradient-to-br from-[#162032] to-[#0b1120] border border-pink-500/40 p-6 rounded-3xl text-center relative">
-                <span class="absolute top-0 right-0 bg-pink-500 text-white text-[10px] font-black px-3.5 py-1 rounded-bl-2xl">فحص الاسم فوري 🎵</span>
-                <div class="w-12 h-12 mx-auto mb-2 flex items-center justify-center">
-                  <svg class="w-10 h-10 anim-coin" viewBox="0 0 40 40">
-                    <circle cx="20" cy="20" r="18" fill="url(#gradCoinP)" stroke="#f472b6" stroke-width="2"/>
-                    <circle cx="20" cy="20" r="14" fill="none" stroke="#fbcfe8" stroke-dasharray="3,2"/>
-                    <text x="20" y="25" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="900" font-family="sans-serif">💎</text>
-                    <defs>
-                      <linearGradient id="gradCoinP" x1="0" y1="0" x2="1" y2="1">
-                        <stop offset="0%" stop-color="#ec4899"/>
-                        <stop offset="100%" stop-color="#be185d"/>
-                      </linearGradient>
-                    </defs>
-                  </svg>
+            <div class="relative bg-cover bg-center border border-pink-500/40 p-6 rounded-3xl text-center overflow-hidden" style="background-image: linear-gradient(rgba(7, 11, 20, 0.82), rgba(11, 17, 32, 0.88)), url('1000727364.jpg');">
+                <span class="absolute top-0 right-0 bg-pink-500 text-white text-[10px] font-black px-3.5 py-1 rounded-bl-2xl z-10">فحص الاسم فوري 🎵</span>
+                <div class="relative z-10 py-4">
+                  <h3 class="text-xl sm:text-2xl font-black text-white mb-1 drop-shadow-md">شحن كوينز تيك توك الرسمية</h3>
+                  <p class="text-xs text-gray-200 mb-3 drop-shadow">شحن فوري بالاسم الرسمي للحساب لدعم البثوث وإرسال الهدايا.</p>
+                  <div class="text-lg font-black text-pink-400 mb-4 font-mono drop-shadow">تبدأ من 65 ج.م فقط</div>
+                  <a href="#sec-coins" class="bg-pink-600 hover:bg-pink-500 text-white font-extrabold py-2 px-5 rounded-xl text-xs transition inline-block shadow-lg">اشحن الآن ⚡</a>
                 </div>
-                <h3 class="text-xl sm:text-2xl font-black text-white mb-1">شحن كوينز تيك توك الرسمية</h3>
-                <p class="text-xs text-gray-300 mb-3">شحن فوري بالاسم الرسمي للحساب لدعم البثوث وإرسال الهدايا.</p>
-                <div class="text-lg font-black text-pink-400 mb-4 font-mono">تبدأ من 65 ج.م فقط</div>
-                <a href="#sec-coins" class="bg-pink-600 hover:bg-pink-500 text-white font-extrabold py-2 px-5 rounded-xl text-xs transition inline-block">اشحن الآن ⚡</a>
             </div>
         </div>
 
+        <!-- الشريحة الثانية: بطاقات VCC -->
         <div class="w-full shrink-0 p-1">
-            <div class="bg-gradient-to-br from-[#162032] to-[#0b1120] border border-amber-500/40 p-6 rounded-3xl text-center relative">
-                <span class="absolute top-0 right-0 bg-amber-500 text-slate-950 text-[10px] font-black px-3.5 py-1 rounded-bl-2xl">الدفع الدولي 💳</span>
-                <div class="w-12 h-12 mx-auto mb-2 flex items-center justify-center">
-                  <svg class="w-11 h-8 anim-vcc" viewBox="0 0 44 32">
-                    <rect x="2" y="2" width="40" height="28" rx="4" fill="url(#gradVccP)" stroke="#fbbf24" stroke-width="1.5"/>
-                    <rect x="2" y="8" width="40" height="6" fill="#162032"/>
-                    <rect x="6" y="18" width="10" height="7" rx="1.5" fill="#fef08a" stroke="#d97706" stroke-width="0.8"/>
-                    <circle cx="34" cy="22" r="4" fill="#ef4444" opacity="0.85"/>
-                    <circle cx="28" cy="22" r="4" fill="#f59e0b" opacity="0.85"/>
-                    <defs>
-                      <linearGradient id="gradVccP" x1="0" y1="0" x2="1" y2="1">
-                        <stop offset="0%" stop-color="#b45309"/>
-                        <stop offset="100%" stop-color="#f59e0b"/>
-                      </linearGradient>
-                    </defs>
-                  </svg>
+            <div class="relative bg-cover bg-center border border-amber-500/40 p-6 rounded-3xl text-center overflow-hidden" style="background-image: linear-gradient(rgba(7, 11, 20, 0.82), rgba(11, 17, 32, 0.88)), url('1000727365.jpg');">
+                <span class="absolute top-0 right-0 bg-amber-500 text-slate-950 text-[10px] font-black px-3.5 py-1 rounded-bl-2xl z-10">الدفع الدولي 💳</span>
+                <div class="relative z-10 py-4">
+                  <h3 class="text-xl sm:text-2xl font-black text-white mb-1 drop-shadow-md">البطاقات الافتراضية الدولية (VCC)</h3>
+                  <p class="text-xs text-gray-200 mb-3 drop-shadow">اشترِ من أي موقع عالمي، اربط حساباتك الإعلانية، وفعّل اشتراكاتك بالجنيه.</p>
+                  <div class="text-lg font-black text-amber-400 mb-4 font-mono drop-shadow">تبدأ من 620 ج.م</div>
+                  <a href="#sec-vcc" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold py-2 px-5 rounded-xl text-xs transition inline-block shadow-lg">احصل على فيزا 💳</a>
                 </div>
-                <h3 class="text-xl sm:text-2xl font-black text-white mb-1">البطاقات الافتراضية الدولية (VCC)</h3>
-                <p class="text-xs text-gray-300 mb-3">اشترِ من أي موقع عالمي، اربط حساباتك الإعلانية، وفعّل اشتراكاتك بالجنيه.</p>
-                <div class="text-lg font-black text-amber-400 mb-4 font-mono">تبدأ من 620 ج.م</div>
-                <a href="#sec-vcc" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold py-2 px-5 rounded-xl text-xs transition inline-block">احصل على فيزا 💳</a>
             </div>
         </div>
 
+        <!-- الشريحة الثالثة: ببجي موبايل -->
         <div class="w-full shrink-0 p-1">
-            <div class="bg-gradient-to-br from-[#162032] to-[#0b1120] border border-emerald-500/40 p-6 rounded-3xl text-center relative">
-                <span class="absolute top-0 right-0 bg-emerald-500 text-white text-[10px] font-black px-3.5 py-1 rounded-bl-2xl">Midasbuy المعتمد</span>
-                <div class="w-12 h-12 mx-auto mb-2 flex items-center justify-center">
-                  <svg class="w-11 h-9 anim-gamepad" viewBox="0 0 44 34">
-                    <path d="M12 4 C5 4 2 12 2 20 C2 27 6 30 11 30 C15 30 18 25 22 25 C26 25 29 30 33 30 C38 30 42 27 42 20 C42 12 39 4 32 4 Z" fill="#047857" stroke="#34d399" stroke-width="2"/>
-                    <path d="M7 16 H17 M12 11 V21" stroke="#ecfdf5" stroke-width="2.5" stroke-linecap="round"/>
-                    <circle cx="28" cy="17" r="2.2" fill="#38bdf8"/>
-                    <circle cx="34" cy="13" r="2.2" fill="#f43f5e"/>
-                    <circle cx="34" cy="21" r="2.2" fill="#fbbf24"/>
-                  </svg>
+            <div class="relative bg-cover bg-center border border-emerald-500/40 p-6 rounded-3xl text-center overflow-hidden" style="background-image: linear-gradient(rgba(7, 11, 20, 0.78), rgba(11, 17, 32, 0.85)), url('1000727363.jpg');">
+                <span class="absolute top-0 right-0 bg-emerald-500 text-white text-[10px] font-black px-3.5 py-1 rounded-bl-2xl z-10">Midasbuy المعتمد</span>
+                <div class="relative z-10 py-4">
+                  <h3 class="text-xl sm:text-2xl font-black text-white mb-1 drop-shadow-md">ببجي موبايل (3850 UC)</h3>
+                  <p class="text-xs text-gray-200 mb-3 drop-shadow">تسليم رسمي وفوري بالـ ID مع فحص اسم اللاعب قبل التحويل.</p>
+                  <div class="text-lg font-black text-emerald-400 mb-4 font-mono drop-shadow">3,100 ج.م</div>
+                  <button onclick="openPlayerIdModal('بابجي موبايل (PUBG)', '3850 UC', 3100, true, 'pubg')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold py-2 px-5 rounded-xl text-xs transition cursor-pointer shadow-lg">شحن فوري بالـ ID ⚡</button>
                 </div>
-                <h3 class="text-xl sm:text-2xl font-black text-white mb-1">ببجي موبايل (3850 UC)</h3>
-                <p class="text-xs text-gray-300 mb-3">تسليم رسمي وفوري بالـ ID مع فحص اسم اللاعب قبل التحويل.</p>
-                <div class="text-lg font-black text-emerald-400 mb-4 font-mono">3,100 ج.م</div>
-                <button onclick="openPlayerIdModal('بابجي موبايل (PUBG)', '3850 UC', 3100, true, 'pubg')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold py-2 px-5 rounded-xl text-xs transition cursor-pointer">شحن فوري بالـ ID ⚡</button>
             </div>
         </div>
+
     </div>
 
     <div class="flex justify-center gap-2 mt-3 pb-1" id="sliderDots">
