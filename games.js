@@ -1,6 +1,5 @@
 // ==============================================================================
 // Migo AI Solution - games.js
-// قاعدة بيانات الألعاب الـ 16 المعتمدة بالكامل - مطابقة دقيقة 100%
 // ==============================================================================
 
 const gamesData = [
@@ -26,7 +25,7 @@ const gamesData = [
     id: "roblox",
     name: "روبلوكس (Roblox)",
     provider: "Codashop / Razer",
-    banner: "pubg.jpg",
+    banner: "Roblox.jbg",
     badge: "شحن فوري بالـ ID ⚡",
     hasZoneId: false,
     apiServiceId: "roblox",
@@ -92,7 +91,7 @@ const gamesData = [
     id: "brawlstars",
     name: "براول ستارز (Brawl Stars)",
     provider: "Supercell ID",
-    banner: "clashofclans.jpg",
+    banner: "brawlstar.jbg",
     badge: "شحن فوري بالـ Tag ⚡",
     hasZoneId: false,
     apiServiceId: "brawl_stars",
@@ -144,7 +143,7 @@ const gamesData = [
     id: "codm",
     name: "كول أوف ديوتي (CODM)",
     provider: "Activision",
-    banner: "pubg.jpg",
+    banner: "callofduty.jbg",
     badge: "شحن CP فوري ⚡",
     hasZoneId: false,
     apiServiceId: "cod_mobile",
@@ -160,7 +159,7 @@ const gamesData = [
     id: "valorant",
     name: "فالورانت (VALORANT)",
     provider: "Riot Games",
-    banner: "fortnite.jpg",
+    banner: "valornt.jbg",
     badge: "نقاط فالورانت VP ⚡",
     hasZoneId: false,
     apiServiceId: "valorant",
@@ -191,7 +190,7 @@ const gamesData = [
     id: "wildrift",
     name: "وايلد ريفت (LoL Wild Rift)",
     provider: "Riot ID",
-    banner: "pubg.jpg",
+    banner: "wildrevit.jbg",
     badge: "شحن Wild Cores فوري ⚡",
     hasZoneId: false,
     apiServiceId: "wild_rift",
@@ -221,7 +220,7 @@ const gamesData = [
     id: "honorofkings",
     name: "هونر أوف كينجز (Honor of Kings)",
     provider: "Tencent Games",
-    banner: "clashofclans.jpg",
+    banner: "honorofkings.jbg",
     badge: "شحن توكنز رسمي ⚡",
     hasZoneId: false,
     apiServiceId: "honor_of_kings",
@@ -250,6 +249,7 @@ const gamesData = [
     id: "topeleven",
     name: "توب إلفن (Top Eleven)",
     provider: "Nordeus",
+    banner: "efootball.jpg",
     badge: "رموز وتوكنز فورية ⚡",
     hasZoneId: false,
     apiServiceId: "top_eleven",
@@ -261,7 +261,6 @@ const gamesData = [
   }
 ];
 
-// تصدير أو إتاحة البيانات عالمياً للاستخدام في المتجر
 if (typeof module !== "undefined" && module.exports) {
   module.exports = { gamesData };
 } else {
