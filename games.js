@@ -1,6 +1,6 @@
 // ==============================================================================
 // Migo AI Solution - games.js
-// قاعدة بيانات الألعاب الـ 16 المعتمدة بالكامل - مطابقة 100% مع الصور الحقيقية المرفوعة
+// قاعدة بيانات الألعاب الـ 16 المعتمدة بالكامل - مطابقة دقيقة للامتدادات الحقيقية
 // ==============================================================================
 
 const gamesData = [
@@ -235,7 +235,7 @@ const gamesData = [
     id: "diablo",
     name: "ديابلو إيمورتال (Diablo)",
     provider: "Blizzard",
-    banner: "diabloimmortal.jpg",
+    banner: "diabloimmortal.jpeg",
     badge: "شحن أوربس وسيرفرات ⚡",
     hasZoneId: true,
     zoneLabel: "اسم السيرفر (Server Name)",
@@ -250,7 +250,6 @@ const gamesData = [
     id: "topeleven",
     name: "توب إلفن (Top Eleven)",
     provider: "Nordeus",
-    banner: "efootball.jpg",
     badge: "رموز وتوكنز فورية ⚡",
     hasZoneId: false,
     apiServiceId: "top_eleven",
