@@ -31,7 +31,7 @@ const telegramStarsList = {
   ]
 };
 
-// 3. تطبيقات البث المباشر الـ 6 المعتمدة بالبانرات المحلية المطابقة للمستودع تماماً
+// 3. تطبيقات البث المباشر الـ 6 المعتمدة بالبانرات المحلية المطابقة للمستودع تماماً (مع تصحيح الأسعار الحقيقية)
 const liveCoinsData = [
   {
     id: "bigo",
@@ -59,10 +59,10 @@ const liveCoinsData = [
     apiServiceId: "chamet",
     idPlaceholder: "أدخل معرّف حساب Chamet ID",
     packages: [
-      { id: "chamet_4500", name: "4500 Diamonds", price: 52 },
-      { id: "chamet_9000", name: "9000 Diamonds", price: 105 },
-      { id: "chamet_22500", name: "22500 Diamonds", price: 265 },
-      { id: "chamet_45000", name: "45000 Diamonds", price: 530 }
+      { id: "chamet_4500", name: "4500 Diamonds", price: 120 },
+      { id: "chamet_9000", name: "9000 Diamonds", price: 240 },
+      { id: "chamet_22500", name: "22500 Diamonds", price: 580 },
+      { id: "chamet_45000", name: "45000 Diamonds", price: 1150 }
     ]
   },
   {
@@ -75,11 +75,11 @@ const liveCoinsData = [
     apiServiceId: "poppo_live",
     idPlaceholder: "أدخل معرف Poppo ID",
     packages: [
-      { id: "poppo_7000", name: "7000 Coins", price: 52 },
-      { id: "poppo_14000", name: "14000 Coins", price: 105 },
-      { id: "poppo_35000", name: "35000 Coins", price: 265 },
-      { id: "poppo_70000", name: "70000 Coins", price: 530 },
-      { id: "poppo_140000", name: "140000 Coins", price: 1050 }
+      { id: "poppo_7000", name: "7000 Coins", price: 45 },
+      { id: "poppo_14000", name: "14000 Coins", price: 90 },
+      { id: "poppo_35000", name: "35000 Coins", price: 220 },
+      { id: "poppo_70000", name: "70000 Coins", price: 440 },
+      { id: "poppo_140000", name: "140000 Coins", price: 880 }
     ]
   },
   {
@@ -92,11 +92,11 @@ const liveCoinsData = [
     apiServiceId: "yalla_ludo",
     idPlaceholder: "أدخل معرّف يلا لودو (User ID)",
     packages: [
-      { id: "yl_50", name: "50 Diamonds", price: 52 },
-      { id: "yl_250", name: "250 Diamonds", price: 265 },
-      { id: "yl_500", name: "500 Diamonds", price: 530 },
-      { id: "yl_1000", name: "1000 Diamonds", price: 1050 },
-      { id: "yl_2500", name: "2500 Diamonds", price: 2650 }
+      { id: "yl_50", name: "50 Diamonds", price: 60 },
+      { id: "yl_250", name: "250 Diamonds", price: 290 },
+      { id: "yl_500", name: "500 Diamonds", price: 580 },
+      { id: "yl_1000", name: "1000 Diamonds", price: 1150 },
+      { id: "yl_2500", name: "2500 Diamonds", price: 2850 }
     ]
   },
   {
@@ -109,10 +109,10 @@ const liveCoinsData = [
     apiServiceId: "sugo",
     idPlaceholder: "أدخل معرّف الحساب (Sugo ID)",
     packages: [
-      { id: "sugo_42", name: "42 Coins", price: 52 },
-      { id: "sugo_297", name: "297 Coins", price: 370 },
-      { id: "sugo_848", name: "848 Coins", price: 1050 },
-      { id: "sugo_3818", name: "3818 Coins", price: 4750 }
+      { id: "sugo_42", name: "42 Coins", price: 48 },
+      { id: "sugo_297", name: "297 Coins", price: 340 },
+      { id: "sugo_848", name: "848 Coins", price: 980 },
+      { id: "sugo_3818", name: "3818 Coins", price: 4400 }
     ]
   },
   {
@@ -125,10 +125,10 @@ const liveCoinsData = [
     apiServiceId: "meyo",
     idPlaceholder: "أدخل معرّف الحساب (MeYo ID)",
     packages: [
-      { id: "meyo_42", name: "42 Coins", price: 52 },
-      { id: "meyo_297", name: "297 Coins", price: 370 },
-      { id: "meyo_848", name: "848 Coins", price: 1050 },
-      { id: "meyo_3818", name: "3818 Coins", price: 4750 }
+      { id: "meyo_42", name: "42 Coins", price: 48 },
+      { id: "meyo_297", name: "297 Coins", price: 340 },
+      { id: "meyo_848", name: "848 Coins", price: 980 },
+      { id: "meyo_3818", name: "3818 Coins", price: 4400 }
     ]
   }
 ];
