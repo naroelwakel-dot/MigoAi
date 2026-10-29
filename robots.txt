@@ -12,4 +12,4 @@ Allow: /
 
 Content-Signal: ai-train=yes, search=yes, ai-input=yes
 
-Sitemap: https://naroelwakel.github.io/MigoAi/sitemap.xml
+Sitemap: https://naroelwakel-dot.github.io/MigoAi/sitemap.xml
