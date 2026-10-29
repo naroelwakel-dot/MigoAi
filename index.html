@@ -24,10 +24,10 @@
   
   <style>
     :root {
-        --bg-main: #070b14;      
-        --bg-surface: #111827;   
-        --bg-card: #162032;      
-        --border-color: #27354f; 
+        --bg-main: #050811;      
+        --bg-surface: #0e1322;   
+        --bg-card: #131b2e;      
+        --border-color: #1e293b; 
     }
     * { box-sizing: border-box; }
     
@@ -35,12 +35,12 @@
         font-family: 'Tajawal', sans-serif;
         scroll-behavior: smooth;
         background-color: var(--bg-main);
-        background-image: linear-gradient(to bottom, rgba(7, 11, 20, 0.85), rgba(7, 11, 20, 0.96)), 
+        background-image: linear-gradient(to bottom, rgba(5, 8, 17, 0.90), rgba(5, 8, 17, 0.98)), 
                           url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1920&auto=format&fit=crop');
         background-size: cover;
         background-position: center;
         background-attachment: fixed;
-        color: #f8fafc;
+        color: #f1f5f9;
         overflow-x: hidden;
         margin: 0;
         padding: 0;
@@ -52,12 +52,12 @@
     details > summary { list-style: none; }
     details > summary::-webkit-details-marker { display: none; }
     
-    .sky-surface { background-color: var(--bg-surface); border-color: var(--border-color); background-opacity: 0.95; backdrop-filter: blur(10px); }
-    .sky-card { background-color: var(--bg-card); border-color: var(--border-color); transition: all 0.25s ease; backdrop-filter: blur(8px); background-color: rgba(22, 32, 50, 0.85); }
-    .sky-card:hover { border-color: #38bdf8; }
-    .sky-btn { background: linear-gradient(135deg, #0284c7, #7c3aed); color: #ffffff; box-shadow: 0 4px 15px rgba(2, 132, 199, 0.3); transition: 0.25s; }
-    .sky-btn:hover { background: linear-gradient(135deg, #38bdf8, #a855f7); transform: translateY(-1px); }
-    .sky-active-tab { border: 2px solid #38bdf8 !important; background: linear-gradient(135deg, rgba(56, 189, 248, 0.15), rgba(30, 41, 59, 0.8)) !important; box-shadow: 0 4px 18px rgba(56, 189, 248, 0.2); }
+    .sky-surface { background-color: var(--bg-surface); border-color: var(--border-color); backdrop-filter: blur(12px); }
+    .sky-card { background-color: var(--bg-card); border-color: var(--border-color); transition: all 0.25s ease; backdrop-filter: blur(10px); }
+    .sky-card:hover { border-color: #38bdf8; box-shadow: 0 0 20px rgba(56, 189, 248, 0.1); }
+    .sky-btn { background: linear-gradient(135deg, #0ea5e9, #6366f1); color: #ffffff; box-shadow: 0 4px 20px rgba(14, 165, 233, 0.35); transition: 0.25s; }
+    .sky-btn:hover { background: linear-gradient(135deg, #38bdf8, #818cf8); transform: translateY(-1px); }
+    .sky-active-tab { border: 2px solid #38bdf8 !important; background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(15, 23, 42, 0.9)) !important; box-shadow: 0 4px 20px rgba(56, 189, 248, 0.25); }
     select, select option { background-color: var(--bg-surface) !important; color: #ffffff !important; }
     
     .dot { height: 7px; width: 7px; background-color: #475569; border-radius: 50%; display: inline-block; cursor: pointer; transition: 0.3s; }
@@ -125,7 +125,7 @@
 
   <div id="toastContainer" class="fixed top-5 left-5 z-[120] flex flex-col gap-2 pointer-events-none"></div>
 
-  <div id="socialProofPopup" class="fixed bottom-20 left-4 z-40 bg-[#111827]/95 border border-sky-500/40 p-3 rounded-2xl shadow-2xl backdrop-blur-md max-w-xs transition-all duration-500 transform translate-y-24 opacity-0 pointer-events-none flex items-center gap-3">
+  <div id="socialProofPopup" class="fixed bottom-20 left-4 z-40 bg-[#0e1322]/95 border border-sky-500/40 p-3 rounded-2xl shadow-2xl backdrop-blur-md max-w-xs transition-all duration-500 transform translate-y-24 opacity-0 pointer-events-none flex items-center gap-3">
     <div id="proofIcon" class="w-10 h-10 rounded-xl bg-slate-900 border border-slate-700 flex items-center justify-center p-2 shrink-0 shadow text-lg">⚡</div>
     <div class="text-right">
       <div id="proofUser" class="text-xs font-black text-white"></div>
@@ -138,8 +138,8 @@
     <svg class="w-7 h-7 fill-current" viewBox="0 0 24 24"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.04 14.69 2 12.04 2M12.05 3.67C14.25 3.67 16.31 4.53 17.87 6.09C19.42 7.65 20.28 9.72 20.28 11.92C20.28 16.46 16.58 20.15 12.04 20.15C10.56 20.15 9.11 19.76 7.85 19L7.55 18.83L4.43 19.65L5.26 16.61L5.06 16.29C4.24 15 3.8 13.47 3.8 11.91C3.81 7.37 7.5 3.67 12.05 3.67Z"/></svg>
   </a>
 
-  <!-- الهيدر المطور والمرتب بدون تداخل -->
-  <header class="border-b sky-surface sticky top-0 z-50 backdrop-blur-xl bg-[#070b14]/95 shadow-2xl transition-all">
+  <!-- الهيدر المطور باللوجو المحسن الجديد -->
+  <header class="border-b sky-surface sticky top-0 z-50 backdrop-blur-xl bg-[#050811]/90 shadow-2xl transition-all">
    <div class="max-w-7xl mx-auto px-3 sm:px-4 py-3">
     <div class="flex justify-between items-center gap-3">
      
@@ -151,7 +151,7 @@
 
       <button type="button" onclick="openCartModal()" aria-label="سلة المشتريات" class="relative w-10 h-10 flex items-center justify-center rounded-2xl sky-card border text-white transition shadow cursor-pointer hover:border-sky-400">
        <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M17 18C15.9 18 15 18.9 15 20C15 21.1 15.9 22 17 22C18.1 22 19 21.1 19 20C19 18.9 18.1 18 17 18ZM1 2V4H3L6.6 11.59L5.25 14.04C5.09 14.32 5 14.65 5 15C5 16.1 5.9 17 7 17H19V15H7.42C7.28 15 7.17 14.89 7.17 14.75L7.2 14.63L8.1 13H15.55C16.3 13 16.96 12.59 17.3 11.97L20.88 5.48C20.96 5.34 21 5.17 21 5C21 4.45 20.55 4 20 4H5.21L4.27 2H1ZM7 18C5.9 18 5 18.9 5 20C5 21.1 5.9 22 7 22C8.1 22 9 21.1 9 20C9 18.9 8.1 18 7 18Z"/></svg>
-       <span id="cartBadge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow border border-[#070b14]">0</span>
+       <span id="cartBadge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow border border-[#050811]">0</span>
       </button>
 
       <button type="button" id="navLoginBtn" onclick="openAuthModal('login')" class="sky-card border text-gray-200 font-bold px-3.5 py-2 rounded-2xl text-xs transition flex items-center gap-1.5 cursor-pointer hover:border-sky-400 shadow">
@@ -167,14 +167,16 @@
       </div>
      </div>
 
-     <!-- الشعار واسم المنصة في أقصى اليسار -->
-     <a href="#" class="flex items-center gap-2 min-w-0 group"> 
+     <!-- اللوجو واسم المنصة المحسن في أقصى اليسار -->
+     <a href="#" class="flex items-center gap-2.5 min-w-0 group"> 
       <div class="truncate text-left">
-       <span class="text-xs sm:text-sm font-black tracking-wide text-white block truncate leading-tight">Migo AI Solution</span>
-       <span class="text-[8px] text-sky-400 font-extrabold block truncate">المنصة الرقمية المتكاملة</span>
+       <span class="text-xs sm:text-sm font-black tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-white via-sky-200 to-sky-400 block truncate leading-tight">Migo AI Solution</span>
+       <span class="text-[9px] text-sky-400 font-extrabold block tracking-wider uppercase">Digital Store ⚡</span>
       </div> 
-      <div class="w-9 h-9 shrink-0 rounded-xl bg-gradient-to-tr from-sky-600 via-indigo-600 to-purple-600 border border-sky-400/40 flex items-center justify-center text-white shadow-md shadow-sky-500/20 group-hover:scale-105 transition">
-       <i class="fa-solid fa-microchip text-sky-200 text-sm"></i>
+      <div class="w-10 h-10 shrink-0 rounded-2xl bg-gradient-to-tr from-sky-500 via-indigo-600 to-purple-600 p-0.5 shadow-lg shadow-sky-500/30 group-hover:scale-105 transition flex items-center justify-center">
+       <div class="w-full h-full bg-[#050811] rounded-[14px] flex items-center justify-center">
+        <i class="fa-solid fa-microchip text-sky-400 text-base animate-pulse"></i>
+       </div>
       </div> 
      </a>
 
@@ -184,10 +186,10 @@
     <div class="mt-3 relative">
      <label for="liveSearchInput" class="sr-only">بحث شامل في المتجر</label>
      <div class="relative flex items-center">
-       <input type="text" id="liveSearchInput" oninput="handleLiveSearch(this.value)" placeholder="🔍 ابحث في كافة المنتجات، الألعاب، كوينز تيك توك، فيزا VCC، برامج اللايف..." class="w-full bg-[#0b0f19] border border-sky-500/50 focus:border-sky-400 rounded-2xl px-4 py-2.5 pl-10 text-xs text-white outline-none shadow-2xl">
+       <input type="text" id="liveSearchInput" oninput="handleLiveSearch(this.value)" placeholder="🔍 ابحث في كافة المنتجات، الألعاب، كوينز تيك توك، فيزا VCC، برامج اللايف..." class="w-full bg-[#0e1322] border border-sky-500/40 focus:border-sky-400 rounded-2xl px-4 py-2.5 pl-10 text-xs text-white outline-none shadow-2xl">
        <button type="button" onclick="document.getElementById('liveSearchInput').value=''; document.getElementById('searchResultsDropdown').classList.add('hidden');" class="absolute left-3 text-gray-400 hover:text-white text-xs w-6 h-6 rounded-full bg-slate-800 flex items-center justify-center cursor-pointer shadow">✕</button>
      </div>
-     <div id="searchResultsDropdown" class="hidden absolute top-full left-0 right-0 mt-2 bg-[#0b0f19] border-2 border-sky-500/70 rounded-2xl p-3 shadow-2xl z-50 max-h-80 overflow-y-auto custom-scrollbar"></div>
+     <div id="searchResultsDropdown" class="hidden absolute top-full left-0 right-0 mt-2 bg-[#0e1322] border-2 border-sky-500/70 rounded-2xl p-3 shadow-2xl z-50 max-h-80 overflow-y-auto custom-scrollbar"></div>
     </div>
    </div>
   </header>
@@ -195,24 +197,24 @@
   <!-- شريط الأقسام الأفقي السريع (App-Style Pills) -->
   <section class="max-w-6xl mx-auto px-3 mt-2.5">
    <div class="flex gap-1.5 overflow-x-auto pb-1.5 custom-scrollbar" dir="rtl">
-    <a href="#sec-coins" class="shrink-0 px-3.5 py-1.5 rounded-xl bg-slate-900/90 border border-slate-800 text-pink-400 font-bold text-xs hover:border-pink-500 transition shadow flex items-center gap-1"><span>💎</span> تيك توك</a>
-    <a href="#sec-live" class="shrink-0 px-3.5 py-1.5 rounded-xl bg-slate-900/90 border border-slate-800 text-rose-400 font-bold text-xs hover:border-rose-500 transition shadow flex items-center gap-1"><span>🔴</span> اللايف</a>
-    <a href="#sec-vcc" class="shrink-0 px-3.5 py-1.5 rounded-xl bg-slate-900/90 border border-slate-800 text-amber-400 font-bold text-xs hover:border-amber-500 transition shadow flex items-center gap-1"><span>💳</span> بطاقات VCC</a>
-    <a href="#sec-games" class="shrink-0 px-3.5 py-1.5 rounded-xl bg-slate-900/90 border border-slate-800 text-emerald-400 font-bold text-xs hover:border-emerald-500 transition shadow flex items-center gap-1"><span>🎮</span> الألعاب</a>
-    <a href="#sec-social" class="shrink-0 px-3.5 py-1.5 rounded-xl bg-slate-900/90 border border-slate-800 text-sky-400 font-bold text-xs hover:border-sky-500 transition shadow flex items-center gap-1"><span>📱</span> السوشيال</a>
-    <a href="#sec-productivity" class="shrink-0 px-3.5 py-1.5 rounded-xl bg-slate-900/90 border border-slate-800 text-cyan-400 font-bold text-xs hover:border-cyan-500 transition shadow flex items-center gap-1"><span>🎨</span> أدوات وبرامج</a>
-    <a href="#sec-entertainment" class="shrink-0 px-3.5 py-1.5 rounded-xl bg-slate-900/90 border border-slate-800 text-purple-400 font-bold text-xs hover:border-purple-500 transition shadow flex items-center gap-1"><span>🎬</span> ترفيه وبث</a>
-    <a href="#sec-ai" class="shrink-0 px-3.5 py-1.5 rounded-xl bg-slate-900/90 border border-slate-800 text-indigo-400 font-bold text-xs hover:border-indigo-500 transition shadow flex items-center gap-1"><span>🧠</span> AI & APIs</a>
+    <a href="#sec-coins" class="shrink-0 px-3.5 py-1.5 rounded-xl bg-[#0e1322]/90 border border-slate-800 text-pink-400 font-bold text-xs hover:border-pink-500 transition shadow flex items-center gap-1"><span>💎</span> تيك توك</a>
+    <a href="#sec-live" class="shrink-0 px-3.5 py-1.5 rounded-xl bg-[#0e1322]/90 border border-slate-800 text-rose-400 font-bold text-xs hover:border-rose-500 transition shadow flex items-center gap-1"><span>🔴</span> اللايف</a>
+    <a href="#sec-vcc" class="shrink-0 px-3.5 py-1.5 rounded-xl bg-[#0e1322]/90 border border-slate-800 text-amber-400 font-bold text-xs hover:border-amber-500 transition shadow flex items-center gap-1"><span>💳</span> بطاقات VCC</a>
+    <a href="#sec-games" class="shrink-0 px-3.5 py-1.5 rounded-xl bg-[#0e1322]/90 border border-slate-800 text-emerald-400 font-bold text-xs hover:border-emerald-500 transition shadow flex items-center gap-1"><span>🎮</span> الألعاب</a>
+    <a href="#sec-social" class="shrink-0 px-3.5 py-1.5 rounded-xl bg-[#0e1322]/90 border border-slate-800 text-sky-400 font-bold text-xs hover:border-sky-500 transition shadow flex items-center gap-1"><span>📱</span> السوشيال</a>
+    <a href="#sec-productivity" class="shrink-0 px-3.5 py-1.5 rounded-xl bg-[#0e1322]/90 border border-slate-800 text-cyan-400 font-bold text-xs hover:border-cyan-500 transition shadow flex items-center gap-1"><span>🎨</span> أدوات وبرامج</a>
+    <a href="#sec-entertainment" class="shrink-0 px-3.5 py-1.5 rounded-xl bg-[#0e1322]/90 border border-slate-800 text-purple-400 font-bold text-xs hover:border-purple-500 transition shadow flex items-center gap-1"><span>🎬</span> ترفيه وبث</a>
+    <a href="#sec-ai" class="shrink-0 px-3.5 py-1.5 rounded-xl bg-[#0e1322]/90 border border-slate-800 text-indigo-400 font-bold text-xs hover:border-indigo-500 transition shadow flex items-center gap-1"><span>🧠</span> AI & APIs</a>
    </div>
   </section>
 
   <!-- القسم الترحيبي والسلايدر -->
   <section class="max-w-6xl mx-auto px-3 pt-3 pb-2 text-center">
-   <div class="relative w-full max-w-3xl mx-auto overflow-hidden rounded-2xl mb-4 shadow-xl border border-slate-700/80 bg-slate-900/50 backdrop-blur-xl" dir="rtl">
+   <div class="relative w-full max-w-3xl mx-auto overflow-hidden rounded-2xl mb-4 shadow-xl border border-slate-700/80 bg-[#0e1322]/50 backdrop-blur-xl" dir="rtl">
     <div id="sliderTrack" class="flex transition-transform duration-700 ease-in-out">
         
         <div class="w-full shrink-0">
-            <div class="relative bg-cover bg-center border border-pink-500/45 py-5 px-4 rounded-2xl text-center overflow-hidden shadow-xl" style="background-image: linear-gradient(rgba(7, 11, 20, 0.6), rgba(11, 17, 32, 0.75)), url('images (6).jpeg');">
+            <div class="relative bg-cover bg-center border border-pink-500/45 py-5 px-4 rounded-2xl text-center overflow-hidden shadow-xl" style="background-image: linear-gradient(rgba(5, 8, 17, 0.65), rgba(14, 19, 34, 0.8)), url('images (6).jpeg');">
                 <span class="absolute top-0 right-0 bg-gradient-to-r from-pink-600 to-rose-500 text-white text-[10px] font-black px-3 py-0.5 rounded-bl-xl z-10 shadow">فحص الاسم فوري 🎵</span>
                 <div class="relative z-10">
                   <h3 class="text-base sm:text-xl font-black text-white mb-1 drop-shadow">شحن كوينز تيك توك الرسمية</h3>
@@ -224,7 +226,7 @@
         </div>
 
         <div class="w-full shrink-0">
-            <div class="relative bg-cover bg-center border border-amber-500/45 py-5 px-4 rounded-2xl text-center overflow-hidden shadow-xl" style="background-image: linear-gradient(rgba(7, 11, 20, 0.6), rgba(11, 17, 32, 0.75)), url('Square-VCC-Product-Focused-Blog.jpg');">
+            <div class="relative bg-cover bg-center border border-amber-500/45 py-5 px-4 rounded-2xl text-center overflow-hidden shadow-xl" style="background-image: linear-gradient(rgba(5, 8, 17, 0.65), rgba(14, 19, 34, 0.8)), url('Square-VCC-Product-Focused-Blog.jpg');">
                 <span class="absolute top-0 right-0 bg-gradient-to-r from-amber-500 to-yellow-500 text-slate-950 text-[10px] font-black px-3 py-0.5 rounded-bl-xl z-10 shadow">الدفع الدولي 💳</span>
                 <div class="relative z-10">
                   <h3 class="text-base sm:text-xl font-black text-white mb-1 drop-shadow">البطاقات الافتراضية الدولية (VCC)</h3>
@@ -236,20 +238,20 @@
         </div>
 
         <div class="w-full shrink-0">
-            <div class="relative bg-cover bg-center border border-emerald-500/45 py-5 px-4 rounded-2xl text-center overflow-hidden shadow-xl" style="background-image: linear-gradient(rgba(7, 11, 20, 0.6), rgba(11, 17, 32, 0.75)), url('kv_event390.jpg');">
+            <div class="relative bg-cover bg-center border border-emerald-500/45 py-5 px-4 rounded-2xl text-center overflow-hidden shadow-xl" style="background-image: linear-gradient(rgba(5, 8, 17, 0.65), rgba(14, 19, 34, 0.8)), url('kv_event390.jpg');">
                 <span class="absolute top-0 right-0 bg-gradient-to-r from-emerald-600 to-teal-500 text-white text-[10px] font-black px-3 py-0.5 rounded-bl-xl z-10 shadow">Midasbuy المعتمد</span>
                 <div class="relative z-10">
                   <h3 class="text-base sm:text-xl font-black text-white mb-1 drop-shadow">ببجي موبايل (3850 UC)</h3>
                   <p class="text-[11px] sm:text-xs text-gray-100 mb-2 drop-shadow max-w-sm mx-auto">تسليم رسمي وفوري بالـ ID مع فحص اسم اللاعب قبل التحويل مباشرة.</p>
                   <div class="text-sm sm:text-base font-black text-emerald-300 mb-3 font-mono drop-shadow">3,100 ج.م</div>
-                  <button onclick="openPlayerIdModal('بابجي موبايل (PUBG)', '3850 UC', 3100, true, 'pubg')" class="bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-extrabold py-2 px-5 rounded-xl text-[11px] transition inline-block shadow">شحن فوري بالـ ID ⚡</button>
+                  <button onclick="openPlayerIdModal('بابجي موبايل (PUBG)', '3850 UC', 3100, true, 'pubg')" class="bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-extrabold py-2 px-5 rounded-xl text-[11px] transition cursor-pointer shadow">شحن فوري بالـ ID ⚡</button>
                 </div>
             </div>
         </div>
 
     </div>
 
-    <div class="flex justify-center gap-1.5 py-2 bg-slate-950/60" id="sliderDots">
+    <div class="flex justify-center gap-1.5 py-2 bg-[#050811]/60" id="sliderDots">
         <span class="dot active" onclick="goToSlide(0)"></span>
         <span class="dot" onclick="goToSlide(1)"></span>
         <span class="dot" onclick="goToSlide(2)"></span>
@@ -260,7 +262,7 @@
   <main class="max-w-7xl mx-auto px-3 sm:px-4 py-3 space-y-8">
    
    <section id="sec-coins" class="sky-surface border rounded-3xl p-4 sm:p-6 shadow-2xl scroll-mt-24">
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 border-b border-slate-700/60 pb-3">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 border-b border-slate-800 pb-3">
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-2xl bg-pink-500/10 border border-pink-500/30 flex items-center justify-center shrink-0 shadow">
           <svg class="w-7 h-7 anim-coin" viewBox="0 0 40 40">
@@ -281,7 +283,7 @@
           <h2 class="text-lg sm:text-2xl font-black text-white mt-1">عملات تيك توك ونجوم تليجرام</h2>
         </div>
       </div>
-      <span class="text-xs text-gray-300 bg-slate-900 border border-slate-700 px-3 py-1 rounded-xl">⚡ فحص المعرف والصورة قبل التأكيد</span>
+      <span class="text-xs text-gray-300 bg-[#050811] border border-slate-800 px-3 py-1 rounded-xl">⚡ فحص المعرف والصورة قبل التأكيد</span>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -291,7 +293,7 @@
    </section>
 
    <section id="sec-live" class="sky-surface border rounded-3xl p-4 sm:p-6 shadow-2xl scroll-mt-24">
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 border-b border-slate-700/60 pb-3">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 border-b border-slate-800 pb-3">
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-2xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-center shrink-0 shadow relative overflow-hidden">
           <svg class="w-7 h-7" viewBox="0 0 40 40">
@@ -306,18 +308,18 @@
           <h2 class="text-lg sm:text-2xl font-black text-white mt-1">شحن تطبيقات البث المباشر (Live Apps)</h2>
         </div>
       </div>
-      <span class="text-xs text-gray-300 bg-slate-900 border border-slate-700 px-3 py-1 rounded-xl">⚡ فحص اسم المذيع والحساب فوري</span>
+      <span class="text-xs text-gray-300 bg-[#050811] border border-slate-800 px-3 py-1 rounded-xl">⚡ فحص اسم المذيع والحساب فوري</span>
     </div>
     <div id="liveAppsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
    </section>
 
    <section id="sec-vcc" class="sky-surface border rounded-3xl p-4 sm:p-6 shadow-2xl scroll-mt-24">
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 border-b border-slate-700/60 pb-3">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 border-b border-slate-800 pb-3">
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center shrink-0 shadow">
           <svg class="w-8 h-6 anim-vcc" viewBox="0 0 44 32">
             <rect x="2" y="2" width="40" height="28" rx="4" fill="url(#gradVccSec)" stroke="#fbbf24" stroke-width="1.5"/>
-            <rect x="2" y="8" width="40" height="5" fill="#111827"/>
+            <rect x="2" y="8" width="40" height="5" fill="#050811"/>
             <rect x="6" y="17" width="9" height="7" rx="1.5" fill="#fde047" stroke="#b45309" stroke-width="0.8"/>
             <circle cx="34" cy="21" r="3.5" fill="#ef4444" opacity="0.85"/>
             <circle cx="29" cy="21" r="3.5" fill="#f59e0b" opacity="0.85"/>
@@ -334,13 +336,13 @@
           <h2 class="text-lg sm:text-2xl font-black text-white mt-1">البطاقات الافتراضية الدولية (VCC)</h2>
         </div>
       </div>
-      <span class="text-xs text-gray-300 bg-slate-900 border border-slate-700 px-3 py-1 rounded-xl">تسليم بيانات الكارت عبر الإيميل والواتساب</span>
+      <span class="text-xs text-gray-300 bg-[#050811] border border-slate-800 px-3 py-1 rounded-xl">تسليم بيانات الكارت عبر الإيميل والواتساب</span>
     </div>
     <div id="vccCardsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3"></div>
    </section>
 
    <section id="sec-games" class="sky-surface border rounded-3xl p-4 sm:p-6 shadow-2xl scroll-mt-24">
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 border-b border-slate-700/60 pb-3">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 border-b border-slate-800 pb-3">
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center shrink-0 shadow">
           <svg class="w-8 h-6 anim-gamepad" viewBox="0 0 44 34">
@@ -356,13 +358,13 @@
           <h2 class="text-lg sm:text-2xl font-black text-white mt-1">شحن الألعاب الرسمي (16 لعبة بالكامل)</h2>
         </div>
       </div>
-      <span class="text-xs text-gray-300 bg-slate-900 border border-slate-700 px-3 py-1 rounded-xl">⚡ معتمد من الموزعين الرسميين</span>
+      <span class="text-xs text-gray-300 bg-[#050811] border border-slate-800 px-3 py-1 rounded-xl">⚡ معتمد من الموزعين الرسميين</span>
     </div>
     <div id="gamesCardsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
    </section>
 
    <section id="sec-productivity" class="sky-surface border rounded-3xl p-4 sm:p-6 shadow-2xl scroll-mt-24">
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 border-b border-slate-700/60 pb-3">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4 border-b border-slate-800 pb-3">
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center shrink-0 shadow">
           <svg class="w-7 h-7 anim-palette" viewBox="0 0 40 40">
@@ -378,7 +380,7 @@
           <h2 class="text-lg sm:text-2xl font-black text-white mt-1">البرامج، الاشتراكات والأصول الرقمية</h2>
         </div>
       </div>
-      <span class="text-xs text-gray-300 bg-slate-900 border border-slate-700 px-3 py-1 rounded-xl">تفعيل رسمي وضمان</span>
+      <span class="text-xs text-gray-300 bg-[#050811] border border-slate-800 px-3 py-1 rounded-xl">تفعيل رسمي وضمان</span>
     </div>
     <div id="productivityContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3"></div>
    </section>
@@ -408,49 +410,49 @@
     <div class="sky-card border rounded-3xl overflow-hidden shadow-2xl">
      <div class="h-32 sm:h-40 relative overflow-hidden">
       <img id="selectedPlatformBannerImg" src="" alt="Banner" class="absolute inset-0 w-full h-full object-cover object-center transition-all duration-500">
-      <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/65 to-transparent p-4 flex flex-col justify-between z-10">
+      <div class="absolute inset-0 bg-gradient-to-t from-[#050811] via-[#050811]/70 to-transparent p-4 flex flex-col justify-between z-10">
        <div class="flex justify-between items-start">
         <span class="text-[10px] font-bold text-sky-300 bg-sky-500/20 px-2.5 py-0.5 rounded-full border border-sky-500/40 backdrop-blur-md">
          سيرفر موثق ⚡
         </span>
-        <span id="selectedServiceBadgeId" class="bg-slate-950/80 border border-sky-500/40 text-sky-400 font-mono text-xs font-bold px-2.5 py-0.5 rounded-lg backdrop-blur-md">ID: #2410</span>
+        <span id="selectedServiceBadgeId" class="bg-[#050811]/90 border border-sky-500/40 text-sky-400 font-mono text-xs font-bold px-2.5 py-0.5 rounded-lg backdrop-blur-md">ID: #2410</span>
        </div>
        <div class="flex items-center gap-2.5">
-        <div id="selectedPlatformIconContainer" class="w-10 h-10 rounded-xl bg-slate-950/90 border border-slate-700 flex items-center justify-center p-2 shadow text-sky-400"></div>
+        <div id="selectedPlatformIconContainer" class="w-10 h-10 rounded-xl bg-[#050811] border border-slate-800 flex items-center justify-center p-2 shadow text-sky-400"></div>
         <div>
          <h3 id="selectedPlatformTitle" class="font-black text-sm sm:text-base text-white drop-shadow-md">تيك توك (TikTok)</h3>
-         <span class="text-[10px] text-gray-200 drop-shadow">سيرفرات موثقة وبضمان عدم النقص</span>
+         <span class="text-[10px] text-gray-300 drop-shadow">سيرفرات موثقة وبضمان عدم النقص</span>
         </div>
        </div>
       </div>
      </div>
 
-     <div class="p-4 bg-slate-900/80">
+     <div class="p-4 bg-[#0e1322]/80">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
        <div>
         <label class="block text-xs font-bold text-gray-200 mb-1" for="smmCategorySelect">القسم:</label>
-        <select id="smmCategorySelect" onchange="onSMMCategoryChange()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white font-bold outline-none"></select>
+        <select id="smmCategorySelect" onchange="onSMMCategoryChange()" class="w-full bg-[#050811] border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white font-bold outline-none"></select>
        </div>
        <div>
         <label class="block text-xs font-bold text-gray-200 mb-1" for="smmServiceSelect">الخدمة:</label>
-        <select id="smmServiceSelect" onchange="onSMMServiceChange()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-xs text-white font-bold outline-none"></select>
+        <select id="smmServiceSelect" onchange="onSMMServiceChange()" class="w-full bg-[#050811] border border-slate-800 rounded-xl px-3 py-2.5 text-xs text-white font-bold outline-none"></select>
        </div>
       </div>
       
-      <div class="mb-3 bg-slate-950 border border-slate-700 rounded-xl p-2.5 flex flex-wrap gap-2 text-xs items-center justify-between" id="smmServiceMeta"></div>
+      <div class="mb-3 bg-[#050811] border border-slate-800 rounded-xl p-2.5 flex flex-wrap gap-2 text-xs items-center justify-between" id="smmServiceMeta"></div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
        <div>
         <label class="block text-xs font-bold text-gray-200 mb-1" for="smmLinkInput">رابط الحساب أو المنشور:</label>
-        <input type="url" id="smmLinkInput" placeholder="https://..." class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono outline-none">
+        <input type="url" id="smmLinkInput" placeholder="https://..." class="w-full bg-[#050811] border border-slate-800 rounded-xl px-3 py-2 text-xs text-white font-mono outline-none">
        </div>
        <div>
         <label class="block text-xs font-bold text-gray-200 mb-1" for="smmQtyInput">الكمية المطلوبة: <span id="smmLimitsNote" class="text-sky-300 text-[10px]"></span></label>
-        <input type="number" id="smmQtyInput" value="1000" min="10" oninput="calculateSMMCost()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono font-bold outline-none">
+        <input type="number" id="smmQtyInput" value="1000" min="10" oninput="calculateSMMCost()" class="w-full bg-[#050811] border border-slate-800 rounded-xl px-3 py-2 text-xs text-white font-mono font-bold outline-none">
        </div>
       </div>
 
-      <div class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-950 border border-slate-700 rounded-xl p-3">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-[#050811] border border-slate-800 rounded-xl p-3">
        <div>
         <span class="text-[11px] text-gray-300 block">التكلفة الإجمالية:</span>
         <div class="text-xl font-black text-sky-400 font-mono" id="smmPriceEGP">0.00 ج.م</div>
@@ -470,7 +472,7 @@
         <div class="w-10 h-10 rounded-2xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center shrink-0 shadow">
           <svg class="w-7 h-7 anim-film" viewBox="0 0 40 40">
             <circle cx="20" cy="20" r="16" fill="#7e22ce" stroke="#c084fc" stroke-width="1.8"/>
-            <circle cx="20" cy="20" r="5" fill="#111827" stroke="#ffffff" stroke-width="1.5"/>
+            <circle cx="20" cy="20" r="5" fill="#050811" stroke="#ffffff" stroke-width="1.5"/>
             <circle cx="20" cy="9" r="2.5" fill="#ffffff"/>
             <circle cx="20" cy="31" r="2.5" fill="#ffffff"/>
             <circle cx="9" cy="20" r="2.5" fill="#ffffff"/>
@@ -503,25 +505,25 @@
       <div id="aiCardsContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6"></div>
 
       <div class="sky-card border border-indigo-500/30 rounded-2xl p-4">
-        <div class="flex items-center justify-between border-b border-slate-700 pb-2 mb-3">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
           <h3 class="font-extrabold text-sm text-white flex items-center gap-2">⚡ نماذج API وحاسبة التوكنز</h3>
           <span class="text-[10px] text-indigo-300 font-mono">لكل 1 مليون Token</span>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3">
-          <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+          <div class="bg-[#050811] p-2.5 rounded-xl border border-slate-800">
             <span class="text-xs font-bold text-gray-200 block">Claude Opus 5.5</span>
             <span class="text-[10px] text-gray-400">إدخال: 71 ج.م | إخراج: 355 ج.م</span>
           </div>
-          <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+          <div class="bg-[#050811] p-2.5 rounded-xl border border-slate-800">
             <span class="text-xs font-bold text-gray-200 block">GPT-5.6 Sol</span>
             <span class="text-[10px] text-gray-400">إدخال: 71 ج.م | إخراج: 355 ج.م</span>
           </div>
-          <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+          <div class="bg-[#050811] p-2.5 rounded-xl border border-slate-800">
             <span class="text-xs font-bold text-gray-200 block">Gemini 3.1 Pro</span>
             <span class="text-[10px] text-gray-400">إدخال: 35.5 ج.م | إخراج: 213 ج.م</span>
           </div>
-          <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+          <div class="bg-[#050811] p-2.5 rounded-xl border border-slate-800">
             <span class="text-xs font-bold text-gray-200 block">DeepSeek R2 Pro</span>
             <span class="text-[10px] text-gray-400">إدخال: 17.7 ج.م | إخراج: 53.2 ج.م</span>
           </div>
@@ -530,15 +532,15 @@
         <div class="pt-2 border-t border-slate-800">
           <span class="text-xs font-bold text-white block mb-2">💎 باقات شحن رصيد الـ API:</span>
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-            <button onclick="expressCheckout({id: 'api_10', name: 'باقة المطور (10$ API)', type: 'api', price: 620, details: 'صلاحية دائمة بدون انتهاء'})" class="p-2 rounded-xl bg-slate-950 border border-slate-700 hover:border-indigo-400 text-center transition cursor-pointer">
+            <button onclick="expressCheckout({id: 'api_10', name: 'باقة المطور (10$ API)', type: 'api', price: 620, details: 'صلاحية دائمة بدون انتهاء'})" class="p-2 rounded-xl bg-[#050811] border border-slate-800 hover:border-indigo-400 text-center transition cursor-pointer">
               <span class="text-xs font-bold text-white block">باقة المطور (10$)</span>
               <span class="text-xs font-black text-amber-400 font-mono">620 ج.م</span>
             </button>
-            <button onclick="expressCheckout({id: 'api_30', name: 'باقة المحترفين (30$ API)', type: 'api', price: 1860, details: '+5$ رصيد إضافي مجاني'})" class="p-2 rounded-xl bg-slate-950 border border-slate-700 hover:border-indigo-400 text-center transition cursor-pointer">
+            <button onclick="expressCheckout({id: 'api_30', name: 'باقة المحترفين (30$ API)', type: 'api', price: 1860, details: '+5$ رصيد إضافي مجاني'})" class="p-2 rounded-xl bg-[#050811] border border-slate-800 hover:border-indigo-400 text-center transition cursor-pointer">
               <span class="text-xs font-bold text-white block">باقة المحترفين (30$)</span>
               <span class="text-xs font-black text-amber-400 font-mono">1,860 ج.م</span>
             </button>
-            <button onclick="expressCheckout({id: 'api_125', name: 'باقة الشركات (125$ API)', type: 'api', price: 7750, details: '+25$ رصيد إضافي مجاني'})" class="p-2 rounded-xl bg-slate-950 border border-slate-700 hover:border-indigo-400 text-center transition cursor-pointer">
+            <button onclick="expressCheckout({id: 'api_125', name: 'باقة الشركات (125$ API)', type: 'api', price: 7750, details: '+25$ رصيد إضافي مجاني'})" class="p-2 rounded-xl bg-[#050811] border border-slate-800 hover:border-indigo-400 text-center transition cursor-pointer">
               <span class="text-xs font-bold text-white block">باقة الشركات (125$)</span>
               <span class="text-xs font-black text-amber-400 font-mono">7,750 ج.م</span>
             </button>
@@ -550,17 +552,17 @@
 
    <section class="sky-surface border rounded-3xl p-5 shadow-2xl">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
-      <div class="p-4 bg-slate-900/80 rounded-2xl border border-slate-800">
+      <div class="p-4 bg-[#0e1322]/80 rounded-2xl border border-slate-800">
         <div class="text-2xl mb-1">✅</div>
         <h3 class="text-sm font-bold text-white mb-1">ضمان كامل واستقرار</h3>
         <p class="text-xs text-gray-300">تعويض فوري واشتراكات رسمية 100% طوال فترة التفعيل.</p>
       </div>
-      <div class="p-4 bg-slate-900/80 rounded-2xl border border-slate-800">
+      <div class="p-4 bg-[#0e1322]/80 rounded-2xl border border-slate-800">
         <div class="text-2xl mb-1">⚡</div>
         <h3 class="text-sm font-bold text-white mb-1">شحن بالـ ID فقط</h3>
         <p class="text-xs text-gray-300">لا نطلب أبداً كلمات مرور لحسابات الألعاب أو برامج اللايف.</p>
       </div>
-      <div class="p-4 bg-slate-900/80 rounded-2xl border border-slate-800">
+      <div class="p-4 bg-[#0e1322]/80 rounded-2xl border border-slate-800">
         <div class="text-2xl mb-1">💳</div>
         <h3 class="text-sm font-bold text-white mb-1">دفع محلي آمن بالجنيه</h3>
         <p class="text-xs text-gray-300">فودافون كاش، اتصالات، إنستاباي، والتقسيط بدون فيزا دولية.</p>
@@ -571,13 +573,13 @@
    <section class="sky-surface border rounded-3xl p-5 shadow-2xl">
     <h2 class="text-lg font-black text-white mb-3 flex items-center gap-2">❓ الأسئلة الشائعة</h2>
     <div class="space-y-2 text-xs">
-      <details class="bg-slate-900/80 border border-slate-800 p-3 rounded-xl cursor-pointer">
+      <details class="bg-[#0e1322]/80 border border-slate-800 p-3 rounded-xl cursor-pointer">
         <summary class="font-bold text-sky-300">كيف يصلني شحن الألعاب وبرامج اللايف؟</summary>
-        <p class="text-gray-200 mt-2">الشحن يتم مباشرة إلى معرّف اللاعب (Player ID) داخل اللعبة أو التطبيق في غضون 2 إلى 5 دقائق من تأكيد التحويل.</p>
+        <p class="text-gray-300 mt-2">الشحن يتم مباشرة إلى معرّف اللاعب (Player ID) داخل اللعبة أو التطبيق في غضون 2 إلى 5 دقائق من تأكيد التحويل.</p>
       </details>
-      <details class="bg-slate-900/80 border border-slate-800 p-3 rounded-xl cursor-pointer">
+      <details class="bg-[#0e1322]/80 border border-slate-800 p-3 rounded-xl cursor-pointer">
         <summary class="font-bold text-sky-300">هل اشتراكات الذكاء الاصطناعي رسمية؟</summary>
-        <p class="text-gray-200 mt-2">نعم، التفعيل يتم على بريدك الشخصي وبطرق دفع رسمية معتمدة مع ضمان استمرارية الاشتراك طوال مدته.</p>
+        <p class="text-gray-300 mt-2">نعم، التفعيل يتم على بريدك الشخصي وبطرق دفع رسمية معتمدة مع ضمان استمرارية الاشتراك طوال مدته.</p>
       </details>
     </div>
    </section>
@@ -600,7 +602,7 @@
       <div class="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/30 mx-auto flex items-center justify-center mb-2">
         <svg class="w-9 h-7 anim-vcc" viewBox="0 0 44 32">
           <rect x="2" y="2" width="40" height="28" rx="4" fill="url(#gradVccModal)" stroke="#fbbf24" stroke-width="1.5"/>
-          <rect x="2" y="8" width="40" height="5" fill="#111827"/>
+          <rect x="2" y="8" width="40" height="5" fill="#050811"/>
           <rect x="6" y="17" width="9" height="7" rx="1.5" fill="#fde047" stroke="#b45309" stroke-width="0.8"/>
           <circle cx="34" cy="21" r="3.5" fill="#ef4444" opacity="0.85"/>
           <circle cx="29" cy="21" r="3.5" fill="#f59e0b" opacity="0.85"/>
@@ -619,11 +621,11 @@
     <div class="space-y-3 mb-4">
       <div>
         <label class="block text-xs font-bold text-gray-200 mb-1" for="vccEmailInput">البريد الإلكتروني (لاستلام تفاصيل الكارت):</label>
-        <input type="email" id="vccEmailInput" placeholder="example@gmail.com" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono outline-none">
+        <input type="email" id="vccEmailInput" placeholder="example@gmail.com" class="w-full bg-[#050811] border border-slate-800 rounded-xl px-3 py-2 text-xs text-white font-mono outline-none">
       </div>
       <div>
         <label class="block text-xs font-bold text-gray-200 mb-1" for="vccPurposeInput">الغرض من البطاقة (اختياري):</label>
-        <input type="text" id="vccPurposeInput" placeholder="إعلانات ممولة، شات جي بي تي، متاجر رقمية..." class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none">
+        <input type="text" id="vccPurposeInput" placeholder="إعلانات ممولة، شات جي بي تي، متاجر رقمية..." class="w-full bg-[#050811] border border-slate-800 rounded-xl px-3 py-2 text-xs text-white outline-none">
       </div>
     </div>
 
@@ -639,7 +641,7 @@
     <button type="button" onclick="closePlayerIdModal()" aria-label="إغلاق" class="absolute top-4 left-4 text-gray-300 hover:text-white sky-card border w-8 h-8 rounded-xl flex items-center justify-center cursor-pointer">✕</button>
     
     <div class="text-center mb-4">
-      <div id="modalTargetIcon" class="w-16 h-16 rounded-2xl bg-slate-950 border border-slate-700 mx-auto flex items-center justify-center mb-2 shadow overflow-hidden"></div>
+      <div id="modalTargetIcon" class="w-16 h-16 rounded-2xl bg-[#050811] border border-slate-800 mx-auto flex items-center justify-center mb-2 shadow overflow-hidden"></div>
       <h3 id="modalTargetTitle" class="text-base sm:text-lg font-black text-white">شحن الحساب</h3>
       <p id="modalTargetPkg" class="text-xs text-amber-400 font-bold mt-0.5 font-mono"></p>
     </div>
@@ -647,13 +649,13 @@
     <div class="space-y-3 mb-4">
       <div>
         <label class="block text-xs font-bold text-gray-200 mb-1" for="modalSelectGame">الخدمة / اللعبة:</label>
-        <select id="modalSelectGame" onchange="onModalGameSelectChange()" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-bold outline-none"></select>
+        <select id="modalSelectGame" onchange="onModalGameSelectChange()" class="w-full bg-[#050811] border border-slate-800 rounded-xl px-3 py-2 text-xs text-white font-bold outline-none"></select>
       </div>
 
       <div>
         <label class="block text-xs font-bold text-gray-200 mb-1" for="modalInputPlayerId"><span id="modalIdLabel">معرف اللاعب أو اليوزر نيم</span> <span class="text-red-400">*</span>:</label>
         <div class="flex gap-2">
-            <input type="text" id="modalInputPlayerId" placeholder="اكتب الـ ID أو @username" class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono outline-none">
+            <input type="text" id="modalInputPlayerId" placeholder="اكتب الـ ID أو @username" class="flex-1 bg-[#050811] border border-slate-800 rounded-xl px-3 py-2 text-xs text-white font-mono outline-none">
             <button type="button" id="verifyAccountBtn" onclick="verifyPlayerAccount()" class="shrink-0 bg-sky-600 hover:bg-sky-500 text-white font-extrabold px-3 rounded-xl text-xs cursor-pointer shadow transition flex items-center gap-1">
                 <span>فحص</span> 🔍
             </button>
@@ -662,12 +664,12 @@
 
       <div id="modalZoneGroup" class="hidden">
         <label class="block text-xs font-bold text-gray-200 mb-1" for="modalInputZoneId">معرف السيرفر (Zone ID):</label>
-        <input type="text" id="modalInputZoneId" placeholder="مثال: 1234" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono outline-none">
+        <input type="text" id="modalInputZoneId" placeholder="مثال: 1234" class="w-full bg-[#050811] border border-slate-800 rounded-xl px-3 py-2 text-xs text-white font-mono outline-none">
       </div>
 
       <div>
         <label class="block text-xs font-bold text-gray-200 mb-1" for="modalInputPlayerName">اسم الحساب المسترجع (Nickname):</label>
-        <input type="text" id="modalInputPlayerName" placeholder="يظهر هنا تلقائياً بعد الفحص" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white outline-none">
+        <input type="text" id="modalInputPlayerName" placeholder="يظهر هنا تلقائياً بعد الفحص" class="w-full bg-[#050811] border border-slate-800 rounded-xl px-3 py-2 text-xs text-white outline-none">
       </div>
 
       <div id="verifyStatusBox" class="hidden p-2.5 rounded-xl text-xs font-bold text-center border"></div>
@@ -681,9 +683,9 @@
 
   <div id="sidebarContainer" class="fixed inset-0 z-50 hidden">
    <div onclick="toggleSidebar()" class="fixed inset-0 bg-black/80 backdrop-blur-sm"></div>
-   <aside class="fixed top-0 right-0 h-full w-72 max-w-[85vw] sky-surface border-l border-slate-700 z-10 p-4 flex flex-col justify-between overflow-y-auto shadow-2xl custom-scrollbar">
+   <aside class="fixed top-0 right-0 h-full w-72 max-w-[85vw] sky-surface border-l border-slate-800 z-10 p-4 flex flex-col justify-between overflow-y-auto shadow-2xl custom-scrollbar">
     <div>
-     <div class="flex justify-between items-center pb-3 border-b border-slate-700">
+     <div class="flex justify-between items-center pb-3 border-b border-slate-800">
       <div class="flex items-center gap-2">
        <div class="w-8 h-8 rounded-lg sky-btn flex items-center justify-center font-black">M</div>
        <span class="font-extrabold text-white text-sm">أقسام المتجر الشاملة</span>
@@ -703,8 +705,8 @@
      </div>
     </div>
     
-    <div class="pt-3 border-t border-slate-700 mt-4 text-center">
-     <div class="bg-slate-900 border border-slate-700 rounded-xl p-2.5 mb-2.5 text-xs flex justify-between items-center">
+    <div class="pt-3 border-t border-slate-800 mt-4 text-center">
+     <div class="bg-[#050811] border border-slate-800 rounded-xl p-2.5 mb-2.5 text-xs flex justify-between items-center">
         <span class="text-gray-300">إجمالي الزوار:</span>
         <span id="visitorCount" class="font-mono text-sky-400 font-black">--</span>
      </div>
@@ -720,7 +722,7 @@
      <div class="w-10 h-10 rounded-2xl sky-btn flex items-center justify-center font-black text-xl mx-auto mb-1">M</div>
      <h3 class="text-lg font-extrabold text-white">بوابة عملاء Migo AI</h3>
     </div>
-    <div class="grid grid-cols-2 gap-2 sky-card p-1 rounded-xl mb-4 border border-slate-700">
+    <div class="grid grid-cols-2 gap-2 sky-card p-1 rounded-xl mb-4 border border-slate-800">
      <button type="button" id="tabLoginBtn" onclick="switchAuthTab('login')" class="py-1.5 text-xs font-bold rounded-lg transition sky-btn cursor-pointer">دخول</button>
      <button type="button" id="tabRegisterBtn" onclick="switchAuthTab('register')" class="py-1.5 text-xs font-bold rounded-lg transition text-gray-400 cursor-pointer">تسجيل حساب</button>
     </div>
@@ -741,22 +743,22 @@
 
   <div id="cartModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
    <div class="sky-surface border rounded-2xl max-w-lg w-full p-5 relative shadow-2xl flex flex-col max-h-[90vh]">
-    <div class="flex justify-between items-center mb-3 border-b border-slate-700 pb-2">
+    <div class="flex justify-between items-center mb-3 border-b border-slate-800 pb-2">
      <h3 class="text-lg font-extrabold text-white flex items-center gap-2">🛒 سلة المشتريات</h3>
      <button type="button" onclick="closeCartModal()" aria-label="إغلاق" class="text-gray-300 hover:text-white sky-card border w-8 h-8 rounded-lg flex items-center justify-center cursor-pointer">✕</button>
     </div>
     
     <div id="cartItemsContainer" class="flex-1 overflow-y-auto custom-scrollbar space-y-2 mb-3 min-h-[140px]"></div>
 
-    <div class="border-t border-slate-700 pt-3 space-y-2">
+    <div class="border-t border-slate-800 pt-3 space-y-2">
      <div class="flex gap-2">
       <label for="cartCouponInput" class="sr-only">كود الخصم</label>
-      <input type="text" id="cartCouponInput" placeholder="كود الخصم (SIAFFC15 أو SIAF15)" class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono focus:outline-none uppercase">
+      <input type="text" id="cartCouponInput" placeholder="كود الخصم (SIAFFC15 أو SIAF15)" class="flex-1 bg-[#050811] border border-slate-800 rounded-xl px-3 py-2 text-xs text-white font-mono focus:outline-none uppercase">
       <button type="button" onclick="applyCartCoupon()" class="sky-btn text-xs font-bold px-3 py-2 rounded-xl cursor-pointer">تفعيل</button>
      </div>
      <div id="cartCouponStatus" class="hidden text-[10px] font-bold"></div>
      
-     <div class="bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs">
+     <div class="bg-[#0e1322] border border-slate-800 rounded-xl p-2.5 text-xs">
       <div class="flex justify-between text-gray-300 mb-1"><span>المجموع الفرعي:</span> <span id="cartSubtotal" class="font-mono">0 ج.م</span></div>
       <div class="flex justify-between text-emerald-400 mb-1 hidden" id="cartDiscountRow"><span>الخصم:</span> <span id="cartDiscountAmount" class="font-mono">-0 ج.م</span></div>
       <div class="flex justify-between text-white font-black text-base border-t border-slate-800 pt-1 mt-1"><span>الإجمالي:</span> <span id="cartTotal" class="text-sky-400 font-mono">0 ج.م</span></div>
@@ -770,7 +772,7 @@
 
   <div id="checkoutModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 hidden items-center justify-center p-4">
    <div class="sky-surface border border-sky-500/30 rounded-2xl max-w-lg w-full p-5 relative shadow-2xl max-h-[95vh] overflow-y-auto custom-scrollbar">
-    <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-700">
+    <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-800">
      <h3 class="text-lg font-extrabold text-white">💳 تأكيد وسيلة الدفع</h3>
      <button type="button" onclick="closeCheckoutModal()" aria-label="إغلاق" class="text-gray-300 hover:text-white sky-card border w-8 h-8 rounded-lg flex items-center justify-center cursor-pointer">✕</button>
     </div>
@@ -849,14 +851,14 @@
      </button>
     </div>
 
-    <div id="checkoutDetailsBox" class="hidden bg-slate-950 border border-slate-700 p-3.5 rounded-xl text-center mb-3">
+    <div id="checkoutDetailsBox" class="hidden bg-[#050811] border border-slate-800 p-3.5 rounded-xl text-center mb-3">
      <h4 id="checkoutPayTitle" class="text-xs font-bold text-gray-200 mb-1.5"></h4>
      <div id="checkoutPayContent" class="text-xs text-gray-300"></div>
     </div>
 
     <div class="mb-3 text-right">
       <label class="block text-xs font-bold text-gray-200 mb-1" for="senderAccountInput">رقم المحفظة / الحساب الذي قمت بالتحويل منه (لتأكيد العملية): <span class="text-red-400">*</span></label>
-      <input type="text" id="senderAccountInput" placeholder="مثال: 010xxxxxxxx أو يوزر إنستاباي / باينانس" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white font-mono outline-none focus:border-sky-400">
+      <input type="text" id="senderAccountInput" placeholder="مثال: 010xxxxxxxx أو يوزر إنستاباي / باينانس" class="w-full bg-[#050811] border border-slate-800 rounded-xl px-3 py-2 text-xs text-white font-mono outline-none focus:border-sky-400">
     </div>
 
     <button type="button" id="confirmPaymentBtn" onclick="finalizeOrderWhatsApp()" class="hidden w-full bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold py-3 rounded-xl text-xs cursor-pointer shadow transition">
