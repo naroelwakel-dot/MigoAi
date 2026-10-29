@@ -119,6 +119,21 @@
       50% { transform: scale(1.2); opacity: 0.7; }
     }
     .anim-pulse { animation: anim-pulse-fast 1.5s infinite ease-in-out; transform-origin: center; }
+
+    /* Custom Pro Glass Effect for Header Buttons */
+    .btn-pro-glass {
+        background: linear-gradient(135deg, rgba(14, 165, 233, 0.15), rgba(99, 102, 241, 0.15));
+        border: 1px solid rgba(56, 189, 248, 0.3);
+        backdrop-filter: blur(12px);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .btn-pro-glass:hover {
+        background: linear-gradient(135deg, rgba(14, 165, 233, 0.3), rgba(99, 102, 241, 0.3));
+        border-color: rgba(56, 189, 248, 0.7);
+        box-shadow: 0 0 20px rgba(56, 189, 248, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+    }
   </style>
  </head>
  <body class="min-h-screen selection:bg-sky-500 selection:text-white pb-24">
@@ -145,21 +160,21 @@
      
      <!-- أزرار الإجراءات (القائمة، السلة، الحساب) في أقصى اليمين -->
      <div class="flex items-center gap-2 shrink-0">
-      <button type="button" onclick="toggleSidebar()" aria-label="القائمة" class="w-10 h-10 rounded-2xl sky-card border flex items-center justify-center text-sky-400 cursor-pointer hover:border-sky-400 shadow-md group">
+      <button type="button" onclick="toggleSidebar()" aria-label="القائمة" class="w-10 h-10 rounded-2xl btn-pro-glass flex items-center justify-center text-sky-400 cursor-pointer shadow-md group">
        <i class="fa-solid fa-bars-staggered text-base group-hover:scale-110 transition"></i>
       </button>
 
-      <button type="button" onclick="openCartModal()" aria-label="سلة المشتريات" class="relative w-10 h-10 flex items-center justify-center rounded-2xl sky-card border text-white transition shadow cursor-pointer hover:border-sky-400">
+      <button type="button" onclick="openCartModal()" aria-label="سلة المشتريات" class="relative w-10 h-10 flex items-center justify-center rounded-2xl btn-pro-glass text-white transition shadow cursor-pointer">
        <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M17 18C15.9 18 15 18.9 15 20C15 21.1 15.9 22 17 22C18.1 22 19 21.1 19 20C19 18.9 18.1 18 17 18ZM1 2V4H3L6.6 11.59L5.25 14.04C5.09 14.32 5 14.65 5 15C5 16.1 5.9 17 7 17H19V15H7.42C7.28 15 7.17 14.89 7.17 14.75L7.2 14.63L8.1 13H15.55C16.3 13 16.96 12.59 17.3 11.97L20.88 5.48C20.96 5.34 21 5.17 21 5C21 4.45 20.55 4 20 4H5.21L4.27 2H1ZM7 18C5.9 18 5 18.9 5 20C5 21.1 5.9 22 7 22C8.1 22 9 21.1 9 20C9 18.9 8.1 18 7 18Z"/></svg>
        <span id="cartBadge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow border border-[#050811]">0</span>
       </button>
 
-      <button type="button" id="navLoginBtn" onclick="openAuthModal('login')" class="sky-card border text-gray-200 font-bold px-3.5 py-2 rounded-2xl text-xs transition flex items-center gap-1.5 cursor-pointer hover:border-sky-400 shadow">
+      <button type="button" id="navLoginBtn" onclick="openAuthModal('login')" class="btn-pro-glass text-gray-200 font-bold px-3.5 py-2 rounded-2xl text-xs transition flex items-center gap-1.5 cursor-pointer shadow">
        <svg class="w-3.5 h-3.5 fill-current text-sky-400" viewBox="0 0 24 24"><path d="M12 4A4 4 0 0 1 16 8A4 4 0 0 1 12 12A4 4 0 0 1 8 8A4 4 0 0 1 12 4M12 14C16.42 14 20 15.79 20 18V20H4V18C4 15.79 7.58 14 12 14Z"/></svg>
        <span class="hidden sm:inline">دخول</span>
       </button>
 
-      <div id="navUserBadge" class="hidden items-center gap-2 sky-card border px-3 py-1.5 rounded-2xl shadow">
+      <div id="navUserBadge" class="hidden items-center gap-2 btn-pro-glass px-3 py-1.5 rounded-2xl shadow">
        <div class="text-right">
         <div id="navUserName" class="text-[11px] font-black text-white truncate max-w-[70px]"></div>
        </div>
@@ -244,7 +259,7 @@
                   <h3 class="text-base sm:text-xl font-black text-white mb-1 drop-shadow">ببجي موبايل (3850 UC)</h3>
                   <p class="text-[11px] sm:text-xs text-gray-100 mb-2 drop-shadow max-w-sm mx-auto">تسليم رسمي وفوري بالـ ID مع فحص اسم اللاعب قبل التحويل مباشرة.</p>
                   <div class="text-sm sm:text-base font-black text-emerald-300 mb-3 font-mono drop-shadow">3,100 ج.م</div>
-                  <button onclick="openPlayerIdModal('بابجي موبايل (PUBG)', '3850 UC', 3100, true, 'pubg')" class="bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-extrabold py-2 px-5 rounded-xl text-[11px] transition cursor-pointer shadow">شحن فوري بالـ ID ⚡</button>
+                  <button onclick="openPlayerIdModal('بابجي موبايل (PUBG)', '3850 UC', 3100, true, 'pubg')" class="bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-extrabold py-2 px-5 rounded-xl text-[11px] transition inline-block shadow">شحن فوري بالـ ID ⚡</button>
                 </div>
             </div>
         </div>
