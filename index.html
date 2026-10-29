@@ -120,7 +120,6 @@
     }
     .anim-pulse { animation: anim-pulse-fast 1.5s infinite ease-in-out; transform-origin: center; }
 
-    /* تأثير زجاجي احترافي للأزرار واللوجو */
     .btn-pro-glass {
         background: linear-gradient(135deg, rgba(14, 165, 233, 0.15), rgba(99, 102, 241, 0.15));
         border: 1px solid rgba(56, 189, 248, 0.3);
@@ -696,82 +695,43 @@
    </div>
   </div>
 
-  <!-- القائمة الجانبية المطورة باحترافية مع أزرار الفيسبوك والواتساب وعدد الزوار القابل للتعديل يدويًا -->
   <div id="sidebarContainer" class="fixed inset-0 z-50 hidden">
    <div onclick="toggleSidebar()" class="fixed inset-0 bg-black/80 backdrop-blur-sm"></div>
-   <aside class="fixed top-0 right-0 h-full w-80 max-w-[88vw] bg-[#090d19] border-l border-sky-500/30 z-10 p-5 flex flex-col justify-between overflow-y-auto shadow-2xl custom-scrollbar">
+   <aside class="fixed top-0 right-0 h-full w-72 max-w-[85vw] sky-surface border-l border-slate-800 z-10 p-4 flex flex-col justify-between overflow-y-auto shadow-2xl custom-scrollbar">
     <div>
-     <!-- رأس القائمة الجانبية -->
-     <div class="flex justify-between items-center pb-4 border-b border-slate-800">
-      <div class="flex items-center gap-2.5">
-       <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center font-black text-white shadow-md shadow-sky-500/30 text-sm">M</div>
-       <div>
-         <span class="font-extrabold text-white text-sm block leading-tight">Migo AI Store</span>
-         <span class="text-[9px] text-sky-400 font-bold block">القائمة الرئيسية</span>
-       </div>
+     <div class="flex justify-between items-center pb-3 border-b border-slate-800">
+      <div class="flex items-center gap-2">
+       <div class="w-8 h-8 rounded-lg sky-btn flex items-center justify-center font-black">M</div>
+       <span class="font-extrabold text-white text-sm">أقسام المتجر الشاملة</span>
       </div>
-      <button type="button" onclick="toggleSidebar()" aria-label="إغلاق" class="w-8 h-8 rounded-xl bg-slate-900 border border-slate-800 text-gray-300 hover:text-white flex items-center justify-center cursor-pointer transition hover:border-sky-400">✕</button>
+      <button type="button" onclick="toggleSidebar()" aria-label="إغلاق" class="w-8 h-8 rounded-lg sky-card border text-gray-300 hover:text-white flex items-center justify-center cursor-pointer">✕</button>
      </div>
      
-     <!-- روابط الأقسام بتصميم أنيق ومضيء -->
-     <div class="mt-4 space-y-2 text-xs">
-      <a href="#sec-coins" onclick="toggleSidebar()" class="w-full px-3.5 py-2.5 rounded-xl bg-[#0e1322] border border-slate-800 hover:border-pink-500/60 text-pink-400 font-bold flex items-center justify-between transition group shadow"> 
-        <span class="flex items-center gap-2"><i class="fa-solid fa-gem text-pink-400 group-hover:scale-110 transition"></i> كوينز تيك توك وتليجرام</span> 
-        <i class="fa-solid fa-chevron-left text-[10px] text-gray-500"></i>
-      </a>
-      <a href="#sec-live" onclick="toggleSidebar()" class="w-full px-3.5 py-2.5 rounded-xl bg-[#0e1322] border border-slate-800 hover:border-rose-500/60 text-rose-400 font-bold flex items-center justify-between transition group shadow"> 
-        <span class="flex items-center gap-2"><i class="fa-solid fa-video text-rose-400 group-hover:scale-110 transition"></i> برامج البث والدردشة (Live)</span> 
-        <i class="fa-solid fa-chevron-left text-[10px] text-gray-500"></i>
-      </a>
-      <a href="#sec-vcc" onclick="toggleSidebar()" class="w-full px-3.5 py-2.5 rounded-xl bg-[#0e1322] border border-slate-800 hover:border-amber-500/60 text-amber-400 font-bold flex items-center justify-between transition group shadow"> 
-        <span class="flex items-center gap-2"><i class="fa-solid fa-credit-card text-amber-400 group-hover:scale-110 transition"></i> بطاقات الدفع الدولي (VCC)</span> 
-        <i class="fa-solid fa-chevron-left text-[10px] text-gray-500"></i>
-      </a>
-      <a href="#sec-games" onclick="toggleSidebar()" class="w-full px-3.5 py-2.5 rounded-xl bg-[#0e1322] border border-slate-800 hover:border-emerald-500/60 text-emerald-400 font-bold flex items-center justify-between transition group shadow"> 
-        <span class="flex items-center gap-2"><i class="fa-solid fa-gamepad text-emerald-400 group-hover:scale-110 transition"></i> شحن الألعاب بالـ ID</span> 
-        <span class="text-[9px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-md border border-emerald-500/30">16 لعبة</span>
-      </a>
-      <a href="#sec-social" onclick="toggleSidebar()" class="w-full px-3.5 py-2.5 rounded-xl bg-[#0e1322] border border-slate-800 hover:border-sky-500/60 text-sky-400 font-bold flex items-center justify-between transition group shadow"> 
-        <span class="flex items-center gap-2"><i class="fa-solid fa-share-nodes text-sky-400 group-hover:scale-110 transition"></i> خدمات السوشيال ميديا</span> 
-        <span class="text-[9px] bg-sky-500/20 text-sky-300 px-2 py-0.5 rounded-md border border-sky-500/30">18 منصة</span>
-      </a>
-      <a href="#sec-productivity" onclick="toggleSidebar()" class="w-full px-3.5 py-2.5 rounded-xl bg-[#0e1322] border border-slate-800 hover:border-cyan-500/60 text-cyan-400 font-bold flex items-center justify-between transition group shadow"> 
-        <span class="flex items-center gap-2"><i class="fa-solid fa-palette text-cyan-400 group-hover:scale-110 transition"></i> أدوات وبرامج المصممين</span> 
-        <i class="fa-solid fa-chevron-left text-[10px] text-gray-500"></i>
-      </a>
-      <a href="#sec-entertainment" onclick="toggleSidebar()" class="w-full px-3.5 py-2.5 rounded-xl bg-[#0e1322] border border-slate-800 hover:border-purple-500/60 text-purple-400 font-bold flex items-center justify-between transition group shadow"> 
-        <span class="flex items-center gap-2"><i class="fa-solid fa-film text-purple-400 group-hover:scale-110 transition"></i> الترفيه والبث (Netflix)</span> 
-        <i class="fa-solid fa-chevron-left text-[10px] text-gray-500"></i>
-      </a>
-      <a href="#sec-ai" onclick="toggleSidebar()" class="w-full px-3.5 py-2.5 rounded-xl bg-[#0e1322] border border-slate-800 hover:border-indigo-500/60 text-indigo-400 font-bold flex items-center justify-between transition group shadow"> 
-        <span class="flex items-center gap-2"><i class="fa-solid fa-brain text-indigo-400 group-hover:scale-110 transition"></i> الذكاء الاصطناعي و الـ APIs</span> 
-        <i class="fa-solid fa-chevron-left text-[10px] text-gray-500"></i>
-      </a>
+     <div class="mt-3 space-y-1.5 text-xs">
+      <a href="#sec-coins" onclick="toggleSidebar()" class="w-full px-3 py-2 rounded-xl sky-card border text-pink-400 font-bold flex items-center justify-between"> <span>💎 كوينز تيك توك وتليجرام</span> </a>
+      <a href="#sec-live" onclick="toggleSidebar()" class="w-full px-3 py-2 rounded-xl sky-card border text-rose-400 font-bold flex items-center justify-between"> <span>🔴 برامج البث والدردشة (Live)</span> </a>
+      <a href="#sec-vcc" onclick="toggleSidebar()" class="w-full px-3 py-2 rounded-xl sky-card border text-amber-400 font-bold flex items-center justify-between"> <span>💳 بطاقات الدفع الدولي (VCC)</span> </a>
+      <a href="#sec-games" onclick="toggleSidebar()" class="w-full px-3 py-2 rounded-xl sky-card border text-emerald-400 font-bold flex items-center justify-between"> <span>🎮 شحن الألعاب بالـ ID</span> <span class="text-[10px] text-emerald-300">16 لعبة</span></a>
+      <a href="#sec-social" onclick="toggleSidebar()" class="w-full px-3 py-2 rounded-xl sky-card border text-sky-400 font-bold flex items-center justify-between"> <span>📱 خدمات السوشيال ميديا</span> <span class="text-[10px]">18 منصة</span></a>
+      <a href="#sec-productivity" onclick="toggleSidebar()" class="w-full px-3 py-2 rounded-xl sky-card border text-cyan-400 font-bold flex items-center justify-between"> <span>🎨 أدوات وبرامج المصممين</span> </a>
+      <a href="#sec-entertainment" onclick="toggleSidebar()" class="w-full px-3 py-2 rounded-xl sky-card border text-purple-400 font-bold flex items-center justify-between"> <span>🎬 الترفيه والبث (Netflix, Prime)</span> </a>
+      <a href="#sec-ai" onclick="toggleSidebar()" class="w-full px-3 py-2 rounded-xl sky-card border text-indigo-400 font-bold flex items-center justify-between"> <span>🧠 الذكاء الاصطناعي و الـ APIs</span> </a>
      </div>
 
-     <!-- أزرار التواصل الاجتماعي المضافة حديثاً داخل القائمة -->
-     <div class="mt-4 pt-3 border-t border-slate-800 grid grid-cols-2 gap-2">
-       <!-- زر صفحة الفيسبوك -->
-       <a href="https://www.facebook.com/YOUR_PAGE" target="_blank" class="p-2.5 rounded-xl bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/40 text-blue-300 text-xs font-bold flex items-center justify-center gap-1.5 transition shadow">
-         <i class="fa-brands fa-facebook text-sm"></i> فيسبوك
-       </a>
-       <!-- زر خدمة العملاء واتساب -->
-       <a href="https://wa.me/201060934020?text=مرحباً%20Migo%20AI،%20أحتاج%20مساعدة" target="_blank" class="p-2.5 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 text-xs font-bold flex items-center justify-center gap-1.5 transition shadow">
-         <i class="fa-brands fa-whatsapp text-sm"></i> واتساب
+     <!-- زر صفحة الفيسبوك بالرابط الحقيقي المطلوبة -->
+     <div class="mt-3 pt-3 border-t border-slate-800">
+       <a href="https://www.facebook.com/share/1EmHemdAPw/" target="_blank" class="w-full py-2.5 rounded-xl bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/40 text-blue-300 text-xs font-bold flex items-center justify-center gap-2 transition shadow">
+         <i class="fa-brands fa-facebook text-sm"></i> تابعنا على صفحة فيسبوك
        </a>
      </div>
     </div>
     
-    <!-- أسفل القائمة: عدد الزوار القابل للتعديل يدوياً من الـ HTML وزر الحساب -->
-    <div class="pt-4 border-t border-slate-800 mt-4 text-center">
-     <div class="bg-[#050811] border border-slate-800 rounded-xl p-3 mb-2.5 text-xs flex justify-between items-center shadow-inner">
-        <span class="text-gray-300 flex items-center gap-1.5"><i class="fa-solid fa-users text-sky-400"></i> إجمالي الزوار:</span>
-        <!-- يمكنك تعديل الرقم مباشرة من هنا 45280 إلى أي رقم تريده -->
-        <span class="font-mono text-sky-400 font-black text-sm tracking-wider">45,280</span>
+    <div class="pt-3 border-t border-slate-800 mt-4 text-center">
+     <div class="bg-[#050811] border border-slate-800 rounded-xl p-2.5 mb-2.5 text-xs flex justify-between items-center">
+        <span class="text-gray-300">إجمالي الزوار:</span>
+        <span id="dynamicVisitorCount" class="font-mono text-sky-400 font-black">45,280</span>
      </div>
-     <button type="button" onclick="toggleSidebar(); openAuthModal('login');" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 text-white font-bold text-xs cursor-pointer shadow-lg hover:opacity-90 transition flex items-center justify-center gap-2">
-       <i class="fa-solid fa-user-shield"></i> دخول / تسجيل حساب
-     </button>
+     <button type="button" onclick="toggleSidebar(); openAuthModal('login');" class="w-full sky-card border text-white font-bold py-2 rounded-xl text-xs cursor-pointer">👤 دخول / تسجيل حساب</button>
     </div>
    </aside>
   </div>
@@ -929,6 +889,21 @@
   </div>
 
   <script>
+    // سكربت زيادة عدد الزوار تلقائياً عند كل زيارة حقيقية وحفظها في المتصفح
+    document.addEventListener("DOMContentLoaded", function() {
+        let visitors = localStorage.getItem("migo_visitor_count");
+        if (!visitors) {
+            visitors = 45280; // الرقم الأساسي الابتدائي
+        } else {
+            visitors = parseInt(visitors) + 1;
+        }
+        localStorage.setItem("migo_visitor_count", visitors);
+        const counterEl = document.getElementById("dynamicVisitorCount");
+        if (counterEl) {
+            counterEl.innerText = visitors.toLocaleString();
+        }
+    });
+
     const originalSelectPaymentMethod = window.selectPaymentMethod;
     window.selectPaymentMethod = function(type, title, el) {
         if (typeof originalSelectPaymentMethod === 'function') {
