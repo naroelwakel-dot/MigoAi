@@ -120,7 +120,7 @@
     }
     .anim-pulse { animation: anim-pulse-fast 1.5s infinite ease-in-out; transform-origin: center; }
 
-    /* Custom Pro Glass Effect for Header Buttons */
+    /* تأثير زجاجي احترافي للأزرار واللوجو */
     .btn-pro-glass {
         background: linear-gradient(135deg, rgba(14, 165, 233, 0.15), rgba(99, 102, 241, 0.15));
         border: 1px solid rgba(56, 189, 248, 0.3);
@@ -153,12 +153,12 @@
     <svg class="w-7 h-7 fill-current" viewBox="0 0 24 24"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.04 14.69 2 12.04 2M12.05 3.67C14.25 3.67 16.31 4.53 17.87 6.09C19.42 7.65 20.28 9.72 20.28 11.92C20.28 16.46 16.58 20.15 12.04 20.15C10.56 20.15 9.11 19.76 7.85 19L7.55 18.83L4.43 19.65L5.26 16.61L5.06 16.29C4.24 15 3.8 13.47 3.8 11.91C3.81 7.37 7.5 3.67 12.05 3.67Z"/></svg>
   </a>
 
-  <!-- الهيدر المطور باللوجو المحسن الجديد -->
+  <!-- الهيدر المطور مع حرف M الفخم المطابق لشكل التشيب -->
   <header class="border-b sky-surface sticky top-0 z-50 backdrop-blur-xl bg-[#050811]/90 shadow-2xl transition-all">
    <div class="max-w-7xl mx-auto px-3 sm:px-4 py-3">
     <div class="flex justify-between items-center gap-3">
      
-     <!-- أزرار الإجراءات (القائمة، السلة، الحساب) في أقصى اليمين -->
+     <!-- أزرار الإجراءات (القائمة، السلة، الحساب) بتصميم زجاجي متطور -->
      <div class="flex items-center gap-2 shrink-0">
       <button type="button" onclick="toggleSidebar()" aria-label="القائمة" class="w-10 h-10 rounded-2xl btn-pro-glass flex items-center justify-center text-sky-400 cursor-pointer shadow-md group">
        <i class="fa-solid fa-bars-staggered text-base group-hover:scale-110 transition"></i>
@@ -182,7 +182,7 @@
       </div>
      </div>
 
-     <!-- اللوجو واسم المنصة المحسن في أقصى اليسار -->
+     <!-- اللوجو المحسن (حرف M بتصميم زجاجي متدرج فخم يماثل أيقونة التشيب) -->
      <a href="#" class="flex items-center gap-2.5 min-w-0 group"> 
       <div class="truncate text-left">
        <span class="text-xs sm:text-sm font-black tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-white via-sky-200 to-sky-400 block truncate leading-tight">Migo AI Solution</span>
@@ -190,7 +190,7 @@
       </div> 
       <div class="w-10 h-10 shrink-0 rounded-2xl bg-gradient-to-tr from-sky-500 via-indigo-600 to-purple-600 p-0.5 shadow-lg shadow-sky-500/30 group-hover:scale-105 transition flex items-center justify-center">
        <div class="w-full h-full bg-[#050811] rounded-[14px] flex items-center justify-center">
-        <i class="fa-solid fa-microchip text-sky-400 text-base animate-pulse"></i>
+        <span class="text-sky-400 font-black text-lg drop-shadow-[0_0_8px_rgba(56,189,248,0.8)]">M</span>
        </div>
       </div> 
      </a>
@@ -696,36 +696,82 @@
    </div>
   </div>
 
+  <!-- القائمة الجانبية المطورة باحترافية مع أزرار الفيسبوك والواتساب وعدد الزوار القابل للتعديل يدويًا -->
   <div id="sidebarContainer" class="fixed inset-0 z-50 hidden">
    <div onclick="toggleSidebar()" class="fixed inset-0 bg-black/80 backdrop-blur-sm"></div>
-   <aside class="fixed top-0 right-0 h-full w-72 max-w-[85vw] sky-surface border-l border-slate-800 z-10 p-4 flex flex-col justify-between overflow-y-auto shadow-2xl custom-scrollbar">
+   <aside class="fixed top-0 right-0 h-full w-80 max-w-[88vw] bg-[#090d19] border-l border-sky-500/30 z-10 p-5 flex flex-col justify-between overflow-y-auto shadow-2xl custom-scrollbar">
     <div>
-     <div class="flex justify-between items-center pb-3 border-b border-slate-800">
-      <div class="flex items-center gap-2">
-       <div class="w-8 h-8 rounded-lg sky-btn flex items-center justify-center font-black">M</div>
-       <span class="font-extrabold text-white text-sm">أقسام المتجر الشاملة</span>
+     <!-- رأس القائمة الجانبية -->
+     <div class="flex justify-between items-center pb-4 border-b border-slate-800">
+      <div class="flex items-center gap-2.5">
+       <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center font-black text-white shadow-md shadow-sky-500/30 text-sm">M</div>
+       <div>
+         <span class="font-extrabold text-white text-sm block leading-tight">Migo AI Store</span>
+         <span class="text-[9px] text-sky-400 font-bold block">القائمة الرئيسية</span>
+       </div>
       </div>
-      <button type="button" onclick="toggleSidebar()" aria-label="إغلاق" class="w-8 h-8 rounded-lg sky-card border text-gray-300 hover:text-white flex items-center justify-center cursor-pointer">✕</button>
+      <button type="button" onclick="toggleSidebar()" aria-label="إغلاق" class="w-8 h-8 rounded-xl bg-slate-900 border border-slate-800 text-gray-300 hover:text-white flex items-center justify-center cursor-pointer transition hover:border-sky-400">✕</button>
      </div>
      
-     <div class="mt-3 space-y-1.5 text-xs">
-      <a href="#sec-coins" onclick="toggleSidebar()" class="w-full px-3 py-2 rounded-xl sky-card border text-pink-400 font-bold flex items-center justify-between"> <span>💎 كوينز تيك توك وتليجرام</span> </a>
-      <a href="#sec-live" onclick="toggleSidebar()" class="w-full px-3 py-2 rounded-xl sky-card border text-rose-400 font-bold flex items-center justify-between"> <span>🔴 برامج البث والدردشة (Live)</span> </a>
-      <a href="#sec-vcc" onclick="toggleSidebar()" class="w-full px-3 py-2 rounded-xl sky-card border text-amber-400 font-bold flex items-center justify-between"> <span>💳 بطاقات الدفع الدولي (VCC)</span> </a>
-      <a href="#sec-games" onclick="toggleSidebar()" class="w-full px-3 py-2 rounded-xl sky-card border text-emerald-400 font-bold flex items-center justify-between"> <span>🎮 شحن الألعاب بالـ ID</span> <span class="text-[10px] text-emerald-300">16 لعبة</span></a>
-      <a href="#sec-social" onclick="toggleSidebar()" class="w-full px-3 py-2 rounded-xl sky-card border text-sky-400 font-bold flex items-center justify-between"> <span>📱 خدمات السوشيال ميديا</span> <span class="text-[10px]">18 منصة</span></a>
-      <a href="#sec-productivity" onclick="toggleSidebar()" class="w-full px-3 py-2 rounded-xl sky-card border text-cyan-400 font-bold flex items-center justify-between"> <span>🎨 أدوات وبرامج المصممين</span> </a>
-      <a href="#sec-entertainment" onclick="toggleSidebar()" class="w-full px-3 py-2 rounded-xl sky-card border text-purple-400 font-bold flex items-center justify-between"> <span>🎬 الترفيه والبث (Netflix, Prime)</span> </a>
-      <a href="#sec-ai" onclick="toggleSidebar()" class="w-full px-3 py-2 rounded-xl sky-card border text-indigo-400 font-bold flex items-center justify-between"> <span>🧠 الذكاء الاصطناعي و الـ APIs</span> </a>
+     <!-- روابط الأقسام بتصميم أنيق ومضيء -->
+     <div class="mt-4 space-y-2 text-xs">
+      <a href="#sec-coins" onclick="toggleSidebar()" class="w-full px-3.5 py-2.5 rounded-xl bg-[#0e1322] border border-slate-800 hover:border-pink-500/60 text-pink-400 font-bold flex items-center justify-between transition group shadow"> 
+        <span class="flex items-center gap-2"><i class="fa-solid fa-gem text-pink-400 group-hover:scale-110 transition"></i> كوينز تيك توك وتليجرام</span> 
+        <i class="fa-solid fa-chevron-left text-[10px] text-gray-500"></i>
+      </a>
+      <a href="#sec-live" onclick="toggleSidebar()" class="w-full px-3.5 py-2.5 rounded-xl bg-[#0e1322] border border-slate-800 hover:border-rose-500/60 text-rose-400 font-bold flex items-center justify-between transition group shadow"> 
+        <span class="flex items-center gap-2"><i class="fa-solid fa-video text-rose-400 group-hover:scale-110 transition"></i> برامج البث والدردشة (Live)</span> 
+        <i class="fa-solid fa-chevron-left text-[10px] text-gray-500"></i>
+      </a>
+      <a href="#sec-vcc" onclick="toggleSidebar()" class="w-full px-3.5 py-2.5 rounded-xl bg-[#0e1322] border border-slate-800 hover:border-amber-500/60 text-amber-400 font-bold flex items-center justify-between transition group shadow"> 
+        <span class="flex items-center gap-2"><i class="fa-solid fa-credit-card text-amber-400 group-hover:scale-110 transition"></i> بطاقات الدفع الدولي (VCC)</span> 
+        <i class="fa-solid fa-chevron-left text-[10px] text-gray-500"></i>
+      </a>
+      <a href="#sec-games" onclick="toggleSidebar()" class="w-full px-3.5 py-2.5 rounded-xl bg-[#0e1322] border border-slate-800 hover:border-emerald-500/60 text-emerald-400 font-bold flex items-center justify-between transition group shadow"> 
+        <span class="flex items-center gap-2"><i class="fa-solid fa-gamepad text-emerald-400 group-hover:scale-110 transition"></i> شحن الألعاب بالـ ID</span> 
+        <span class="text-[9px] bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded-md border border-emerald-500/30">16 لعبة</span>
+      </a>
+      <a href="#sec-social" onclick="toggleSidebar()" class="w-full px-3.5 py-2.5 rounded-xl bg-[#0e1322] border border-slate-800 hover:border-sky-500/60 text-sky-400 font-bold flex items-center justify-between transition group shadow"> 
+        <span class="flex items-center gap-2"><i class="fa-solid fa-share-nodes text-sky-400 group-hover:scale-110 transition"></i> خدمات السوشيال ميديا</span> 
+        <span class="text-[9px] bg-sky-500/20 text-sky-300 px-2 py-0.5 rounded-md border border-sky-500/30">18 منصة</span>
+      </a>
+      <a href="#sec-productivity" onclick="toggleSidebar()" class="w-full px-3.5 py-2.5 rounded-xl bg-[#0e1322] border border-slate-800 hover:border-cyan-500/60 text-cyan-400 font-bold flex items-center justify-between transition group shadow"> 
+        <span class="flex items-center gap-2"><i class="fa-solid fa-palette text-cyan-400 group-hover:scale-110 transition"></i> أدوات وبرامج المصممين</span> 
+        <i class="fa-solid fa-chevron-left text-[10px] text-gray-500"></i>
+      </a>
+      <a href="#sec-entertainment" onclick="toggleSidebar()" class="w-full px-3.5 py-2.5 rounded-xl bg-[#0e1322] border border-slate-800 hover:border-purple-500/60 text-purple-400 font-bold flex items-center justify-between transition group shadow"> 
+        <span class="flex items-center gap-2"><i class="fa-solid fa-film text-purple-400 group-hover:scale-110 transition"></i> الترفيه والبث (Netflix)</span> 
+        <i class="fa-solid fa-chevron-left text-[10px] text-gray-500"></i>
+      </a>
+      <a href="#sec-ai" onclick="toggleSidebar()" class="w-full px-3.5 py-2.5 rounded-xl bg-[#0e1322] border border-slate-800 hover:border-indigo-500/60 text-indigo-400 font-bold flex items-center justify-between transition group shadow"> 
+        <span class="flex items-center gap-2"><i class="fa-solid fa-brain text-indigo-400 group-hover:scale-110 transition"></i> الذكاء الاصطناعي و الـ APIs</span> 
+        <i class="fa-solid fa-chevron-left text-[10px] text-gray-500"></i>
+      </a>
+     </div>
+
+     <!-- أزرار التواصل الاجتماعي المضافة حديثاً داخل القائمة -->
+     <div class="mt-4 pt-3 border-t border-slate-800 grid grid-cols-2 gap-2">
+       <!-- زر صفحة الفيسبوك -->
+       <a href="https://www.facebook.com/YOUR_PAGE" target="_blank" class="p-2.5 rounded-xl bg-blue-600/20 hover:bg-blue-600/30 border border-blue-500/40 text-blue-300 text-xs font-bold flex items-center justify-center gap-1.5 transition shadow">
+         <i class="fa-brands fa-facebook text-sm"></i> فيسبوك
+       </a>
+       <!-- زر خدمة العملاء واتساب -->
+       <a href="https://wa.me/201060934020?text=مرحباً%20Migo%20AI،%20أحتاج%20مساعدة" target="_blank" class="p-2.5 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 text-xs font-bold flex items-center justify-center gap-1.5 transition shadow">
+         <i class="fa-brands fa-whatsapp text-sm"></i> واتساب
+       </a>
      </div>
     </div>
     
-    <div class="pt-3 border-t border-slate-800 mt-4 text-center">
-     <div class="bg-[#050811] border border-slate-800 rounded-xl p-2.5 mb-2.5 text-xs flex justify-between items-center">
-        <span class="text-gray-300">إجمالي الزوار:</span>
-        <span id="visitorCount" class="font-mono text-sky-400 font-black">--</span>
+    <!-- أسفل القائمة: عدد الزوار القابل للتعديل يدوياً من الـ HTML وزر الحساب -->
+    <div class="pt-4 border-t border-slate-800 mt-4 text-center">
+     <div class="bg-[#050811] border border-slate-800 rounded-xl p-3 mb-2.5 text-xs flex justify-between items-center shadow-inner">
+        <span class="text-gray-300 flex items-center gap-1.5"><i class="fa-solid fa-users text-sky-400"></i> إجمالي الزوار:</span>
+        <!-- يمكنك تعديل الرقم مباشرة من هنا 45280 إلى أي رقم تريده -->
+        <span class="font-mono text-sky-400 font-black text-sm tracking-wider">45,280</span>
      </div>
-     <button type="button" onclick="toggleSidebar(); openAuthModal('login');" class="w-full sky-card border text-white font-bold py-2 rounded-xl text-xs cursor-pointer">👤 دخول / تسجيل حساب</button>
+     <button type="button" onclick="toggleSidebar(); openAuthModal('login');" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-sky-600 to-indigo-600 text-white font-bold text-xs cursor-pointer shadow-lg hover:opacity-90 transition flex items-center justify-center gap-2">
+       <i class="fa-solid fa-user-shield"></i> دخول / تسجيل حساب
+     </button>
     </div>
    </aside>
   </div>
