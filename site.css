@@ -274,3 +274,48 @@
         fill: none; stroke: currentColor; stroke-width: 1.8;
         stroke-linecap: round; stroke-linejoin: round;
     }
+
+    /* ---- Section icon badges v2: colourful gradient tiles, white icons,
+            coloured glow ring. Keeps the float/hover/shine from above. ---- */
+    .sec-ic {
+        color: #ffffff;
+        background: linear-gradient(145deg, var(--c1, #4f8ef7), var(--c2, #1d4ed8));
+        border: 1px solid rgba(255, 255, 255, 0.24);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.30), inset 0 0 12px rgba(255, 255, 255, 0.10), 0 8px 20px -8px var(--c1, #4f8ef7);
+        animation: secFloat 3.6s ease-in-out infinite;
+        overflow: visible;
+    }
+    .sec-ic::before {
+        content: "";
+        position: absolute; inset: 0; border-radius: inherit;
+        border: 1px solid var(--c1, #4f8ef7);
+        animation: secRing 3.6s ease-out infinite;
+        pointer-events: none;
+    }
+    .sec-ic .sec-ico {
+        animation: secIcon 3.6s ease-in-out infinite;
+        filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.35));
+    }
+    .sec-grid > a:hover .sec-ic {
+        animation: none;
+        transform: scale(1.12) rotate(-6deg);
+        border-color: rgba(255, 255, 255, 0.5);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 12px 28px -8px var(--c1, #4f8ef7);
+    }
+
+    .sec-grid > a:nth-child(1) .sec-ic { --c1: #e69500; --c2: #b45309; }
+    .sec-grid > a:nth-child(2) .sec-ic { --c1: #7c4dff; --c2: #5b21b6; }
+    .sec-grid > a:nth-child(3) .sec-ic { --c1: #0ea5a5; --c2: #0f766e; }
+    .sec-grid > a:nth-child(4) .sec-ic { --c1: #2fb56a; --c2: #15803d; }
+    .sec-grid > a:nth-child(5) .sec-ic { --c1: #3b82f6; --c2: #1d4ed8; }
+    .sec-grid > a:nth-child(6) .sec-ic { --c1: #f97316; --c2: #c2410c; }
+    .sec-grid > a:nth-child(7) .sec-ic { --c1: #f43f6e; --c2: #be123c; }
+    .sec-grid > a:nth-child(8) .sec-ic { --c1: #8b5cf6; --c2: #6d28d9; }
+    .sec-grid > a:nth-child(9) .sec-ic { --c1: #0ea5e9; --c2: #0369a1; }
+
+    @keyframes secRing { 0% { transform: scale(1); opacity: .55; } 70% { transform: scale(1.4); opacity: 0; } 100% { transform: scale(1.4); opacity: 0; } }
+    @keyframes secIcon { 0%, 100% { transform: scale(1) rotate(0); } 50% { transform: scale(1.07) rotate(-3deg); } }
+
+    @media (prefers-reduced-motion: reduce) {
+        .sec-ic, .sec-ic::before, .sec-ic .sec-ico { animation: none; }
+    }
