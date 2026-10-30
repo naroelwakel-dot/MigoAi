@@ -65,7 +65,7 @@ const smmPlatforms = [
     id: "tiktok",
     name: "تيك توك (TikTok)",
     icon: "fab fa-tiktok",
-    banner: "images (6).jpeg",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/85ef6a0f144d418c9f5d8f0f2c27ac36.webp",
     services: [
       {
         id: "2410",
@@ -113,7 +113,7 @@ const smmPlatforms = [
     id: "facebook",
     name: "فيسبوك (Facebook)",
     icon: "fab fa-facebook",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/c0e16665be694683868fc7438b25c6a6.webp",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/d2730c84cf2c484ea9c539d5a8f38bad.webp",
     services: [
       {
         id: "3101",
@@ -141,7 +141,7 @@ const smmPlatforms = [
     id: "instagram",
     name: "انستقرام (Instagram)",
     icon: "fab fa-instagram",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/00ebd3f891664f21b581ea04f8b0e508.svg",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/b45ccbcaee784d479870281a2c287493.webp",
     services: [
       {
         id: "4101",
@@ -169,7 +169,7 @@ const smmPlatforms = [
     id: "youtube",
     name: "يوتيوب (YouTube)",
     icon: "fab fa-youtube",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/cd96d463270d4b19907ad500617d444e.webp",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/e3138241574f4b93a96cbdae6a4c866f.webp",
     services: [
       {
         id: "5101",
@@ -197,7 +197,7 @@ const smmPlatforms = [
     id: "telegram",
     name: "تليجرام (Telegram)",
     icon: "fab fa-telegram",
-    banner: "telegram.jpeg",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/7fd23abd5b5b44b79490ae4fae49ca34.webp",
     services: [
       {
         id: "6101",
@@ -225,7 +225,7 @@ const smmPlatforms = [
     id: "twitter",
     name: "إكس / تويتر (Twitter / X)",
     icon: "fab fa-x-twitter",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/b7f65e6d00114100861b2d4b426e8e8d.webp",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/8243f09961cb4874ba5a328bd32b2003.webp",
     services: [
       {
         id: "7101",
@@ -253,7 +253,7 @@ const smmPlatforms = [
     id: "snapchat",
     name: "سناب شات (Snapchat)",
     icon: "fab fa-snapchat",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/e53f9d7c51594918951d74b09e4df462.webp",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/ae36f11e62fb4183ba23f282405c4c4d.webp",
     services: [
       {
         id: "8101",
@@ -271,7 +271,7 @@ const smmPlatforms = [
     id: "twitch",
     name: "تويتش (Twitch)",
     icon: "fab fa-twitch",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/53b1235d5b03427880563a4c2a6142d3.webp",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/bdc023a2ff6a4d5e91b2057dc7b65398.webp",
     services: [
       {
         id: "9101",
@@ -289,7 +289,7 @@ const smmPlatforms = [
     id: "kwai",
     name: "كواي (Kwai)",
     icon: "fas fa-video",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/68f6f8bf42e64eb3bf05bd8fda201041.webp",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/b037e0f74f674cfaa2e4786c80a5efc3.webp",
     services: [
       {
         id: "10101",
@@ -307,7 +307,7 @@ const smmPlatforms = [
     id: "linkedin",
     name: "لينكد إن (LinkedIn)",
     icon: "fab fa-linkedin",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/034e4c1e460345938ab2d8808cf14780.svg",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/2c44165f2ad54ed194492913ef003747.webp",
     services: [
       {
         id: "11101",
@@ -325,7 +325,7 @@ const smmPlatforms = [
     id: "discord",
     name: "ديسكورد (Discord)",
     icon: "fab fa-discord",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/3758368776d54e278455fcccee2990da.webp",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/0350706a905042fc910ec6318c11f8f5.webp",
     services: [
       {
         id: "12101",
@@ -343,7 +343,7 @@ const smmPlatforms = [
     id: "spotify_smm",
     name: "سبوتيفاي (Spotify)",
     icon: "fab fa-spotify",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/5f37ee56f9b64a4bb117aec3d72d7aa6.webp",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/ea18110bdad54f1dbb7215ba0b6a37ba.webp",
     services: [
       {
         id: "13101",
@@ -361,7 +361,7 @@ const smmPlatforms = [
     id: "soundcloud",
     name: "ساوند كلاود (SoundCloud)",
     icon: "fab fa-soundcloud",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/eb6f3234021643c5ba9a1b01ed8f4014.webp",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/e8811e505f054fb7bca4ae542712a975.webp",
     services: [
       {
         id: "14101",
@@ -379,7 +379,7 @@ const smmPlatforms = [
     id: "pinterest",
     name: "بينترست (Pinterest)",
     icon: "fab fa-pinterest",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/fbdaacac102e4e40b945a621d1823dd2.webp",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/aa5b66b19a9e48bd8e1f6428e4130f56.webp",
     services: [
       {
         id: "15101",
@@ -397,7 +397,7 @@ const smmPlatforms = [
     id: "threads",
     name: "ثريدز (Threads)",
     icon: "fas fa-at",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/67e8050068ef47ee8eeb36aedfacc4c9.webp",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/150d854947d74ffc98f6855240283a6c.webp",
     services: [
       {
         id: "16101",
@@ -415,7 +415,7 @@ const smmPlatforms = [
     id: "reddit",
     name: "ريديت (Reddit)",
     icon: "fab fa-reddit",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/eea8f67ce36847e6b914095d956f4838.svg",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/8df2772f61a44cfa825244b7bcf20d4a.webp",
     services: [
       {
         id: "17101",
@@ -433,7 +433,7 @@ const smmPlatforms = [
     id: "kick",
     name: "كيك (Kick)",
     icon: "fas fa-play-circle",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/f0d88eead015441db5d2a10317eb0b13.svg",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/2b58b018962a4b6db87e7d37d63ecd0b.webp",
     services: [
       {
         id: "18101",
@@ -451,7 +451,7 @@ const smmPlatforms = [
     id: "trovo",
     name: "تروفو (Trovo)",
     icon: "fas fa-gamepad",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/64b817bb52fe483195413f57e9314c17.svg",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/1e74b83ef28249bca8cc5af38dfa307b.webp",
     services: [
       {
         id: "19101",
