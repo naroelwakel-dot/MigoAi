@@ -86,7 +86,7 @@ const liveCoinsData = [
     id: "yallaludo",
     name: "Yalla Ludo (يلا لودو)",
     provider: "يلا لودو الرسمي",
-    banner: "https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?auto=format&fit=crop&w=1200&q=80",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/e3281d94ce634af8a7743d9f5094dc15.webp",
     badge: "شحن ماسات فوري ⚡",
     hasZoneId: false,
     apiServiceId: "yalla_ludo",
