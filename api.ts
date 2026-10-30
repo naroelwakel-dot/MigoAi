@@ -1,4 +1,4 @@
-// build marker 2026-10-30T14:02Z: rebuild to pick up NEFERBYTE_API_KEY (backup provider)
+// build marker 2026-10-30T14:20Z: free keyless Fortnite support (Osirion public API)
 // ==============================================================================
 // Migo AI Solution - Verification Engine API (Deno Server)
 // Real account lookup only. No fabricated / placeholder names.
@@ -207,6 +207,37 @@ async function isanLookup(path: string): Promise<{ name: string; info: string }>
 }
 
 // ----------------------------------------------------------------------------
+// Free source (no key): Osirion Fortnite public API (open in beta).
+// Epic Account ID (32 hex) -> display name, or display name -> account.
+// ----------------------------------------------------------------------------
+async function lookupFortnite(q: string): Promise<{ name: string; info: string }> {
+  const clean = q.trim();
+  const details = (d: any): string => {
+    const a = d?.accountDetails ?? d?.accounts?.[0]?.accountDetails;
+    if (!a) return "";
+    const n = a.epic || a.psn || a.xbl || a.steam || a.nintendo;
+    return typeof n === "string" ? n.trim() : "";
+  };
+  const isHexId = /^[0-9a-fA-F]{32}$/.test(clean);
+  if (isHexId) {
+    const d = await getJson(
+      `https://fnapi.osirion.gg/v1/accounts/lookup-by-account-id-bulk?accountIds=${encodeURIComponent(clean)}`,
+      { headers: { "User-Agent": UA, "Accept": "application/json" } },
+      8000,
+    );
+    const name = details(d);
+    return { name, info: `osirion-id:${d?.success ? "ok" : "none"}:${name ? "found" : "missing"}` };
+  }
+  const d = await getJson(
+    `https://fnapi.osirion.gg/v1/accounts/lookup-by-display-name?displayName=${encodeURIComponent(clean)}`,
+    { headers: { "User-Agent": UA, "Accept": "application/json" } },
+    8000,
+  );
+  const name = details(d);
+  return { name, info: `osirion-name:${d?.success ? "ok" : "none"}:${name ? "found" : "missing"}` };
+}
+
+// ----------------------------------------------------------------------------
 // Keyed Game-ID providers. Set ANY ONE key as a Deno environment variable:
 //   VOLSEVER_API_KEY    gateway: https://gate.volsever.com/proxy/api/game/<slug>?id=&zone=
 //   NEFERBYTE_API_KEY   https://api.neferbyte.com/game-id-checker/<slug>/<id>[/<server>]
@@ -288,7 +319,7 @@ async function rapidApiLookup(slugs: string[], id: string): Promise<{ name: stri
 //   jollymax = free PUBG fallback
 //   enka = official Genshin lookup
 // ----------------------------------------------------------------------------
-type Step = { p: "vol" | "nef" | "rap" | "isan" | "jollymax" | "enka"; slug?: string; zone?: boolean; path?: string };
+type Step = { p: "vol" | "nef" | "rap" | "isan" | "jollymax" | "enka" | "osirion"; slug?: string; zone?: boolean; path?: string };
 
 const ROUTES: Record<string, Step[]> = {
   pubg: [
@@ -336,7 +367,7 @@ const ROUTES: Record<string, Step[]> = {
   ],
   diablo: [{ p: "vol", slug: "diablo-immortal", zone: true }],
   topeleven: [{ p: "vol", slug: "top-eleven" }],
-  fortnite: [{ p: "nef", slug: "fortnite" }],
+  fortnite: [{ p: "osirion" }],
   // ---- live apps ----
   bigo: [{ p: "vol", slug: "bigo-live" }, { p: "nef", slug: "bigo-live" }],
   chamet: [{ p: "vol", slug: "chamet" }],
@@ -384,6 +415,8 @@ function runStep(step: Step, id: string, zoneId: string): Promise<{ name: string
       return lookupPubgJollyMax(id).then((n) => ({ name: n, info: `jollymax:${n ? "ok" : "none"}` }));
     case "enka":
       return lookupGenshin(id).then((n) => ({ name: n, info: `enka:${n ? "ok" : "none"}` }));
+    case "osirion":
+      return lookupFortnite(id);
     default:
       return Promise.resolve({ name: "", info: "unknown-step" });
   }
