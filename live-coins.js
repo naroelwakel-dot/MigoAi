@@ -7,13 +7,19 @@
 const tiktokCoinsList = {
   banner: "images (6).jpeg",
   packages: [
-    { coins: 70, price: 65 },
-    { coins: 350, price: 325 },
-    { coins: 700, price: 650 },
-    { coins: 1400, price: 1300 },
-    { coins: 3500, price: 3250 },
-    { coins: 7000, price: 6500 },
-    { coins: 17500, price: 16250 }
+    { coins: 100, price: 95 },
+    { coins: 300, price: 235 },
+    { coins: 500, price: 381 },
+    { coins: 1000, price: 717 },
+    { coins: 1500, price: 1075 },
+    { coins: 2500, price: 1792 },
+    { coins: 3500, price: 2509 },
+    { coins: 5000, price: 3584 },
+    { coins: 10000, price: 7168 },
+    { coins: 15000, price: 10752 },
+    { coins: 30000, price: 21504 },
+    { coins: 50000, price: 35840 },
+    { coins: 100000, price: 71680 }
   ]
 };
 
