@@ -1,9 +1,11 @@
-// build marker 2026-10-30T13:30Z: rebuild after VOLSEVER_API_KEY set
+// build marker 2026-10-30T14:00Z: multi-provider ID lookup (Volsever gateway + NeferByte + isan + official)
 // ==============================================================================
 // Migo AI Solution - Verification Engine API (Deno Server)
 // Real account lookup only. No fabricated / placeholder names.
-// If a game has no reachable free source, we return an honest "not found"
-// and the storefront lets the customer type their name and continue.
+// Provider chain per game: Volsever gateway (VOLSEVER_API_KEY) -> NeferByte
+// (NEFERBYTE_API_KEY) -> free fallbacks (isan / JollyMax / official). If a game
+// has no reachable source, we return an honest, non-alarming "type it manually"
+// and the storefront lets the customer continue.
 // ==============================================================================
 
 const CORS_HEADERS = {
@@ -144,7 +146,7 @@ async function lookupGenshin(id: string): Promise<string> {
 }
 
 // ----------------------------------------------------------------------------
-// Last-resort (free, no key): JollyMax public top-up gateway (PUBG Mobile UID -> nickname)
+// Free fallback (no key): JollyMax public top-up gateway (PUBG Mobile UID -> nickname)
 // ----------------------------------------------------------------------------
 async function lookupPubgJollyMax(id: string): Promise<string> {
   const headers = {
@@ -195,23 +197,21 @@ async function lookupPubgJollyMax(id: string): Promise<string> {
 }
 
 // ----------------------------------------------------------------------------
-// Best-effort free source: isan.eu.org (Mobile Legends / Free Fire nickname)
+// Best-effort free source: isan.eu.org (nickname finder, no key)
+// e.g. ff?id=, ml?id=&server=, codm?id=, valo?id=Tag, gi?id=
 // ----------------------------------------------------------------------------
-async function lookupIsan(path: string): Promise<string> {
+async function isanLookup(path: string): Promise<string> {
   const d = await getJson(`https://api.isan.eu.org/nickname/${path}`, { headers: { "User-Agent": UA } }, 6000);
   if (d && d.success === false) return "";
   return extractPlayerName(d);
 }
 
 // ----------------------------------------------------------------------------
-
-// ----------------------------------------------------------------------------
-// Keyed Game-ID providers (PUBG Mobile UID -> nickname).
-// Set ANY ONE of these as a Deno environment variable and it is tried first:
-//   VOLSEVER_API_KEY    (https://volsever.com/checker/pubg-mobile)
-//   NEFERBYTE_API_KEY   (Telegram @idgamecheckerbot -> https://api.neferbyte.com)
-//   RAPIDAPI_KEY        (rapidapi.com -> id-game-checker)
-// No key is hard-coded in this file. With none set, only JollyMax is tried.
+// Keyed Game-ID providers. Set ANY ONE key as a Deno environment variable:
+//   VOLSEVER_API_KEY    gateway: https://gate.volsever.com/proxy/api/game/<slug>?id=&zone=
+//   NEFERBYTE_API_KEY   https://api.neferbyte.com/game-id-checker/<slug>/<id>[/<server>]
+//   RAPIDAPI_KEY        https://id-game-checker.p.rapidapi.com/<slug>?id=<id>
+// No key is hard-coded in this file.
 // ----------------------------------------------------------------------------
 function envKey(...names: string[]): string {
   for (const n of names) {
@@ -223,19 +223,28 @@ function envKey(...names: string[]): string {
   return "";
 }
 
-async function lookupPubgVolsever(id: string, key: string): Promise<string> {
+async function volseverLookup(slug: string, id: string, zone: string): Promise<string> {
+  const key = envKey("VOLSEVER_API_KEY", "VOLSEVER_KEY");
+  if (!key) return "";
+  const qs = new URLSearchParams();
+  qs.set("id", id);
+  if (zone) qs.set("zone", zone);
   const d = await getJson(
-    `https://gate.volsever.com/proxy/api/game/pubg-mobile-global?id=${encodeURIComponent(id)}`,
+    `https://gate.volsever.com/proxy/api/game/${slug}?${qs.toString()}`,
     { headers: { "X-API-Key": key, "Accept": "application/json", "User-Agent": UA } },
     8000,
   );
-  const u = d?.data?.username ?? d?.username;
+  const u = d?.data?.username ?? d?.username ?? d?.data?.name;
   return typeof u === "string" ? u.trim() : "";
 }
 
-async function lookupPubgNeferbyte(id: string, key: string): Promise<string> {
+async function neferbyteLookup(slug: string, id: string, server: string): Promise<string> {
+  const key = envKey("NEFERBYTE_API_KEY", "NEFERBYTE_KEY");
+  if (!key) return "";
+  let url = `https://api.neferbyte.com/game-id-checker/${slug}/${encodeURIComponent(id)}`;
+  if (server) url += `/${encodeURIComponent(server)}`;
   const d = await getJson(
-    `https://api.neferbyte.com/game-id-checker/pubgm-global/${encodeURIComponent(id)}`,
+    url,
     { headers: { "x-api-key": key, "Accept": "application/json", "User-Agent": UA } },
     8000,
   );
@@ -243,10 +252,12 @@ async function lookupPubgNeferbyte(id: string, key: string): Promise<string> {
   return typeof u === "string" ? u.trim() : "";
 }
 
-async function lookupPubgRapidApi(id: string, key: string): Promise<string> {
-  for (const path of ["pubgm-global", "pubgm"]) {
+async function rapidApiLookup(slugs: string[], id: string): Promise<string> {
+  const key = envKey("RAPIDAPI_KEY", "RAPIDAPI_KEY_GAME");
+  if (!key) return "";
+  for (const slug of slugs) {
     const d = await getJson(
-      `https://id-game-checker.p.rapidapi.com/${path}?id=${encodeURIComponent(id)}`,
+      `https://id-game-checker.p.rapidapi.com/${slug}?id=${encodeURIComponent(id)}`,
       {
         headers: {
           "x-rapidapi-key": key,
@@ -263,20 +274,114 @@ async function lookupPubgRapidApi(id: string, key: string): Promise<string> {
   return "";
 }
 
-async function lookupPubg(id: string): Promise<string> {
-  const vol = envKey("VOLSEVER_API_KEY", "PUBG_VOLSEVER_KEY");
-  const nef = envKey("NEFERBYTE_API_KEY", "PUBG_NEFERBYTE_KEY");
-  const rap = envKey("RAPIDAPI_KEY", "RAPIDAPI_PUBG_KEY");
+// ----------------------------------------------------------------------------
+// Provider routes per store game id.
+//   vol = Volsever gateway slug (uses id + optional zone)
+//   nef = NeferByte slug (uses id + optional server)
+//   rap = RapidAPI id-game-checker slugs
+//   isan = free isan.eu.org path
+//   jollymax = free PUBG fallback
+//   enka = official Genshin lookup
+// ----------------------------------------------------------------------------
+type Step = { p: "vol" | "nef" | "rap" | "isan" | "jollymax" | "enka"; slug?: string; zone?: boolean; path?: string };
 
-  const tries: Array<() => Promise<string>> = [];
-  if (vol) tries.push(() => lookupPubgVolsever(id, vol));
-  if (nef) tries.push(() => lookupPubgNeferbyte(id, nef));
-  if (rap) tries.push(() => lookupPubgRapidApi(id, rap));
-  for (const t of tries) {
-    const name = await t();
-    if (name) return name;
+const ROUTES: Record<string, Step[]> = {
+  pubg: [
+    { p: "vol", slug: "pubg-mobile-global" },
+    { p: "nef", slug: "pubgm-global" },
+    { p: "rap", slug: "pubgm-global" },
+    { p: "jollymax" },
+  ],
+  freefire: [
+    { p: "vol", slug: "free-fire-global" },
+    { p: "nef", slug: "free-fire" },
+    { p: "isan", path: "ff" },
+  ],
+  clashofclans: [{ p: "vol", slug: "clash-of-clans" }],
+  brawlstars: [{ p: "vol", slug: "brawl-stars" }],
+  fcmobile: [
+    { p: "vol", slug: "ea-sports-fc-mobile-indonesia" },
+    { p: "vol", slug: "ea-sports-fc-mobile" },
+  ],
+  mlbb: [
+    { p: "vol", slug: "mobile-legends", zone: true },
+    { p: "nef", slug: "mobile-legends", zone: true },
+    { p: "isan", path: "ml", zone: true },
+  ],
+  codm: [
+    { p: "vol", slug: "call-of-duty-mobile-indonesia" },
+    { p: "vol", slug: "codm-us" },
+    { p: "nef", slug: "cod-mobile" },
+    { p: "isan", path: "codm" },
+  ],
+  valorant: [
+    { p: "vol", slug: "valorant-indonesia" },
+    { p: "vol", slug: "valorant-singapore" },
+    { p: "nef", slug: "valorant" },
+    { p: "isan", path: "valo" },
+  ],
+  wildrift: [{ p: "vol", slug: "league-of-legends-wild-rift" }],
+  arenabreakout: [
+    { p: "vol", slug: "arena-breakout" },
+    { p: "nef", slug: "arena-breakout" },
+  ],
+  honorofkings: [
+    { p: "vol", slug: "honor-of-kings" },
+    { p: "nef", slug: "honor-of-kings" },
+  ],
+  diablo: [{ p: "vol", slug: "diablo-immortal", zone: true }],
+  topeleven: [{ p: "vol", slug: "top-eleven" }],
+  fortnite: [{ p: "nef", slug: "fortnite" }],
+  // ---- live apps ----
+  bigo: [{ p: "vol", slug: "bigo-live" }, { p: "nef", slug: "bigo-live" }],
+  chamet: [{ p: "vol", slug: "chamet" }],
+  poppo: [{ p: "vol", slug: "poppo-live" }],
+  yallaludo: [{ p: "vol", slug: "yalla-ludo" }],
+  sugo: [{ p: "vol", slug: "sugo" }],
+  meyo: [{ p: "vol", slug: "meyo" }],
+};
+
+// Normalise the many id/apIServiceId spellings the storefront may send.
+const ALIASES: Record<string, string> = {
+  pubgmobile: "pubg", pubg_mobile: "pubg",
+  free_fire: "freefire",
+  clash_of_clans: "clashofclans",
+  fc_mobile: "fcmobile",
+  brawl_stars: "brawlstars",
+  genshinimpact: "genshin", genshin_impact: "genshin",
+  mobilelegends: "mlbb", mobile_legends: "mlbb",
+  cod_mobile: "codm",
+  wild_rift: "wildrift",
+  arena_breakout: "arenabreakout",
+  honor_of_kings: "honorofkings",
+  diablo_immortal: "diablo",
+  top_eleven: "topeleven",
+  bigo_live: "bigo",
+  poppo_live: "poppo",
+  yalla_ludo: "yallaludo",
+};
+
+function runStep(step: Step, id: string, zoneId: string): Promise<string> {
+  switch (step.p) {
+    case "vol":
+      return volseverLookup(step.slug!, id, step.zone ? zoneId : "");
+    case "nef":
+      return neferbyteLookup(step.slug!, id, step.zone ? zoneId : "");
+    case "rap":
+      return rapidApiLookup([step.slug!], id);
+    case "isan":
+      return isanLookup(
+        step.zone
+          ? `${step.path}?id=${encodeURIComponent(id)}&server=${encodeURIComponent(zoneId)}`
+          : `${step.path}?id=${encodeURIComponent(id)}`,
+      );
+    case "jollymax":
+      return lookupPubgJollyMax(id);
+    case "enka":
+      return lookupGenshin(id);
+    default:
+      return Promise.resolve("");
   }
-  return await lookupPubgJollyMax(id);
 }
 
 Deno.serve(async (req: Request) => {
@@ -285,9 +390,11 @@ Deno.serve(async (req: Request) => {
   }
 
   const url = new URL(req.url);
-  const game = (url.searchParams.get("game") || "").toLowerCase().trim();
+  let game = (url.searchParams.get("game") || "").toLowerCase().trim();
   const id = (url.searchParams.get("id") || "").trim();
   const zoneId = (url.searchParams.get("zoneId") || "").trim();
+
+  if (ALIASES[game]) game = ALIASES[game];
 
   if (!game || !id) {
     return new Response(
@@ -314,27 +421,29 @@ Deno.serve(async (req: Request) => {
     } // ---- Roblox (official) ----
     else if (game === "roblox") {
       if (isNumeric) foundName = await lookupRoblox(id);
-    } // ---- Genshin Impact (Enka) ----
-    else if (game === "genshin" || game === "genshinimpact") {
+    } // ---- Genshin Impact: Enka first, then generic providers ----
+    else if (game === "genshin") {
       if (isNumeric) foundName = await lookupGenshin(id);
-    } // ---- PUBG Mobile (JollyMax) ----
-    else if (game === "pubg" || game === "pubgmobile" || game === "pubg_mobile") {
-      if (isNumeric) foundName = await lookupPubg(id);
-    } // ---- Free Fire (isan, best effort) ----
-    else if (game === "freefire" || game === "free_fire") {
-      if (isNumeric) foundName = await lookupIsan(`freefire?id=${encodeURIComponent(id)}`);
-    } // ---- Mobile Legends (isan, needs zone) ----
-    else if (game === "mlbb" || game === "mobilelegends" || game === "mobile_legends") {
-      if (!zoneId) {
-        return new Response(
-          JSON.stringify({ success: false, message: "لعبة Mobile Legends تتطلب إدخال رقم السيرفر (Zone ID)" }),
-          { status: 200, headers: CORS_HEADERS },
-        );
+      if (!foundName) {
+        for (const step of [
+          { p: "vol", slug: "genshin-impact-global" } as Step,
+          { p: "isan", path: "gi" } as Step,
+        ]) {
+          foundName = await runStep(step, id, zoneId);
+          if (foundName) break;
+        }
       }
-      foundName = await lookupIsan(`ml?id=${encodeURIComponent(id)}&zone=${encodeURIComponent(zoneId)}`);
+    } // ---- Everything else: provider route table ----
+    else {
+      const steps = ROUTES[game] || [];
+      // Games that use a numeric-only ID skip the free providers when non-numeric.
+      for (const step of steps) {
+        if (!isNumeric && (step.p === "jollymax")) continue;
+        foundName = await runStep(step, id, zoneId);
+        if (foundName) break;
+      }
     }
 
-    // Everything else: no free real source available yet -> honest "not found".
     if (foundName) {
       return new Response(
         JSON.stringify({ success: true, username: foundName, name: foundName, avatar: avatarUrl || undefined }),
@@ -344,7 +453,7 @@ Deno.serve(async (req: Request) => {
     return new Response(
       JSON.stringify({
         success: false,
-        message: "تم التحقق من المدخلات، ولم نجد الاسم تلقائياً. اكتب اسم حسابك يدوياً واضغط متابعة لإتمام طلبك.",
+        message: "تعذّر الفحص التلقائي لهذا المعرّف الآن، وهذا لا يمنع إتمام طلبك: اكتب اسم حسابك ثم اضغط متابعة.",
       }),
       { status: 200, headers: CORS_HEADERS },
     );
@@ -352,10 +461,9 @@ Deno.serve(async (req: Request) => {
     return new Response(
       JSON.stringify({
         success: false,
-        message: "اكتب اسم حسابك يدوياً واضغط متابعة لإتمام طلبك فوراً.",
+        message: "اكتب اسم حسابك ثم اضغط متابعة لإتمام طلبك فوراً.",
       }),
       { status: 200, headers: CORS_HEADERS },
     );
   }
 });
-
