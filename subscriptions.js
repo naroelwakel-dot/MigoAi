@@ -117,7 +117,7 @@ const subscriptionsData = [
     banner: "framerai.jpg",
     description: "تصميم ونشر مواقع ويب حديثة وسريعة الاستجابة بالذكاء الاصطناعي.",
     packages: [
-      { id: "framer_1y", name: "سنة واحدة (Framer AI 1Y) — 392 ج.م", duration: "سنة واحدة", price: 392 }
+      { id: "framer_1y", name: "سنة واحدة (Framer AI 1Y) — 439 ج.م", duration: "سنة واحدة", price: 439 }
     ]
   },
   {
@@ -129,7 +129,7 @@ const subscriptionsData = [
     banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/184bc93a2e234e0a9dc3202ccf8b9b48.webp",
     description: "مساعد فيديو ووسائط متقدم مدعوم بنماذج الذكاء الاصطناعي.",
     packages: [
-      { id: "muse_full", name: "اشتراك كامل — 140 ج.م", duration: "اشتراك كامل", price: 140 }
+      { id: "muse_full", name: "اشتراك كامل — 126 ج.م", duration: "اشتراك كامل", price: 126 }
     ]
   },
 
@@ -160,7 +160,7 @@ const subscriptionsData = [
     banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/8b753d99ae234bcd9cfc240b31b2a501.png",
     description: "رابط تفعيل رسمي مباشر لإنشاء تصاميم السوشيال ميديا بسرعة.",
     packages: [
-      { id: "adobe_exp_12m", name: "12 شهر (Adobe Express 12M) — 34 ج.م", duration: "12 شهر", price: 34 }
+      { id: "adobe_exp_12m", name: "12 شهر (Adobe Express 12M) — 38 ج.م", duration: "12 شهر", price: 38 }
     ]
   },
   {
@@ -172,7 +172,7 @@ const subscriptionsData = [
     banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/de174b6d7b5f45c1a08e97f448f304c5.svg",
     description: "خطة سنتين مع رصيد لتصميم المواقع والتطبيقات.",
     packages: [
-      { id: "figma_2y", name: "Figma Pro Edu 2yrs — 280 ج.م", duration: "سنتان", price: 280 }
+      { id: "figma_2y", name: "Figma Pro Edu 2yrs — 314 ج.م", duration: "سنتان", price: 314 }
     ]
   },
   {
@@ -199,7 +199,7 @@ const subscriptionsData = [
     banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/af6f9a608e9e4ceba231b0caedbc5f96.svg",
     description: "إدارة المهام والملاحظات وقواعد البيانات باحترافية تامة.",
     packages: [
-      { id: "notion_1y", name: "Notion Plus 12M — 90 ج.م", duration: "سنة واحدة", price: 90 }
+      { id: "notion_1y", name: "Notion Plus 12M — 100 ج.م", duration: "سنة واحدة", price: 100 }
     ]
   },
   {
@@ -211,7 +211,7 @@ const subscriptionsData = [
     banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/03b29d161cfc422fa333ffb35e463417.webp",
     description: "جميع برامج أوفيس الرسمية (Word, Excel, PowerPoint) وتخزين سحابي.",
     packages: [
-      { id: "office_1y", name: "Office 365 Plus 1year — 28 ج.م", duration: "سنة واحدة", price: 28 }
+      { id: "office_1y", name: "Office 365 Plus 1year — 31 ج.م", duration: "سنة واحدة", price: 31 }
     ]
   },
   {
@@ -223,7 +223,7 @@ const subscriptionsData = [
     banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/43a233e6b34c4ca5a1e978fe69e5a89e.png",
     description: "تعديل وتحويل ودمج وضغط ملفات الـ PDF بلا قيود.",
     packages: [
-      { id: "ilovepdf_1y", name: "iLovePdf Premium 1Y — 56 ج.م", duration: "سنة واحدة", price: 56 }
+      { id: "ilovepdf_1y", name: "iLovePdf Premium 1Y — 63 ج.م", duration: "سنة واحدة", price: 63 }
     ]
   },
   {
@@ -259,7 +259,7 @@ const subscriptionsData = [
     banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/7aaf1d1b17e14defa5dd83f3b57a5cc5.webp",
     description: "لوحة عمل مرئية وتفاعلية للعصف الذهني والفرق ومدى الحياة.",
     packages: [
-      { id: "miro_life", name: "Miro Lifetime Panel — 560 ج.م", duration: "مدى الحياة", price: 560 }
+      { id: "miro_life", name: "Miro Lifetime Panel — 628 ج.م", duration: "مدى الحياة", price: 628 }
     ]
   },
   {
@@ -271,7 +271,7 @@ const subscriptionsData = [
     banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/d89171ae3ea144f6b7ba09e29e84ecb7.webp",
     description: "حساب جاهز وموثق بالكامل للتسليم الفوري والاستخدام المباشر.",
     packages: [
-      { id: "gmail_1acc", name: "Gmails Accounts — 45 ج.م", duration: "حساب دائم", price: 45 }
+      { id: "gmail_1acc", name: "Gmails Accounts — 50 ج.م", duration: "حساب دائم", price: 50 }
     ]
   },
   {
@@ -297,7 +297,7 @@ const subscriptionsData = [
     banner: "shahidvib.webp",
     description: "اشتراك رسمي لمتابعة أحدث الأعمال والمسلسلات العربية الحصرية.",
     packages: [
-      { id: "shahid_7m", name: "Shahid VIP 7M — 129 ج.م", duration: "7 أشهر", price: 129 },
+      { id: "shahid_7m", name: "Shahid VIP 7M — 144 ج.م", duration: "7 أشهر", price: 144 },
       { id: "shahid_1m", name: "شهر واحد — 205 ج.م", duration: "شهر واحد", price: 205 }
     ]
   },
@@ -323,7 +323,7 @@ const subscriptionsData = [
     banner: "amazonvideo.jpeg",
     description: "مكتبة سينمائية ضخمة بجودة 4K على حساب رسمي ومضمون.",
     packages: [
-      { id: "prime_6m", name: "Prime Video 6M — 224 ج.م", duration: "6 أشهر", price: 224 }
+      { id: "prime_6m", name: "Prime Video 6M — 251 ج.م", duration: "6 أشهر", price: 251 }
     ]
   },
   {
@@ -347,7 +347,7 @@ const subscriptionsData = [
     banner: "spotify.png",
     description: "استماع وتحميل بلا اتصال بالإنترنت وتخطي لا محدود للمسارات.",
     packages: [
-      { id: "spotify_1m", name: "Spotify premium 1M — 84 ج.م", duration: "شهر واحد", price: 84 },
+      { id: "spotify_1m", name: "Spotify premium 1M — 94 ج.م", duration: "شهر واحد", price: 94 },
       { id: "spotify_3m_link", name: "3 أشهر (رابط) — 60 ج.م", duration: "3 أشهر (رابط)", price: 60 },
       { id: "spotify_1m_acc", name: "شهر واحد (حساب) — 140 ج.م", duration: "شهر واحد (حساب)", price: 140 }
     ]
@@ -375,7 +375,7 @@ const subscriptionsData = [
     banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/b882c8ea8fe0466ab53cbdbb4dc70605.webp",
     description: "تصفح آمن وسريع مع خوادم عالمية فائقة السرعة.",
     packages: [
-      { id: "express_1m", name: "ExpressVPN 1M — 90 ج.م", duration: "شهر واحد", price: 90 }
+      { id: "express_1m", name: "ExpressVPN 1M — 100 ج.م", duration: "شهر واحد", price: 100 }
     ]
   }
 ];
