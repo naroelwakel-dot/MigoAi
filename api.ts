@@ -143,9 +143,9 @@ async function lookupGenshin(id: string): Promise<string> {
 }
 
 // ----------------------------------------------------------------------------
-// Real source: JollyMax public top-up gateway (PUBG Mobile UID -> nickname)
+// Last-resort (free, no key): JollyMax public top-up gateway (PUBG Mobile UID -> nickname)
 // ----------------------------------------------------------------------------
-async function lookupPubg(id: string): Promise<string> {
+async function lookupPubgJollyMax(id: string): Promise<string> {
   const headers = {
     "Content-Type": "application/json",
     "User-Agent": UA,
@@ -203,6 +203,80 @@ async function lookupIsan(path: string): Promise<string> {
 }
 
 // ----------------------------------------------------------------------------
+
+// ----------------------------------------------------------------------------
+// Keyed Game-ID providers (PUBG Mobile UID -> nickname).
+// Set ANY ONE of these as a Deno environment variable and it is tried first:
+//   VOLSEVER_API_KEY    (https://volsever.com/checker/pubg-mobile)
+//   NEFERBYTE_API_KEY   (Telegram @idgamecheckerbot -> https://api.neferbyte.com)
+//   RAPIDAPI_KEY        (rapidapi.com -> id-game-checker)
+// No key is hard-coded in this file. With none set, only JollyMax is tried.
+// ----------------------------------------------------------------------------
+function envKey(...names: string[]): string {
+  for (const n of names) {
+    try {
+      const v = Deno.env.get(n);
+      if (v && v.trim()) return v.trim();
+    } catch (_) {}
+  }
+  return "";
+}
+
+async function lookupPubgVolsever(id: string, key: string): Promise<string> {
+  const d = await getJson(
+    `https://gate.volsever.com/proxy/api/game/pubg-mobile-global?id=${encodeURIComponent(id)}`,
+    { headers: { "X-API-Key": key, "Accept": "application/json", "User-Agent": UA } },
+    8000,
+  );
+  const u = d?.data?.username ?? d?.username;
+  return typeof u === "string" ? u.trim() : "";
+}
+
+async function lookupPubgNeferbyte(id: string, key: string): Promise<string> {
+  const d = await getJson(
+    `https://api.neferbyte.com/game-id-checker/pubgm-global/${encodeURIComponent(id)}`,
+    { headers: { "x-api-key": key, "Accept": "application/json", "User-Agent": UA } },
+    8000,
+  );
+  const u = d?.data?.username ?? d?.username;
+  return typeof u === "string" ? u.trim() : "";
+}
+
+async function lookupPubgRapidApi(id: string, key: string): Promise<string> {
+  for (const path of ["pubgm-global", "pubgm"]) {
+    const d = await getJson(
+      `https://id-game-checker.p.rapidapi.com/${path}?id=${encodeURIComponent(id)}`,
+      {
+        headers: {
+          "x-rapidapi-key": key,
+          "x-rapidapi-host": "id-game-checker.p.rapidapi.com",
+          "Accept": "application/json",
+          "User-Agent": UA,
+        },
+      },
+      8000,
+    );
+    const u = d?.data?.username ?? d?.username ?? d?.data?.nickname ?? d?.nickname;
+    if (typeof u === "string" && u.trim()) return u.trim();
+  }
+  return "";
+}
+
+async function lookupPubg(id: string): Promise<string> {
+  const vol = envKey("VOLSEVER_API_KEY", "PUBG_VOLSEVER_KEY");
+  const nef = envKey("NEFERBYTE_API_KEY", "PUBG_NEFERBYTE_KEY");
+  const rap = envKey("RAPIDAPI_KEY", "RAPIDAPI_PUBG_KEY");
+
+  const tries: Array<() => Promise<string>> = [];
+  if (vol) tries.push(() => lookupPubgVolsever(id, vol));
+  if (nef) tries.push(() => lookupPubgNeferbyte(id, nef));
+  if (rap) tries.push(() => lookupPubgRapidApi(id, rap));
+  for (const t of tries) {
+    const name = await t();
+    if (name) return name;
+  }
+  return await lookupPubgJollyMax(id);
+}
 
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
