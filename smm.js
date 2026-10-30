@@ -26,7 +26,7 @@ const vccData = [
     name: "بطاقة VCC دولية (10$)",
     balanceUsd: 10,
     priceEgp: 620,
-    banner: "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=1200&q=80",
+    banner: "Square-VCC-Product-Focused-Blog.jpg",
     badge: "تفعيل فوري 💳",
     description: "صالحة للشراء الدولي وتفعيل الاشتراكات والإعلانات."
   },
@@ -35,7 +35,7 @@ const vccData = [
     name: "بطاقة VCC دولية (25$)",
     balanceUsd: 25,
     priceEgp: 1550,
-    banner: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=1200&q=80",
+    banner: "Square-VCC-Product-Focused-Blog.jpg",
     badge: "الأكثر طلباً 🔥",
     description: "مشحونة برصيد 25 دولار ومقبولة في مختلف المنصات العالمية."
   },
@@ -44,7 +44,7 @@ const vccData = [
     name: "بطاقة VCC دولية (50$)",
     balanceUsd: 50,
     priceEgp: 3100,
-    banner: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=1200&q=80",
+    banner: "Square-VCC-Product-Focused-Blog.jpg",
     badge: "رصيد مميز ⚡",
     description: "مثالية للمدفوعات والحملات الإعلانية واشتراكات المطورين."
   },
@@ -53,7 +53,7 @@ const vccData = [
     name: "بطاقة VCC دولية (100$)",
     balanceUsd: 100,
     priceEgp: 6200,
-    banner: "https://images.unsplash.com/photo-1589758438368-0ad531db3366?auto=format&fit=crop&w=1200&q=80",
+    banner: "Square-VCC-Product-Focused-Blog.jpg",
     badge: "باقة النخبة 💎",
     description: "بطاقة دفع رقمية برصيد 100 دولار كاملة مع كود التحقق 3DS."
   }
@@ -113,7 +113,7 @@ const smmPlatforms = [
     id: "facebook",
     name: "فيسبوك (Facebook)",
     icon: "fab fa-facebook",
-    banner: "https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&w=1200&q=80",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/c0e16665be694683868fc7438b25c6a6.webp",
     services: [
       {
         id: "3101",
@@ -141,7 +141,7 @@ const smmPlatforms = [
     id: "instagram",
     name: "انستقرام (Instagram)",
     icon: "fab fa-instagram",
-    banner: "https://images.unsplash.com/photo-1611262588024-d12430b98920?auto=format&fit=crop&w=1200&q=80",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/00ebd3f891664f21b581ea04f8b0e508.svg",
     services: [
       {
         id: "4101",
@@ -169,7 +169,7 @@ const smmPlatforms = [
     id: "youtube",
     name: "يوتيوب (YouTube)",
     icon: "fab fa-youtube",
-    banner: "https://images.unsplash.com/photo-1611162616475-46b635cb6868?auto=format&fit=crop&w=1200&q=80",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/cd96d463270d4b19907ad500617d444e.webp",
     services: [
       {
         id: "5101",
@@ -225,7 +225,7 @@ const smmPlatforms = [
     id: "twitter",
     name: "إكس / تويتر (Twitter / X)",
     icon: "fab fa-x-twitter",
-    banner: "https://images.unsplash.com/photo-1611605698323-b1e99cfd37ea?auto=format&fit=crop&w=1200&q=80",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/b7f65e6d00114100861b2d4b426e8e8d.webp",
     services: [
       {
         id: "7101",
@@ -253,7 +253,7 @@ const smmPlatforms = [
     id: "snapchat",
     name: "سناب شات (Snapchat)",
     icon: "fab fa-snapchat",
-    banner: "https://images.unsplash.com/photo-1579869847514-7c1a19d2d2ad?auto=format&fit=crop&w=1200&q=80",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/e53f9d7c51594918951d74b09e4df462.webp",
     services: [
       {
         id: "8101",
@@ -271,7 +271,7 @@ const smmPlatforms = [
     id: "twitch",
     name: "تويتش (Twitch)",
     icon: "fab fa-twitch",
-    banner: "https://images.unsplash.com/photo-1542751110-97427bbecf20?auto=format&fit=crop&w=1200&q=80",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/53b1235d5b03427880563a4c2a6142d3.webp",
     services: [
       {
         id: "9101",
@@ -289,7 +289,7 @@ const smmPlatforms = [
     id: "kwai",
     name: "كواي (Kwai)",
     icon: "fas fa-video",
-    banner: "https://images.unsplash.com/photo-1516251193007-45ef944ab0c6?auto=format&fit=crop&w=1200&q=80",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/68f6f8bf42e64eb3bf05bd8fda201041.webp",
     services: [
       {
         id: "10101",
@@ -307,7 +307,7 @@ const smmPlatforms = [
     id: "linkedin",
     name: "لينكد إن (LinkedIn)",
     icon: "fab fa-linkedin",
-    banner: "https://images.unsplash.com/photo-1616469829941-c7200edec809?auto=format&fit=crop&w=1200&q=80",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/034e4c1e460345938ab2d8808cf14780.svg",
     services: [
       {
         id: "11101",
@@ -325,7 +325,7 @@ const smmPlatforms = [
     id: "discord",
     name: "ديسكورد (Discord)",
     icon: "fab fa-discord",
-    banner: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/3758368776d54e278455fcccee2990da.webp",
     services: [
       {
         id: "12101",
@@ -343,7 +343,7 @@ const smmPlatforms = [
     id: "spotify_smm",
     name: "سبوتيفاي (Spotify)",
     icon: "fab fa-spotify",
-    banner: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?auto=format&fit=crop&w=1200&q=80",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/5f37ee56f9b64a4bb117aec3d72d7aa6.webp",
     services: [
       {
         id: "13101",
@@ -361,7 +361,7 @@ const smmPlatforms = [
     id: "soundcloud",
     name: "ساوند كلاود (SoundCloud)",
     icon: "fab fa-soundcloud",
-    banner: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=1200&q=80",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/eb6f3234021643c5ba9a1b01ed8f4014.webp",
     services: [
       {
         id: "14101",
@@ -379,7 +379,7 @@ const smmPlatforms = [
     id: "pinterest",
     name: "بينترست (Pinterest)",
     icon: "fab fa-pinterest",
-    banner: "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?auto=format&fit=crop&w=1200&q=80",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/fbdaacac102e4e40b945a621d1823dd2.webp",
     services: [
       {
         id: "15101",
@@ -397,7 +397,7 @@ const smmPlatforms = [
     id: "threads",
     name: "ثريدز (Threads)",
     icon: "fas fa-at",
-    banner: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/67e8050068ef47ee8eeb36aedfacc4c9.webp",
     services: [
       {
         id: "16101",
@@ -415,7 +415,7 @@ const smmPlatforms = [
     id: "reddit",
     name: "ريديت (Reddit)",
     icon: "fab fa-reddit",
-    banner: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=1200&q=80",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/eea8f67ce36847e6b914095d956f4838.svg",
     services: [
       {
         id: "17101",
@@ -433,7 +433,7 @@ const smmPlatforms = [
     id: "kick",
     name: "كيك (Kick)",
     icon: "fas fa-play-circle",
-    banner: "https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1200&q=80",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/f0d88eead015441db5d2a10317eb0b13.svg",
     services: [
       {
         id: "18101",
@@ -451,7 +451,7 @@ const smmPlatforms = [
     id: "trovo",
     name: "تروفو (Trovo)",
     icon: "fas fa-gamepad",
-    banner: "https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=1200&q=80",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/64b817bb52fe483195413f57e9314c17.svg",
     services: [
       {
         id: "19101",
