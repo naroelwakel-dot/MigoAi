@@ -266,3 +266,11 @@
         .sec-grid > a::after { display: none; }
         .sec-grid > a:hover { transform: translateY(-2px); }
     }
+
+    /* ---- Custom SVG line icons inside the animated section badges ---- */
+    .sec-ic { color: var(--accent-bright); }
+    .sec-ic .sec-ico {
+        width: 1.5rem; height: 1.5rem; display: block;
+        fill: none; stroke: currentColor; stroke-width: 1.8;
+        stroke-linecap: round; stroke-linejoin: round;
+    }
