@@ -233,29 +233,16 @@
     .bg-black\/50, .bg-black\/60 { background-color: rgba(18, 21, 27, 0.7) !important; }
     .bg-black\/40 { background-color: rgba(18, 21, 27, 0.5) !important; }
 
-    /* ---- Brand logo tiles: show each brand's real logo cleanly on a
-            light panel instead of a full-bleed stock photo ---- */
+    /* ---- Brand logos: show the whole logo sized to fit the card frame,
+            centred, on the card's own dark background (no light panel) ---- */
     #gamesCardsContainer .sky-card > .bg-cover,
-#productivityContainer .sky-card > .bg-cover,
+    #productivityContainer .sky-card > .bg-cover,
     #entertainmentCardsContainer .sky-card > .bg-cover,
     #liveAppsContainer .sky-card > .bg-cover {
         background-size: contain !important;
         background-repeat: no-repeat !important;
-        background-position: center !important;
-        background-color: #eef2f8 !important;
-    }
-    #gamesCardsContainer .sky-card > .bg-cover > div,
-#productivityContainer .sky-card > .bg-cover > div,
-    #entertainmentCardsContainer .sky-card > .bg-cover > div,
-    #liveAppsContainer .sky-card > .bg-cover > div {
-        background-image: linear-gradient(to top, rgba(255,255,255,0.94), rgba(255,255,255,0.32) 55%, rgba(255,255,255,0)) !important;
-    }
-    #gamesCardsContainer .sky-card > .bg-cover h3,
-#productivityContainer .sky-card > .bg-cover h3,
-    #entertainmentCardsContainer .sky-card > .bg-cover h3,
-    #liveAppsContainer .sky-card > .bg-cover h3 {
-        color: #0b1220 !important;
-        text-shadow: none !important;
+        background-position: center 42% !important;
+        background-color: transparent !important;
     }
   </style>
  </head>
