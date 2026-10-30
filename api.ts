@@ -1,3 +1,4 @@
+// build marker 2026-10-30T13:17Z: rebuild to pick up provider env var
 // ==============================================================================
 // Migo AI Solution - Verification Engine API (Deno Server)
 // Real account lookup only. No fabricated / placeholder names.
