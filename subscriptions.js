@@ -14,7 +14,7 @@ const subscriptionsData = [
     banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/c92f1e4493084dc78b3f3ad926b6b0d9.svg",
     description: "حساب رسمي ببريد خاص Gmail NW لتفعيل فوري وآمن.",
     packages: [
-      { id: "chatgpt_1m", name: "شهر واحد — 835 ج.م", duration: "شهر واحد", price: 835 },
+      { id: "chatgpt_1m", name: "شهر واحد — 747 ج.م", duration: "شهر واحد", price: 747 },
       { id: "chatgpt_plus_1m", name: "ChatGPT Plus 1M (باقة خاصة) — 890 ج.م", duration: "شهر واحد", price: 890 }
     ]
   },
@@ -27,7 +27,7 @@ const subscriptionsData = [
     banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/c92f1e4493084dc78b3f3ad926b6b0d9.svg",
     description: "باقات API المتقدمة لتشغيل الأكواد والذكاء الاصطناعي.",
     packages: [
-      { id: "codex_50m", name: "API CODEX 50M T 2D — 140 ج.م", duration: "يومان", price: 140 },
+      { id: "codex_50m", name: "API CODEX 50M T 2D — 370 ج.م", duration: "يومان", price: 370 },
       { id: "codex_100m", name: "API CODEX 100M T 3D — 240 ج.م", duration: "3 أيام", price: 240 }
     ]
   },
@@ -40,9 +40,9 @@ const subscriptionsData = [
     banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/100ac4a7db2c447ba6f9de54488d22cf.webp",
     description: "باقات رصيد ومفاتيح API لنموذج Claude المتقدم.",
     packages: [
-      { id: "claude_10m_1d", name: "API CLAUDE 10M t 1D — 56 ج.م", duration: "يوم واحد", price: 56 },
+      { id: "claude_10m_1d", name: "API CLAUDE 10M t 1D — 138 ج.م", duration: "يوم واحد", price: 138 },
       { id: "claude_50m_2d", name: "API Claude 50M T 2D — 168 ج.م", duration: "يومان", price: 168 },
-      { id: "claude_100s_30d", name: "100$ API Claude 30D — 112 ج.م", duration: "30 يوماً", price: 112 },
+      { id: "claude_100s_30d", name: "100$ API Claude 30D — 281 ج.م", duration: "30 يوماً", price: 281 },
       { id: "claude_500s_30d", name: "500$ API Claude 30D — 336 ج.م", duration: "30 يوماً", price: 336 }
     ]
   },
@@ -55,7 +55,7 @@ const subscriptionsData = [
     banner: "Geminipro.png",
     description: "اشتراك رسمي متكامل مع وصول دائم لأحدث النماذج المتقدمة.",
     packages: [
-      { id: "gemini_18m", name: "Gemini AI Pro — 18 شهر — 69 ج.م", duration: "18 شهر", price: 69 },
+      { id: "gemini_18m", name: "Gemini AI Pro — 18 شهر — 281 ج.م", duration: "18 شهر", price: 281 },
       { id: "gemini_ai_pro_12m", name: "Google AI Pro — 12 شهر (FW) — 63 ج.م", duration: "12 شهر (FW)", price: 63 },
       { id: "gemini_ai_plus_3m", name: "Google AI Plus — 3 شهور (FW) — 41 ج.م", duration: "3 شهور (FW)", price: 41 }
     ]
@@ -93,9 +93,9 @@ const subscriptionsData = [
     banner: "capcut.png",
     description: "مونتاج فيديو احترافي، إزالة خلفيات، وفلاتر ذكية بلا حدود.",
     packages: [
-      { id: "capcut_7d", name: "7 أيام — 55 ج.م", duration: "7 أيام", price: 55 },
-      { id: "capcut_1m", name: "شهر واحد — 84 ج.م", duration: "شهر واحد", price: 84 },
-      { id: "capcut_credits", name: "CapCut PRO 1600 CREDITS — 112 ج.م", duration: "رصيد رويال", price: 112 }
+      { id: "capcut_7d", name: "7 أيام — 62 ج.م", duration: "7 أيام", price: 62 },
+      { id: "capcut_1m", name: "شهر واحد — 187 ج.م", duration: "شهر واحد", price: 187 },
+      { id: "capcut_credits", name: "CapCut PRO 1600 CREDITS — 249 ج.م", duration: "رصيد رويال", price: 249 }
     ]
   },
   {
@@ -107,7 +107,7 @@ const subscriptionsData = [
     banner: "lovable.png",
     description: "بناء وتطوير تطبيقات ومواقع كاملة عبر الأوامر النصية المباشرة.",
     packages: [
-      { id: "lovable_12m", name: "12 شهر (سنة) — 665 ج.م", duration: "سنة واحدة", price: 665 }
+      { id: "lovable_12m", name: "12 شهر (سنة) — 608 ج.م", duration: "سنة واحدة", price: 608 }
     ]
   },
   {
@@ -162,7 +162,7 @@ const subscriptionsData = [
     banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/8b753d99ae234bcd9cfc240b31b2a501.png",
     description: "رابط تفعيل رسمي مباشر لإنشاء تصاميم السوشيال ميديا بسرعة.",
     packages: [
-      { id: "adobe_exp_12m", name: "12 شهر (Adobe Express 12M) — 38 ج.م", duration: "12 شهر", price: 38 }
+      { id: "adobe_exp_12m", name: "12 شهر (Adobe Express 12M) — 107 ج.م", duration: "12 شهر", price: 107 }
     ]
   },
   {
@@ -187,12 +187,12 @@ const subscriptionsData = [
     description: "خيارات متعددة للتفعيل لفتح كافة الميزات والقوالب المدفوعة.",
     packages: [
       { id: "canva_2yrs", name: "Canva Pro 2 yrs — 56 ج.م", duration: "سنتان", price: 56 },
-      { id: "canva_2y_fw", name: "سنتان (FW) — 130 ج.م", duration: "سنتان (FW)", price: 130 },
-      { id: "canva_1m_pers", name: "شهر شخصي — 130 ج.م", duration: "شهر شخصي", price: 130 },
-      { id: "canva_admin", name: "حساب Admin — 345 ج.م", duration: "حساب Admin", price: 345 },
+      { id: "canva_2y_fw", name: "سنتان (FW) — 119 ج.م", duration: "سنتان (FW)", price: 119 },
+      { id: "canva_1m_pers", name: "شهر شخصي — 119 ج.م", duration: "شهر شخصي", price: 119 },
+      { id: "canva_admin", name: "حساب Admin — 313 ج.م", duration: "حساب Admin", price: 313 },
       { id: "canva_pro_inv_1y", name: "Canva Pro Invitation — سنة (Full) — 439 ج.م", duration: "سنة (Invitation Full)", price: 439 },
       { id: "canva_edu_inv_1y", name: "Canva Education Invitation — سنة — 4 ج.م", duration: "سنة (Education)", price: 4 },
-      { id: "canva_edu_admin_500", name: "Canva Edu Admin — 500 دعوة — 144 ج.م", duration: "Edu Admin (500 دعوة)", price: 144 }
+      { id: "canva_edu_admin_500", name: "Canva Edu Admin — 500 دعوة — 313 ج.م", duration: "Edu Admin (500 دعوة)", price: 313 }
     ]
   },
   {
@@ -204,7 +204,7 @@ const subscriptionsData = [
     banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/af6f9a608e9e4ceba231b0caedbc5f96.svg",
     description: "إدارة المهام والملاحظات وقواعد البيانات باحترافية تامة.",
     packages: [
-      { id: "notion_1y", name: "Notion Plus 12M — 100 ج.م", duration: "سنة واحدة", price: 100 },
+      { id: "notion_1y", name: "Notion Plus 12M — 124 ج.م", duration: "سنة واحدة", price: 124 },
       { id: "notion_biz_coupon_3m", name: "Notion Business Coupon — 3 شهور — 68 ج.م", duration: "3 شهور", price: 68 }
     ]
   },
@@ -217,7 +217,7 @@ const subscriptionsData = [
     banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/03b29d161cfc422fa333ffb35e463417.webp",
     description: "جميع برامج أوفيس الرسمية (Word, Excel, PowerPoint) وتخزين سحابي.",
     packages: [
-      { id: "office_1y", name: "Office 365 Plus 1year — 31 ج.م", duration: "سنة واحدة", price: 31 }
+      { id: "office_1y", name: "Office 365 Plus 1year — 147 ج.م", duration: "سنة واحدة", price: 147 }
     ]
   },
   {
@@ -229,7 +229,7 @@ const subscriptionsData = [
     banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/43a233e6b34c4ca5a1e978fe69e5a89e.png",
     description: "تعديل وتحويل ودمج وضغط ملفات الـ PDF بلا قيود.",
     packages: [
-      { id: "ilovepdf_1y", name: "iLovePdf Premium 1Y — 63 ج.م", duration: "سنة واحدة", price: 63 }
+      { id: "ilovepdf_1y", name: "iLovePdf Premium 1Y — 94 ج.م", duration: "سنة واحدة", price: 94 }
     ]
   },
   {
@@ -241,7 +241,7 @@ const subscriptionsData = [
     banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/034e4c1e460345938ab2d8808cf14780.svg",
     description: "ترقية الحساب للحصول على ميزات التوظيف ودورات التعلم.",
     packages: [
-      { id: "linkedin_3m", name: "3 أشهر — 185 ج.م", duration: "3 أشهر", price: 185 }
+      { id: "linkedin_3m", name: "3 أشهر — 168 ج.م", duration: "3 أشهر", price: 168 }
     ]
   },
   {
@@ -253,7 +253,7 @@ const subscriptionsData = [
     banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/d78b2cbd15994994b36703f413356a22.webp",
     description: "تعلم اللغات بدون إعلانات وبقلوب غير محدودة ومراجعة الأخطاء.",
     packages: [
-      { id: "duolingo_12m", name: "12 شهر — 35 ج.م", duration: "12 شهر", price: 35 }
+      { id: "duolingo_12m", name: "12 شهر — 100 ج.م", duration: "12 شهر", price: 100 }
     ]
   },
   {
@@ -317,7 +317,7 @@ const subscriptionsData = [
     description: "مشاهدة بدون فواصل إعلانية، تشغيل في الخلفية، واشتراك Music.",
     packages: [
       { id: "yt_1m", name: "شهر واحد — 82 ج.م", duration: "شهر واحد", price: 82 },
-      { id: "yt_3m", name: "3 أشهر — 124 ج.م", duration: "3 أشهر", price: 124 }
+      { id: "yt_3m", name: "3 أشهر — 250 ج.م", duration: "3 أشهر", price: 250 }
     ]
   },
   {
@@ -341,7 +341,7 @@ const subscriptionsData = [
     banner: "apallemusic.jpeg",
     description: "استماع لملايين المقاطع الموسيقية بنقاء Spatial Audio وبدون إعلانات.",
     packages: [
-      { id: "apple_music_5m", name: "5 أشهر — 175 ج.م", duration: "5 أشهر", price: 175 }
+      { id: "apple_music_5m", name: "5 أشهر — 161 ج.م", duration: "5 أشهر", price: 161 }
     ]
   },
   {
@@ -354,8 +354,8 @@ const subscriptionsData = [
     description: "استماع وتحميل بلا اتصال بالإنترنت وتخطي لا محدود للمسارات.",
     packages: [
       { id: "spotify_1m", name: "Spotify premium 1M — 94 ج.م", duration: "شهر واحد", price: 94 },
-      { id: "spotify_3m_link", name: "3 أشهر (رابط) — 60 ج.م", duration: "3 أشهر (رابط)", price: 60 },
-      { id: "spotify_1m_acc", name: "شهر واحد (حساب) — 140 ج.م", duration: "شهر واحد (حساب)", price: 140 }
+      { id: "spotify_3m_link", name: "3 أشهر (رابط) — 56 ج.م", duration: "3 أشهر (رابط)", price: 56 },
+      { id: "spotify_1m_acc", name: "شهر واحد (حساب) — 125 ج.م", duration: "شهر واحد (حساب)", price: 125 }
     ]
   },
   {
@@ -393,7 +393,20 @@ const subscriptionsData = [
     banner: "",
     description: "اشتراك NordVPN لكود تفعيل ثلاث شهور.",
     packages: [
-      { id: "nordvpn_coupon_3m", name: "NordVPN Coupon — 3 شهور — 154 ج.م", duration: "3 شهور", price: 154 }
+      { id: "nordvpn_coupon_3m", name: "NordVPN Coupon — 3 شهور — 154 ج.م", duration: "3 شهور (Coupon)", price: 154 },
+      { id: "nordvpn_basic_3m", name: "NordVPN Basic — 3 شهور — 250 ج.م", duration: "3 شهور (Basic)", price: 250 }
+    ]
+  },
+  {
+    id: "coursera_premium",
+    name: "Coursera Premium",
+    provider: "Coursera",
+    category: "productivity",
+    badge: "تعلم وكورسات 📚",
+    banner: "",
+    description: "اشتراك Coursera Premium للوصول لكل الكورسات والشهادات.",
+    packages: [
+      { id: "coursera_12m", name: "Coursera Premium — 12 شهر — 250 ج.م", duration: "12 شهر", price: 250 }
     ]
   }
 ];
