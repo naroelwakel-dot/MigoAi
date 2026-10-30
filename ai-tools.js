@@ -110,7 +110,7 @@ const aiProducts = [
         id: 'ai_chatgpt',
         name: 'ChatGPT Plus (شهر)',
         tag: 'GPT-4o الأصلي',
-        price: 480,
+        price: 753,
         desc: 'حساب مفعل بكامل مميزات التحليل، التصفح وتوليد الصور DALL-E',
         banner: 'chatgptplus.jpeg'
     },
