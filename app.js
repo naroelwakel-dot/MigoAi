@@ -146,7 +146,6 @@ const purchaseTemplates = [
     { act: "شحن 500 نجمة تليجرام", icon: '⭐' }
 ];
 
-// دالة حساب السعر المباشرة والمضبوطة تماماً (عرض السعر الأساسي كما هو دون تضخم)
 function calculateAutoPrice(basePrice) {
     if (!basePrice || isNaN(basePrice)) return 0;
     return Math.round(Number(basePrice));
@@ -692,60 +691,46 @@ function renderEntertainment() {
 
 function renderAI() {
     let aiList = [];
-    if (typeof subscriptionsData !== 'undefined') {
+    if (typeof aiProducts !== 'undefined' && aiProducts.length > 0) {
+        aiList = aiProducts;
+    } else if (typeof subscriptionsData !== 'undefined') {
         aiList = subscriptionsData.filter(s => s.category === 'ai');
-    }
-    if (typeof aiProducts !== 'undefined') {
-        aiProducts.forEach(prod => {
-            if (!aiList.find(x => x.id === prod.id)) {
-                aiList.push({
-                    id: prod.id,
-                    name: prod.name,
-                    provider: "AI Solution",
-                    category: "ai",
-                    badge: prod.tag,
-                    banner: "https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=1200&q=80",
-                    description: prod.desc,
-                    packages: [{ id: prod.id + '_p', name: prod.tag || 'اشتراك كامل', price: prod.price, duration: prod.tag }]
-                });
-            }
-        });
     }
 
     const container = document.getElementById('aiCardsContainer');
     if (!container || !aiList.length) return;
 
     container.innerHTML = aiList.map(a => {
-        const pkgs = a.packages || [{ name: a.name, price: 0 }];
+        const pkgs = a.packages || [{ name: a.tag || a.name, price: a.price, duration: a.tag }];
         const defaultPrice = calculateAutoPrice(pkgs[0].price);
         const bannerUrl = a.banner || "https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=1200&q=80";
 
         return `
             <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg">
-                <div class="h-24 relative bg-cover bg-center" style="background-image: url('${bannerUrl}');">
-                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent p-2.5 flex flex-col justify-between">
-                        <span class="text-[9px] bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 px-2 py-0.5 rounded-full font-bold w-fit">
-                            ${a.badge || 'ذكاء اصطناعي'}
+                <div class="h-28 sm:h-32 relative bg-cover bg-center" style="background-image: url('${bannerUrl}');">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent p-3 flex flex-col justify-between">
+                        <span class="text-[9px] bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 px-2.5 py-0.5 rounded-full font-bold w-fit">
+                            ${a.badge || a.tag || 'ذكاء اصطناعي'}
                         </span>
-                        <h4 class="font-bold text-xs sm:text-sm text-white">${a.name}</h4>
+                        <h4 class="font-extrabold text-sm sm:text-base text-white drop-shadow-md">${a.name}</h4>
                     </div>
                 </div>
                 <div class="p-3 bg-slate-900/60 flex-1 flex flex-col justify-between">
-                    <p class="text-[10px] text-gray-400 mb-2">${a.description || ''}</p>
+                    <p class="text-[10px] text-gray-400 mb-2">${a.description || a.desc || ''}</p>
 
                     <div>
-                        <div class="flex justify-between items-center mb-1">
-                            <label class="text-[10px] font-bold text-gray-300" for="ai_pkg_${a.id}">الباقة:</label>
-                            <span id="ai_price_${a.id}" class="text-xs font-black text-amber-400 font-mono">${defaultPrice.toLocaleString()} ج.م</span>
+                        <div class="flex justify-between items-center mb-1.5">
+                            <label class="text-[11px] font-bold text-gray-300" for="ai_pkg_${a.id}">اختر الباقة:</label>
+                            <span id="ai_price_${a.id}" class="text-xs font-extrabold text-amber-400 font-mono">${defaultPrice.toLocaleString()} ج.م</span>
                         </div>
-                        <select id="ai_pkg_${a.id}" onchange="updateCardPriceDisplay('ai', '${a.id}')" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-1.5 text-[10px] text-indigo-300 font-bold outline-none mb-2">
+                        <select id="ai_pkg_${a.id}" onchange="updateCardPriceDisplay('ai', '${a.id}')" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-xs text-indigo-300 font-bold outline-none mb-2">
                             ${pkgs.map((pkg, idx) => `<option value="${idx}" data-price="${pkg.price}">${pkg.name}</option>`).join('')}
                         </select>
                     </div>
 
                     <div class="pt-2 border-t border-slate-800 flex gap-2">
-                        <button onclick="handleSubscriptionAction('${a.id}', true)" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-[10px] py-1.5 rounded-lg cursor-pointer">فوري ⚡</button>
-                        <button onclick="handleSubscriptionAction('${a.id}', false)" class="sky-btn font-bold text-[10px] px-3 py-1.5 rounded-lg cursor-pointer">🛒 للسلة</button>
+                        <button onclick="handleAIAction('${a.id}', true)" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs py-2 rounded-xl cursor-pointer shadow">شحن فوري ⚡</button>
+                        <button onclick="handleAIAction('${a.id}', false)" class="sky-btn font-bold text-xs px-3 py-2 rounded-xl cursor-pointer shadow">🛒 للسلة</button>
                     </div>
                 </div>
             </div>
@@ -753,26 +738,35 @@ function renderAI() {
     }).join('');
 }
 
+function handleAIAction(itemId, isExpress = false) {
+    const prod = (typeof aiProducts !== 'undefined') ? aiProducts.find(p => p.id === itemId) : null;
+    if (!prod) return;
+
+    const selectEl = document.getElementById(`ai_pkg_${itemId}`);
+    const pkgs = prod.packages || [{ name: prod.tag, price: prod.price, duration: prod.tag }];
+    const idx = selectEl ? parseInt(selectEl.value, 10) : 0;
+    const selectedPkg = pkgs[idx] || pkgs[0];
+    const finalPrice = calculateAutoPrice(selectedPkg.price);
+
+    const cartItem = {
+        id: `${prod.id}_${Date.now()}`,
+        name: `${prod.name} (${selectedPkg.duration || selectedPkg.name})`,
+        type: 'ai',
+        price: finalPrice,
+        details: prod.description || prod.desc
+    };
+
+    if (isExpress) expressCheckout(cartItem);
+    else addToCart(cartItem);
+}
+
 function handleSubscriptionAction(itemId, isExpress = false) {
     let item = (typeof subscriptionsData !== 'undefined') ? subscriptionsData.find(s => s.id === itemId) : null;
-    if (!item && typeof aiProducts !== 'undefined') {
-        const prod = aiProducts.find(p => p.id === itemId);
-        if (prod) {
-            item = {
-                id: prod.id,
-                name: prod.name,
-                category: 'ai',
-                description: prod.desc,
-                packages: [{ id: prod.id + '_p', name: prod.tag, price: prod.price, duration: prod.tag }]
-            };
-        }
-    }
     if (!item) return;
 
     let selectedPkg = item.packages[0];
     const selectEl = document.getElementById(`prod_pkg_${itemId}`) || 
-                     document.getElementById(`ent_pkg_${itemId}`) || 
-                     document.getElementById(`ai_pkg_${itemId}`);
+                     document.getElementById(`ent_pkg_${itemId}`);
 
     if (selectEl) {
         selectedPkg = item.packages[parseInt(selectEl.value, 10)] || item.packages[0];
@@ -783,7 +777,7 @@ function handleSubscriptionAction(itemId, isExpress = false) {
     const cartItem = {
         id: `${item.id}_${Date.now()}`,
         name: `${item.name} (${selectedPkg.duration || selectedPkg.name})`,
-        type: item.category || 'ai',
+        type: item.category || 'sub',
         price: finalPrice,
         details: item.description
     };
