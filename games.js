@@ -83,9 +83,9 @@ const gamesData = [
     packages: [
       { id: "fc_40", name: "40 FC Points", price: 22 },
       { id: "fc_100", name: "100 FC Points", price: 56 },
-      { id: "fc_small", name: "حزمة صغيرة (إضافية)", price: 115 },
-      { id: "fc_med", name: "حزمة متوسطة (إضافية)", price: 230 },
-      { id: "fc_big", name: "حزمة كبيرة (إضافية)", price: 345 }
+      { id: "fc_520", name: "520 FC Points", price: 280 },
+      { id: "fc_1070", name: "1070 FC Points", price: 560 },
+      { id: "fc_2200", name: "2200 FC Points", price: 1120 }
     ]
   },
   {
@@ -134,10 +134,12 @@ const gamesData = [
     apiServiceId: "mobile_legends",
     idPlaceholder: "أدخل معرّف اللاعب (User ID)",
     packages: [
-      { id: "ml_86", name: "86 Diamonds", price: 55 },
-      { id: "ml_172", name: "172 Diamonds", price: 110 },
-      { id: "ml_257", name: "257 Diamonds", price: 160 },
-      { id: "ml_706", name: "706 Diamonds", price: 425 }
+      { id: "ml_155", name: "155 Diamonds", price: 155 },
+      { id: "ml_311", name: "311 Diamonds", price: 310 },
+      { id: "ml_949", name: "949 Diamonds", price: 929 },
+      { id: "ml_1617", name: "1617 Diamonds", price: 1550 },
+      { id: "ml_3331", name: "3331 Diamonds", price: 3099 },
+      { id: "ml_4997", name: "4997 Diamonds", price: 4648 }
     ]
   },
   {
@@ -212,9 +214,12 @@ const gamesData = [
     apiServiceId: "arena_breakout",
     idPlaceholder: "أدخل معرّف اللاعب (Character ID)",
     packages: [
-      { id: "ab_basic", name: "باقة أساسية", price: 105 },
-      { id: "ab_tac", name: "باقة تكتيكية", price: 265 },
-      { id: "ab_elite", name: "باقة النخبة", price: 530 }
+      { id: "ab_60", name: "60 Bonds", price: 63 },
+      { id: "ab_310", name: "310 Bonds", price: 316 },
+      { id: "ab_630", name: "630 Bonds", price: 632 },
+      { id: "ab_1580", name: "1580 Bonds", price: 1579 },
+      { id: "ab_3200", name: "3200 Bonds", price: 3158 },
+      { id: "ab_6500", name: "6500 Bonds", price: 6318 }
     ]
   },
   {
@@ -227,8 +232,12 @@ const gamesData = [
     apiServiceId: "honor_of_kings",
     idPlaceholder: "أدخل UID الحساب",
     packages: [
-      { id: "hok_starter", name: "باقة المبتدئين", price: 105 },
-      { id: "hok_pro", name: "باقة المحترفين", price: 265 }
+      { id: "hok_80", name: "80 Tokens", price: 72 },
+      { id: "hok_240", name: "240 Tokens", price: 197 },
+      { id: "hok_400", name: "400 Tokens", price: 326 },
+      { id: "hok_560", name: "560 Tokens", price: 451 },
+      { id: "hok_830", name: "830 Tokens", price: 645 },
+      { id: "hok_1245", name: "1245 Tokens", price: 948 }
     ]
   },
   {
@@ -242,8 +251,12 @@ const gamesData = [
     apiServiceId: "diablo_immortal",
     idPlaceholder: "أدخل BattleTag أو UID",
     packages: [
-      { id: "db_small", name: "حزمة صغيرة", price: 105 },
-      { id: "db_big", name: "حزمة كبيرة", price: 315 }
+      { id: "db_60", name: "60 Eternal Orbs", price: 54 },
+      { id: "db_320", name: "320 Eternal Orbs", price: 269 },
+      { id: "db_650", name: "650 Eternal Orbs", price: 538 },
+      { id: "db_1650", name: "1650 Eternal Orbs", price: 1344 },
+      { id: "db_3450", name: "3450 Eternal Orbs", price: 2688 },
+      { id: "db_7200", name: "7200 Eternal Orbs", price: 5432 }
     ]
   },
   {
@@ -256,8 +269,12 @@ const gamesData = [
     apiServiceId: "top_eleven",
     idPlaceholder: "أدخل معرّف المدرب (Manager ID)",
     packages: [
-      { id: "te_basic", name: "رموز أساسية", price: 105 },
-      { id: "te_prem", name: "رموز مميزة", price: 265 }
+      { id: "te_14", name: "14 Tokens", price: 112 },
+      { id: "te_37", name: "37 Tokens", price: 280 },
+      { id: "te_80", name: "80 Tokens", price: 560 },
+      { id: "te_176", name: "176 Tokens", price: 1120 },
+      { id: "te_500", name: "500 Tokens", price: 2800 },
+      { id: "te_1031", name: "1031 Tokens", price: 5600 }
     ]
   }
 ];
