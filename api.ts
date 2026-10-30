@@ -1,4 +1,4 @@
-// build marker 2026-10-30T13:20Z: diag probe
+// build marker 2026-10-30T13:30Z: rebuild after VOLSEVER_API_KEY set
 // ==============================================================================
 // Migo AI Solution - Verification Engine API (Deno Server)
 // Real account lookup only. No fabricated / placeholder names.
@@ -288,16 +288,6 @@ Deno.serve(async (req: Request) => {
   const game = (url.searchParams.get("game") || "").toLowerCase().trim();
   const id = (url.searchParams.get("id") || "").trim();
   const zoneId = (url.searchParams.get("zoneId") || "").trim();
-
-  if (game === "__diag") {
-    const vol = envKey("VOLSEVER_API_KEY", "PUBG_VOLSEVER_KEY");
-    const nef = envKey("NEFERBYTE_API_KEY", "PUBG_NEFERBYTE_KEY");
-    const rap = envKey("RAPIDAPI_KEY", "RAPIDAPI_PUBG_KEY");
-    return new Response(
-      JSON.stringify({ success: true, diag: { vol: vol.length, nef: nef.length, rap: rap.length } }),
-      { status: 200, headers: CORS_HEADERS },
-    );
-  }
 
   if (!game || !id) {
     return new Response(
