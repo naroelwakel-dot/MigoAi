@@ -531,8 +531,10 @@ function renderVccCards() {
     if (!container || !list.length) return;
 
     container.innerHTML = list.map(v => {
-        const price = calculateAutoPrice(v.priceEgp || 0);
+        const pkgs = v.packages || [{ name: v.name, price: v.priceEgp }];
+        const defaultPrice = calculateAutoPrice(pkgs[0].price);
         const bannerUrl = v.banner || "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=1200&q=80";
+
         return `
             <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg">
                 <div class="h-28 relative bg-cover bg-center" style="background-image: url('${bannerUrl}');">
@@ -544,10 +546,21 @@ function renderVccCards() {
                     </div>
                 </div>
                 <div class="p-3 bg-slate-900/60 flex-1 flex flex-col justify-between">
-                    <p class="text-[10px] text-gray-400 mb-3">${v.description || 'تقبل الدفع بالمواقع العالمية والإعلانات بدون قيود.'}</p>
+                    <p class="text-[10px] text-gray-400 mb-2">${v.description || 'تقبل الدفع بالمواقع العالمية والإعلانات بدون قيود.'}</p>
+                    
+                    <div>
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="text-[10px] font-bold text-gray-300" for="vcc_pkg_${v.id}">اختر باقتك:</label>
+                            <span id="vcc_price_${v.id}" class="text-xs font-black text-amber-400 font-mono">${defaultPrice.toLocaleString()} ج.م</span>
+                        </div>
+                        <select id="vcc_pkg_${v.id}" onchange="updateCardPriceDisplay('vcc', '${v.id}')" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-1.5 text-[10px] text-amber-300 font-bold outline-none mb-2">
+                            ${pkgs.map((pkg, idx) => `<option value="${idx}" data-price="${pkg.price}">${pkg.name}</option>`).join('')}
+                        </select>
+                    </div>
+
                     <div class="pt-2 border-t border-slate-800 flex items-center justify-between">
-                        <span class="text-sm font-extrabold text-amber-400 font-mono">${price.toLocaleString()} ج.م</span>
-                        <button onclick="openVccModal('${v.id}')" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs px-3 py-1.5 rounded-xl cursor-pointer shadow">اطلب 💳</button>
+                        <button onclick="handleVccAction('${v.id}', true)" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs py-2 rounded-xl cursor-pointer shadow mr-1">طلب فوري ⚡</button>
+                        <button onclick="handleVccAction('${v.id}', false)" class="sky-btn font-bold text-xs px-3 py-2 rounded-xl cursor-pointer shadow">🛒 للسلة</button>
                     </div>
                 </div>
             </div>
@@ -555,16 +568,51 @@ function renderVccCards() {
     }).join('');
 }
 
-function openVccModal(vccId) {
+function handleVccAction(vccId, isExpress) {
     const list = (typeof vccData !== 'undefined') ? vccData : [];
-    selectedVccItem = list.find(x => x.id === vccId);
-    if (!selectedVccItem) return;
-    const price = calculateAutoPrice(selectedVccItem.priceEgp || 0);
+    const vcc = list.find(x => x.id === vccId);
+    if (!vcc) return;
+
+    const selectEl = document.getElementById(`vcc_pkg_${vccId}`);
+    const pkgs = vcc.packages || [{ name: vcc.name, price: vcc.priceEgp }];
+    const idx = selectEl ? parseInt(selectEl.value, 10) : 0;
+    const selectedPkg = pkgs[idx] || pkgs[0];
+    const finalPrice = calculateAutoPrice(selectedPkg.price);
+
+    selectedVccItem = {
+        id: vcc.id + '_' + Date.now(),
+        name: `${vcc.name} - ${selectedPkg.name}`,
+        type: 'vcc',
+        price: finalPrice,
+        details: `الباقة المختارة: ${selectedPkg.name}`
+    };
+
+    openVccModalCustom(vccId);
+}
+
+function openVccModalCustom(vccId) {
+    const list = (typeof vccData !== 'undefined') ? vccData : [];
+    const vcc = list.find(x => x.id === vccId);
+    if (!vcc) return;
+
+    const selectEl = document.getElementById(`vcc_pkg_${vccId}`);
+    const pkgs = vcc.packages || [{ name: vcc.name, price: vcc.priceEgp }];
+    const idx = selectEl ? parseInt(selectEl.value, 10) : 0;
+    const selectedPkg = pkgs[idx] || pkgs[0];
+    const finalPrice = calculateAutoPrice(selectedPkg.price);
 
     const t = document.getElementById('vccModalTitle');
     const p = document.getElementById('vccModalPrice');
-    if (t) t.innerText = selectedVccItem.name;
-    if (p) p.innerText = `المبلغ: ${price.toLocaleString()} ج.م`;
+    if (t) t.innerText = `${vcc.name} (${selectedPkg.name})`;
+    if (p) p.innerText = `السعر الإجمالي: ${finalPrice.toLocaleString()} ج.م`;
+
+    selectedVccItem = {
+        id: vcc.id + '_' + Date.now(),
+        name: `${vcc.name} - ${selectedPkg.name}`,
+        type: 'vcc',
+        price: finalPrice
+    };
+
     const em = document.getElementById('vccEmailInput');
     const pu = document.getElementById('vccPurposeInput');
     if (em) em.value = '';
@@ -585,18 +633,18 @@ function submitVccModal(isExpress) {
     const email = em ? em.value.trim() : '';
     const purpose = pu ? pu.value.trim() : '';
     if (!email) return showToast('أدخل البريد الإلكتروني لاستلام بيانات البطاقة', 'error');
+    if (!selectedVccItem) return showToast('حدث خطأ، اختر البطاقة مرة أخرى', 'error');
 
-    const price = calculateAutoPrice(selectedVccItem.priceEgp || 0);
-    const item = {
-        id: selectedVccItem.id + '_' + Date.now(),
-        name: selectedVccItem.name,
-        type: 'vcc',
-        price: price,
-        details: `البريد: ${email} ${purpose ? '| الغرض: ' + purpose : ''}`
-    };
+    selectedVccItem.details = `البريد: ${email} ${purpose ? '| ملاحظات: ' + purpose : ''}`;
+    
+    const itemToProcess = { ...selectedVccItem };
     closeVccModal();
-    if (isExpress) expressCheckout(item);
-    else addToCart(item);
+
+    if (isExpress) {
+        expressCheckout(itemToProcess);
+    } else {
+        addToCart(itemToProcess);
+    }
 }
 
 function renderProductivity() {
