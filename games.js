@@ -1,6 +1,6 @@
 // ==============================================================================
 // Migo AI Solution - games.js
-// (نسخة معدّلة: تصحيح مراجع الصور فقط — لا تغيير في أي بيانات أو أسعار)
+// (نسخة معدّلة: تصحيح مراجع الصور + تحديث أسعار الموردين ×1.12 — 2026-10-30)
 // ==============================================================================
 
 const gamesData = [
@@ -81,8 +81,8 @@ const gamesData = [
     apiServiceId: "fc_mobile",
     idPlaceholder: "أدخل معرّف اللاعب (UID)",
     packages: [
-      { id: "fc_40", name: "40 FC Points", price: 35 },
-      { id: "fc_100", name: "100 FC Points", price: 88 },
+      { id: "fc_40", name: "40 FC Points", price: 22 },
+      { id: "fc_100", name: "100 FC Points", price: 56 },
       { id: "fc_small", name: "حزمة صغيرة (إضافية)", price: 115 },
       { id: "fc_med", name: "حزمة متوسطة (إضافية)", price: 230 },
       { id: "fc_big", name: "حزمة كبيرة (إضافية)", price: 345 }
@@ -117,9 +117,9 @@ const gamesData = [
     idPlaceholder: "أدخل معرّف اللعبة (UID)",
     packages: [
       { id: "gi_60", name: "60 كريستال", price: 62 },
-      { id: "gi_330", name: "300+30 كريستال", price: 310 },
-      { id: "gi_moon", name: "بركة القمر (Welkin Moon)", price: 305 },
-      { id: "gi_1090", name: "980+110 كريستال", price: 950 }
+      { id: "gi_330", name: "300+30 كريستال", price: 313 },
+      { id: "gi_moon", name: "بركة القمر (Welkin Moon)", price: 313 },
+      { id: "gi_1090", name: "980+110 كريستال", price: 941 }
     ]
   },
   {
@@ -150,10 +150,10 @@ const gamesData = [
     apiServiceId: "cod_mobile",
     idPlaceholder: "أدخل معرّف اللاعب (Player ID)",
     packages: [
-      { id: "cod_80", name: "80 CP", price: 62 },
-      { id: "cod_420", name: "420 CP", price: 265 },
-      { id: "cod_880", name: "880 CP", price: 530 },
-      { id: "cod_2400", name: "2400 CP", price: 1250 }
+      { id: "cod_80", name: "80 CP", price: 50 },
+      { id: "cod_420", name: "420 CP", price: 252 },
+      { id: "cod_880", name: "880 CP", price: 504 },
+      { id: "cod_2400", name: "2400 CP", price: 1260 }
     ]
   },
   {
@@ -166,10 +166,10 @@ const gamesData = [
     apiServiceId: "valorant",
     idPlaceholder: "أدخل Riot ID مع التاج (Name#TAG)",
     packages: [
-      { id: "val_475", name: "475 VP", price: 160 },
-      { id: "val_1000", name: "1000 VP", price: 315 },
-      { id: "val_2050", name: "2050 VP", price: 630 },
-      { id: "val_3650", name: "3650 VP", price: 1050 }
+      { id: "val_475", name: "475 VP", price: 269 },
+      { id: "val_1000", name: "1000 VP", price: 538 },
+      { id: "val_2050", name: "2050 VP", price: 1075 },
+      { id: "val_3650", name: "3650 VP", price: 1904 }
     ]
   },
   {
