@@ -56,21 +56,23 @@
   <style>
     :root {
         --bg-main: #000000;
-        --surface-1: #0a0a0a;
-        --surface-2: #121212;
+        --surface-panel: #09090b;
+        --surface-card: #111113;
+        --surface-hover: #18181b;
         --border-subtle: rgba(255, 255, 255, 0.08);
-        --border-highlight: rgba(255, 255, 255, 0.16);
+        --border-highlight: rgba(255, 255, 255, 0.18);
+        --accent-cyan: #38bdf8;
     }
     * { box-sizing: border-box; }
     
     body {
-        font-family: 'Tajawal', -apple-system, BlinkMacSystemFont, sans-serif;
-        background-color: #000000;
+        font-family: 'Tajawal', sans-serif;
+        background-color: var(--bg-main);
         background-image: 
-            radial-gradient(ellipse 80% 50% at 50% -20%, rgba(56, 189, 248, 0.12), transparent),
-            radial-gradient(ellipse 60% 40% at 80% 50%, rgba(99, 102, 241, 0.06), transparent);
+            radial-gradient(ellipse 90% 45% at 50% -10%, rgba(56, 189, 248, 0.09), transparent 75%),
+            radial-gradient(ellipse 50% 30% at 85% 30%, rgba(99, 102, 241, 0.05), transparent 70%);
         background-repeat: no-repeat;
-        color: #e5e5e5;
+        color: #f4f4f5;
         overflow-x: hidden;
         margin: 0;
         padding: 0;
@@ -83,83 +85,83 @@
 
     .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: #000000; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: #262626; border-radius: 4px; }
-    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #404040; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #27272a; border-radius: 9999px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
     details > summary { list-style: none; }
     details > summary::-webkit-details-marker { display: none; }
     
-    .agentql-panel {
-        background: #0a0a0a;
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 20px;
-        transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    }
-
+    /* AgentQL Design System Classes */
     .sky-surface { 
-        background: #0a0a0a; 
-        border: 1px solid rgba(255, 255, 255, 0.08); 
+        background: #09090b; 
+        border: 1px solid var(--border-subtle);
+        border-radius: 24px;
+        position: relative;
     }
 
     .sky-card { 
-        background: #0e0e0e; 
-        border: 1px solid rgba(255, 255, 255, 0.07); 
+        background: #111113; 
+        border: 1px solid var(--border-subtle); 
         border-radius: 16px;
-        transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease; 
+        transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease, box-shadow 0.25s ease; 
     }
     .sky-card:hover { 
-        border-color: rgba(255, 255, 255, 0.2); 
-        box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.8), 0 0 20px rgba(56, 189, 248, 0.08);
+        border-color: rgba(255, 255, 255, 0.22); 
+        box-shadow: 0 16px 36px -12px rgba(0, 0, 0, 0.9), 0 0 24px rgba(56, 189, 248, 0.06);
         transform: translateY(-2px);
     }
 
     .agentql-btn-primary {
         background: #ffffff;
         color: #000000;
-        font-weight: 700;
+        font-weight: 800;
         transition: all 0.2s ease;
-        box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.12);
     }
     .agentql-btn-primary:hover {
-        background: #e5e5e5;
+        background: #e4e4e7;
         transform: translateY(-1px);
-        box-shadow: 0 0 25px rgba(255, 255, 255, 0.25);
+        box-shadow: 0 0 28px rgba(255, 255, 255, 0.22);
     }
 
     .sky-btn { 
-        background: #141414; 
+        background: #18181b; 
         border: 1px solid rgba(255, 255, 255, 0.12);
-        color: #f5f5f5; 
+        color: #ffffff; 
         border-radius: 12px;
         transition: all 0.2s ease; 
     }
     .sky-btn:hover { 
-        background: #1f1f1f;
+        background: #27272a;
         border-color: rgba(255, 255, 255, 0.3);
-        color: #ffffff;
+        transform: translateY(-1px);
     }
 
     .sky-active-tab { 
         border: 1px solid #ffffff !important; 
-        background: #171717 !important; 
+        background: #27272a !important; 
         color: #ffffff !important;
     }
 
     select, select option { 
-        background-color: #0d0d0d !important; 
-        color: #e5e5e5 !important; 
+        background-color: #09090b !important; 
+        color: #f4f4f5 !important; 
     }
 
     .pill-badge {
-        background: rgba(255, 255, 255, 0.05);
+        background: rgba(255, 255, 255, 0.04);
         border: 1px solid rgba(255, 255, 255, 0.1);
-        color: #a3a3a3;
+        color: #a1a1aa;
         font-size: 11px;
+        font-weight: 600;
         border-radius: 9999px;
         padding: 4px 12px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
     }
     
-    .dot { height: 5px; width: 5px; background-color: #262626; border-radius: 50%; display: inline-block; cursor: pointer; transition: 0.3s; }
-    .dot.active { background-color: #ffffff; width: 16px; border-radius: 4px; }
+    .dot { height: 5px; width: 5px; background-color: #27272a; border-radius: 50%; display: inline-block; cursor: pointer; transition: 0.3s; }
+    .dot.active { background-color: #ffffff; width: 18px; border-radius: 9999px; }
 
     @keyframes anim-vcc-float {
       0%, 100% { transform: translateY(0); }
@@ -172,8 +174,8 @@
 
   <div id="toastContainer" class="fixed top-5 left-5 z-[120] flex flex-col gap-2 pointer-events-none"></div>
 
-  <div id="socialProofPopup" class="fixed bottom-20 left-4 z-40 bg-[#0d0d0d]/95 border border-white/10 p-3 rounded-2xl shadow-2xl backdrop-blur-xl max-w-xs transition-all duration-500 transform translate-y-24 opacity-0 pointer-events-none flex items-center gap-3">
-    <div id="proofIcon" class="w-10 h-10 rounded-xl bg-black border border-white/10 flex items-center justify-center p-2 shrink-0 text-base">⚡</div>
+  <div id="socialProofPopup" class="fixed bottom-20 left-4 z-40 bg-[#09090b]/95 border border-white/10 p-3.5 rounded-2xl shadow-2xl backdrop-blur-xl max-w-xs transition-all duration-500 transform translate-y-24 opacity-0 pointer-events-none flex items-center gap-3">
+    <div id="proofIcon" class="w-10 h-10 rounded-xl bg-black border border-white/10 flex items-center justify-center p-2 shrink-0 text-base shadow">⚡</div>
     <div class="text-right">
       <div id="proofUser" class="text-xs font-bold text-white"></div>
       <div id="proofAction" class="text-[11px] text-neutral-300 font-medium truncate max-w-[190px]"></div>
@@ -181,30 +183,30 @@
     </div>
   </div>
 
-  <a href="https://wa.me/201060934020?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%20Migo%20AI%D8%8C%20%D8%A3%D8%AD%D8%AA%D8%A7%D8%AC%20%D9%85%D8%B3%D8%A7%D8%B9%D8%AF%D8%A9%20%D9%81%D9%8A%20%D8%A7%D9%84%D8%B7%D9%84%D8%A8" target="_blank" class="fixed bottom-6 left-6 z-40 w-12 h-12 bg-white text-black hover:bg-neutral-200 rounded-full flex items-center justify-center shadow-2xl transition hover:scale-105 cursor-pointer" aria-label="تواصل مع الدعم الفني">
+  <a href="https://wa.me/201060934020?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%20Migo%20AI%D8%8C%20%D8%A3%D8%AD%D8%AA%D8%A7%D8%AC%20%D9%85%D8%B3%D8%A7%D8%B9%D8%AF%D8%A9%20%D9%81%D9%8A%20%D8%A7%D9%84%D8%B7%D9%84%D8%A8" target="_blank" class="fixed bottom-6 left-6 z-40 w-12 h-12 bg-white text-black hover:bg-neutral-200 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 hover:scale-105 cursor-pointer" aria-label="تواصل مع الدعم الفني">
     <svg class="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.04 14.69 2 12.04 2M12.05 3.67C14.25 3.67 16.31 4.53 17.87 6.09C19.42 7.65 20.28 9.72 20.28 11.92C20.28 16.46 16.58 20.15 12.04 20.15C10.56 20.15 9.11 19.76 7.85 19L7.55 18.83L4.43 19.65L5.26 16.61L5.06 16.29C4.24 15 3.8 13.47 3.8 11.91C3.81 7.37 7.5 3.67 12.05 3.67Z"/></svg>
   </a>
 
   <!-- Header -->
-  <header class="border-b border-white/[0.06] sticky top-0 z-50 backdrop-blur-2xl bg-black/75 transition-all">
+  <header class="border-b border-white/[0.06] sticky top-0 z-50 backdrop-blur-2xl bg-black/80 transition-all">
    <div class="max-w-6xl mx-auto px-4 py-3">
     <div class="flex justify-between items-center gap-3">
      
-     <div class="flex items-center gap-2 shrink-0">
-      <button type="button" onclick="toggleSidebar()" aria-label="القائمة" class="w-9 h-9 rounded-xl border border-white/10 bg-[#0d0d0d] flex items-center justify-center text-neutral-300 hover:text-white hover:border-white/20 transition cursor-pointer">
+     <div class="flex items-center gap-2.5 shrink-0">
+      <button type="button" onclick="toggleSidebar()" aria-label="القائمة" class="w-9 h-9 rounded-xl border border-white/10 bg-[#0e0e10] flex items-center justify-center text-neutral-300 hover:text-white hover:border-white/20 transition cursor-pointer">
        <i class="fa-solid fa-bars text-xs"></i>
       </button>
 
-      <button type="button" onclick="openCartModal()" aria-label="سلة المشتريات" class="relative w-9 h-9 flex items-center justify-center rounded-xl border border-white/10 bg-[#0d0d0d] text-neutral-300 hover:text-white hover:border-white/20 transition cursor-pointer">
+      <button type="button" onclick="openCartModal()" aria-label="سلة المشتريات" class="relative w-9 h-9 flex items-center justify-center rounded-xl border border-white/10 bg-[#0e0e10] text-neutral-300 hover:text-white hover:border-white/20 transition cursor-pointer">
        <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M17 18C15.9 18 15 18.9 15 20C15 21.1 15.9 22 17 22C18.1 22 19 21.1 19 20C19 18.9 18.1 18 17 18ZM1 2V4H3L6.6 11.59L5.25 14.04C5.09 14.32 5 14.65 5 15C5 16.1 5.9 17 7 17H19V15H7.42C7.28 15 7.17 14.89 7.17 14.75L7.2 14.63L8.1 13H15.55C16.3 13 16.96 12.59 17.3 11.97L20.88 5.48C20.96 5.34 21 5.17 21 5C21 4.45 20.55 4 20 4H5.21L4.27 2H1ZM7 18C5.9 18 5 18.9 5 20C5 21.1 5.9 22 7 22C8.1 22 9 21.1 9 20C9 18.9 8.1 18 7 18Z"/></svg>
        <span id="cartBadge" class="absolute -top-1 -right-1 bg-white text-black text-[9px] font-bold font-en w-4 h-4 rounded-full flex items-center justify-center shadow">0</span>
       </button>
 
-      <button type="button" id="navLoginBtn" onclick="openAuthModal('login')" class="border border-white/10 bg-[#0d0d0d] hover:bg-[#171717] hover:border-white/25 text-white font-bold px-3 py-1.5 rounded-xl text-xs transition flex items-center gap-1.5 cursor-pointer">
+      <button type="button" id="navLoginBtn" onclick="openAuthModal('login')" class="border border-white/10 bg-[#0e0e10] hover:bg-[#18181b] hover:border-white/25 text-white font-bold px-3.5 py-1.5 rounded-xl text-xs transition flex items-center gap-1.5 cursor-pointer">
        <span class="font-en text-[11px] font-semibold">Sign In</span>
       </button>
 
-      <div id="navUserBadge" class="hidden items-center gap-2 border border-white/10 bg-[#0d0d0d] px-3 py-1.5 rounded-xl">
+      <div id="navUserBadge" class="hidden items-center gap-2 border border-white/10 bg-[#0e0e10] px-3 py-1.5 rounded-xl">
        <div class="text-right">
         <div id="navUserName" class="text-[11px] font-bold text-white truncate max-w-[70px]"></div>
        </div>
@@ -214,10 +216,10 @@
 
      <a href="#" class="flex items-center gap-2.5 min-w-0 group"> 
       <div class="truncate text-left">
-       <span class="text-sm font-bold tracking-tight text-white block truncate font-en">Migo AI</span>
-       <span class="text-[9px] text-neutral-400 font-medium block font-en tracking-wider uppercase">DIGITAL PLATFORM</span>
+       <span class="text-sm font-bold tracking-tight text-white block truncate font-en">Migo AI Solution</span>
+       <span class="text-[9px] text-neutral-400 font-medium block font-en tracking-wider uppercase">DIGITAL ENGINE</span>
       </div> 
-      <div class="w-8 h-8 shrink-0 rounded-lg bg-neutral-900 border border-white/10 flex items-center justify-center group-hover:border-white/30 transition">
+      <div class="w-8 h-8 shrink-0 rounded-xl bg-neutral-900 border border-white/10 flex items-center justify-center group-hover:border-white/30 transition shadow">
         <span class="text-white font-en font-extrabold text-xs">M</span>
       </div> 
      </a>
@@ -228,10 +230,10 @@
     <div class="mt-3 relative">
      <label for="liveSearchInput" class="sr-only">بحث شامل في المتجر</label>
      <div class="relative flex items-center">
-       <input type="text" id="liveSearchInput" oninput="handleLiveSearch(this.value)" placeholder="ابحث في الخدمات، الألعاب، كوينز تيك توك، فيزا VCC، المطورين..." class="w-full bg-[#0a0a0a] border border-white/10 focus:border-white/30 focus:bg-[#0e0e0e] rounded-xl px-4 py-2.5 pl-10 text-xs text-neutral-100 placeholder-neutral-500 outline-none transition">
+       <input type="text" id="liveSearchInput" oninput="handleLiveSearch(this.value)" placeholder="ابحث في الخدمات، الألعاب، كوينز تيك توك، فيزا VCC، المطورين..." class="w-full bg-[#09090b] border border-white/10 focus:border-white/30 focus:bg-[#0e0e10] rounded-xl px-4 py-2.5 pl-10 text-xs text-neutral-100 placeholder-neutral-500 outline-none transition">
        <button type="button" onclick="document.getElementById('liveSearchInput').value=''; document.getElementById('searchResultsDropdown').classList.add('hidden');" class="absolute left-3 text-neutral-500 hover:text-white text-xs w-5 h-5 rounded-md flex items-center justify-center cursor-pointer">✕</button>
      </div>
-     <div id="searchResultsDropdown" class="hidden absolute top-full left-0 right-0 mt-2 bg-[#0c0c0c] border border-white/10 rounded-xl p-2 shadow-2xl z-50 max-h-80 overflow-y-auto custom-scrollbar"></div>
+     <div id="searchResultsDropdown" class="hidden absolute top-full left-0 right-0 mt-2 bg-[#09090b] border border-white/10 rounded-2xl p-2 shadow-2xl z-50 max-h-80 overflow-y-auto custom-scrollbar backdrop-blur-xl"></div>
     </div>
    </div>
   </header>
@@ -239,25 +241,25 @@
   <!-- Categories Navigation -->
   <section class="max-w-6xl mx-auto px-4 mt-3">
    <div class="flex gap-1.5 overflow-x-auto pb-1 custom-scrollbar" dir="rtl">
-    <a href="#sec-coins" class="shrink-0 px-3 py-1.5 rounded-lg border border-white/5 bg-[#0a0a0a] text-neutral-400 font-medium text-xs hover:border-white/20 hover:text-white transition">عملات تيك توك</a>
-    <a href="#sec-live" class="shrink-0 px-3 py-1.5 rounded-lg border border-white/5 bg-[#0a0a0a] text-neutral-400 font-medium text-xs hover:border-white/20 hover:text-white transition">برامج اللايف</a>
-    <a href="#sec-vcc" class="shrink-0 px-3 py-1.5 rounded-lg border border-white/5 bg-[#0a0a0a] text-neutral-400 font-medium text-xs hover:border-white/20 hover:text-white transition">بطاقات VCC</a>
-    <a href="#sec-games" class="shrink-0 px-3 py-1.5 rounded-lg border border-white/5 bg-[#0a0a0a] text-neutral-400 font-medium text-xs hover:border-white/20 hover:text-white transition">شحن الألعاب</a>
-    <a href="#sec-social" class="shrink-0 px-3 py-1.5 rounded-lg border border-white/5 bg-[#0a0a0a] text-neutral-400 font-medium text-xs hover:border-white/20 hover:text-white transition">السوشيال ميديا</a>
-    <a href="#sec-productivity" class="shrink-0 px-3 py-1.5 rounded-lg border border-white/5 bg-[#0a0a0a] text-neutral-400 font-medium text-xs hover:border-white/20 hover:text-white transition">أدوات وبرامج</a>
-    <a href="#sec-entertainment" class="shrink-0 px-3 py-1.5 rounded-lg border border-white/5 bg-[#0a0a0a] text-neutral-400 font-medium text-xs hover:border-white/20 hover:text-white transition">ترفيه وبث</a>
-    <a href="#sec-ai" class="shrink-0 px-3 py-1.5 rounded-lg border border-white/5 bg-[#0a0a0a] text-neutral-400 font-medium text-xs hover:border-white/20 hover:text-white transition">AI & APIs</a>
+    <a href="#sec-coins" class="shrink-0 px-3 py-1.5 rounded-lg border border-white/5 bg-[#09090b] text-neutral-400 font-medium text-xs hover:border-white/20 hover:text-white transition">عملات تيك توك</a>
+    <a href="#sec-live" class="shrink-0 px-3 py-1.5 rounded-lg border border-white/5 bg-[#09090b] text-neutral-400 font-medium text-xs hover:border-white/20 hover:text-white transition">برامج اللايف</a>
+    <a href="#sec-vcc" class="shrink-0 px-3 py-1.5 rounded-lg border border-white/5 bg-[#09090b] text-neutral-400 font-medium text-xs hover:border-white/20 hover:text-white transition">بطاقات VCC</a>
+    <a href="#sec-games" class="shrink-0 px-3 py-1.5 rounded-lg border border-white/5 bg-[#09090b] text-neutral-400 font-medium text-xs hover:border-white/20 hover:text-white transition">شحن الألعاب</a>
+    <a href="#sec-social" class="shrink-0 px-3 py-1.5 rounded-lg border border-white/5 bg-[#09090b] text-neutral-400 font-medium text-xs hover:border-white/20 hover:text-white transition">السوشيال ميديا</a>
+    <a href="#sec-productivity" class="shrink-0 px-3 py-1.5 rounded-lg border border-white/5 bg-[#09090b] text-neutral-400 font-medium text-xs hover:border-white/20 hover:text-white transition">أدوات وبرامج</a>
+    <a href="#sec-entertainment" class="shrink-0 px-3 py-1.5 rounded-lg border border-white/5 bg-[#09090b] text-neutral-400 font-medium text-xs hover:border-white/20 hover:text-white transition">ترفيه وبث</a>
+    <a href="#sec-ai" class="shrink-0 px-3 py-1.5 rounded-lg border border-white/5 bg-[#09090b] text-neutral-400 font-medium text-xs hover:border-white/20 hover:text-white transition">AI & APIs</a>
    </div>
   </section>
 
-  <!-- Clean Minimalist Hero Banner -->
+  <!-- Hero Slider -->
   <section class="max-w-6xl mx-auto px-4 pt-4 pb-2 text-center">
-   <div class="relative w-full max-w-4xl mx-auto overflow-hidden rounded-2xl mb-4 border border-white/[0.08] bg-[#080808]" dir="rtl">
+   <div class="relative w-full max-w-4xl mx-auto overflow-hidden rounded-2xl mb-4 border border-white/[0.08] bg-[#09090b]" dir="rtl">
     <div id="sliderTrack" class="flex transition-transform duration-700 ease-in-out">
         
         <div class="w-full shrink-0">
             <div class="relative py-8 px-6 text-center overflow-hidden">
-                <span class="inline-block pill-badge mb-3 font-en">VERIFIED PARTNER</span>
+                <span class="inline-block pill-badge mb-3 font-en">VERIFIED CREDITS</span>
                 <div class="relative z-10 max-w-lg mx-auto">
                   <h3 class="text-xl sm:text-2xl font-bold text-white mb-2 tracking-tight">شحن كوينز تيك توك الرسمية</h3>
                   <p class="text-xs text-neutral-400 mb-4 leading-relaxed">تسليم فوري ومباشر إلى حسابك بالاسم الرسمي لدعم البثوث والمشاريع بأمان تام.</p>
@@ -305,7 +307,7 @@
   <main class="max-w-6xl mx-auto px-4 py-4 space-y-8">
    
    <!-- TikTok & Telegram -->
-   <section id="sec-coins" class="agentql-panel p-5 sm:p-6 scroll-mt-24">
+   <section id="sec-coins" class="sky-surface p-5 sm:p-6 scroll-mt-24">
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-5 border-b border-white/[0.06] pb-3">
       <div>
         <span class="pill-badge font-en">INSTANT CREDITS</span>
@@ -321,7 +323,7 @@
    </section>
 
    <!-- Live Apps -->
-   <section id="sec-live" class="agentql-panel p-5 sm:p-6 scroll-mt-24">
+   <section id="sec-live" class="sky-surface p-5 sm:p-6 scroll-mt-24">
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-5 border-b border-white/[0.06] pb-3">
       <div>
         <span class="pill-badge font-en">BROADCAST & STREAM</span>
@@ -333,7 +335,7 @@
    </section>
 
    <!-- VCC Cards -->
-   <section id="sec-vcc" class="agentql-panel p-5 sm:p-6 scroll-mt-24">
+   <section id="sec-vcc" class="sky-surface p-5 sm:p-6 scroll-mt-24">
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-5 border-b border-white/[0.06] pb-3">
       <div>
         <span class="pill-badge font-en">VIRTUAL CARDS</span>
@@ -345,7 +347,7 @@
    </section>
 
    <!-- Games Section -->
-   <section id="sec-games" class="agentql-panel p-5 sm:p-6 scroll-mt-24">
+   <section id="sec-games" class="sky-surface p-5 sm:p-6 scroll-mt-24">
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-5 border-b border-white/[0.06] pb-3">
       <div>
         <span class="pill-badge font-en">GAMING ENGINE</span>
@@ -357,7 +359,7 @@
    </section>
 
    <!-- Productivity & Design -->
-   <section id="sec-productivity" class="agentql-panel p-5 sm:p-6 scroll-mt-24">
+   <section id="sec-productivity" class="sky-surface p-5 sm:p-6 scroll-mt-24">
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-5 border-b border-white/[0.06] pb-3">
       <div>
         <span class="pill-badge font-en">SOFTWARE SUITE</span>
@@ -369,7 +371,7 @@
    </section>
 
    <!-- SMM Platforms -->
-   <section id="sec-social" class="agentql-panel p-5 sm:p-6 scroll-mt-24">
+   <section id="sec-social" class="sky-surface p-5 sm:p-6 scroll-mt-24">
     <div class="mb-4">
       <span class="pill-badge font-en">SOCIAL GROWTH</span>
       <h2 class="text-lg font-bold text-white mt-1">تعزيز الحسابات والمتابعين (18 منصة بالكامل)</h2>
@@ -382,7 +384,7 @@
     <div class="sky-card overflow-hidden">
      <div class="h-32 sm:h-40 relative overflow-hidden bg-neutral-900">
       <img id="selectedPlatformBannerImg" src="" alt="Banner" class="absolute inset-0 w-full h-full object-cover object-center opacity-70">
-      <div class="absolute inset-0 bg-gradient-to-t from-[#0e0e0e] via-[#0e0e0e]/70 to-transparent p-4 flex flex-col justify-between z-10">
+      <div class="absolute inset-0 bg-gradient-to-t from-[#111113] via-[#111113]/70 to-transparent p-4 flex flex-col justify-between z-10">
        <div class="flex justify-between items-start">
         <span class="pill-badge font-en">SECURE NODE</span>
         <span id="selectedServiceBadgeId" class="text-neutral-400 font-en text-xs">ID: #2410</span>
@@ -397,32 +399,32 @@
       </div>
      </div>
 
-     <div class="p-4 bg-[#0a0a0a]">
+     <div class="p-4 bg-[#09090b]">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
        <div>
         <label class="block text-xs font-medium text-neutral-400 mb-1" for="smmCategorySelect">القسم:</label>
-        <select id="smmCategorySelect" onchange="onSMMCategoryChange()" class="w-full bg-[#121212] border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none"></select>
+        <select id="smmCategorySelect" onchange="onSMMCategoryChange()" class="w-full bg-[#111113] border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none"></select>
        </div>
        <div>
         <label class="block text-xs font-medium text-neutral-400 mb-1" for="smmServiceSelect">الخدمة:</label>
-        <select id="smmServiceSelect" onchange="onSMMServiceChange()" class="w-full bg-[#121212] border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none"></select>
+        <select id="smmServiceSelect" onchange="onSMMServiceChange()" class="w-full bg-[#111113] border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none"></select>
        </div>
       </div>
       
-      <div class="mb-3 bg-[#121212] border border-white/5 rounded-xl p-2.5 flex flex-wrap gap-2 text-xs items-center justify-between" id="smmServiceMeta"></div>
+      <div class="mb-3 bg-[#111113] border border-white/5 rounded-xl p-2.5 flex flex-wrap gap-2 text-xs items-center justify-between" id="smmServiceMeta"></div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
        <div>
         <label class="block text-xs font-medium text-neutral-400 mb-1" for="smmLinkInput">رابط الحساب أو المنشور:</label>
-        <input type="url" id="smmLinkInput" placeholder="https://..." class="w-full bg-[#121212] border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-en outline-none">
+        <input type="url" id="smmLinkInput" placeholder="https://..." class="w-full bg-[#111113] border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-en outline-none">
        </div>
        <div>
         <label class="block text-xs font-medium text-neutral-400 mb-1" for="smmQtyInput">الكمية المطلوبة: <span id="smmLimitsNote" class="text-neutral-500 font-en text-[11px]"></span></label>
-        <input type="number" id="smmQtyInput" value="1000" min="10" oninput="calculateSMMCost()" class="w-full bg-[#121212] border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-en font-bold outline-none">
+        <input type="number" id="smmQtyInput" value="1000" min="10" oninput="calculateSMMCost()" class="w-full bg-[#111113] border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-en font-bold outline-none">
        </div>
       </div>
 
-      <div class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-[#121212] border border-white/5 rounded-xl p-3">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-3 bg-[#111113] border border-white/5 rounded-xl p-3">
        <div>
         <span class="text-[11px] text-neutral-400 block font-en">TOTAL COST</span>
         <div class="text-lg font-bold text-white font-en" id="smmPriceEGP">0.00 ج.م</div>
@@ -438,7 +440,7 @@
 
    <!-- Entertainment & AI Row -->
    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-    <section id="sec-entertainment" class="agentql-panel p-5 sm:p-6 scroll-mt-24">
+    <section id="sec-entertainment" class="sky-surface p-5 sm:p-6 scroll-mt-24">
       <div class="mb-4">
         <span class="pill-badge font-en">STREAMING</span>
         <h2 class="text-lg font-bold text-white mt-1">اشتراكات الترفيه والبث</h2>
@@ -446,7 +448,7 @@
       <div id="entertainmentCardsContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
     </section>
 
-    <section id="sec-ai" class="agentql-panel p-5 sm:p-6 scroll-mt-24">
+    <section id="sec-ai" class="sky-surface p-5 sm:p-6 scroll-mt-24">
       <div class="mb-4">
         <span class="pill-badge font-en">AI & WORKFLOW</span>
         <h2 class="text-lg font-bold text-white mt-1">الذكاء الاصطناعي والـ APIs</h2>
@@ -500,19 +502,19 @@
    </div>
 
    <!-- Three Trust Badges -->
-   <section class="agentql-panel p-5">
+   <section class="sky-surface p-5">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
-      <div class="p-4 rounded-xl bg-[#0e0e0e] border border-white/[0.04]">
+      <div class="p-4 rounded-xl bg-[#111113] border border-white/[0.04]">
         <div class="font-en text-xs text-neutral-500 font-bold mb-1">01 / STABILITY</div>
         <h3 class="text-sm font-bold text-white mb-1">ضمان رسمي 100%</h3>
         <p class="text-xs text-neutral-400">تعويض فوري واشتراكات مستقرة طوال فترة التفعيل.</p>
       </div>
-      <div class="p-4 rounded-xl bg-[#0e0e0e] border border-white/[0.04]">
+      <div class="p-4 rounded-xl bg-[#111113] border border-white/[0.04]">
         <div class="font-en text-xs text-neutral-500 font-bold mb-1">02 / PRIVACY</div>
         <h3 class="text-sm font-bold text-white mb-1">شحن بالـ ID فقط</h3>
         <p class="text-xs text-neutral-400">لا نطلب أبداً كلمات مرور لحسابات الألعاب أو برامج البث.</p>
       </div>
-      <div class="p-4 rounded-xl bg-[#0e0e0e] border border-white/[0.04]">
+      <div class="p-4 rounded-xl bg-[#111113] border border-white/[0.04]">
         <div class="font-en text-xs text-neutral-500 font-bold mb-1">03 / LOCAL CHECKOUT</div>
         <h3 class="text-sm font-bold text-white mb-1">دفع محلي بالجنيه المصري</h3>
         <p class="text-xs text-neutral-400">فودافون كاش، اتصالات، إنستاباي، وبوابات التقسيط المباشرة.</p>
@@ -521,14 +523,14 @@
    </section>
 
    <!-- FAQ -->
-   <section class="agentql-panel p-5">
+   <section class="sky-surface p-5">
     <h2 class="text-sm font-bold text-white mb-3 font-en tracking-wider uppercase">Frequently Asked Questions</h2>
     <div class="space-y-2 text-xs">
-      <details class="bg-[#0e0e0e] border border-white/[0.05] p-3 rounded-xl cursor-pointer">
+      <details class="bg-[#111113] border border-white/[0.05] p-3 rounded-xl cursor-pointer">
         <summary class="font-bold text-neutral-200">كيف يصلني شحن الألعاب وبرامج اللايف؟</summary>
         <p class="text-neutral-400 mt-2 leading-relaxed">الشحن يتم مباشرة إلى معرّف اللاعب (Player ID) داخل اللعبة أو التطبيق في غضون 2 إلى 5 دقائق من تأكيد التحويل.</p>
       </details>
-      <details class="bg-[#0e0e0e] border border-white/[0.05] p-3 rounded-xl cursor-pointer">
+      <details class="bg-[#111113] border border-white/[0.05] p-3 rounded-xl cursor-pointer">
         <summary class="font-bold text-neutral-200">هل اشتراكات الذكاء الاصطناعي رسمية؟</summary>
         <p class="text-neutral-400 mt-2 leading-relaxed">نعم، التفعيل يتم على بريدك الشخصي وبطرق دفع رسمية معتمدة مع ضمان استمرارية الاشتراك طوال مدته.</p>
       </details>
@@ -536,7 +538,7 @@
    </section>
 
    <!-- Reviews -->
-   <section id="reviews" class="agentql-panel p-5 sm:p-6 scroll-mt-24">
+   <section id="reviews" class="sky-surface p-5 sm:p-6 scroll-mt-24">
     <h2 class="text-sm font-bold text-white mb-3 font-en tracking-wider uppercase">Customer Testimonials</h2>
     <div id="reviewsContainer" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3 text-xs"></div>
    </section>
@@ -550,7 +552,7 @@
 
   <!-- VCC Modal -->
   <div id="vccModal" class="fixed inset-0 bg-black/80 backdrop-blur-xl z-[90] hidden items-center justify-center p-3">
-   <div class="agentql-panel max-w-md w-full p-5 relative shadow-2xl">
+   <div class="sky-surface max-w-md w-full p-5 relative shadow-2xl">
     <button type="button" onclick="closeVccModal()" aria-label="إغلاق" class="absolute top-4 left-4 text-neutral-400 hover:text-white border border-white/10 w-7 h-7 rounded-lg flex items-center justify-center cursor-pointer">✕</button>
     <div class="text-center mb-4">
       <div class="w-10 h-10 rounded-xl bg-white/5 border border-white/10 mx-auto flex items-center justify-center mb-2">
@@ -563,11 +565,11 @@
     <div class="space-y-3 mb-4">
       <div>
         <label class="block text-xs font-medium text-neutral-400 mb-1" for="vccEmailInput">البريد الإلكتروني (لاستلام تفاصيل الكارت):</label>
-        <input type="email" id="vccEmailInput" placeholder="example@gmail.com" class="w-full bg-[#121212] border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-en outline-none">
+        <input type="email" id="vccEmailInput" placeholder="example@gmail.com" class="w-full bg-[#111113] border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-en outline-none">
       </div>
       <div>
         <label class="block text-xs font-medium text-neutral-400 mb-1" for="vccPurposeInput">الغرض من البطاقة (اختياري):</label>
-        <input type="text" id="vccPurposeInput" placeholder="إعلانات ممولة، شات جي بي تي، متاجر رقمية..." class="w-full bg-[#121212] border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none">
+        <input type="text" id="vccPurposeInput" placeholder="إعلانات ممولة، شات جي بي تي، متاجر رقمية..." class="w-full bg-[#111113] border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none">
       </div>
     </div>
 
@@ -580,11 +582,11 @@
 
   <!-- Player ID Modal -->
   <div id="playerIdModal" class="fixed inset-0 bg-black/80 backdrop-blur-xl z-[90] hidden items-center justify-center p-3">
-   <div class="agentql-panel max-w-md w-full p-5 relative shadow-2xl max-h-[92vh] overflow-y-auto custom-scrollbar">
+   <div class="sky-surface max-w-md w-full p-5 relative shadow-2xl max-h-[92vh] overflow-y-auto custom-scrollbar">
     <button type="button" onclick="closePlayerIdModal()" aria-label="إغلاق" class="absolute top-4 left-4 text-neutral-400 hover:text-white border border-white/10 w-7 h-7 rounded-lg flex items-center justify-center cursor-pointer">✕</button>
     
     <div class="text-center mb-4">
-      <div id="modalTargetIcon" class="w-14 h-14 rounded-xl bg-[#121212] border border-white/10 mx-auto flex items-center justify-center mb-2 overflow-hidden"></div>
+      <div id="modalTargetIcon" class="w-14 h-14 rounded-xl bg-[#111113] border border-white/10 mx-auto flex items-center justify-center mb-2 overflow-hidden"></div>
       <h3 id="modalTargetTitle" class="text-base font-bold text-white">شحن الحساب</h3>
       <p id="modalTargetPkg" class="text-xs text-neutral-400 font-bold mt-0.5 font-en"></p>
     </div>
@@ -592,13 +594,13 @@
     <div class="space-y-3 mb-4">
       <div>
         <label class="block text-xs font-medium text-neutral-400 mb-1" for="modalSelectGame">الخدمة / اللعبة:</label>
-        <select id="modalSelectGame" onchange="onModalGameSelectChange()" class="w-full bg-[#121212] border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-bold outline-none"></select>
+        <select id="modalSelectGame" onchange="onModalGameSelectChange()" class="w-full bg-[#111113] border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-bold outline-none"></select>
       </div>
 
       <div>
         <label class="block text-xs font-medium text-neutral-400 mb-1" for="modalInputPlayerId"><span id="modalIdLabel">معرف اللاعب أو اليوزر نيم</span> <span class="text-red-400">*</span>:</label>
         <div class="flex gap-2">
-            <input type="text" id="modalInputPlayerId" placeholder="اكتب الـ ID أو @username" class="flex-1 bg-[#121212] border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-en outline-none">
+            <input type="text" id="modalInputPlayerId" placeholder="اكتب الـ ID أو @username" class="flex-1 bg-[#111113] border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-en outline-none">
             <button type="button" id="verifyAccountBtn" onclick="verifyPlayerAccount()" class="shrink-0 bg-white text-black font-bold px-3 rounded-xl text-xs cursor-pointer transition flex items-center gap-1 font-en">
                 <span>Check</span>
             </button>
@@ -607,12 +609,12 @@
 
       <div id="modalZoneGroup" class="hidden">
         <label class="block text-xs font-medium text-neutral-400 mb-1" for="modalInputZoneId">معرف السيرفر (Zone ID):</label>
-        <input type="text" id="modalInputZoneId" placeholder="مثال: 1234" class="w-full bg-[#121212] border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-en outline-none">
+        <input type="text" id="modalInputZoneId" placeholder="مثال: 1234" class="w-full bg-[#111113] border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-en outline-none">
       </div>
 
       <div>
         <label class="block text-xs font-medium text-neutral-400 mb-1" for="modalInputPlayerName">اسم الحساب المسترجع (Nickname):</label>
-        <input type="text" id="modalInputPlayerName" placeholder="يظهر هنا تلقائياً بعد الفحص" class="w-full bg-[#121212] border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none">
+        <input type="text" id="modalInputPlayerName" placeholder="يظهر هنا تلقائياً بعد الفحص" class="w-full bg-[#111113] border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none">
       </div>
 
       <div id="verifyStatusBox" class="hidden p-2.5 rounded-xl text-xs font-medium text-center border"></div>
@@ -627,7 +629,7 @@
   <!-- Sidebar -->
   <div id="sidebarContainer" class="fixed inset-0 z-50 hidden">
    <div onclick="toggleSidebar()" class="fixed inset-0 bg-black/80 backdrop-blur-md"></div>
-   <aside class="fixed top-0 right-0 h-full w-72 max-w-[85vw] bg-[#080808] border-l border-white/10 z-10 p-4 flex flex-col justify-between overflow-y-auto shadow-2xl custom-scrollbar">
+   <aside class="fixed top-0 right-0 h-full w-72 max-w-[85vw] bg-[#09090b] border-l border-white/10 z-10 p-4 flex flex-col justify-between overflow-y-auto shadow-2xl custom-scrollbar">
     <div>
      <div class="flex justify-between items-center pb-3 border-b border-white/[0.06]">
       <div class="flex items-center gap-2">
@@ -670,26 +672,26 @@
 
   <!-- Auth Modal -->
   <div id="authModal" class="fixed inset-0 bg-black/80 backdrop-blur-xl z-50 hidden items-center justify-center p-4">
-   <div class="agentql-panel max-w-md w-full p-6 relative shadow-2xl">
+   <div class="sky-surface max-w-md w-full p-6 relative shadow-2xl">
     <button type="button" onclick="closeAuthModal()" aria-label="إغلاق" class="absolute top-4 left-4 text-neutral-400 hover:text-white border border-white/10 w-7 h-7 rounded-lg flex items-center justify-center cursor-pointer">✕</button>
     <div class="text-center mb-5">
      <div class="w-9 h-9 rounded-xl bg-white text-black font-en font-bold text-sm flex items-center justify-center mx-auto mb-2">M</div>
      <h3 class="text-base font-bold text-white font-en">Customer Portal</h3>
     </div>
-    <div class="grid grid-cols-2 gap-1 bg-[#121212] p-1 rounded-xl mb-4 border border-white/5 font-en text-xs">
+    <div class="grid grid-cols-2 gap-1 bg-[#111113] p-1 rounded-xl mb-4 border border-white/5 font-en text-xs">
      <button type="button" id="tabLoginBtn" onclick="switchAuthTab('login')" class="py-1.5 font-bold rounded-lg transition sky-active-tab cursor-pointer">Sign In</button>
      <button type="button" id="tabRegisterBtn" onclick="switchAuthTab('register')" class="py-1.5 font-medium rounded-lg transition text-neutral-400 cursor-pointer">Register</button>
     </div>
     <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-3">
-     <div><label class="block text-xs font-medium text-neutral-400 mb-1" for="loginEmail">البريد الإلكتروني:</label><input type="email" id="loginEmail" required class="w-full bg-[#121212] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-white/30 outline-none"></div>
-     <div><label class="block text-xs font-medium text-neutral-400 mb-1" for="loginPassword">الرقم السري:</label><input type="password" id="loginPassword" required class="w-full bg-[#121212] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-white/30 outline-none"></div>
+     <div><label class="block text-xs font-medium text-neutral-400 mb-1" for="loginEmail">البريد الإلكتروني:</label><input type="email" id="loginEmail" required class="w-full bg-[#111113] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-white/30 outline-none"></div>
+     <div><label class="block text-xs font-medium text-neutral-400 mb-1" for="loginPassword">الرقم السري:</label><input type="password" id="loginPassword" required class="w-full bg-[#111113] border border-white/10 rounded-xl px-3 py-2 text-xs text-white focus:border-white/30 outline-none"></div>
      <button type="submit" class="w-full agentql-btn-primary py-2.5 rounded-xl text-xs cursor-pointer font-en">Sign In</button>
     </form>
     <form id="registerForm" onsubmit="handleRegister(event)" class="space-y-3 hidden">
-     <div><label class="block text-xs font-medium text-neutral-400 mb-1" for="regName">الاسم الكامل:</label><input type="text" id="regName" required minlength="3" class="w-full bg-[#121212] border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none"></div>
-     <div><label class="block text-xs font-medium text-neutral-400 mb-1" for="regEmail">البريد الإلكتروني:</label><input type="email" id="regEmail" required class="w-full bg-[#121212] border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-en outline-none"></div>
-     <div><label class="block text-xs font-medium text-neutral-400 mb-1" for="regPhone">رقم الهاتف:</label><input type="tel" id="regPhone" required class="w-full bg-[#121212] border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-en outline-none"></div>
-     <div><label class="block text-xs font-medium text-neutral-400 mb-1" for="regPassword">الرقم السري:</label><input type="password" id="regPassword" required minlength="6" class="w-full bg-[#121212] border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-en outline-none"></div>
+     <div><label class="block text-xs font-medium text-neutral-400 mb-1" for="regName">الاسم الكامل:</label><input type="text" id="regName" required minlength="3" class="w-full bg-[#111113] border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none"></div>
+     <div><label class="block text-xs font-medium text-neutral-400 mb-1" for="regEmail">البريد الإلكتروني:</label><input type="email" id="regEmail" required class="w-full bg-[#111113] border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-en outline-none"></div>
+     <div><label class="block text-xs font-medium text-neutral-400 mb-1" for="regPhone">رقم الهاتف:</label><input type="tel" id="regPhone" required class="w-full bg-[#111113] border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-en outline-none"></div>
+     <div><label class="block text-xs font-medium text-neutral-400 mb-1" for="regPassword">الرقم السري:</label><input type="password" id="regPassword" required minlength="6" class="w-full bg-[#111113] border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-en outline-none"></div>
      <button type="submit" class="w-full agentql-btn-primary py-2.5 rounded-xl text-xs cursor-pointer font-en">Create Account</button>
     </form>
    </div>
@@ -697,7 +699,7 @@
 
   <!-- Cart Modal -->
   <div id="cartModal" class="fixed inset-0 bg-black/80 backdrop-blur-xl z-50 hidden items-center justify-center p-4">
-   <div class="agentql-panel max-w-lg w-full p-5 relative shadow-2xl flex flex-col max-h-[90vh]">
+   <div class="sky-surface max-w-lg w-full p-5 relative shadow-2xl flex flex-col max-h-[90vh]">
     <div class="flex justify-between items-center mb-3 border-b border-white/[0.06] pb-2">
      <h3 class="text-sm font-bold text-white font-en uppercase tracking-wider">Shopping Cart</h3>
      <button type="button" onclick="closeCartModal()" aria-label="إغلاق" class="text-neutral-400 hover:text-white border border-white/10 w-7 h-7 rounded-lg flex items-center justify-center cursor-pointer">✕</button>
@@ -708,12 +710,12 @@
     <div class="border-t border-white/[0.06] pt-3 space-y-2">
      <div class="flex gap-2">
       <label for="cartCouponInput" class="sr-only">كود الخصم</label>
-      <input type="text" id="cartCouponInput" placeholder="كود الخصم (SIAFFC15 أو SIAF15)" class="flex-1 bg-[#121212] border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-en focus:border-white/30 outline-none uppercase">
+      <input type="text" id="cartCouponInput" placeholder="كود الخصم (SIAFFC15 أو SIAF15)" class="flex-1 bg-[#111113] border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-en focus:border-white/30 outline-none uppercase">
       <button type="button" onclick="applyCartCoupon()" class="sky-btn text-xs font-bold px-3 py-2 cursor-pointer font-en">Apply</button>
      </div>
      <div id="cartCouponStatus" class="hidden text-[10px] font-bold"></div>
      
-     <div class="bg-[#121212] border border-white/5 rounded-xl p-2.5 text-xs font-en">
+     <div class="bg-[#111113] border border-white/5 rounded-xl p-2.5 text-xs font-en">
       <div class="flex justify-between text-neutral-400 mb-1"><span>Subtotal:</span> <span id="cartSubtotal">0 ج.م</span></div>
       <div class="flex justify-between text-emerald-400 mb-1 hidden" id="cartDiscountRow"><span>Discount:</span> <span id="cartDiscountAmount">-0 ج.م</span></div>
       <div class="flex justify-between text-white font-bold text-base border-t border-white/5 pt-1 mt-1"><span>Total:</span> <span id="cartTotal" class="text-white">0 ج.م</span></div>
@@ -727,7 +729,7 @@
 
   <!-- Checkout Modal -->
   <div id="checkoutModal" class="fixed inset-0 bg-black/85 backdrop-blur-xl z-50 hidden items-center justify-center p-4">
-   <div class="agentql-panel max-w-lg w-full p-5 relative shadow-2xl max-h-[95vh] overflow-y-auto custom-scrollbar">
+   <div class="sky-surface max-w-lg w-full p-5 relative shadow-2xl max-h-[95vh] overflow-y-auto custom-scrollbar">
     <div class="flex justify-between items-center mb-3 pb-2 border-b border-white/[0.06]">
      <h3 class="text-sm font-bold text-white font-en uppercase tracking-wider">Payment Method</h3>
      <button type="button" onclick="closeCheckoutModal()" aria-label="إغلاق" class="text-neutral-400 hover:text-white border border-white/10 w-7 h-7 rounded-lg flex items-center justify-center cursor-pointer">✕</button>
@@ -807,14 +809,14 @@
      </button>
     </div>
 
-    <div id="checkoutDetailsBox" class="hidden bg-[#121212] border border-white/10 p-3.5 rounded-xl text-center mb-3">
+    <div id="checkoutDetailsBox" class="hidden bg-[#111113] border border-white/10 p-3.5 rounded-xl text-center mb-3">
      <h4 id="checkoutPayTitle" class="text-xs font-bold text-white mb-1.5 font-en"></h4>
      <div id="checkoutPayContent" class="text-xs text-neutral-300"></div>
     </div>
 
     <div class="mb-3 text-right">
-      <label class="block text-xs font-medium text-neutral-400 mb-1" for="senderAccountInput">رقم المحفظة / الحساب الذي قمت بالتحويل منه: <span class="text-red-400">*</span></label>
-      <input type="text" id="senderAccountInput" placeholder="مثال: 010xxxxxxxx أو يوزر إنستاباي / باينانس" class="w-full bg-[#121212] border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-en outline-none focus:border-white/30">
+      <label class="block text-xs font-medium text-neutral-400 mb-1" for="senderAccountInput">رقم المحفظة / الحساب الذي قمت بالتحويل منه (لتأكيد العملية): <span class="text-red-400">*</span></label>
+      <input type="text" id="senderAccountInput" placeholder="مثال: 010xxxxxxxx أو يوزر إنستاباي / باينانس" class="w-full bg-[#111113] border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-en outline-none focus:border-white/30">
     </div>
 
     <button type="button" id="confirmPaymentBtn" onclick="finalizeOrderWhatsApp()" class="hidden w-full agentql-btn-primary py-2.5 rounded-xl text-xs cursor-pointer font-en">
