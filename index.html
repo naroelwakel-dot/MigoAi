@@ -304,7 +304,6 @@
             Every product card shows its image in the SAME frame shape, scaled to
             the card width, so tiles line up section to section and resize with the
             window (games / live / VCC / software / entertainment / AI). ---- */
-    #gamesCardsContainer .sky-card > div:first-child,
     #liveAppsContainer .sky-card > div:first-child,
     #vccCardsContainer .sky-card > div:first-child,
     #productivityContainer .sky-card > div:first-child,
@@ -314,9 +313,18 @@
         aspect-ratio: 16 / 9 !important;
     }
 
+    /* ---- Games: real full-bleed product art (square tile, like the suppliers),
+            cropped to fill the frame edge to edge ---- */
+    #gamesCardsContainer .sky-card > div:first-child {
+        height: auto !important;
+        aspect-ratio: 1 / 1 !important;
+        background-size: cover !important;
+        background-repeat: no-repeat !important;
+        background-position: center !important;
+    }
+
     /* ---- Brand logos: show the whole logo sized to fit the card frame,
             centred, on the card's own dark background (no light panel) ---- */
-    #gamesCardsContainer .sky-card > .bg-cover,
     #productivityContainer .sky-card > .bg-cover,
     #entertainmentCardsContainer .sky-card > .bg-cover,
     #liveAppsContainer .sky-card > .bg-cover,
