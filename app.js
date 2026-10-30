@@ -345,10 +345,13 @@ function renderCoinsAndStars() {
                             <span id="tt_price_display" class="text-xs font-extrabold text-amber-400 font-mono">${defaultFinalPrice.toLocaleString()} ج.م</span>
                         </div>
                         <div>
-                            <label class="block text-[11px] font-bold text-gray-200 mb-1" for="tt_package_select">اختر الباقة:</label>
-                            <select id="tt_package_select" onchange="updateCoinPrice('tt')" class="w-full bg-slate-950/90 border border-slate-700 rounded-xl p-2 text-xs text-pink-300 font-bold outline-none">
-                                ${ttPkgs.map((c, idx) => `<option value="${idx}" data-price="${c.price}">${c.coins.toLocaleString()} عملة (${calculateAutoPrice(c.price)} ج.م)</option>`).join('')}
-                            </select>
+                            <label class="block text-[11px] font-bold text-gray-200 mb-1">اختر الباقة:</label>
+                            <div class="coin-picker" id="tt_package_select" data-selected="0">
+                                <button type="button" class="coin-picker-btn" onclick="toggleCoinPicker('tt')" aria-haspopup="listbox"><span id="tt_picker_label">${ttPkgs[0].coins.toLocaleString()} عملة (${defaultFinalPrice.toLocaleString()} ج.م)</span><span class="coin-picker-caret">▾</span></button>
+                                <div class="coin-picker-list hidden" role="listbox">
+                                    ${ttPkgs.map((c, idx) => `<button type="button" role="option" class="coin-picker-opt${idx === 0 ? ' is-active' : ''}" data-idx="${idx}" data-price="${c.price}" onclick="selectCoinPkg('tt', ${idx})"><span>${c.coins.toLocaleString()} عملة</span><span class="coin-picker-price">${calculateAutoPrice(c.price).toLocaleString()} ج.م</span></button>`).join('')}
+                                </div>
+                            </div>
                         </div>
                         <div class="flex gap-2 pt-2 border-t border-slate-800/80">
                             <button onclick="handleCoinAction('tiktok', true)" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs py-2 rounded-xl cursor-pointer shadow">شحن فوري ⚡</button>
@@ -375,10 +378,13 @@ function renderCoinsAndStars() {
                             <span id="tg_price_display" class="text-xs font-extrabold text-amber-400 font-mono">${defaultFinalPrice.toLocaleString()} ج.م</span>
                         </div>
                         <div>
-                            <label class="block text-[11px] font-bold text-gray-200 mb-1" for="tg_package_select">اختر الباقة:</label>
-                            <select id="tg_package_select" onchange="updateCoinPrice('tg')" class="w-full bg-slate-950/90 border border-slate-700 rounded-xl p-2 text-xs text-sky-300 font-bold outline-none">
-                                ${tgPkgs.map((s, idx) => `<option value="${idx}" data-price="${s.price}">${s.stars.toLocaleString()} نجمة (${calculateAutoPrice(s.price)} ج.م)</option>`).join('')}
-                            </select>
+                            <label class="block text-[11px] font-bold text-gray-200 mb-1">اختر الباقة:</label>
+                            <div class="coin-picker" id="tg_package_select" data-selected="0">
+                                <button type="button" class="coin-picker-btn" onclick="toggleCoinPicker('tg')" aria-haspopup="listbox"><span id="tg_picker_label">${tgPkgs[0].stars.toLocaleString()} نجمة (${defaultFinalPrice.toLocaleString()} ج.م)</span><span class="coin-picker-caret">▾</span></button>
+                                <div class="coin-picker-list hidden" role="listbox">
+                                    ${tgPkgs.map((s, idx) => `<button type="button" role="option" class="coin-picker-opt${idx === 0 ? ' is-active' : ''}" data-idx="${idx}" data-price="${s.price}" onclick="selectCoinPkg('tg', ${idx})"><span>${s.stars.toLocaleString()} نجمة</span><span class="coin-picker-price">${calculateAutoPrice(s.price).toLocaleString()} ج.م</span></button>`).join('')}
+                                </div>
+                            </div>
                         </div>
                         <div class="flex gap-2 pt-2 border-t border-slate-800/80">
                             <button onclick="handleCoinAction('telegram', true)" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs py-2 rounded-xl cursor-pointer shadow">شحن فوري ⚡</button>
@@ -392,19 +398,50 @@ function renderCoinsAndStars() {
 }
 
 function updateCoinPrice(type) {
-    const sel = document.getElementById(type === 'tt' ? 'tt_package_select' : 'tg_package_select');
+    const root = document.getElementById(type === 'tt' ? 'tt_package_select' : 'tg_package_select');
     const disp = document.getElementById(type === 'tt' ? 'tt_price_display' : 'tg_price_display');
-    if (!sel || !disp) return;
-    const basePrice = parseFloat(sel.options[sel.selectedIndex].getAttribute('data-price')) || 0;
+    if (!root || !disp) return;
+    const idx = parseInt(root.getAttribute('data-selected') || '0', 10);
+    const opt = root.querySelector('.coin-picker-opt[data-idx="' + idx + '"]');
+    const basePrice = opt ? parseFloat(opt.getAttribute('data-price')) : 0;
     const finalPrice = calculateAutoPrice(basePrice);
     disp.innerText = finalPrice.toLocaleString() + ' ج.م';
+    const label = document.getElementById(type === 'tt' ? 'tt_picker_label' : 'tg_picker_label');
+    if (label && opt && opt.querySelector('span')) {
+        label.innerText = opt.querySelector('span').textContent + ' (' + finalPrice.toLocaleString() + ' ج.م)';
+    }
+}
+
+function closeAllCoinPickers() {
+    document.querySelectorAll('.coin-picker-list').forEach(function (l) { l.classList.add('hidden'); });
+}
+
+function toggleCoinPicker(type) {
+    const root = document.getElementById(type === 'tt' ? 'tt_package_select' : 'tg_package_select');
+    if (!root) return;
+    const list = root.querySelector('.coin-picker-list');
+    if (!list) return;
+    const wasHidden = list.classList.contains('hidden');
+    closeAllCoinPickers();
+    if (wasHidden) list.classList.remove('hidden');
+}
+
+function selectCoinPkg(type, idx) {
+    const root = document.getElementById(type === 'tt' ? 'tt_package_select' : 'tg_package_select');
+    if (!root) return;
+    root.setAttribute('data-selected', String(idx));
+    root.querySelectorAll('.coin-picker-opt').forEach(function (o) { o.classList.remove('is-active'); });
+    const opt = root.querySelector('.coin-picker-opt[data-idx="' + idx + '"]');
+    if (opt) opt.classList.add('is-active');
+    updateCoinPrice(type);
+    closeAllCoinPickers();
 }
 
 function handleCoinAction(type, isExpress) {
     const selId = type === 'tiktok' ? 'tt_package_select' : 'tg_package_select';
     const sel = document.getElementById(selId);
     if (!sel) return;
-    const idx = parseInt(sel.value, 10);
+    const idx = parseInt(sel.getAttribute('data-selected') || '0', 10);
     const rawList = type === 'tiktok' ? tiktokCoinsList : telegramStarsList;
     const list = rawList.packages || rawList;
     const pkg = list[idx];
@@ -1503,5 +1540,6 @@ window.onload = function() {
             const dd = document.getElementById('searchResultsDropdown');
             if (dd) dd.classList.add('hidden');
         }
+        if (!e.target.closest('.coin-picker')) { closeAllCoinPickers(); }
     });
 };
