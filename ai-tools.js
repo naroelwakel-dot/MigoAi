@@ -321,7 +321,7 @@ if (typeof subscriptionsData !== 'undefined' && Array.isArray(subscriptionsData)
       var a = links[j];
       if (a.className && a.className.indexOf('sky-card') !== -1) {
         cloneLink(a, '#sec-apitoken',
-          '<span class="sec-ic" aria-hidden="true">🔑</span>' +
+          '<span class="sec-ic" aria-hidden="true"><svg viewBox="0 0 24 24" class="sec-ico"><circle cx="8" cy="15.5" r="3.5"/><path d="M10.6 13.4L19.5 4.5M16.5 6.5l2 2M14.5 8.5l2 2"/></svg></span>' +
           '<span class="text-xs font-bold text-white">API Token</span>' +
           '<span class="text-[10px] text-slate-400">مفاتيح ورصيد المطورين</span>');
       } else if (a.getAttribute('onclick') && a.getAttribute('onclick').indexOf('toggleSidebar') !== -1) {
