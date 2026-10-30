@@ -118,7 +118,7 @@ const aiProducts = [
         id: 'ai_perplexity_pro',
         name: 'Perplexity Pro',
         tag: 'محرك البحث الذكي',
-        price: 450,
+        price: 739,
         desc: 'بحث علمي وتحليلي متقدم مع Claude 3.5 و GPT-4o',
         banner: 'Perplexity.webp'
     },
