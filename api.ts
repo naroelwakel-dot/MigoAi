@@ -214,6 +214,11 @@ Deno.serve(async (req: Request) => {
   const id = (url.searchParams.get("id") || "").trim();
   const zoneId = (url.searchParams.get("zoneId") || "").trim();
 
+  // --- Migo build probe (harmless, no effect on real lookups) ---
+  if (game === "__migo_ping") {
+    return new Response(JSON.stringify({ success: true, build: "probe-20261030a", ts: Date.now() }), { status: 200, headers: CORS_HEADERS });
+  }
+
   if (!game || !id) {
     return new Response(
       JSON.stringify({ success: false, message: "يرجى تحديد اللعبة ورقم المعرف (Player ID)" }),
@@ -283,3 +288,4 @@ Deno.serve(async (req: Request) => {
     );
   }
 });
+
