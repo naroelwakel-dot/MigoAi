@@ -232,6 +232,28 @@
     .bg-black\/80, .bg-black\/85 { background-color: rgba(8, 9, 12, 0.82) !important; }
     .bg-black\/50, .bg-black\/60 { background-color: rgba(18, 21, 27, 0.7) !important; }
     .bg-black\/40 { background-color: rgba(18, 21, 27, 0.5) !important; }
+
+    /* ---- Brand logo tiles: show each brand's real logo cleanly on a
+            light panel instead of a full-bleed stock photo ---- */
+    #productivityContainer .sky-card > .bg-cover,
+    #entertainmentCardsContainer .sky-card > .bg-cover,
+    #liveAppsContainer .sky-card > .bg-cover {
+        background-size: contain !important;
+        background-repeat: no-repeat !important;
+        background-position: center !important;
+        background-color: #eef2f8 !important;
+    }
+    #productivityContainer .sky-card > .bg-cover > div,
+    #entertainmentCardsContainer .sky-card > .bg-cover > div,
+    #liveAppsContainer .sky-card > .bg-cover > div {
+        background-image: linear-gradient(to top, rgba(255,255,255,0.94), rgba(255,255,255,0.32) 55%, rgba(255,255,255,0)) !important;
+    }
+    #productivityContainer .sky-card > .bg-cover h3,
+    #entertainmentCardsContainer .sky-card > .bg-cover h3,
+    #liveAppsContainer .sky-card > .bg-cover h3 {
+        color: #0b1220 !important;
+        text-shadow: none !important;
+    }
   </style>
  </head>
  <body class="min-h-screen selection:bg-blue-500/30 selection:text-white pb-24">
