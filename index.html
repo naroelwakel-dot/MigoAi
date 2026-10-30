@@ -80,12 +80,13 @@
         font-family: 'Tajawal', sans-serif;
         background-color: var(--bg-void);
         background-image:
-            radial-gradient(ellipse 85% 50% at 50% -12%, rgba(79, 125, 240, 0.10), transparent 65%),
-            radial-gradient(ellipse 55% 38% at 88% 8%, rgba(139, 92, 246, 0.055), transparent 70%),
-            linear-gradient(rgba(255, 255, 255, 0.022) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
-        background-size: 100% 100%, 100% 100%, 46px 46px, 46px 46px;
-        background-repeat: no-repeat, no-repeat, repeat, repeat;
+            radial-gradient(ellipse 85% 50% at 50% -12%, rgba(79, 125, 240, 0.16), transparent 65%),
+            radial-gradient(ellipse 55% 38% at 88% 8%, rgba(139, 92, 246, 0.09), transparent 70%),
+            linear-gradient(rgba(11, 13, 17, 0.80), rgba(11, 13, 17, 0.92)),
+            url('https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/acc4b445599f4b16a9fb47f45f4d0c95.webp');
+        background-size: 100% 100%, 100% 100%, 100% 100%, cover;
+        background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
+        background-position: center center;
         background-attachment: fixed;
         color: #e8ecf4;
         overflow-x: hidden;
@@ -267,8 +268,9 @@
   </a>
 
   <!-- Global Header Engine -->
-  <header class="border-b border-white/10 sticky top-0 z-50 backdrop-blur-2xl bg-[#0b0d11]/85 transition-all">
-   <div class="max-w-6xl mx-auto px-4 py-3">
+  <header class="border-b border-white/10 sticky top-0 z-50 backdrop-blur-2xl bg-[#0b0d11]/85 transition-all relative overflow-hidden">
+   <div class="absolute inset-0 bg-cover bg-center opacity-20 pointer-events-none" style="background-image:url('https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/acc4b445599f4b16a9fb47f45f4d0c95.webp');"></div>
+   <div class="max-w-6xl mx-auto px-4 py-3 relative z-10">
     <div class="flex justify-between items-center gap-3">
 
      <div class="flex items-center gap-2.5 shrink-0">
