@@ -171,6 +171,54 @@ const aiProducts = [
         price: 140,
         desc: 'حساب كامل مخصص للإنتاج المرئي',
         banner: 'musai.jpeg'
+    },
+
+    // عائلة جوجل (Google Gemini)
+    {
+        id: 'gemini_pro',
+        name: 'Google Gemini Pro',
+        tag: 'عرض حصري ⚡',
+        banner: 'Geminipro.png',
+        desc: 'اشتراك رسمي متكامل مع وصول دائم لأحدث النماذج المتقدمة.',
+        packages: [
+            { id: 'gemini_18m', name: 'Gemini AI Pro — 18 شهر — 281 ج.م', duration: '18 شهر', price: 281 },
+            { id: 'gemini_ai_pro_12m', name: 'Google AI Pro — 12 شهر (FW) — 63 ج.م', duration: '12 شهر (FW)', price: 63 },
+            { id: 'gemini_ai_plus_3m', name: 'Google AI Plus — 3 شهور (FW) — 41 ج.م', duration: '3 شهور (FW)', price: 41 }
+        ]
+    },
+
+    // المونتاج وبناء المواقع بالذكاء الاصطناعي
+    {
+        id: 'capcut_pro',
+        name: 'CapCut Pro + AI',
+        tag: 'مونتاج وذكاء اصطناعي 🎬',
+        banner: 'capcut.png',
+        desc: 'مونتاج فيديو احترافي، إزالة خلفيات، وفلاتر ذكية بلا حدود.',
+        packages: [
+            { id: 'capcut_7d', name: '7 أيام — 62 ج.م', duration: '7 أيام', price: 62 },
+            { id: 'capcut_1m', name: 'شهر واحد — 187 ج.م', duration: 'شهر واحد', price: 187 },
+            { id: 'capcut_credits', name: 'CapCut PRO 1600 CREDITS — 249 ج.م', duration: 'رصيد رويال', price: 249 }
+        ]
+    },
+    {
+        id: 'lovable_pro',
+        name: 'Lovable Pro Lite',
+        tag: 'تطوير ويب بالذكاء 💻',
+        banner: 'lovable.png',
+        desc: 'بناء وتطوير تطبيقات ومواقع كاملة عبر الأوامر النصية المباشرة.',
+        packages: [
+            { id: 'lovable_12m', name: '12 شهر (سنة) — 608 ج.م', duration: 'سنة واحدة', price: 608 }
+        ]
+    },
+    {
+        id: 'framer_ai',
+        name: 'Framer AI',
+        tag: 'تصميم مواقع تفاعلية 🌐',
+        banner: 'framerai.jpg',
+        desc: 'تصميم ونشر مواقع ويب حديثة وسريعة الاستجابة بالذكاء الاصطناعي.',
+        packages: [
+            { id: 'framer_1y', name: 'سنة واحدة (Framer AI 1Y) — 439 ج.م', duration: 'سنة واحدة', price: 439 }
+        ]
     }
 ];
 
@@ -178,4 +226,24 @@ if (typeof module !== "undefined" && module.exports) {
   module.exports = { aiProducts };
 } else {
   window.aiProducts = aiProducts;
+}
+
+// ==============================================================================
+// توحيد البيانات (منع التضارب):
+// كل منتجات وباقات الذكاء الاصطناعي تُكتب هنا فقط (ai-tools.js) بمصدر واحد.
+// ولأن البحث في الموقع يقرأ subscriptionsData فقط، نُسجّل نفس الباقات فيها
+// تلقائياً بلا أي كتابة يدوية، فتظهر نتيجة البحث بنفس سعر البطاقة تماماً.
+// لا تُعد كتابة أسعار الذكاء الاصطناعي داخل subscriptions.js بعد الآن.
+// ==============================================================================
+if (typeof subscriptionsData !== 'undefined' && Array.isArray(subscriptionsData)) {
+  aiProducts.forEach(function (p) {
+    if (subscriptionsData.some(function (s) { return s.id === p.id; })) return;
+    subscriptionsData.push({
+      id: p.id,
+      name: p.name,
+      category: 'ai',
+      description: p.description || p.desc || '',
+      packages: p.packages || [{ id: p.id, name: p.tag || p.name, duration: p.tag, price: p.price }]
+    });
+  });
 }
