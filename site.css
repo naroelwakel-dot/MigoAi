@@ -1,0 +1,218 @@
+/* ============================================================
+       Migo AI Solution — Dark Blue design system
+       (redesign layer: overrides the JS-rendered cards too,
+        so app.js keeps working untouched)
+       ============================================================ */
+    :root {
+        --bg-void: #0b0d11;
+        --bg-panel: #14181f;
+        --bg-card: #171c24;
+        --bg-elev: #1f2530;
+        --border-subtle: rgba(255, 255, 255, 0.08);
+        --border-hover: rgba(255, 255, 255, 0.22);
+        --accent: #4f7df0;
+        --accent-bright: #7fa0f7;
+        --accent-deep: #3b62c4;
+        --accent-glow: rgba(79, 125, 240, 0.16);
+        --text-soft: #98a2b3;
+    }
+    * { box-sizing: border-box; }
+
+    body {
+        font-family: 'Tajawal', sans-serif;
+        background-color: var(--bg-void);
+        background-image:
+            radial-gradient(ellipse 85% 50% at 50% -12%, rgba(79, 125, 240, 0.16), transparent 65%),
+            radial-gradient(ellipse 55% 38% at 88% 8%, rgba(139, 92, 246, 0.09), transparent 70%),
+            linear-gradient(rgba(11, 13, 17, 0.72), rgba(11, 13, 17, 0.88)),
+            url('https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/acc4b445599f4b16a9fb47f45f4d0c95.webp');
+        background-size: 100% 100%, 100% 100%, 100% 100%, cover;
+        background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
+        background-position: center center;
+        background-attachment: fixed;
+        color: #e8ecf4;
+        overflow-x: hidden;
+        margin: 0;
+        padding: 0;
+        letter-spacing: -0.015em;
+    }
+
+    .font-mono-code { font-family: 'JetBrains Mono', monospace; }
+    .font-en-sans { font-family: 'Plus Jakarta Sans', sans-serif; }
+
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: var(--bg-void); }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #2a3140; border-radius: 9999px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #3a4356; }
+    details > summary { list-style: none; }
+    details > summary::-webkit-details-marker { display: none; }
+
+    .sky-surface {
+        background: linear-gradient(180deg, rgba(44, 54, 74, 0.55), rgba(20, 25, 34, 0.40));
+        border: 1px solid rgba(255, 255, 255, 0.13);
+        border-radius: 20px;
+        position: relative;
+        backdrop-filter: blur(18px) saturate(135%);
+        -webkit-backdrop-filter: blur(18px) saturate(135%);
+        box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.08), 0 22px 50px -28px rgba(0, 0, 0, 0.75);
+    }
+
+    .sky-card {
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.028));
+        border: 1px solid rgba(255, 255, 255, 0.13);
+        border-radius: 16px;
+        backdrop-filter: blur(10px) saturate(125%);
+        -webkit-backdrop-filter: blur(10px) saturate(125%);
+        box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
+        transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
+    }
+    .sky-card:hover {
+        border-color: var(--border-hover);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.045));
+        box-shadow: 0 18px 40px -14px rgba(0, 0, 0, 0.7), 0 0 22px var(--accent-glow);
+        transform: translateY(-2px);
+    }
+
+    .agentql-btn-primary {
+        background: linear-gradient(135deg, #4f7df0, #3b62c4);
+        color: #ffffff;
+        font-weight: 800;
+        border: 1px solid rgba(129, 160, 247, 0.35);
+        transition: all 0.2s ease;
+        box-shadow: 0 8px 20px -10px rgba(79, 125, 240, 0.75);
+    }
+    .agentql-btn-primary:hover {
+        filter: brightness(1.08);
+        transform: translateY(-1px);
+        box-shadow: 0 12px 26px -10px rgba(79, 125, 240, 0.85);
+    }
+
+    .sky-btn {
+        background: var(--bg-elev);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        color: #dbe2ef;
+        border-radius: 12px;
+        transition: all 0.2s ease;
+    }
+    .sky-btn:hover {
+        background: #262d3a;
+        border-color: var(--border-hover);
+        transform: translateY(-1px);
+    }
+
+    .sky-active-tab {
+        border: 1px solid var(--accent) !important;
+        background: rgba(79, 125, 240, 0.16) !important;
+        color: #ffffff !important;
+    }
+
+    select, select option {
+        background-color: var(--bg-panel) !important;
+        color: #e8eefc !important;
+    }
+
+    .pill-badge {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        color: #b9c2d4;
+        font-size: 11px;
+        font-weight: 600;
+        border-radius: 9999px;
+        padding: 4px 12px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .dot { height: 5px; width: 5px; background-color: #2a3140; border-radius: 50%; display: inline-block; cursor: pointer; transition: 0.3s; }
+    .dot.active { background-color: var(--accent); width: 18px; border-radius: 9999px; }
+
+    @keyframes anim-vcc-float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-3px); }
+    }
+    .anim-vcc { animation: anim-vcc-float 3.5s infinite ease-in-out; }
+
+    /* ---- Bridge layer: retune the classes app.js emits, so product
+            cards, cart rows, checkout and modals all match the blue
+            identity without editing app.js ---- */
+    .bg-slate-950 { background-color: rgba(9, 12, 18, 0.5) !important; }
+    .bg-slate-950\/90 { background-color: rgba(15, 19, 27, 0.6) !important; }
+    .bg-slate-900\/60 { background-color: rgba(23, 28, 36, 0.45) !important; }
+    .bg-slate-800 { background-color: rgba(31, 37, 48, 0.55) !important; }
+    .bg-slate-800\/80 { background-color: rgba(31, 37, 48, 0.5) !important; }
+    .bg-gray-900, .bg-gray-800 { background-color: rgba(23, 28, 36, 0.45) !important; }
+
+    .border-slate-700 { border-color: var(--border-subtle) !important; }
+    .border-slate-800 { border-color: var(--border-subtle) !important; }
+    .border-slate-700\/50 { border-color: rgba(255, 255, 255, 0.08) !important; }
+
+    .text-slate-950 { color: #ffffff !important; }
+    .text-gray-300 { color: #cfd6e4 !important; }
+    .text-gray-400 { color: var(--text-soft) !important; }
+
+    .bg-amber-500, .bg-amber-400 {
+        background: linear-gradient(135deg, #4f7df0, #3b62c4) !important;
+        color: #ffffff !important;
+    }
+    .hover\:bg-amber-400:hover { filter: brightness(1.08); }
+    .text-amber-400, .text-amber-300 { color: var(--accent-bright) !important; }
+
+    .text-sky-400, .text-sky-300, .text-sky-600 { color: var(--accent-bright) !important; }
+    .border-sky-400 { border-color: var(--accent) !important; }
+    .bg-sky-500\/20 { background-color: rgba(79, 125, 240, 0.14) !important; }
+    .border-sky-500\/40 { border-color: rgba(129, 160, 247, 0.32) !important; }
+
+    /* tint every coloured badge/pill to the single accent */
+    .bg-indigo-500\/20, .bg-purple-500\/20, .bg-cyan-500\/20,
+    .bg-rose-500\/20, .bg-emerald-500\/20, .bg-pink-500\/20 {
+        background-color: rgba(79, 125, 240, 0.12) !important;
+    }
+    .border-indigo-500\/40, .border-purple-500\/40, .border-cyan-500\/40,
+    .border-rose-500\/40, .border-emerald-500\/40, .border-pink-500\/40 {
+        border-color: rgba(255, 255, 255, 0.12) !important;
+    }
+    .text-indigo-300, .text-purple-300, .text-cyan-300,
+    .text-rose-300, .text-emerald-300, .text-pink-400, .text-pink-300,
+    .text-indigo-400, .text-purple-400 {
+        color: var(--accent-bright) !important;
+    }
+
+    /* keep overlays readable */
+    .bg-black\/80, .bg-black\/85 { background-color: rgba(8, 9, 12, 0.82) !important; }
+    .bg-black\/50, .bg-black\/60 { background-color: rgba(18, 21, 27, 0.7) !important; }
+    .bg-black\/40 { background-color: rgba(18, 21, 27, 0.5) !important; }
+
+    /* ---- Uniform full-bleed product art frame ----
+            Every product card shows its real image full-bleed in the SAME frame:
+            a square tile (1:1) cropped to fill edge to edge, exactly like the
+            suppliers' own grids. Tiles line up section to section and resize with
+            the window (games / live / VCC / software / entertainment / AI). ---- */
+    #gamesCardsContainer .sky-card > div:first-child,
+    #liveAppsContainer .sky-card > div:first-child,
+    #vccCardsContainer .sky-card > div:first-child,
+    #productivityContainer .sky-card > div:first-child,
+    #entertainmentCardsContainer .sky-card > div:first-child,
+    #aiCardsContainer .sky-card > div:first-child {
+        height: auto !important;
+        aspect-ratio: 1 / 1 !important;
+        background-size: cover !important;
+        background-repeat: no-repeat !important;
+        background-position: center !important;
+        background-color: transparent !important;
+    }
+
+    /* ---- SMM dispatch banner: show the platform image sharp and clear
+            (it was washed out at 70% opacity on a dark box) ---- */
+    #selectedPlatformBannerImg {
+        opacity: 1 !important;
+    }
+
+    /* ---- Migo animated orbit logo ---- */
+    @keyframes migo-spin { to { transform: rotate(360deg); } }
+    @keyframes migo-core { 0%,100% { transform: scale(.84); opacity:.72; } 50% { transform: scale(1.08); opacity:1; } }
+    @keyframes migo-ring { 0% { stroke-dashoffset:104; } 60% { stroke-dashoffset:0; } 100% { stroke-dashoffset:0; opacity:.85; } }
+    .migo-spin { transform-origin:24px 24px; animation:migo-spin 11s linear infinite; }
+    .migo-core { transform-origin:24px 24px; animation:migo-core 2.8s ease-in-out infinite; }
+    .migo-ring { stroke-dasharray:104; animation:migo-ring 3.6s ease-out infinite; }
+    @media (prefers-reduced-motion: reduce){ .migo-spin,.migo-core,.migo-ring { animation:none; } }
