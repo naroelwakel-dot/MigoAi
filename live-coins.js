@@ -5,7 +5,7 @@
 
 // 1. باقات كوينز تيك توك الرسمية بالجنيه المصري (مع البانر المخصص)
 const tiktokCoinsList = {
-  banner: "images (6).jpeg",
+  banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/85ef6a0f144d418c9f5d8f0f2c27ac36.webp",
   packages: [
     { coins: 100, price: 95 },
     { coins: 300, price: 235 },
@@ -25,7 +25,7 @@ const tiktokCoinsList = {
 
 // 2. باقات نجوم تليجرام الرسمية بالجنيه المصري (مع البانر المخصص)
 const telegramStarsList = {
-  banner: "telegram.jpeg",
+  banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/7fd23abd5b5b44b79490ae4fae49ca34.webp",
   packages: [
     { stars: 50, price: 55 },
     { stars: 100, price: 110 },
@@ -43,7 +43,7 @@ const liveCoinsData = [
     id: "bigo",
     name: "BIGO Live",
     provider: "شحن بالـ ID",
-    banner: "bigolive.png",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/5eb3b39e7bf846b7a7cb7411aeb7e0ec.webp",
     badge: "شحن فوري بالـ ID ⚡",
     hasZoneId: false,
     apiServiceId: "bigo_live",
@@ -59,7 +59,7 @@ const liveCoinsData = [
     id: "chamet",
     name: "Chamet",
     provider: "تسليم فوري",
-    banner: "chamet.jpeg",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/e17c45b13c354470aaebacef0c485bd3.webp",
     badge: "تسليم فوري بالمعرّف ⚡",
     hasZoneId: false,
     apiServiceId: "chamet",
@@ -75,7 +75,7 @@ const liveCoinsData = [
     id: "poppo",
     name: "Poppo Live",
     provider: "شحن فوري بالمعرف",
-    banner: "poppoplive.jpeg",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/25907ba7dd3747dda8ae559f2e4f9c05.webp",
     badge: "شحن فوري ⚡",
     hasZoneId: false,
     apiServiceId: "poppo_live",
@@ -92,7 +92,7 @@ const liveCoinsData = [
     id: "yallaludo",
     name: "Yalla Ludo (يلا لودو)",
     provider: "يلا لودو الرسمي",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/e3281d94ce634af8a7743d9f5094dc15.webp",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/c30d8a33138649939b8f0de73c0a1466.webp",
     badge: "شحن ماسات فوري ⚡",
     hasZoneId: false,
     apiServiceId: "yalla_ludo",
@@ -109,7 +109,7 @@ const liveCoinsData = [
     id: "sugo",
     name: "SUGO (سوجو)",
     provider: "سوجو الرسمي",
-    banner: "sugo.png",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/c7dedb3b516f41718e8919f47a72e942.webp",
     badge: "تسليم فوري ⚡",
     hasZoneId: false,
     apiServiceId: "sugo",
@@ -125,7 +125,7 @@ const liveCoinsData = [
     id: "meyo",
     name: "MeYo (ميو)",
     provider: "ميو الرسمي",
-    banner: "meyo.jpeg",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/87e7cdd4eaa74f2c9493cc113a2e588e.webp",
     badge: "تسليم فوري ⚡",
     hasZoneId: false,
     apiServiceId: "meyo",
