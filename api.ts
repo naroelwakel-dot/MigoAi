@@ -200,10 +200,10 @@ async function lookupPubgJollyMax(id: string): Promise<string> {
 // Best-effort free source: isan.eu.org (nickname finder, no key)
 // e.g. ff?id=, ml?id=&server=, codm?id=, valo?id=Tag, gi?id=
 // ----------------------------------------------------------------------------
-async function isanLookup(path: string): Promise<string> {
+async function isanLookup(path: string): Promise<{ name: string; info: string }> {
   const d = await getJson(`https://api.isan.eu.org/nickname/${path}`, { headers: { "User-Agent": UA } }, 6000);
-  if (d && d.success === false) return "";
-  return extractPlayerName(d);
+  const name = (d && d.success === false) ? "" : extractPlayerName(d);
+  return { name, info: `isan:${path.split("?")[0]}:${d?.message ?? (name ? "ok" : "none")}` };
 }
 
 // ----------------------------------------------------------------------------
@@ -223,9 +223,9 @@ function envKey(...names: string[]): string {
   return "";
 }
 
-async function volseverLookup(slug: string, id: string, zone: string): Promise<string> {
+async function volseverLookup(slug: string, id: string, zone: string): Promise<{ name: string; info: string }> {
   const key = envKey("VOLSEVER_API_KEY", "VOLSEVER_KEY");
-  if (!key) return "";
+  if (!key) return { name: "", info: `vol:${slug}:no-key` };
   const qs = new URLSearchParams();
   qs.set("id", id);
   if (zone) qs.set("zone", zone);
@@ -235,12 +235,14 @@ async function volseverLookup(slug: string, id: string, zone: string): Promise<s
     8000,
   );
   const u = d?.data?.username ?? d?.username ?? d?.data?.name;
-  return typeof u === "string" ? u.trim() : "";
+  const name = typeof u === "string" ? u.trim() : "";
+  const info = `vol:${slug}:code=${d?.code ?? "-"}:msg=${d?.message ?? "-"}:err=${d?.error ?? "-"}`;
+  return { name, info };
 }
 
-async function neferbyteLookup(slug: string, id: string, server: string): Promise<string> {
+async function neferbyteLookup(slug: string, id: string, server: string): Promise<{ name: string; info: string }> {
   const key = envKey("NEFERBYTE_API_KEY", "NEFERBYTE_KEY");
-  if (!key) return "";
+  if (!key) return { name: "", info: `nef:${slug}:no-key` };
   let url = `https://api.neferbyte.com/game-id-checker/${slug}/${encodeURIComponent(id)}`;
   if (server) url += `/${encodeURIComponent(server)}`;
   const d = await getJson(
@@ -249,12 +251,14 @@ async function neferbyteLookup(slug: string, id: string, server: string): Promis
     8000,
   );
   const u = d?.data?.username ?? d?.username;
-  return typeof u === "string" ? u.trim() : "";
+  const name = typeof u === "string" ? u.trim() : "";
+  return { name, info: `nef:${slug}:msg=${d?.msg ?? (d?.error ? "error" : "none")}` };
 }
 
-async function rapidApiLookup(slugs: string[], id: string): Promise<string> {
+async function rapidApiLookup(slugs: string[], id: string): Promise<{ name: string; info: string }> {
   const key = envKey("RAPIDAPI_KEY", "RAPIDAPI_KEY_GAME");
-  if (!key) return "";
+  if (!key) return { name: "", info: `rap:${slugs.join(",")}:no-key` };
+  let info = "";
   for (const slug of slugs) {
     const d = await getJson(
       `https://id-game-checker.p.rapidapi.com/${slug}?id=${encodeURIComponent(id)}`,
@@ -269,9 +273,10 @@ async function rapidApiLookup(slugs: string[], id: string): Promise<string> {
       8000,
     );
     const u = d?.data?.username ?? d?.username ?? d?.data?.nickname ?? d?.nickname;
-    if (typeof u === "string" && u.trim()) return u.trim();
+    if (typeof u === "string" && u.trim()) return { name: u.trim(), info: `rap:${slug}:ok` };
+    info = `rap:${slug}:msg=${d?.message ?? d?.msg ?? "none"}`;
   }
-  return "";
+  return { name: "", info };
 }
 
 // ----------------------------------------------------------------------------
@@ -361,7 +366,7 @@ const ALIASES: Record<string, string> = {
   yalla_ludo: "yallaludo",
 };
 
-function runStep(step: Step, id: string, zoneId: string): Promise<string> {
+function runStep(step: Step, id: string, zoneId: string): Promise<{ name: string; info: string }> {
   switch (step.p) {
     case "vol":
       return volseverLookup(step.slug!, id, step.zone ? zoneId : "");
@@ -376,11 +381,11 @@ function runStep(step: Step, id: string, zoneId: string): Promise<string> {
           : `${step.path}?id=${encodeURIComponent(id)}`,
       );
     case "jollymax":
-      return lookupPubgJollyMax(id);
+      return lookupPubgJollyMax(id).then((n) => ({ name: n, info: `jollymax:${n ? "ok" : "none"}` }));
     case "enka":
-      return lookupGenshin(id);
+      return lookupGenshin(id).then((n) => ({ name: n, info: `enka:${n ? "ok" : "none"}` }));
     default:
-      return Promise.resolve("");
+      return Promise.resolve({ name: "", info: "unknown-step" });
   }
 }
 
@@ -406,6 +411,8 @@ Deno.serve(async (req: Request) => {
   let foundName = "";
   let avatarUrl = "";
   const isNumeric = /^\d+$/.test(id);
+  const debug = url.searchParams.get("debug") === "1";
+  const trace: string[] = [];
 
   try {
     // ---- TikTok ----
@@ -413,33 +420,41 @@ Deno.serve(async (req: Request) => {
       const r = await resolveTikTokUser(id);
       foundName = r.name;
       avatarUrl = r.avatar;
+      trace.push(`tiktok:${foundName ? "ok" : "none"}`);
     } // ---- Telegram Stars ----
     else if (game === "telegram" || game === "telegramstars") {
       const r = await resolveTelegramUser(id);
       foundName = r.name;
       avatarUrl = r.avatar;
+      trace.push(`telegram:${foundName ? "ok" : "none"}`);
     } // ---- Roblox (official) ----
     else if (game === "roblox") {
       if (isNumeric) foundName = await lookupRoblox(id);
+      trace.push(`roblox:${foundName ? "ok" : "none"}`);
     } // ---- Genshin Impact: Enka first, then generic providers ----
     else if (game === "genshin") {
       if (isNumeric) foundName = await lookupGenshin(id);
+      trace.push(`enka:${foundName ? "ok" : "none"}`);
       if (!foundName) {
         for (const step of [
           { p: "vol", slug: "genshin-impact-global" } as Step,
           { p: "isan", path: "gi" } as Step,
         ]) {
-          foundName = await runStep(step, id, zoneId);
+          const r = await runStep(step, id, zoneId);
+          trace.push(r.info);
+          foundName = r.name;
           if (foundName) break;
         }
       }
     } // ---- Everything else: provider route table ----
     else {
       const steps = ROUTES[game] || [];
-      // Games that use a numeric-only ID skip the free providers when non-numeric.
+      // Free providers that only accept a numeric ID skip non-numeric input.
       for (const step of steps) {
-        if (!isNumeric && (step.p === "jollymax")) continue;
-        foundName = await runStep(step, id, zoneId);
+        if (!isNumeric && step.p === "jollymax") continue;
+        const r = await runStep(step, id, zoneId);
+        trace.push(r.info);
+        foundName = r.name;
         if (foundName) break;
       }
     }
@@ -454,6 +469,7 @@ Deno.serve(async (req: Request) => {
       JSON.stringify({
         success: false,
         message: "تعذّر الفحص التلقائي لهذا المعرّف الآن، وهذا لا يمنع إتمام طلبك: اكتب اسم حسابك ثم اضغط متابعة.",
+        trace: debug ? trace : undefined,
       }),
       { status: 200, headers: CORS_HEADERS },
     );
