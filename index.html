@@ -317,6 +317,15 @@
     #selectedPlatformBannerImg {
         opacity: 1 !important;
     }
+
+    /* ---- Migo animated orbit logo ---- */
+    @keyframes migo-spin { to { transform: rotate(360deg); } }
+    @keyframes migo-core { 0%,100% { transform: scale(.84); opacity:.72; } 50% { transform: scale(1.08); opacity:1; } }
+    @keyframes migo-ring { 0% { stroke-dashoffset:104; } 60% { stroke-dashoffset:0; } 100% { stroke-dashoffset:0; opacity:.85; } }
+    .migo-spin { transform-origin:24px 24px; animation:migo-spin 11s linear infinite; }
+    .migo-core { transform-origin:24px 24px; animation:migo-core 2.8s ease-in-out infinite; }
+    .migo-ring { stroke-dasharray:104; animation:migo-ring 3.6s ease-out infinite; }
+    @media (prefers-reduced-motion: reduce){ .migo-spin,.migo-core,.migo-ring { animation:none; } }
   </style>
  </head>
  <body class="min-h-screen selection:bg-blue-500/30 selection:text-white pb-24">
@@ -372,10 +381,17 @@
        <span class="text-sm font-bold tracking-tight text-white block truncate font-en-sans">Migo AI Solution</span>
        <span class="text-[9px] text-slate-500 font-medium block font-en-sans tracking-wider uppercase">DIGITAL PLATFORM</span>
       </div>
-      <div class="w-9 h-9 shrink-0 rounded-xl flex items-center justify-center transition group-hover:scale-105" style="background:linear-gradient(135deg,#4f7df0,#7c4df0);box-shadow:0 8px 20px -8px rgba(79,125,240,.7)">
-        <svg viewBox="0 0 32 32" class="w-5 h-5" aria-hidden="true">
-          <path d="M6 24V9l10 9 10-9v15" fill="none" stroke="#ffffff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
-          <circle cx="25.5" cy="7.5" r="2.6" fill="#ffffff"/>
+      <div class="w-9 h-9 shrink-0 flex items-center justify-center transition group-hover:scale-105">
+        <svg viewBox="0 0 48 48" class="w-9 h-9" role="img" aria-label="Migo AI Solution logo">
+          <defs>
+            <linearGradient id="migoOrbit" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#7fa0f7"/><stop offset="1" stop-color="#3b62c4"/>
+            </linearGradient>
+          </defs>
+          <circle cx="24" cy="24" r="8.5" fill="url(#migoOrbit)" class="migo-core"/>
+          <circle cx="24" cy="24" r="16.5" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="1.6"/>
+          <circle cx="24" cy="24" r="16.5" fill="none" stroke="url(#migoOrbit)" stroke-width="2.2" stroke-linecap="round" class="migo-ring"/>
+          <g class="migo-spin"><circle cx="24" cy="7.5" r="3" fill="#cfe0ff"/></g>
         </svg>
       </div>
      </a>
@@ -412,6 +428,51 @@
   <section class="max-w-6xl mx-auto px-4 pt-6 pb-2 text-center">
    <h1 class="text-xl sm:text-3xl font-extrabold text-white tracking-tight mb-2 px-4">شحن الألعاب والخدمات الرقمية بالـ ID في مصر</h1>
    <p class="text-xs sm:text-sm text-slate-400 leading-relaxed mb-4 max-w-2xl mx-auto px-4">كوينز تيك توك ونجوم تليجرام، بطاقات VCC دولية، واشتراكات الذكاء الاصطناعي والسوشيال ميديا بالجنيه المصري مع تسليم فوري ودعم مباشر.</p>
+
+   <!-- Section Hub: a simple taste of every section (links straight to it) -->
+   <div class="grid grid-cols-2 md:grid-cols-4 gap-2.5 mb-5" dir="rtl">
+    <a href="#sec-coins" class="sky-card p-3 flex flex-col items-center text-center gap-1">
+     <span class="text-xl leading-none" aria-hidden="true">🪙</span>
+     <span class="text-xs font-bold text-white">عملات ونجوم</span>
+     <span class="text-[10px] text-slate-400">تبدأ من 95 ج.م</span>
+    </a>
+    <a href="#sec-live" class="sky-card p-3 flex flex-col items-center text-center gap-1">
+     <span class="text-xl leading-none" aria-hidden="true">📡</span>
+     <span class="text-xs font-bold text-white">تطبيقات اللايف</span>
+     <span class="text-[10px] text-slate-400">BIGO، Chamet، Yalla</span>
+    </a>
+    <a href="#sec-vcc" class="sky-card p-3 flex flex-col items-center text-center gap-1">
+     <span class="text-xl leading-none" aria-hidden="true">💳</span>
+     <span class="text-xs font-bold text-white">بطاقات VCC</span>
+     <span class="text-[10px] text-slate-400">تبدأ من 620 ج.م</span>
+    </a>
+    <a href="#sec-games" class="sky-card p-3 flex flex-col items-center text-center gap-1">
+     <span class="text-xl leading-none" aria-hidden="true">🎮</span>
+     <span class="text-xs font-bold text-white">شحن الألعاب</span>
+     <span class="text-[10px] text-slate-400">16 لعبة بالـ ID</span>
+    </a>
+    <a href="#sec-social" class="sky-card p-3 flex flex-col items-center text-center gap-1">
+     <span class="text-xl leading-none" aria-hidden="true">📈</span>
+     <span class="text-xs font-bold text-white">السوشيال ميديا</span>
+     <span class="text-[10px] text-slate-400">18 منصة متابعين</span>
+    </a>
+    <a href="#sec-productivity" class="sky-card p-3 flex flex-col items-center text-center gap-1">
+     <span class="text-xl leading-none" aria-hidden="true">🧰</span>
+     <span class="text-xs font-bold text-white">برامج واشتراكات</span>
+     <span class="text-[10px] text-slate-400">تصميم وإنتاجية</span>
+    </a>
+    <a href="#sec-entertainment" class="sky-card p-3 flex flex-col items-center text-center gap-1">
+     <span class="text-xl leading-none" aria-hidden="true">🎬</span>
+     <span class="text-xs font-bold text-white">ترفيه وبث</span>
+     <span class="text-[10px] text-slate-400">مشاهدة وموسيقى</span>
+    </a>
+    <a href="#sec-ai" class="sky-card p-3 flex flex-col items-center text-center gap-1">
+     <span class="text-xl leading-none" aria-hidden="true">🤖</span>
+     <span class="text-xs font-bold text-white">الذكاء الاصطناعي</span>
+     <span class="text-[10px] text-slate-400">ChatGPT، Claude</span>
+    </a>
+   </div>
+
    <!-- Hero Slider Carousel -->
    <div class="relative w-full max-w-6xl mx-auto overflow-hidden rounded-2xl mb-4 border border-white/10 bg-[#12151b]" dir="rtl">
     <div id="sliderTrack" class="flex transition-transform duration-700 ease-in-out">
