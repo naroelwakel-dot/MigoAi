@@ -1,4 +1,4 @@
-// build marker 2026-10-30T14:20Z: free keyless Fortnite support (Osirion public API)
+// build marker 2026-10-30T14:25Z: Fortnite via Osirion (free); FC Mobile uses the one documented Volsever route
 // ==============================================================================
 // Migo AI Solution - Verification Engine API (Deno Server)
 // Real account lookup only. No fabricated / placeholder names.
@@ -337,7 +337,6 @@ const ROUTES: Record<string, Step[]> = {
   brawlstars: [{ p: "vol", slug: "brawl-stars" }],
   fcmobile: [
     { p: "vol", slug: "ea-sports-fc-mobile-indonesia" },
-    { p: "vol", slug: "ea-sports-fc-mobile" },
   ],
   mlbb: [
     { p: "vol", slug: "mobile-legends", zone: true },
