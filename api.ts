@@ -1,4 +1,4 @@
-// build marker 2026-10-30T14:00Z: multi-provider ID lookup (Volsever gateway + NeferByte + isan + official)
+// build marker 2026-10-30T14:02Z: rebuild to pick up NEFERBYTE_API_KEY (backup provider)
 // ==============================================================================
 // Migo AI Solution - Verification Engine API (Deno Server)
 // Real account lookup only. No fabricated / placeholder names.
@@ -461,7 +461,7 @@ Deno.serve(async (req: Request) => {
 
     if (foundName) {
       return new Response(
-        JSON.stringify({ success: true, username: foundName, name: foundName, avatar: avatarUrl || undefined }),
+        JSON.stringify({ success: true, username: foundName, name: foundName, avatar: avatarUrl || undefined, trace: debug ? trace : undefined }),
         { status: 200, headers: CORS_HEADERS },
       );
     }
