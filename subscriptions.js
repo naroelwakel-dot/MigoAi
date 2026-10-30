@@ -52,7 +52,7 @@ const subscriptionsData = [
     provider: "Google الرسمي",
     category: "ai",
     badge: "عرض حصري ⚡",
-    banner: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80",
+    banner: "Geminipro.png",
     description: "اشتراك رسمي متكامل مع وصول دائم لأحدث النماذج المتقدمة.",
     packages: [
       { id: "gemini_18m", name: "18 شهر — 245 ج.م", duration: "18 شهر", price: 245 }
@@ -88,7 +88,7 @@ const subscriptionsData = [
     provider: "Bytedance / CapCut",
     category: "ai",
     badge: "مونتاج وذكاء اصطناعي 🎬",
-    banner: "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?auto=format&fit=crop&w=1200&q=80",
+    banner: "capcut.png",
     description: "مونتاج فيديو احترافي، إزالة خلفيات، وفلاتر ذكية بلا حدود.",
     packages: [
       { id: "capcut_7d", name: "7 أيام — 55 ج.م", duration: "7 أيام", price: 55 },
@@ -102,7 +102,7 @@ const subscriptionsData = [
     provider: "Lovable AI",
     category: "ai",
     badge: "تطوير ويب بالذكاء 💻",
-    banner: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&q=80",
+    banner: "lovable.png",
     description: "بناء وتطوير تطبيقات ومواقع كاملة عبر الأوامر النصية المباشرة.",
     packages: [
       { id: "lovable_12m", name: "12 شهر (سنة) — 665 ج.م", duration: "سنة واحدة", price: 665 }
@@ -114,7 +114,7 @@ const subscriptionsData = [
     provider: "Framer الرسمي",
     category: "ai",
     badge: "تصميم مواقع تفاعلية 🌐",
-    banner: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1200&q=80",
+    banner: "framerai.jpg",
     description: "تصميم ونشر مواقع ويب حديثة وسريعة الاستجابة بالذكاء الاصطناعي.",
     packages: [
       { id: "framer_1y", name: "سنة واحدة (Framer AI 1Y) — 392 ج.م", duration: "سنة واحدة", price: 392 }
