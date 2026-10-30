@@ -319,3 +319,14 @@
     @media (prefers-reduced-motion: reduce) {
         .sec-ic, .sec-ic::before, .sec-ic .sec-ico { animation: none; }
     }
+
+/* Compact coin/stars package picker (replaces full-screen native select on mobile) */
+.coin-picker { position: relative; }
+.coin-picker-btn { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 8px; background: rgba(2, 6, 23, .9); border: 1px solid #334155; border-radius: 12px; padding: 8px 10px; font-size: 12px; font-weight: 700; color: #f9a8d4; cursor: pointer; text-align: right; }
+.coin-picker-caret { opacity: .7; font-size: 11px; }
+.coin-picker-list { position: absolute; z-index: 30; left: 0; right: 0; margin-top: 4px; background: #0f141c; border: 1px solid #334155; border-radius: 12px; max-height: 190px; overflow-y: auto; box-shadow: 0 12px 30px rgba(0, 0, 0, .5); }
+.coin-picker-opt { display: flex; justify-content: space-between; gap: 8px; width: 100%; padding: 8px 10px; font-size: 12px; color: #e2e8f0; background: transparent; border: 0; border-bottom: 1px solid rgba(255, 255, 255, .06); cursor: pointer; text-align: right; }
+.coin-picker-opt:last-child { border-bottom: 0; }
+.coin-picker-opt.is-active { background: rgba(236, 72, 153, .15); color: #f9a8d4; }
+.coin-picker-opt:hover { background: rgba(255, 255, 255, .05); }
+.coin-picker-price { color: #fbbf24; font-weight: 700; white-space: nowrap; }
