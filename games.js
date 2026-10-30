@@ -1,5 +1,6 @@
 // ==============================================================================
 // Migo AI Solution - games.js
+// (نسخة معدّلة: تصحيح مراجع الصور فقط — لا تغيير في أي بيانات أو أسعار)
 // ==============================================================================
 
 const gamesData = [
@@ -234,7 +235,7 @@ const gamesData = [
     id: "diablo",
     name: "ديابلو إيمورتال (Diablo)",
     provider: "Blizzard",
-    banner: "diabloimmortal.jpeg",
+    banner: "diabloimortal.jpeg",
     badge: "شحن أوربس وسيرفرات ⚡",
     hasZoneId: true,
     zoneLabel: "اسم السيرفر (Server Name)",
