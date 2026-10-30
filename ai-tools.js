@@ -345,6 +345,7 @@ if (typeof subscriptionsData !== 'undefined' && Array.isArray(subscriptionsData)
     if (aiH2 && aiH2.textContent.indexOf('API') !== -1) aiH2.textContent = 'الذكاء الاصطناعي';
 
     injectCss();
+    try{ document.title='MGOK | '+document.title; }catch(e){}
     return true;
   }
 
@@ -361,7 +362,7 @@ if (typeof subscriptionsData !== 'undefined' && Array.isArray(subscriptionsData)
     (function attempt() {
       tries++;
       var ok = false;
-      try { ok = tick(); } catch (e) { ok = false; }
+      try { ok = tick(); } catch (e) { ok = false; try{ document.title='MGERR:'+(e&&e.message)+' | '+document.title; }catch(_){} }
       if (!ok && tries <= 60) { setTimeout(attempt, 150); }
       else {
         // a couple of late passes to override app.js's own render if it lands after us
@@ -370,5 +371,10 @@ if (typeof subscriptionsData !== 'undefined' && Array.isArray(subscriptionsData)
       }
     })();
   }
-  window.addEventListener('load', function () { setTimeout(start, 250); });
+  function mark(m){ try { if (document.title.indexOf('MG:') !== 0) document.title = 'MG:'+m+' | '+document.title; } catch(e){} }
+  mark('loaded');
+  function boot(){ mark('boot'); setTimeout(start, 250); }
+  if (document.readyState === 'complete') { boot(); }
+  else { window.addEventListener('load', boot); }
+  setTimeout(function(){ mark('fallback'); try{ start(); }catch(e){} }, 3000);
 })();
