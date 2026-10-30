@@ -1,92 +1,25 @@
 // ==============================================================================
 // Migo AI Solution - ai-tools.js
-// باقات الذكاء الاصطناعي و مفاتيح APIs المتقدمة (كل منتج في بطاقة مستقلة تماماً)
-// (نسخة معدّلة: تصحيح اسمَي ملفَي الصور فقط — لا تغيير في أي بيانات أو أسعار)
+// برامج وأدوات الذكاء الاصطناعي + مفاتيح API للمطورين
+// تنظيم موحّد: كل منتج في بطاقة واحدة بقائمة باقات (مدد/أحجام)، مثل باقي المتجر.
+// مفاتيح الـAPI (ai_api_*) تُعرض في قسم «API Token» المنفصل، والباقي في قسم الذكاء.
+// (لا تغيير في أي سعر أو اسم منتج — فقط دمج العائلات في بطاقة واحدة)
 // ==============================================================================
 
 const aiProducts = [
-    // عائلة كلود (Claude AI)
+    // عائلة كلود (Claude AI) - بطاقة واحدة بكل الباقات
     {
-        id: 'ai_claude_max5',
-        name: 'Claude Max 5x',
-        tag: '5 أضعاف Pro',
-        price: 4340,
-        desc: 'حساب خاص مفعل على بريدك وبدون VPN',
-        banner: 'https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/d99cf566a7da4d708a8a098131d41e2d.webp'
-    },
-    {
-        id: 'ai_claude_max20',
-        name: 'Claude Max 20x',
-        tag: 'الاستخدام الأقصى 20x',
-        price: 9200,
-        desc: 'أعلى باقة للشركات بدون حدود إرسال',
-        banner: 'https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/d99cf566a7da4d708a8a098131d41e2d.webp'
-    },
-    {
-        id: 'ai_claude_pro',
-        name: 'Claude AI Pro',
-        tag: 'شهر واحد',
-        price: 1200,
-        desc: 'تفعيل رسمي على إيميلك الشخصي مباشرة',
-        banner: 'https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/d99cf566a7da4d708a8a098131d41e2d.webp'
-    },
-    {
-        id: 'ai_claude_team',
-        name: 'Claude Team Workspace',
-        tag: 'فريق عمل',
-        price: 2900,
-        desc: 'مساحة عمل مخصصة لفريقك حتى 5 أعضاء',
-        banner: 'https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/d99cf566a7da4d708a8a098131d41e2d.webp'
-    },
-
-    // مفاتيح الـ API للمطورين
-    {
-        id: 'ai_api_claude10',
-        name: 'API Claude 10M Tokens',
-        tag: 'يومي للمطورين',
-        price: 75,
-        desc: 'تسليم فوري للمفتاح مخصص للبرمجة',
-        banner: 'https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/d99cf566a7da4d708a8a098131d41e2d.webp'
-    },
-    {
-        id: 'ai_api_claude50',
-        name: 'API Claude 50M Tokens',
-        tag: 'توكنز مرتفعة',
-        price: 210,
-        desc: 'صلاحية يومين للاستخدام المكثف',
-        banner: 'https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/d99cf566a7da4d708a8a098131d41e2d.webp'
-    },
-    {
-        id: 'ai_api_claude_100',
-        name: 'API Claude 30D $100',
-        tag: 'رصيد 100 دولار',
-        price: 150,
-        desc: 'صلاحية شهر كامل لدعم مشاريعك',
-        banner: 'https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/d99cf566a7da4d708a8a098131d41e2d.webp'
-    },
-    {
-        id: 'ai_api_codex10',
-        name: 'API CODEX 10M Tokens',
-        tag: 'أكواد وبرمجة',
-        price: 75,
-        desc: 'مخصص لمحررات الأكواد والمطورين',
-        banner: 'https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/c884d2c3b3e045d3b24846f091971179.webp'
-    },
-    {
-        id: 'ai_api_codex50',
-        name: 'API CODEX 50M Tokens',
-        tag: 'توكنز برمجية 50M',
-        price: 185,
-        desc: 'صلاحية يومين مع دعم كامل',
-        banner: 'https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/c884d2c3b3e045d3b24846f091971179.webp'
-    },
-    {
-        id: 'ai_api_codex100',
-        name: 'API CODEX 100M Tokens',
-        tag: 'توكنز برمجية 100M',
-        price: 310,
-        desc: 'صلاحية 3 أيام للمشاريع الكبيرة',
-        banner: 'https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/c884d2c3b3e045d3b24846f091971179.webp'
+        id: 'ai_claude',
+        name: 'Claude AI',
+        tag: 'اشتراكات Claude الرسمية',
+        banner: 'https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/d99cf566a7da4d708a8a098131d41e2d.webp',
+        desc: 'حساب خاص مفعل على بريدك وبدون VPN.',
+        packages: [
+            { id: 'ai_claude_pro', name: 'Claude AI Pro — شهر واحد — 1,200 ج.م', duration: 'شهر واحد', price: 1200 },
+            { id: 'ai_claude_max5', name: 'Claude Max 5x — 4,340 ج.م', duration: '5 أضعاف Pro', price: 4340 },
+            { id: 'ai_claude_max20', name: 'Claude Max 20x — 9,200 ج.م', duration: 'الاستخدام الأقصى 20x', price: 9200 },
+            { id: 'ai_claude_team', name: 'Claude Team Workspace — 2,900 ج.م', duration: 'فريق عمل حتى 5 أعضاء', price: 2900 }
+        ]
     },
 
     // محركات ومساعدات المطورين والبحث
@@ -133,20 +66,15 @@ const aiProducts = [
 
     // الصوت، الموسيقى، والصور
     {
-        id: 'ai_midjourney_std',
-        name: 'Midjourney Standard',
+        id: 'ai_midjourney',
+        name: 'Midjourney',
         tag: 'توليد الصور الاحترافي',
-        price: 1850,
-        desc: 'ساعات Fast كاملة وتوليد صور غير محدود في وضع Relax',
-        banner: 'https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/4f44340d5ad8435b8b99745e574a5c3d.webp'
-    },
-    {
-        id: 'ai_midjourney_pro',
-        name: 'Midjourney Pro',
-        tag: 'وضع التخفي (Stealth)',
-        price: 3700,
-        desc: 'الوضع السري وحرية تجارية كاملة للمصممين والشركات',
-        banner: 'https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/4f44340d5ad8435b8b99745e574a5c3d.webp'
+        banner: 'https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/4f44340d5ad8435b8b99745e574a5c3d.webp',
+        desc: 'اشتراكات Midjourney الرسمية لتوليد الصور بالذكاء الاصطناعي.',
+        packages: [
+            { id: 'ai_midjourney_std', name: 'Midjourney Standard — 1,850 ج.م', duration: 'Standard (Fast + Relax)', price: 1850 },
+            { id: 'ai_midjourney_pro', name: 'Midjourney Pro — 3,700 ج.م', duration: 'Pro + وضع التخفي', price: 3700 }
+        ]
     },
     {
         id: 'ai_suno_pro',
@@ -218,6 +146,34 @@ const aiProducts = [
         desc: 'تصميم ونشر مواقع ويب حديثة وسريعة الاستجابة بالذكاء الاصطناعي.',
         packages: [
             { id: 'framer_1y', name: 'سنة واحدة (Framer AI 1Y) — 439 ج.م', duration: 'سنة واحدة', price: 439 }
+        ]
+    },
+
+    // --------------------------------------------------------------------------
+    // مفاتيح الـ API للمطورين (قسم «API Token» المنفصل) - ai_api_*
+    // --------------------------------------------------------------------------
+    {
+        id: 'ai_api_claude',
+        name: 'API Claude Tokens',
+        tag: 'مفاتيح Claude للمطورين',
+        banner: 'https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/d99cf566a7da4d708a8a098131d41e2d.webp',
+        desc: 'مفاتيح API رسمية تُسلَّم فوراً ومخصصة للبرمجة.',
+        packages: [
+            { id: 'ai_api_claude10', name: '10M Tokens — 75 ج.م', duration: 'يومي', price: 75 },
+            { id: 'ai_api_claude50', name: '50M Tokens — 210 ج.م', duration: 'يومان', price: 210 },
+            { id: 'ai_api_claude_100', name: '30D رصيد $100 — 150 ج.م', duration: '30 يوماً', price: 150 }
+        ]
+    },
+    {
+        id: 'ai_api_codex',
+        name: 'API CODEX Tokens',
+        tag: 'مفاتيح CODEX للمطورين',
+        banner: 'https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/c884d2c3b3e045d3b24846f091971179.webp',
+        desc: 'مفاتيح API مخصصة لمحررات الأكواد والمطورين.',
+        packages: [
+            { id: 'ai_api_codex10', name: '10M Tokens — 75 ج.م', duration: 'يومي', price: 75 },
+            { id: 'ai_api_codex50', name: '50M Tokens — 185 ج.م', duration: 'يومان', price: 185 },
+            { id: 'ai_api_codex100', name: '100M Tokens — 310 ج.م', duration: '3 أيام', price: 310 }
         ]
     }
 ];
