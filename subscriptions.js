@@ -55,7 +55,7 @@ const subscriptionsData = [
     banner: "Geminipro.png",
     description: "اشتراك رسمي متكامل مع وصول دائم لأحدث النماذج المتقدمة.",
     packages: [
-      { id: "gemini_18m", name: "18 شهر — 245 ج.م", duration: "18 شهر", price: 245 }
+      { id: "gemini_18m", name: "18 شهر — 69 ج.م", duration: "18 شهر", price: 69 }
     ]
   },
   {
@@ -310,8 +310,8 @@ const subscriptionsData = [
     banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/cd96d463270d4b19907ad500617d444e.webp",
     description: "مشاهدة بدون فواصل إعلانية، تشغيل في الخلفية، واشتراك Music.",
     packages: [
-      { id: "yt_1m", name: "شهر واحد — 115 ج.م", duration: "شهر واحد", price: 115 },
-      { id: "yt_3m", name: "3 أشهر — 275 ج.م", duration: "3 أشهر", price: 275 }
+      { id: "yt_1m", name: "شهر واحد — 82 ج.م", duration: "شهر واحد", price: 82 },
+      { id: "yt_3m", name: "3 أشهر — 124 ج.م", duration: "3 أشهر", price: 124 }
     ]
   },
   {
