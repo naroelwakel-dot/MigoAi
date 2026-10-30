@@ -141,7 +141,7 @@
         background-image:
             radial-gradient(ellipse 85% 50% at 50% -12%, rgba(79, 125, 240, 0.16), transparent 65%),
             radial-gradient(ellipse 55% 38% at 88% 8%, rgba(139, 92, 246, 0.09), transparent 70%),
-            linear-gradient(rgba(11, 13, 17, 0.80), rgba(11, 13, 17, 0.92)),
+            linear-gradient(rgba(11, 13, 17, 0.72), rgba(11, 13, 17, 0.88)),
             url('https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/acc4b445599f4b16a9fb47f45f4d0c95.webp');
         background-size: 100% 100%, 100% 100%, 100% 100%, cover;
         background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
@@ -165,21 +165,28 @@
     details > summary::-webkit-details-marker { display: none; }
 
     .sky-surface {
-        background: linear-gradient(180deg, rgba(23, 28, 36, 0.92), rgba(20, 24, 31, 0.92));
-        border: 1px solid var(--border-subtle);
+        background: linear-gradient(180deg, rgba(44, 54, 74, 0.55), rgba(20, 25, 34, 0.40));
+        border: 1px solid rgba(255, 255, 255, 0.13);
         border-radius: 20px;
         position: relative;
+        backdrop-filter: blur(18px) saturate(135%);
+        -webkit-backdrop-filter: blur(18px) saturate(135%);
+        box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.08), 0 22px 50px -28px rgba(0, 0, 0, 0.75);
     }
 
     .sky-card {
-        background: var(--bg-card);
-        border: 1px solid var(--border-subtle);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.028));
+        border: 1px solid rgba(255, 255, 255, 0.13);
         border-radius: 16px;
-        transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.22s ease, box-shadow 0.22s ease;
+        backdrop-filter: blur(10px) saturate(125%);
+        -webkit-backdrop-filter: blur(10px) saturate(125%);
+        box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.06);
+        transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
     }
     .sky-card:hover {
         border-color: var(--border-hover);
-        box-shadow: 0 18px 40px -14px rgba(0, 0, 0, 0.85), 0 0 22px var(--accent-glow);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.045));
+        box-shadow: 0 18px 40px -14px rgba(0, 0, 0, 0.7), 0 0 22px var(--accent-glow);
         transform: translateY(-2px);
     }
 
@@ -246,12 +253,12 @@
     /* ---- Bridge layer: retune the classes app.js emits, so product
             cards, cart rows, checkout and modals all match the blue
             identity without editing app.js ---- */
-    .bg-slate-950 { background-color: #12151b !important; }
-    .bg-slate-950\/90 { background-color: rgba(18, 21, 27, 0.9) !important; }
-    .bg-slate-900\/60 { background-color: rgba(23, 28, 36, 0.7) !important; }
-    .bg-slate-800 { background-color: #1f2530 !important; }
-    .bg-slate-800\/80 { background-color: rgba(31, 37, 48, 0.8) !important; }
-    .bg-gray-900, .bg-gray-800 { background-color: #171c24 !important; }
+    .bg-slate-950 { background-color: rgba(9, 12, 18, 0.5) !important; }
+    .bg-slate-950\/90 { background-color: rgba(15, 19, 27, 0.6) !important; }
+    .bg-slate-900\/60 { background-color: rgba(23, 28, 36, 0.45) !important; }
+    .bg-slate-800 { background-color: rgba(31, 37, 48, 0.55) !important; }
+    .bg-slate-800\/80 { background-color: rgba(31, 37, 48, 0.5) !important; }
+    .bg-gray-900, .bg-gray-800 { background-color: rgba(23, 28, 36, 0.45) !important; }
 
     .border-slate-700 { border-color: var(--border-subtle) !important; }
     .border-slate-800 { border-color: var(--border-subtle) !important; }
