@@ -1,6 +1,8 @@
 // ==============================================================================
 // Migo AI Solution - Verification Engine API (Deno Server)
-// Multi-Game & Multi-Platform Account Lookup & Avatar Resolver
+// Real account lookup only. No fabricated / placeholder names.
+// If a game has no reachable free source, we return an honest "not found"
+// and the storefront lets the customer type their name and continue.
 // ==============================================================================
 
 const CORS_HEADERS = {
@@ -10,16 +12,23 @@ const CORS_HEADERS = {
   "Access-Control-Allow-Headers": "Content-Type",
 };
 
-// سحب مفتاح RapidAPI بأمان من متغيرات البيئة مع الاحتياطي المعتمد
-const RAPIDAPI_KEY = Deno.env.get("RAPIDAPI_KEY") || "04c7fee3aamshd0586dcb6ccc650p1d66f2jsne4624799cc03";
-const RAPIDAPI_HOST = "id-game-checker.p.rapidapi.com";
+const UA =
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36";
 
-async function safeFetchJson(url: string, options: RequestInit = {}) {
+async function fetchWithTimeout(url: string, options: RequestInit = {}, ms = 6000): Promise<Response> {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), ms);
   try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 4500);
-    const res = await fetch(url, { ...options, signal: controller.signal });
+    return await fetch(url, { ...options, signal: controller.signal });
+  } finally {
     clearTimeout(timeoutId);
+  }
+}
+
+// Returns parsed JSON, or null on any error / non-JSON / HTML response.
+async function getJson(url: string, options: RequestInit = {}, ms = 6000): Promise<any> {
+  try {
+    const res = await fetchWithTimeout(url, options, ms);
     const raw = await res.text();
     if (!raw || raw.trim().startsWith("<") || raw.includes("<!DOCTYPE")) return null;
     return JSON.parse(raw);
@@ -28,41 +37,42 @@ async function safeFetchJson(url: string, options: RequestInit = {}) {
   }
 }
 
+// Pull the first plausible nickname out of an unknown JSON shape.
 function extractPlayerName(data: any): string {
   if (!data) return "";
   if (typeof data === "string") return data.trim();
-  if (typeof data.data === "string") return data.data.trim();
-  if (typeof data.data?.name === "string") return data.data.name.trim();
-  if (typeof data.data?.username === "string") return data.data.username.trim();
-  if (typeof data.data?.nickname === "string") return data.data.nickname.trim();
-  if (typeof data.name === "string") return data.name.trim();
-  if (typeof data.username === "string") return data.username.trim();
-  if (typeof data.nickname === "string") return data.nickname.trim();
-  if (typeof data.charac_name === "string") return decodeURIComponent(data.charac_name).trim();
+  const paths: any[] = [
+    data.nickname, data.name, data.username, data.nickName, data.nick_name,
+    data.displayName, data.result, data.data,
+  ];
+  for (const p of paths) {
+    if (typeof p === "string" && p.trim()) return p.trim();
+    if (p && typeof p === "object") {
+      const inner = p.nickname ?? p.name ?? p.username ?? p.nickName ?? p.nick_name ?? p.displayName;
+      if (typeof inner === "string" && inner.trim()) return inner.trim();
+      const deep = p.data;
+      if (deep && typeof deep === "object") {
+        const dd = deep.nickname ?? deep.name ?? deep.username ?? deep.nickName ?? deep.nick_name;
+        if (typeof dd === "string" && dd.trim()) return dd.trim();
+      }
+    }
+  }
   return "";
 }
 
-// دالة فحص حساب تيك توك بالاسم وجلب الصورة والاسم الظاهر
+// ----------------------------------------------------------------------------
+// Real source: TikTok profile (scrape)
+// ----------------------------------------------------------------------------
 async function resolveTikTokUser(username: string): Promise<{ name: string; avatar: string }> {
   const clean = username.replace(/^@/, "").trim().toLowerCase();
   try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 4500);
-    const res = await fetch(`https://www.tiktok.com/@${clean}`, {
-      headers: {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
-        "Accept-Language": "en-US,en;q=0.9"
-      },
-      signal: controller.signal
-    });
-    clearTimeout(timeoutId);
-
+    const res = await fetchWithTimeout(`https://www.tiktok.com/@${clean}`, {
+      headers: { "User-Agent": UA, "Accept": "text/html", "Accept-Language": "en-US,en;q=0.9" },
+    }, 5000);
     if (res.ok) {
       const html = await res.text();
       let nickname = "";
       let avatar = "";
-
       const scriptMatch = html.match(/<script id="__UNIVERSAL_DATA_FOR_REHYDRATION__"[^>]*>([\s\S]*?)<\/script>/);
       if (scriptMatch && scriptMatch[1]) {
         try {
@@ -75,45 +85,124 @@ async function resolveTikTokUser(username: string): Promise<{ name: string; avat
           }
         } catch (_) {}
       }
-
       const ogTitle = html.match(/<meta property="og:title" content="([^"]+)"/i);
       const ogImage = html.match(/<meta property="og:image" content="([^"]+)"/i);
-      if (ogTitle && ogTitle[1]) nickname = ogTitle[1].replace(/\s*\(@[^\)]+\).*$/, "").replace(/\| TikTok$/, "").trim();
+      if (ogTitle && ogTitle[1]) nickname = ogTitle[1].replace(/\s*\(@[^)]+\).*$/, "").replace(/\| TikTok$/, "").trim();
       if (ogImage && ogImage[1]) avatar = ogImage[1].replace(/&amp;/g, "&");
-
-      return { name: nickname || `@${clean}`, avatar };
+      if (nickname) return { name: nickname, avatar };
     }
   } catch (_) {}
-
-  return { name: `@${clean}`, avatar: "" };
+  return { name: "", avatar: "" };
 }
 
-// دالة فحص تليجرام وجلب الصورة
+// ----------------------------------------------------------------------------
+// Real source: Telegram public profile (scrape)
+// ----------------------------------------------------------------------------
 async function resolveTelegramUser(username: string): Promise<{ name: string; avatar: string }> {
   const clean = username.replace(/^@/, "").trim();
   try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 4000);
-    const res = await fetch(`https://t.me/${clean}`, {
-      headers: { "User-Agent": "Mozilla/5.0" },
-      signal: controller.signal
-    });
-    clearTimeout(timeoutId);
-
+    const res = await fetchWithTimeout(`https://t.me/${clean}`, { headers: { "User-Agent": UA } }, 5000);
     if (res.ok) {
       const html = await res.text();
-      let name = clean;
+      let name = "";
       let avatar = "";
       const ogTitle = html.match(/<meta property="og:title" content="([^"]+)"/i);
       const ogImage = html.match(/<meta property="og:image" content="([^"]+)"/i);
       if (ogTitle && ogTitle[1]) name = ogTitle[1].trim();
       if (ogImage && ogImage[1]) avatar = ogImage[1].replace(/&amp;/g, "&");
-      return { name, avatar };
+      if (name) return { name, avatar };
     }
   } catch (_) {}
-
-  return { name: `@${clean}`, avatar: "" };
+  return { name: "", avatar: "" };
 }
+
+// ----------------------------------------------------------------------------
+// Real source: Roblox official user API
+// ----------------------------------------------------------------------------
+async function lookupRoblox(id: string): Promise<string> {
+  const d = await getJson(`https://users.roblox.com/v1/users/${encodeURIComponent(id)}`);
+  if (d && typeof d.name === "string" && d.name.trim()) {
+    const display = typeof d.displayName === "string" && d.displayName.trim() && d.displayName !== d.name
+      ? d.displayName
+      : "";
+    return display ? `${display} (@${d.name})` : d.name;
+  }
+  return "";
+}
+
+// ----------------------------------------------------------------------------
+// Real source: Enka.Network (Genshin Impact UID -> player nickname)
+// ----------------------------------------------------------------------------
+async function lookupGenshin(id: string): Promise<string> {
+  const d = await getJson(`https://enka.network/api/uid/${encodeURIComponent(id)}`, {
+    headers: { "User-Agent": "MigoAI/1.0" },
+  });
+  const nick = d?.playerInfo?.nickname;
+  if (typeof nick === "string" && nick.trim()) return nick.trim();
+  return "";
+}
+
+// ----------------------------------------------------------------------------
+// Real source: JollyMax public top-up gateway (PUBG Mobile UID -> nickname)
+// ----------------------------------------------------------------------------
+async function lookupPubg(id: string): Promise<string> {
+  const headers = {
+    "Content-Type": "application/json",
+    "User-Agent": UA,
+    "Origin": "https://www.jollymax.com",
+    "Referer": "https://www.jollymax.com/",
+    "Accept": "application/json, text/plain, */*",
+  };
+  try {
+    const tokenRes = await getJson("https://api.jollymax.com/aggregate-pay-gate/api/gateway", {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        terminalType: "PC_H5",
+        accessTokenType: "access_token",
+        bizType: "userLogin",
+        deviceId: "b7f8c2e1-3a4d-4e5f-9a1b-2c3d4e5f6a7b",
+        loginType: "visitor",
+        loginInfo: { country: "tr", language: "en", deviceType: "mobile" },
+        version: "1.0",
+        domain: "www.jollymax.com",
+      }),
+    });
+    const token = tokenRes?.data?.data?.token || tokenRes?.data?.token;
+    if (!token) return "";
+
+    const check = await getJson("https://topup-center.shoplay365.com/shareit-topup-center/order/check-uid", {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        token,
+        userId: id,
+        appId: "APP20220811034444301",
+        country: "tr",
+        language: "en",
+        appAlias: "pubg",
+        goodsId: "G20230718123400139",
+        payTypeId: "698832",
+        domain: "www.jollymax.com",
+      }),
+    });
+    const nick = check?.data?.data?.nickName || check?.data?.nickName;
+    return typeof nick === "string" ? nick.trim() : "";
+  } catch (_) {
+    return "";
+  }
+}
+
+// ----------------------------------------------------------------------------
+// Best-effort free source: isan.eu.org (Mobile Legends / Free Fire nickname)
+// ----------------------------------------------------------------------------
+async function lookupIsan(path: string): Promise<string> {
+  const d = await getJson(`https://api.isan.eu.org/nickname/${path}`, { headers: { "User-Agent": UA } }, 6000);
+  if (d && d.success === false) return "";
+  return extractPlayerName(d);
+}
+
+// ----------------------------------------------------------------------------
 
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
@@ -128,7 +217,7 @@ Deno.serve(async (req: Request) => {
   if (!game || !id) {
     return new Response(
       JSON.stringify({ success: false, message: "يرجى تحديد اللعبة ورقم المعرف (Player ID)" }),
-      { status: 200, headers: CORS_HEADERS }
+      { status: 200, headers: CORS_HEADERS },
     );
   }
 
@@ -137,218 +226,60 @@ Deno.serve(async (req: Request) => {
   const isNumeric = /^\d+$/.test(id);
 
   try {
-    // 1. تيك توك كوينز (TikTok Profile & Avatar)
+    // ---- TikTok ----
     if (game === "tiktok") {
-      const resolved = await resolveTikTokUser(id);
-      foundName = resolved.name;
-      avatarUrl = resolved.avatar;
-    }
-
-    // 2. تليجرام نجوم (Telegram Stars)
-    else if (game === "telegram") {
-      const resolved = await resolveTelegramUser(id);
-      foundName = resolved.name;
-      avatarUrl = resolved.avatar;
-    }
-
-    // 3. ببجي موبايل (PUBG Mobile)
-    else if (game === "pubg" || game === "pubgmobile") {
-      let resApi = await safeFetchJson(`https://${RAPIDAPI_HOST}/pubgm?id=${encodeURIComponent(id)}`, {
-        headers: {
-          "X-RapidAPI-Key": RAPIDAPI_KEY,
-          "X-RapidAPI-Host": RAPIDAPI_HOST,
-        },
-      });
-      foundName = extractPlayerName(resApi);
-
-      if (!foundName) {
-        resApi = await safeFetchJson(`https://${RAPIDAPI_HOST}/pubg?id=${encodeURIComponent(id)}`, {
-          headers: {
-            "X-RapidAPI-Key": RAPIDAPI_KEY,
-            "X-RapidAPI-Host": RAPIDAPI_HOST,
-          },
-        });
-        foundName = extractPlayerName(resApi);
-      }
-
-      if (!foundName) {
-        resApi = await safeFetchJson(`https://${RAPIDAPI_HOST}/pubgm-global?id=${encodeURIComponent(id)}`, {
-          headers: {
-            "X-RapidAPI-Key": RAPIDAPI_KEY,
-            "X-RapidAPI-Host": RAPIDAPI_HOST,
-          },
-        });
-        foundName = extractPlayerName(resApi);
-      }
-
-      if (!foundName && isNumeric && id.length >= 7) {
-        foundName = `حساب PUBG موثق (#${id})`;
-      }
-    }
-
-    // 4. فيفا موبايل (FC Mobile)
-    else if (game === "fifa" || game === "fcmobile") {
-      if (isNumeric && id.length >= 8) {
-        const shortId = id.length > 10 ? `${id.slice(0, 6)}...${id.slice(-4)}` : id;
-        foundName = `حساب FC Mobile موثق (#${shortId})`;
-      } else {
-        foundName = `حساب FC Mobile (#${id})`;
-      }
-    }
-
-    // 5. فري فاير (Free Fire)
-    else if (game === "freefire") {
-      const res1 = await safeFetchJson(`https://api.isan.eu.org/nickname/freefire?id=${encodeURIComponent(id)}`, {
-        headers: { "User-Agent": "Mozilla/5.0" },
-      });
-      foundName = extractPlayerName(res1);
-
-      if (!foundName && isNumeric && id.length >= 7) {
-        foundName = `حساب FreeFire موثق (#${id})`;
-      }
-    }
-
-    // 6. موبايل ليجندز (Mobile Legends)
-    else if (game === "mlbb" || game === "mobilelegends") {
+      const r = await resolveTikTokUser(id);
+      foundName = r.name;
+      avatarUrl = r.avatar;
+    } // ---- Telegram Stars ----
+    else if (game === "telegram" || game === "telegramstars") {
+      const r = await resolveTelegramUser(id);
+      foundName = r.name;
+      avatarUrl = r.avatar;
+    } // ---- Roblox (official) ----
+    else if (game === "roblox") {
+      if (isNumeric) foundName = await lookupRoblox(id);
+    } // ---- Genshin Impact (Enka) ----
+    else if (game === "genshin" || game === "genshinimpact") {
+      if (isNumeric) foundName = await lookupGenshin(id);
+    } // ---- PUBG Mobile (JollyMax) ----
+    else if (game === "pubg" || game === "pubgmobile" || game === "pubg_mobile") {
+      if (isNumeric) foundName = await lookupPubg(id);
+    } // ---- Free Fire (isan, best effort) ----
+    else if (game === "freefire" || game === "free_fire") {
+      if (isNumeric) foundName = await lookupIsan(`freefire?id=${encodeURIComponent(id)}`);
+    } // ---- Mobile Legends (isan, needs zone) ----
+    else if (game === "mlbb" || game === "mobilelegends" || game === "mobile_legends") {
       if (!zoneId) {
         return new Response(
           JSON.stringify({ success: false, message: "لعبة Mobile Legends تتطلب إدخال رقم السيرفر (Zone ID)" }),
-          { status: 200, headers: CORS_HEADERS }
+          { status: 200, headers: CORS_HEADERS },
         );
       }
-
-      const res1 = await safeFetchJson(`https://api.isan.eu.org/nickname/ml?id=${encodeURIComponent(id)}&zone=${encodeURIComponent(zoneId)}`, {
-        headers: { "User-Agent": "Mozilla/5.0" },
-      });
-      foundName = extractPlayerName(res1);
-
-      if (!foundName && isNumeric) {
-        foundName = `حساب MLBB موثق (#${id})`;
-      }
+      foundName = await lookupIsan(`ml?id=${encodeURIComponent(id)}&zone=${encodeURIComponent(zoneId)}`);
     }
 
-    // 7. روبلوكس (Roblox)
-    else if (game === "roblox") {
-      const resRoblox = await safeFetchJson(`https://users.roblox.com/v1/users/${encodeURIComponent(id)}`);
-      if (resRoblox && resRoblox.name) {
-        foundName = resRoblox.displayName ? `${resRoblox.displayName} (@${resRoblox.name})` : resRoblox.name;
-      } else {
-        foundName = `حساب Roblox (#${id})`;
-      }
-    }
-
-    // 8. كلاش أوف كلانس (Clash of Clans)
-    else if (game === "clashofclans" || game === "coc") {
-      const cleanTag = id.startsWith("#") ? id : `#${id}`;
-      foundName = `Chief (${cleanTag})`;
-    }
-
-    // 9. براول ستارز (Brawl Stars)
-    else if (game === "brawlstars") {
-      const cleanTag = id.startsWith("#") ? id : `#${id}`;
-      foundName = `Brawler (${cleanTag})`;
-    }
-
-    // 10. جينشين إمباكت (Genshin Impact)
-    else if (game === "genshin" || game === "genshinimpact") {
-      const serverText = zoneId ? ` [سيرفر ${zoneId}]` : "";
-      foundName = `Traveler (${id})${serverText}`;
-    }
-
-    // 11. كول أوف ديوتي موبايل (CODM)
-    else if (game === "codm" || game === "codmobile") {
-      foundName = `جندي CODM (#${id})`;
-    }
-
-    // 12. فالورانت (VALORANT)
-    else if (game === "valorant") {
-      foundName = id.includes("#") ? id : `${id}#EGY`;
-    }
-
-    // 13. فورتنايت (Fortnite)
-    else if (game === "fortnite") {
-      foundName = `Epic Player (${id})`;
-    }
-
-    // 14. وايلد ريفت (LoL Wild Rift)
-    else if (game === "wildrift") {
-      foundName = id.includes("#") ? id : `${id}#Riot`;
-    }
-
-    // 15. أرينا بريك آوت (Arena Breakout)
-    else if (game === "arenabreakout" || game === "arena") {
-      foundName = `Operator (#${id})`;
-    }
-
-    // 16. هونر أوف كينجز (Honor of Kings)
-    else if (game === "honorofkings" || game === "hok") {
-      foundName = `HOK Legend (#${id})`;
-    }
-
-    // 17. ديابلو إيمورتال (Diablo Immortal)
-    else if (game === "diablo") {
-      const srv = zoneId ? ` - ${zoneId}` : "";
-      foundName = `Immortal (#${id}${srv})`;
-    }
-
-    // 18. توب إلفن (Top Eleven)
-    else if (game === "topeleven") {
-      foundName = `Manager (#${id})`;
-    }
-
-    // 19. إي فوتبول (eFootball Konami ID)
-    else if (game === "efootball") {
-      foundName = `مالك Konami ID (#${id})`;
-    }
-
-    // 20. برامج البث المباشر (Live Apps)
-    else if (["bigo", "poppo", "chamet", "yalla", "yallaludo", "sugo", "meyo"].includes(game)) {
-      const appTitles: Record<string, string> = {
-        bigo: "BIGO Live",
-        poppo: "Poppo Live",
-        chamet: "Chamet",
-        yalla: "يلا لودو",
-        yallaludo: "يلا لودو",
-        sugo: "SUGO",
-        meyo: "MeYo"
-      };
-      foundName = `حساب ${appTitles[game] || "Live"} موثق (#${id})`;
-    }
-
-    // الألعاب والخدمات العامة الأخرى
-    else {
-      if (id.length >= 3) {
-        foundName = `حساب موثق (#${id})`;
-      }
-    }
-
-    // الرد النهائي الموحد
+    // Everything else: no free real source available yet -> honest "not found".
     if (foundName) {
       return new Response(
-        JSON.stringify({
-          success: true,
-          username: foundName,
-          name: foundName,
-          avatar: avatarUrl || undefined
-        }),
-        { status: 200, headers: CORS_HEADERS }
-      );
-    } else {
-      return new Response(
-        JSON.stringify({
-          success: false,
-          message: "تعذر التحقق من الحساب. يرجى كتابة اسم حسابك يدوياً والمتابعة.",
-        }),
-        { status: 200, headers: CORS_HEADERS }
+        JSON.stringify({ success: true, username: foundName, name: foundName, avatar: avatarUrl || undefined }),
+        { status: 200, headers: CORS_HEADERS },
       );
     }
+    return new Response(
+      JSON.stringify({
+        success: false,
+        message: "تم التحقق من المدخلات، ولم نجد الاسم تلقائياً. اكتب اسم حسابك يدوياً واضغط متابعة لإتمام طلبك.",
+      }),
+      { status: 200, headers: CORS_HEADERS },
+    );
   } catch (_) {
     return new Response(
       JSON.stringify({
         success: false,
         message: "اكتب اسم حسابك يدوياً واضغط متابعة لإتمام طلبك فوراً.",
       }),
-      { status: 200, headers: CORS_HEADERS }
+      { status: 200, headers: CORS_HEADERS },
     );
   }
 });
