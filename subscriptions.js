@@ -67,7 +67,7 @@ const subscriptionsData = [
     banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/03f5b628901b449db08f2324c261591c.webp",
     description: "أحدث نموذج ذكاء اصطناعي فائق الذكاء من منصة xAI.",
     packages: [
-      { id: "grok_7d", name: "7 أيام — 410 ج.م", duration: "7 أيام", price: 410 }
+      { id: "grok_7d", name: "7 أيام — 232 ج.م", duration: "7 أيام", price: 232 }
     ]
   },
   {
@@ -247,7 +247,7 @@ const subscriptionsData = [
     banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/d78b2cbd15994994b36703f413356a22.webp",
     description: "تعلم اللغات بدون إعلانات وبقلوب غير محدودة ومراجعة الأخطاء.",
     packages: [
-      { id: "duolingo_12m", name: "12 شهر — 110 ج.م", duration: "12 شهر", price: 110 }
+      { id: "duolingo_12m", name: "12 شهر — 35 ج.م", duration: "12 شهر", price: 35 }
     ]
   },
   {
