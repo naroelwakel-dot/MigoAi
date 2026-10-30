@@ -946,76 +946,82 @@
 
     <p class="text-xs text-slate-400 mb-3 font-mono-code">Total Amount: <b id="checkoutTotalText" class="text-white font-bold font-mono-code"></b></p>
 
-    <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-2 mb-4">
-     <button type="button" onclick="selectPaymentMethod('vodafone', '📱 فودافون كاش', this)" class="pay-method-btn sky-card p-2 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer">
-      <div class="w-7 h-7 bg-red-600 rounded-lg flex items-center justify-center text-white font-bold text-xs">V</div>
+    <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 gap-2 mb-3">
+     <button type="button" onclick="selectPaymentMethod('vodafone', '📱 فودافون كاش', this)" class="pay-method-btn sky-card p-2.5 rounded-xl flex flex-col items-center justify-center gap-1.5 cursor-pointer">
+      <span class="w-11 h-11 rounded-xl bg-white flex items-center justify-center p-1.5 shadow"><img src="https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/1a88acc7e9424a1abced63737538d4f3.png" alt="فودافون كاش" class="max-w-full max-h-full object-contain" loading="lazy"></span>
       <span class="text-[10px] font-medium text-white">فودافون كاش</span>
      </button>
 
-     <button type="button" onclick="selectPaymentMethod('etisalat', '🟢 اتصالات كاش', this)" class="pay-method-btn sky-card p-2 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer">
-      <div class="w-7 h-7 bg-emerald-600 rounded-lg flex items-center justify-center text-white font-bold text-[9px]">اتصالات</div>
+     <button type="button" onclick="selectPaymentMethod('etisalat', '🟢 اتصالات كاش', this)" class="pay-method-btn sky-card p-2.5 rounded-xl flex flex-col items-center justify-center gap-1.5 cursor-pointer">
+      <span class="w-11 h-11 rounded-xl bg-white flex items-center justify-center p-1.5 shadow"><img src="https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/d6b52c657f7d440fa1f537e39c468f53.png" alt="اتصالات كاش" class="max-w-full max-h-full object-contain" loading="lazy"></span>
       <span class="text-[10px] font-medium text-white">اتصالات كاش</span>
      </button>
 
-     <button type="button" onclick="selectPaymentMethod('instapay', '⚡ إنستاباي (InstaPay)', this)" class="pay-method-btn sky-card p-2 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer">
-      <div class="w-7 h-7 bg-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-xs">IP</div>
+     <button type="button" onclick="selectPaymentMethod('instapay', '⚡ إنستاباي (InstaPay)', this)" class="pay-method-btn sky-card p-2.5 rounded-xl flex flex-col items-center justify-center gap-1.5 cursor-pointer">
+      <span class="w-11 h-11 rounded-xl bg-white flex items-center justify-center p-1.5 shadow"><img src="https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/8a96a54a89184292886113cb7101892b.webp" alt="إنستاباي" class="max-w-full max-h-full object-contain" loading="lazy"></span>
       <span class="text-[10px] font-medium text-white">إنستاباي</span>
      </button>
 
-     <button type="button" onclick="selectPaymentMethod('telda', '🟣 تيلدا (Telda)', this)" class="pay-method-btn sky-card p-2 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer">
-      <div class="w-7 h-7 bg-neutral-800 rounded-lg flex items-center justify-center text-white font-bold text-xs">T</div>
+     <button type="button" onclick="selectPaymentMethod('telda', '🟣 تيلدا (Telda)', this)" class="pay-method-btn sky-card p-2.5 rounded-xl flex flex-col items-center justify-center gap-1.5 cursor-pointer">
+      <span class="w-11 h-11 rounded-xl bg-white flex items-center justify-center p-1.5 shadow"><img src="https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/cb894ed3772047418d3385f47980696b.webp" alt="تيلدا Telda" class="max-w-full max-h-full object-contain" loading="lazy"></span>
       <span class="text-[10px] font-medium text-white">تيلدا Telda</span>
      </button>
 
-     <button type="button" onclick="selectPaymentMethod('binance', '🟡 باينانس باي (Binance Pay)', this)" class="pay-method-btn sky-card p-2 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer">
-      <div class="w-7 h-7 bg-amber-400 rounded-lg flex items-center justify-center text-black font-black text-xs">B</div>
+     <button type="button" onclick="selectPaymentMethod('binance', '🟡 باينانس باي (Binance Pay)', this)" class="pay-method-btn sky-card p-2.5 rounded-xl flex flex-col items-center justify-center gap-1.5 cursor-pointer">
+      <span class="w-11 h-11 rounded-xl bg-white flex items-center justify-center p-1.5 shadow"><img src="https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/175cdc14e53246aaa4dff774d3f2e305.webp" alt="باينانس باي" class="max-w-full max-h-full object-contain" loading="lazy"></span>
       <span class="text-[10px] font-medium text-white">Binance Pay</span>
      </button>
 
-     <button type="button" onclick="selectPaymentMethod('redotpay', '🔴 ريدوت باي (RedotPay)', this)" class="pay-method-btn sky-card p-2 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer">
-      <div class="w-7 h-7 bg-rose-600 rounded-lg flex items-center justify-center text-white font-bold text-xs">R</div>
+     <button type="button" onclick="selectPaymentMethod('redotpay', '🔴 ريدوت باي (RedotPay)', this)" class="pay-method-btn sky-card p-2.5 rounded-xl flex flex-col items-center justify-center gap-1.5 cursor-pointer">
+      <span class="w-11 h-11 rounded-xl flex items-center justify-center text-white font-bold text-sm shadow" style="background:#e11d48">R</span>
       <span class="text-[10px] font-medium text-white">RedotPay</span>
      </button>
 
-     <button type="button" onclick="selectPaymentMethod('paypal', '🔵 باي بال (PayPal)', this)" class="pay-method-btn sky-card p-2 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer">
-      <div class="w-7 h-7 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-xs">P</div>
+     <button type="button" onclick="selectPaymentMethod('paypal', '🔵 باي بال (PayPal)', this)" class="pay-method-btn sky-card p-2.5 rounded-xl flex flex-col items-center justify-center gap-1.5 cursor-pointer">
+      <span class="w-11 h-11 rounded-xl bg-white flex items-center justify-center p-1.5 shadow"><img src="https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/e55beb8844344707a0a0e4be1507179f.png" alt="PayPal" class="max-w-full max-h-full object-contain" loading="lazy"></span>
       <span class="text-[10px] font-medium text-white">PayPal</span>
      </button>
 
-     <button type="button" onclick="selectPaymentMethod('cards', '💳 فيزا وماستركارد (Cards)', this)" class="pay-method-btn sky-card p-2 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer">
-      <div class="w-7 h-7 bg-neutral-800 rounded-lg flex items-center justify-center text-white font-bold text-xs">💳</div>
+     <button type="button" onclick="selectPaymentMethod('cards', '💳 فيزا وماستركارد (Cards)', this)" class="pay-method-btn sky-card p-2.5 rounded-xl flex flex-col items-center justify-center gap-1.5 cursor-pointer">
+      <span class="w-11 h-11 rounded-xl bg-white flex items-center justify-center gap-0.5 p-1 shadow"><img src="https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/a77c9abe90fa4c60a247a2eb1d9162a0.png" alt="Visa" class="h-4 object-contain" loading="lazy"><img src="https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/e0398dbfe0a44e1e9163500b46840348.png" alt="Mastercard" class="h-5 object-contain" loading="lazy"></span>
       <span class="text-[10px] font-medium text-white">بطاقة بنكية</span>
      </button>
 
-     <button type="button" onclick="selectPaymentMethod('valu', '⚡ فاليو (valU)', this)" class="pay-method-btn sky-card p-2 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer">
-      <div class="w-7 h-7 bg-red-700 rounded-lg flex items-center justify-center text-white font-black text-[9px]">valU</div>
-      <span class="text-[10px] font-medium text-white">فاليو valU</span>
+     <button type="button" onclick="document.getElementById('installmentsBox').classList.toggle('hidden')" class="sky-card p-2.5 rounded-xl flex flex-col items-center justify-center gap-1.5 cursor-pointer">
+      <span class="w-11 h-11 rounded-xl flex items-center justify-center shadow" style="background:linear-gradient(135deg,#4f7df0,#7c4df0)"><i class="fa-solid fa-layer-group text-white text-lg"></i></span>
+      <span class="text-[10px] font-medium text-white">التقسيط BNPL</span>
      </button>
+    </div>
 
-     <button type="button" onclick="selectPaymentMethod('tamara', '🟠 تمارة (Tamara)', this)" class="pay-method-btn sky-card p-2 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer">
-      <div class="w-7 h-7 bg-amber-600 rounded-lg flex items-center justify-center text-white font-black text-[8px]">tamara</div>
-      <span class="text-[10px] font-medium text-white">تمارة Tamara</span>
-     </button>
-
-     <button type="button" onclick="selectPaymentMethod('tabby', '🟢 تابي (Tabby)', this)" class="pay-method-btn sky-card p-2 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer">
-      <div class="w-7 h-7 bg-emerald-500 rounded-lg flex items-center justify-center text-black font-black text-[9px]">tabby</div>
-      <span class="text-[10px] font-medium text-white">تابي Tabby</span>
-     </button>
-
-     <button type="button" onclick="selectPaymentMethod('souhoola', '🟣 سهولة (Souhoola)', this)" class="pay-method-btn sky-card p-2 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer">
-      <div class="w-7 h-7 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold text-[9px]">سهولة</div>
-      <span class="text-[10px] font-medium text-white">سهولة</span>
-     </button>
-
-     <button type="button" onclick="selectPaymentMethod('forsa', '🟢 فرصة (Forsa)', this)" class="pay-method-btn sky-card p-2 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer">
-      <div class="w-7 h-7 bg-teal-600 rounded-lg flex items-center justify-center text-white font-bold text-[9px]">فرصة</div>
-      <span class="text-[10px] font-medium text-white">فرصة Forsa</span>
-     </button>
-
-     <button type="button" onclick="selectPaymentMethod('aman', '🔵 أمان (Aman)', this)" class="pay-method-btn sky-card p-2 rounded-xl flex flex-col items-center justify-center gap-1 cursor-pointer">
-      <div class="w-7 h-7 bg-cyan-600 rounded-lg flex items-center justify-center text-white font-bold text-[9px]">أمان</div>
-      <span class="text-[10px] font-medium text-white">أمان Aman</span>
-     </button>
+    <!-- Installments (BNPL) grouped window -->
+    <div id="installmentsBox" class="hidden mb-3 sky-card p-3">
+     <p class="text-[11px] font-bold text-white mb-2 font-mono-code">التقسيط بدون فوائد (BNPL) — اختر الخدمة:</p>
+     <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+      <button type="button" onclick="selectPaymentMethod('valu', '⚡ فاليو (valU)', this)" class="pay-method-btn sky-card p-2 rounded-lg flex items-center gap-2 cursor-pointer">
+       <span class="w-8 h-8 rounded-lg flex items-center justify-center text-white font-black text-[11px] shrink-0 shadow" style="background:#b91c1c">valU</span>
+       <span class="text-[10px] font-medium text-white text-right">فاليو valU</span>
+      </button>
+      <button type="button" onclick="selectPaymentMethod('tamara', '🟠 تمارة (Tamara)', this)" class="pay-method-btn sky-card p-2 rounded-lg flex items-center gap-2 cursor-pointer">
+       <span class="w-8 h-8 rounded-lg flex items-center justify-center text-white font-black text-[9px] shrink-0 shadow" style="background:#d97706">tamara</span>
+       <span class="text-[10px] font-medium text-white text-right">تمارة Tamara</span>
+      </button>
+      <button type="button" onclick="selectPaymentMethod('tabby', '🟢 تابي (Tabby)', this)" class="pay-method-btn sky-card p-2 rounded-lg flex items-center gap-2 cursor-pointer">
+       <span class="w-8 h-8 rounded-lg flex items-center justify-center text-black font-black text-[9px] shrink-0 shadow" style="background:#3edc81">tabby</span>
+       <span class="text-[10px] font-medium text-white text-right">تابي Tabby</span>
+      </button>
+      <button type="button" onclick="selectPaymentMethod('souhoola', '🟣 سهولة (Souhoola)', this)" class="pay-method-btn sky-card p-2 rounded-lg flex items-center gap-2 cursor-pointer">
+       <span class="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-[9px] shrink-0 shadow" style="background:#4f46e5">سهولة</span>
+       <span class="text-[10px] font-medium text-white text-right">سهولة Souhoola</span>
+      </button>
+      <button type="button" onclick="selectPaymentMethod('forsa', '🟢 فرصة (Forsa)', this)" class="pay-method-btn sky-card p-2 rounded-lg flex items-center gap-2 cursor-pointer">
+       <span class="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-[9px] shrink-0 shadow" style="background:#0d9488">فرصة</span>
+       <span class="text-[10px] font-medium text-white text-right">فرصة Forsa</span>
+      </button>
+      <button type="button" onclick="selectPaymentMethod('aman', '🔵 أمان (Aman)', this)" class="pay-method-btn sky-card p-2 rounded-lg flex items-center gap-2 cursor-pointer">
+       <span class="w-8 h-8 rounded-lg flex items-center justify-center text-white font-bold text-[9px] shrink-0 shadow" style="background:#0891b2">أمان</span>
+       <span class="text-[10px] font-medium text-white text-right">أمان Aman</span>
+      </button>
+     </div>
     </div>
 
     <!-- Active Details Display -->
@@ -1051,10 +1057,14 @@
         }
     });
 
-    const originalSelectPaymentMethod = window.selectPaymentMethod;
-    window.selectPaymentMethod = function(type, title, el) {
-        if (typeof originalSelectPaymentMethod === 'function') {
-            originalSelectPaymentMethod(type, title, el);
+    /* Binance QR: install AFTER app.js loads, otherwise app.js's own
+       selectPaymentMethod declaration overwrites this wrapper. */
+    window.__installBinanceQr = function() {
+        if (window.__binanceQrInstalled) return;
+        const base = window.selectPaymentMethod;
+        window.selectPaymentMethod = function(type, title, el) {
+        if (typeof base === 'function') {
+            base(type, title, el);
         }
         if (type === 'binance') {
             const box = document.getElementById('checkoutDetailsBox');
@@ -1072,7 +1082,10 @@
                 `;
             }
         }
+        };
+        window.__binanceQrInstalled = true;
     };
+    window.addEventListener('load', function() { window.__installBinanceQr(); });
   </script>
 
   <!-- Dynamic Cache-Busting Module Loader -->
@@ -1083,7 +1096,9 @@
       files.forEach(file => {
         const s = document.createElement('script');
         s.src = file + '?' + v;
-        if (file === 'app.js') s.defer = true;
+        if (file === 'app.js') {
+          s.onload = function() { if (window.__installBinanceQr) window.__installBinanceQr(); };
+        }
         document.body.appendChild(s);
       });
     })();
