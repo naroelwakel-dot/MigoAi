@@ -300,38 +300,22 @@
     .bg-black\/50, .bg-black\/60 { background-color: rgba(18, 21, 27, 0.7) !important; }
     .bg-black\/40 { background-color: rgba(18, 21, 27, 0.5) !important; }
 
-    /* ---- Uniform, window-responsive product image frame ----
-            Every product card shows its image in the SAME frame shape, scaled to
-            the card width, so tiles line up section to section and resize with the
-            window (games / live / VCC / software / entertainment / AI). ---- */
+    /* ---- Uniform full-bleed product art frame ----
+            Every product card shows its real image full-bleed in the SAME frame:
+            a square tile (1:1) cropped to fill edge to edge, exactly like the
+            suppliers' own grids. Tiles line up section to section and resize with
+            the window (games / live / VCC / software / entertainment / AI). ---- */
+    #gamesCardsContainer .sky-card > div:first-child,
     #liveAppsContainer .sky-card > div:first-child,
     #vccCardsContainer .sky-card > div:first-child,
     #productivityContainer .sky-card > div:first-child,
     #entertainmentCardsContainer .sky-card > div:first-child,
     #aiCardsContainer .sky-card > div:first-child {
         height: auto !important;
-        aspect-ratio: 16 / 9 !important;
-    }
-
-    /* ---- Games: real full-bleed product art (square tile, like the suppliers),
-            cropped to fill the frame edge to edge ---- */
-    #gamesCardsContainer .sky-card > div:first-child {
-        height: auto !important;
         aspect-ratio: 1 / 1 !important;
         background-size: cover !important;
         background-repeat: no-repeat !important;
         background-position: center !important;
-    }
-
-    /* ---- Brand logos: show the whole logo sized to fit the card frame,
-            centred, on the card's own dark background (no light panel) ---- */
-    #productivityContainer .sky-card > .bg-cover,
-    #entertainmentCardsContainer .sky-card > .bg-cover,
-    #liveAppsContainer .sky-card > .bg-cover,
-    #aiCardsContainer .sky-card > .bg-cover {
-        background-size: contain !important;
-        background-repeat: no-repeat !important;
-        background-position: center 42% !important;
         background-color: transparent !important;
     }
 
