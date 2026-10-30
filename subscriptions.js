@@ -55,7 +55,9 @@ const subscriptionsData = [
     banner: "Geminipro.png",
     description: "اشتراك رسمي متكامل مع وصول دائم لأحدث النماذج المتقدمة.",
     packages: [
-      { id: "gemini_18m", name: "18 شهر — 69 ج.م", duration: "18 شهر", price: 69 }
+      { id: "gemini_18m", name: "Gemini AI Pro — 18 شهر — 69 ج.م", duration: "18 شهر", price: 69 },
+      { id: "gemini_ai_pro_12m", name: "Google AI Pro — 12 شهر (FW) — 63 ج.م", duration: "12 شهر (FW)", price: 63 },
+      { id: "gemini_ai_plus_3m", name: "Google AI Plus — 3 شهور (FW) — 41 ج.م", duration: "3 شهور (FW)", price: 41 }
     ]
   },
   {
@@ -187,7 +189,10 @@ const subscriptionsData = [
       { id: "canva_2yrs", name: "Canva Pro 2 yrs — 56 ج.م", duration: "سنتان", price: 56 },
       { id: "canva_2y_fw", name: "سنتان (FW) — 130 ج.م", duration: "سنتان (FW)", price: 130 },
       { id: "canva_1m_pers", name: "شهر شخصي — 130 ج.م", duration: "شهر شخصي", price: 130 },
-      { id: "canva_admin", name: "حساب Admin — 345 ج.م", duration: "حساب Admin", price: 345 }
+      { id: "canva_admin", name: "حساب Admin — 345 ج.م", duration: "حساب Admin", price: 345 },
+      { id: "canva_pro_inv_1y", name: "Canva Pro Invitation — سنة (Full) — 439 ج.م", duration: "سنة (Invitation Full)", price: 439 },
+      { id: "canva_edu_inv_1y", name: "Canva Education Invitation — سنة — 4 ج.م", duration: "سنة (Education)", price: 4 },
+      { id: "canva_edu_admin_500", name: "Canva Edu Admin — 500 دعوة — 144 ج.م", duration: "Edu Admin (500 دعوة)", price: 144 }
     ]
   },
   {
@@ -199,7 +204,8 @@ const subscriptionsData = [
     banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/af6f9a608e9e4ceba231b0caedbc5f96.svg",
     description: "إدارة المهام والملاحظات وقواعد البيانات باحترافية تامة.",
     packages: [
-      { id: "notion_1y", name: "Notion Plus 12M — 100 ج.م", duration: "سنة واحدة", price: 100 }
+      { id: "notion_1y", name: "Notion Plus 12M — 100 ج.م", duration: "سنة واحدة", price: 100 },
+      { id: "notion_biz_coupon_3m", name: "Notion Business Coupon — 3 شهور — 68 ج.م", duration: "3 شهور", price: 68 }
     ]
   },
   {
@@ -376,6 +382,18 @@ const subscriptionsData = [
     description: "تصفح آمن وسريع مع خوادم عالمية فائقة السرعة.",
     packages: [
       { id: "express_1m", name: "ExpressVPN 1M — 100 ج.م", duration: "شهر واحد", price: 100 }
+    ]
+  },
+  {
+    id: "nordvpn",
+    name: "NordVPN",
+    provider: "NordVPN الرسمي",
+    category: "productivity",
+    badge: "حماية وVPN 🔒",
+    banner: "",
+    description: "اشتراك NordVPN لكود تفعيل ثلاث شهور.",
+    packages: [
+      { id: "nordvpn_coupon_3m", name: "NordVPN Coupon — 3 شهور — 154 ج.م", duration: "3 شهور", price: 154 }
     ]
   }
 ];
