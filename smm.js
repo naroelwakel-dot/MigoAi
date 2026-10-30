@@ -1,49 +1,28 @@
 // ==============================================================================
 // Migo AI Solution - smm.js
-// محرك السوشيال ميديا (18 منصة ببانرات أفقية واقعية مخصصة) + البطاقات الافتراضية VCC
+// محرك السوشيال ميديا الكامل (18 منصة بكافة خدماتها التفصيلية) + البطاقات الافتراضية VCC
 // ==============================================================================
 
-// 1. البطاقات الافتراضية الدولية (Virtual Credit Cards - VCC)
+// 1. البطاقات الافتراضية الدولية (Virtual Credit Cards - VCC) مع خيار اختر باقتك المرنة
 const vccData = [
   {
-    id: "vcc_10",
-    name: "بطاقة VCC دولية (10$)",
-    balanceUsd: 10,
+    id: "vcc_custom_box",
+    name: "بطاقة VCC دولية (اختر باقتك)",
+    balanceUsd: "مرن",
     priceEgp: 620,
-    banner: "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=1200&q=80",
-    badge: "تفعيل فوري 💳",
-    description: "صالحة للشراء الدولي وتفعيل الاشتراكات والإعلانات."
-  },
-  {
-    id: "vcc_25",
-    name: "بطاقة VCC دولية (25$)",
-    balanceUsd: 25,
-    priceEgp: 1550,
-    banner: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=1200&q=80",
-    badge: "الأكثر طلباً 🔥",
-    description: "مشحونة برصيد 25 دولار ومقبولة في مختلف المنصات العالمية."
-  },
-  {
-    id: "vcc_50",
-    name: "بطاقة VCC دولية (50$)",
-    balanceUsd: 50,
-    priceEgp: 3100,
-    banner: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=1200&q=80",
-    badge: "رصيد مميز ⚡",
-    description: "مثالية للمدفوعات والحملات الإعلانية واشتراكات المطورين."
-  },
-  {
-    id: "vcc_100",
-    name: "بطاقة VCC دولية (100$)",
-    balanceUsd: 100,
-    priceEgp: 6200,
-    banner: "https://images.unsplash.com/photo-1589758438368-0ad531db3366?auto=format&fit=crop&w=1200&q=80",
-    badge: "باقة النخبة 💎",
-    description: "بطاقة دفع رقمية برصيد 100 دولار كاملة مع كود التحقق 3DS."
+    banner: "Square-VCC-Product-Focused-Blog.jpg",
+    badge: "اختر باقتك ⚡",
+    description: "صالحة للشراء الدولي وتفعيل الاشتراكات والإعلانات بقيمة مرنة حسب اختيارك.",
+    packages: [
+      { name: "بطاقة برصيد 10$ — 620 ج.م", price: 620, usd: 10 },
+      { name: "بطاقة برصيد 25$ — 1,550 ج.م", price: 1550, usd: 25 },
+      { name: "بطاقة برصيد 50$ — 3,100 ج.م", price: 3100, usd: 50 },
+      { name: "بطاقة برصيد 100$ — 6,200 ج.م", price: 6200, usd: 100 }
+    ]
   }
 ];
 
-// 2. محرك خدمات السوشيال ميديا للمنصات الـ 18 (بانرات مخصصة لكل تطبيق)
+// 2. محرك خدمات السوشيال ميديا للمنصات الـ 18 (كاملة وبدون أي نقص)
 const smmPlatforms = [
   {
     id: "tiktok",
