@@ -243,7 +243,7 @@ function updateCartUI() {
             container.innerHTML = cart.map(item => `
                 <div class="bg-slate-950 border border-slate-700 rounded-xl p-2.5 flex justify-between items-center gap-2">
                     <div class="flex-1 min-w-0">
-                        <h4 class="text-xs font-bold text-white truncate">${item.name}</h4>
+                        <h3 class="text-xs font-bold text-white truncate">${item.name}</h3>
                         <div class="text-[10px] text-sky-400 truncate">${item.details || ''}</div>
                     </div>
                     <div class="text-left shrink-0">
@@ -731,7 +731,7 @@ function renderEntertainment() {
                         <span class="text-[9px] bg-purple-500/20 text-purple-300 border border-purple-500/40 px-2 py-0.5 rounded-full font-bold w-fit">
                             ${e.badge || 'ترفيه وبث'}
                         </span>
-                        <h4 class="font-bold text-xs sm:text-sm text-white">${e.name}</h4>
+                        <h3 class="font-bold text-xs sm:text-sm text-white">${e.name}</h3>
                     </div>
                 </div>
                 <div class="p-3 bg-slate-900/60 flex-1 flex flex-col justify-between">
@@ -780,7 +780,7 @@ function renderAI() {
                         <span class="text-[9px] bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 px-2.5 py-0.5 rounded-full font-bold w-fit">
                             ${a.badge || a.tag || 'ذكاء اصطناعي'}
                         </span>
-                        <h4 class="font-extrabold text-sm sm:text-base text-white drop-shadow-md">${a.name}</h4>
+                        <h3 class="font-extrabold text-sm sm:text-base text-white drop-shadow-md">${a.name}</h3>
                     </div>
                 </div>
                 <div class="p-3 bg-slate-900/60 flex-1 flex flex-col justify-between">
