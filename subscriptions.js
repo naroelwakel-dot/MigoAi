@@ -55,13 +55,13 @@ const subscriptionsData = [
     banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/7aa52bc207244312a28617412c89bfb6.webp",
     description: "خيارات متعددة للتفعيل لفتح كافة الميزات والقوالب المدفوعة.",
     packages: [
-      { id: "canva_2yrs", name: "Canva Pro 2 yrs — 56 ج.م", duration: "سنتان", price: 56 },
-      { id: "canva_2y_fw", name: "سنتان (FW) — 119 ج.م", duration: "سنتان (FW)", price: 119 },
-      { id: "canva_1m_pers", name: "شهر شخصي — 119 ج.م", duration: "شهر شخصي", price: 119 },
-      { id: "canva_admin", name: "حساب Admin — 313 ج.م", duration: "حساب Admin", price: 313 },
-      { id: "canva_pro_inv_1y", name: "Canva Pro Invitation — سنة (Full) — 439 ج.م", duration: "سنة (Invitation Full)", price: 439 },
-      { id: "canva_edu_inv_1y", name: "Canva Education Invitation — سنة — 4 ج.م", duration: "سنة (Education)", price: 4 },
-      { id: "canva_edu_admin_500", name: "Canva Edu Admin — 500 دعوة — 313 ج.م", duration: "Edu Admin (500 دعوة)", price: 313 }
+      { id: "canva_2yrs", name: "سنتان (انضمام فريق Edu) — 56 ج.م", duration: "سنتان", price: 56 },
+      { id: "canva_2y_fw", name: "سنتان (تفعيل بضمان كامل FW) — 119 ج.م", duration: "سنتان (FW)", price: 119 },
+      { id: "canva_1m_pers", name: "شهر واحد (حساب شخصي خاص) — 119 ج.م", duration: "شهر شخصي", price: 119 },
+      { id: "canva_admin", name: "حساب Canva Admin — 313 ج.م", duration: "حساب Admin", price: 313 },
+      { id: "canva_pro_inv_1y", name: "سنة كاملة (دعوة رسمية Invitation) — 439 ج.م", duration: "سنة (Invitation Full)", price: 439 },
+      { id: "canva_edu_inv_1y", name: "سنة (دعوة Canva Education) — 4 ج.م", duration: "سنة (Education)", price: 4 },
+      { id: "canva_edu_admin_500", name: "حساب Edu Admin (500 دعوة) — 313 ج.م", duration: "Edu Admin (500 دعوة)", price: 313 }
     ]
   },
   {
