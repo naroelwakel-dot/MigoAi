@@ -337,7 +337,7 @@ function renderCoinsAndStars() {
             const defaultFinalPrice = calculateAutoPrice(ttPkgs[0].price);
             ttContainer.innerHTML = `
                 <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg relative" style="min-height: 180px;">
-                    <div class="absolute inset-0 bg-cover bg-center opacity-40" style="background-image: url('${ttBanner}');"></div>
+                    <img src="${ttBanner}" alt="" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover object-center opacity-40">
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent"></div>
                     <div class="relative z-10 p-4 flex flex-col justify-between h-full gap-3">
                         <div class="flex items-center justify-between">
@@ -370,7 +370,7 @@ function renderCoinsAndStars() {
             const defaultFinalPrice = calculateAutoPrice(tgPkgs[0].price);
             tgContainer.innerHTML = `
                 <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg relative" style="min-height: 180px;">
-                    <div class="absolute inset-0 bg-cover bg-center opacity-40" style="background-image: url('${tgBanner}');"></div>
+                    <img src="${tgBanner}" alt="" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover object-center opacity-40">
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent"></div>
                     <div class="relative z-10 p-4 flex flex-col justify-between h-full gap-3">
                         <div class="flex items-center justify-between">
@@ -465,7 +465,7 @@ function renderGames() {
 
         return `
             <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg">
-                <div class="h-28 sm:h-32 relative bg-cover bg-center" style="background-image: url('${bannerUrl}');">
+                <div class="h-28 sm:h-32 relative overflow-hidden bg-[#12151b]"><img src="${bannerUrl}" alt="" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover object-center">
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent p-3 flex flex-col justify-between">
                         <div class="flex justify-between items-start">
                             <span class="text-[9px] font-bold text-emerald-300 bg-emerald-500/20 px-2.5 py-0.5 rounded-full border border-emerald-500/40 backdrop-blur-md">
@@ -521,7 +521,7 @@ function renderLiveApps() {
 
         return `
             <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg">
-                <div class="h-28 sm:h-32 relative bg-cover bg-center" style="background-image: url('${bannerUrl}');">
+                <div class="h-28 sm:h-32 relative overflow-hidden bg-[#12151b]"><img src="${bannerUrl}" alt="" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover object-center">
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent p-3 flex flex-col justify-between">
                         <div>
                             <span class="text-[9px] font-bold text-rose-300 bg-rose-500/20 px-2.5 py-0.5 rounded-full border border-rose-500/40 backdrop-blur-md">
@@ -574,7 +574,7 @@ function renderVccCards() {
 
         return `
             <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg">
-                <div class="h-28 relative bg-cover bg-center" style="background-image: url('${bannerUrl}');">
+                <div class="h-28 relative overflow-hidden bg-[#12151b]"><img src="${bannerUrl}" alt="" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover object-center">
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent p-3 flex flex-col justify-between">
                         <span class="text-[9px] bg-amber-500/20 text-amber-300 border border-amber-500/40 px-2.5 py-0.5 rounded-full font-bold w-fit">
                             ${v.badge || 'فيزا دولية'}
@@ -698,7 +698,7 @@ function renderProductivity() {
 
         return `
             <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg">
-                <div class="h-24 relative bg-cover bg-center" style="background-image: url('${bannerUrl}');">
+                <div class="h-24 relative overflow-hidden bg-[#12151b]"><img src="${bannerUrl}" alt="" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover object-center">
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent p-2.5 flex flex-col justify-between">
                         <span class="text-[9px] bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 px-2 py-0.5 rounded-full font-bold w-fit">
                             ${p.badge || 'إنتاجية'}
@@ -743,7 +743,7 @@ function renderEntertainment() {
 
         return `
             <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg">
-                <div class="h-24 relative bg-cover bg-center" style="background-image: url('${bannerUrl}');">
+                <div class="h-24 relative overflow-hidden bg-[#12151b]"><img src="${bannerUrl}" alt="" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover object-center">
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent p-2.5 flex flex-col justify-between">
                         <span class="text-[9px] bg-purple-500/20 text-purple-300 border border-purple-500/40 px-2 py-0.5 rounded-full font-bold w-fit">
                             ${e.badge || 'ترفيه وبث'}
@@ -792,7 +792,7 @@ function renderAI() {
 
         return `
             <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg">
-                <div class="h-28 sm:h-32 relative bg-cover bg-center" style="background-image: url('${bannerUrl}');">
+                <div class="h-28 sm:h-32 relative overflow-hidden bg-[#12151b]"><img src="${bannerUrl}" alt="" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover object-center">
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent p-3 flex flex-col justify-between">
                         <span class="text-[9px] bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 px-2.5 py-0.5 rounded-full font-bold w-fit">
                             ${a.badge || a.tag || 'ذكاء اصطناعي'}
@@ -1158,7 +1158,7 @@ async function verifyPlayerAccount() {
             }
             if (avatarUrl) {
                 const iconBox = document.getElementById('modalTargetIcon');
-                if (iconBox) iconBox.innerHTML = `<img src="${avatarUrl}" class="w-full h-full object-cover rounded-xl" alt="avatar">`;
+                if (iconBox) iconBox.innerHTML = `<img src="${avatarUrl}" class="w-full h-full object-cover rounded-xl" alt="avatar" loading="lazy" decoding="async">`;
             }
             showToast(`تم التعرف على الحساب: ${retrievedName || uid}`);
         } else {
