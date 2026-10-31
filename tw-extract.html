@@ -7,44 +7,60 @@
 </head>
 <body>
 <pre id="status">BOOT</pre>
-<div id="chunks"></div>
+<pre id="out"></pre>
 <iframe id="store" src="index.html" style="width:1300px;height:900px;border:0"></iframe>
 <script>
 (function(){
   var f = document.getElementById('store');
   var status = document.getElementById('status');
+  var out = document.getElementById('out');
+  var CSS = '', CH = [];
+  var want = parseInt((location.hash||'').replace('#',''),10) || 0;
   var last = -1, stable = 0;
-  function totalStyleLen(doc){
-    var t = 0, ss = doc.querySelectorAll('style');
-    for (var i=0;i<ss.length;i++) t += (ss[i].textContent||'').length;
-    return {len:t, count:ss.length};
-  }
+
   function allCss(doc){
-    var out='', ss=doc.querySelectorAll('style');
-    for (var i=0;i<ss.length;i++) out += (ss[i].textContent||'') + '\n';
-    return out;
+    var s='', ss=doc.querySelectorAll('style');
+    for (var i=0;i<ss.length;i++) s += (ss[i].textContent||'') + '\n';
+    return s;
+  }
+  function totalLen(doc){
+    var t=0, ss=doc.querySelectorAll('style');
+    for (var i=0;i<ss.length;i++) t += (ss[i].textContent||'').length;
+    return t;
+  }
+  function buildChunks(css){
+    var lines = css.split('\n'), chunks = [], cur = '';
+    for (var i=0;i<lines.length;i++){
+      if (cur.length + lines[i].length > 3000){ chunks.push(cur); cur = ''; }
+      cur += lines[i] + '\n';
+    }
+    if (cur) chunks.push(cur);
+    return chunks;
+  }
+  function render(){
+    var i = Math.min(want, CH.length-1);
+    out.textContent = '@@TW'+i+'/'+(CH.length-1)+'@@\n' + CH[i];
+    status.textContent = 'READY len='+CSS.length+' chunks='+CH.length+' show='+i;
   }
   function tick(){
     if(!f.contentDocument){ status.textContent='NO-DOC'; return; }
-    var m = totalStyleLen(f.contentDocument);
-    if(m.len === last && m.len > 5000){ stable++; } else { stable=0; }
-    last = m.len;
-    status.textContent = 'styles='+m.count+' len='+m.len+' stable='+stable;
+    var len = totalLen(f.contentDocument);
+    if(len === last && len > 5000){ stable++; } else { stable=0; }
+    last = len;
+    status.textContent = 'styles len='+len+' stable='+stable;
     if(stable >= 3){ done(); return; }
     setTimeout(tick, 1000);
   }
   function done(){
-    var css = allCss(f.contentDocument);
-    var box = document.getElementById('chunks');
-    var size = 3200, i=0;
-    for(var p=0;p<css.length;p+=size){
-      var pre=document.createElement('pre');
-      pre.textContent='@@TW'+i+'@@\n'+css.slice(p,p+size);
-      box.appendChild(pre);
-      i++;
-    }
-    status.textContent = 'READY len='+css.length+' chunks='+i;
+    CSS = allCss(f.contentDocument);
+    CH = buildChunks(CSS);
+    f.parentNode.removeChild(f);
+    render();
   }
+  window.addEventListener('hashchange', function(){
+    want = parseInt((location.hash||'').replace('#',''),10) || 0;
+    if (CH.length) render();
+  });
   f.addEventListener('load', function(){ setTimeout(tick, 1500); });
 })();
 </script>
