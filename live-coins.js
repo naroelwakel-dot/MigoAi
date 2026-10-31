@@ -5,7 +5,7 @@
 
 // 1. باقات كوينز تيك توك الرسمية بالجنيه المصري (مع البانر المخصص)
 const tiktokCoinsList = {
-  banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/85ef6a0f144d418c9f5d8f0f2c27ac36.webp",
+  banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/8487df546d17404b8189206a03d8cf81.webp",
   packages: [
     { coins: 100, price: 95 },
     { coins: 300, price: 235 },
@@ -25,7 +25,7 @@ const tiktokCoinsList = {
 
 // 2. باقات نجوم تليجرام الرسمية بالجنيه المصري (مع البانر المخصص)
 const telegramStarsList = {
-  banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/7fd23abd5b5b44b79490ae4fae49ca34.webp",
+  banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/bc68344c93cc434180f1f241b56b6a60.webp",
   packages: [
     { stars: 50, price: 55 },
     { stars: 100, price: 110 },
@@ -43,7 +43,7 @@ const liveCoinsData = [
     id: "bigo",
     name: "BIGO Live",
     provider: "شحن بالـ ID",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/5eb3b39e7bf846b7a7cb7411aeb7e0ec.webp",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/3e1ce8b99e4c409288ad27a90eadaff5.webp",
     badge: "شحن فوري بالـ ID ⚡",
     hasZoneId: false,
     apiServiceId: "bigo_live",
@@ -59,7 +59,7 @@ const liveCoinsData = [
     id: "chamet",
     name: "Chamet",
     provider: "تسليم فوري",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/e17c45b13c354470aaebacef0c485bd3.webp",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/bca8cf9f79984424a7aebb22d602e904.webp",
     badge: "تسليم فوري بالمعرّف ⚡",
     hasZoneId: false,
     apiServiceId: "chamet",
@@ -75,7 +75,7 @@ const liveCoinsData = [
     id: "poppo",
     name: "Poppo Live",
     provider: "شحن فوري بالمعرف",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/25907ba7dd3747dda8ae559f2e4f9c05.webp",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/0b79350e1d424351a36b68a805c28f06.webp",
     badge: "شحن فوري ⚡",
     hasZoneId: false,
     apiServiceId: "poppo_live",
@@ -92,7 +92,7 @@ const liveCoinsData = [
     id: "yallaludo",
     name: "Yalla Ludo (يلا لودو)",
     provider: "يلا لودو الرسمي",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/c30d8a33138649939b8f0de73c0a1466.webp",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/7e7915733a71429e88d4d1d85d5810f3.webp",
     badge: "شحن ماسات فوري ⚡",
     hasZoneId: false,
     apiServiceId: "yalla_ludo",
@@ -109,7 +109,7 @@ const liveCoinsData = [
     id: "sugo",
     name: "SUGO (سوجو)",
     provider: "سوجو الرسمي",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/c7dedb3b516f41718e8919f47a72e942.webp",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/a82df41daefb4122ae5e6de03b049d5b.webp",
     badge: "تسليم فوري ⚡",
     hasZoneId: false,
     apiServiceId: "sugo",
@@ -125,7 +125,7 @@ const liveCoinsData = [
     id: "meyo",
     name: "MeYo (ميو)",
     provider: "ميو الرسمي",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/87e7cdd4eaa74f2c9493cc113a2e588e.webp",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/ef8555d9f0724645b93ae779e66c2318.webp",
     badge: "تسليم فوري ⚡",
     hasZoneId: false,
     apiServiceId: "meyo",
