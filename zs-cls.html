@@ -3,15 +3,28 @@
 <style>body{margin:0;background:#111;color:#eee;font:12px monospace}#f{width:412px;height:823px;border:1px solid #444;background:#000}</style>
 </head><body>
 <pre id="out" style="white-space:pre-wrap;padding:6px"></pre>
-<iframe id="f" src="index.html?cls=1"></iframe>
+<iframe id="f" src="index.html?cls=2"></iframe>
 <script>
 var f=document.getElementById('f'), out=document.getElementById('out');
 f.addEventListener('load',function(){
-  var w=f.contentWindow;
+  var w=f.contentWindow, d=f.contentDocument;
+  var samples=[], cls=[];
+  function rect(el){ if(!el) return 'x'; var r=el.getBoundingClientRect(); return Math.round(r.top)+','+Math.round(r.height)+'x'+Math.round(r.width); }
+  function sample(tag){
+    samples.push(tag+' t='+Math.round(w.performance.now())+
+      ' h1='+rect(d.querySelector('h1'))+
+      ' strip='+rect(d.querySelector('.sec-grid'))+
+      ' hero='+rect(d.querySelector('#dragonHero')));
+  }
   try{
-    w.eval("window.__sh=[];window.__cls=0;try{new PerformanceObserver(function(l){var es=l.getEntries();es.forEach(function(e){window.__cls+=e.hadRecentInput?0:e.value;var src=(e.sources||[]).map(function(s){var n=s.node;return n?(n.tagName+(n.id?'#'+n.id:'')+(n.className?'.'+String(n.className).trim().split(/\\s+/).slice(0,3).join('.'):'')):'(noNode)';}).join(' | ');window.__sh.push({t:Math.round(e.startTime),v:+e.value.toFixed(4),recent:!!e.hadRecentInput,src:src});});}).observe({type:'layout-shift',buffered:true});}catch(err){window.__sh.push({err:''+err});}");
-  }catch(e){ out.textContent='ERR '+e; }
-  setTimeout(function(){ var s; try{s=JSON.stringify({cls:+w.__cls.toFixed(4),entries:w.__sh},null,1);}catch(e){s='read err '+e;} out.textContent='RESULT '+s; }, 13000);
+    w.eval("window.__sh=[];try{new PerformanceObserver(function(l){l.getEntries().forEach(function(e){var src=(e.sources||[]).map(function(s){var n=s.node;return n?(n.tagName+(n.id?'#'+n.id:'')):'?';}).join(',');window.__sh.push({t:Math.round(e.startTime),v:+e.value.toFixed(4),src:src});});}).observe({type:'layout-shift',buffered:true});}catch(err){}");
+  }catch(e){ out.textContent='ERR eval '+e; }
+  sample('now');
+  var n=0; var iv=setInterval(function(){ n++; sample('s'+n); if(n>=20){clearInterval(iv); done();} },150);
+  function done(){
+    var sh=[]; try{ sh=w.__sh||[]; }catch(e){}
+    out.textContent='CLS '+JSON.stringify(sh)+'\nRECTS\n'+samples.join('\n');
+  }
 });
 </script>
 </body></html>
