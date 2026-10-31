@@ -14,7 +14,7 @@
   var f = document.getElementById('store');
   var status = document.getElementById('status');
   var out = document.getElementById('out');
-  var CSS = '', CH = [];
+  var B64 = '', CH = [];
   var want = parseInt((location.hash||'').replace('#',''),10) || 0;
   var last = -1, stable = 0;
 
@@ -28,33 +28,30 @@
     for (var i=0;i<ss.length;i++) t += (ss[i].textContent||'').length;
     return t;
   }
-  function buildChunks(css){
-    var segs = css.split('}'), chunks = [], cur = '';
-    for (var i=0;i<segs.length;i++){
-      var piece = segs[i] + (i < segs.length-1 ? '}' : '');
-      if (cur && cur.length + piece.length > 3500){ chunks.push(cur); cur = ''; }
-      cur += piece;
-    }
-    if (cur) chunks.push(cur);
-    return chunks;
+  function toB64(s){
+    try { return btoa(s); }
+    catch(e){ return btoa(unescape(encodeURIComponent(s))); }
+  }
+  function chunkify(s,size){
+    var a=[]; for (var i=0;i<s.length;i+=size) a.push(s.slice(i,i+size)); return a;
   }
   function render(){
     var i = Math.min(want, CH.length-1);
-    out.textContent = '@@TW'+i+'/'+(CH.length-1)+'@@\n' + CH[i].replace(/\n/g,' ');
-    status.textContent = 'READY len='+CSS.length+' chunks='+CH.length+' show='+i;
+    out.textContent = '@@TW'+i+'/'+(CH.length-1)+'@@\n' + CH[i];
+    status.textContent = 'READY b64len='+B64.length+' chunks='+CH.length+' show='+i;
   }
   function tick(){
     if(!f.contentDocument){ status.textContent='NO-DOC'; return; }
     var len = totalLen(f.contentDocument);
     if(len === last && len > 5000){ stable++; } else { stable=0; }
     last = len;
-    status.textContent = 'styles len='+len+' stable='+stable;
+    status.textContent = 'len='+len+' stable='+stable;
     if(stable >= 3){ done(); return; }
     setTimeout(tick, 1000);
   }
   function done(){
-    CSS = allCss(f.contentDocument);
-    CH = buildChunks(CSS);
+    B64 = toB64(allCss(f.contentDocument));
+    CH = chunkify(B64, 4000);
     f.parentNode.removeChild(f);
     render();
   }
