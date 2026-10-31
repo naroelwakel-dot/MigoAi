@@ -349,7 +349,7 @@
     gap: 10px;
     overflow-x: auto;
     overflow-y: hidden;
-    padding: 2px 2px 8px;
+    padding: 12px 2px 12px;
     scroll-snap-type: x proximity;
     -webkit-overflow-scrolling: touch;
 }
