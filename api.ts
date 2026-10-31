@@ -1,4 +1,6 @@
-// build marker 2026-10-30T14:25Z: Fortnite via Osirion (free); FC Mobile uses the one documented Volsever route
+// build marker 2026-10-31T06:10Z: free sources (isan/jollymax) tried before the metered Volsever route
+// for the games they cover (pubg/freefire/mlbb/codm/valorant/genshin), so the Volsever daily budget is
+// spent first on the games only Volsever can serve. Normal fallback order otherwise unchanged.
 // ==============================================================================
 // Migo AI Solution - Verification Engine API (Deno Server)
 // Real account lookup only. No fabricated / placeholder names.
@@ -362,14 +364,17 @@ type Step = { p: "vol" | "nef" | "rap" | "isan" | "jollymax" | "enka" | "osirion
 const ROUTES: Record<string, Step[]> = {
   pubg: [
     { p: "vol", slug: "pubg-mobile-global" },
+    { p: "jollymax" },
     { p: "nef", slug: "pubgm-global" },
     { p: "rap", slug: "pubgm-global" },
-    { p: "jollymax" },
   ],
+  // Free source first (isan is Codashop-backed): it answers SEA/ID-registered
+  // ids for free, so the metered Volsever daily budget is spent only when the
+  // free source finds nothing. Order of the remaining steps is unchanged.
   freefire: [
+    { p: "isan", path: "ff" },
     { p: "vol", slug: "free-fire-global" },
     { p: "nef", slug: "free-fire" },
-    { p: "isan", path: "ff" },
   ],
   clashofclans: [{ p: "vol", slug: "clash-of-clans" }],
   brawlstars: [{ p: "vol", slug: "brawl-stars" }],
@@ -377,21 +382,21 @@ const ROUTES: Record<string, Step[]> = {
     { p: "vol", slug: "ea-sports-fc-mobile-indonesia" },
   ],
   mlbb: [
+    { p: "isan", path: "ml", zone: true },
     { p: "vol", slug: "mobile-legends", zone: true },
     { p: "nef", slug: "mobile-legends", zone: true },
-    { p: "isan", path: "ml", zone: true },
   ],
   codm: [
+    { p: "isan", path: "codm" },
     { p: "vol", slug: "call-of-duty-mobile-indonesia" },
     { p: "vol", slug: "codm-us" },
     { p: "nef", slug: "cod-mobile" },
-    { p: "isan", path: "codm" },
   ],
   valorant: [
+    { p: "isan", path: "valo" },
     { p: "vol", slug: "valorant-indonesia" },
     { p: "vol", slug: "valorant-singapore" },
     { p: "nef", slug: "valorant" },
-    { p: "isan", path: "valo" },
   ],
   wildrift: [{ p: "vol", slug: "league-of-legends-wild-rift" }],
   arenabreakout: [
@@ -509,8 +514,8 @@ Deno.serve(async (req: Request) => {
       trace.push(`enka:${foundName ? "ok" : "none"}`);
       if (!foundName) {
         for (const step of [
-          { p: "vol", slug: "genshin-impact-global" } as Step,
           { p: "isan", path: "gi" } as Step,
+          { p: "vol", slug: "genshin-impact-global" } as Step,
         ]) {
           const r = await runStep(step, id, zoneId);
           trace.push(r.info);
