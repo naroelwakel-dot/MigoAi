@@ -432,3 +432,17 @@ a[aria-label="تواصل مع الدعم الفني"] svg { fill: #ffffff !impor
 
 /* Cart discount row: was blue (text-blue-400); gold to match the identity */
 #cartDiscountRow { color: var(--accent-bright) !important; }
+
+    /* --- Merge the sticky header with the page background (2026-10-31, editor) ---
+       The top title bar was reading as a separate band (own shade + a bottom
+       divider + a texture overlay). Make it transparent so the fixed page
+       background runs straight through it, drop the divider, and hide the
+       texture overlay. The backdrop blur stays, so anything scrolling under the
+       header still softens. */
+    header.sticky {
+        background: transparent !important;
+        border-bottom: 0 !important;
+    }
+    header.sticky > div.absolute.inset-0 {
+        display: none !important;
+    }
