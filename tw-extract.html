@@ -29,17 +29,18 @@
     return t;
   }
   function buildChunks(css){
-    var lines = css.split('\n'), chunks = [], cur = '';
-    for (var i=0;i<lines.length;i++){
-      if (cur.length + lines[i].length > 3000){ chunks.push(cur); cur = ''; }
-      cur += lines[i] + '\n';
+    var segs = css.split('}'), chunks = [], cur = '';
+    for (var i=0;i<segs.length;i++){
+      var piece = segs[i] + (i < segs.length-1 ? '}' : '');
+      if (cur && cur.length + piece.length > 3500){ chunks.push(cur); cur = ''; }
+      cur += piece;
     }
     if (cur) chunks.push(cur);
     return chunks;
   }
   function render(){
     var i = Math.min(want, CH.length-1);
-    out.textContent = '@@TW'+i+'/'+(CH.length-1)+'@@\n' + CH[i];
+    out.textContent = '@@TW'+i+'/'+(CH.length-1)+'@@\n' + CH[i].replace(/\n/g,' ');
     status.textContent = 'READY len='+CSS.length+' chunks='+CH.length+' show='+i;
   }
   function tick(){
