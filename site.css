@@ -429,3 +429,6 @@ a[aria-label="تواصل مع الدعم الفني"] {
 a[aria-label="تواصل مع الدعم الفني"]:hover { filter: brightness(1.08); }
 a[aria-label="تواصل مع الدعم الفني"] svg { fill: #ffffff !important; }
 
+
+/* Cart discount row: was blue (text-blue-400); gold to match the identity */
+#cartDiscountRow { color: var(--accent-bright) !important; }
