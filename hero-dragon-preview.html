@@ -4,14 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
-  <title>معاينة: التنين الثابت + سلايدر العروض المتحرك | Migo AI Solution</title>
+  <title>معاينة: التنين الثابت + العروض بتتبدّل فوقه | Migo AI Solution</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="tailwind.css?v=2026-10-31-3">
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="site.css">
 
   <style>
-    /* ===== هيرو «التنين» الثابت + كتابة سلايدر بتتغير فوقه + لهب متحرك ===== */
+    /* ===== هيرو «التنين» الثابت + العروض بتتبدّل فوقه (تلاشي) + لهب متحرك ===== */
+    html, body { overflow-x: hidden; }
 
     .dragon-hero {
       position: relative; overflow: hidden;
@@ -19,7 +20,6 @@
       display: flex; align-items: center; justify-content: center;
     }
 
-    /* صورة التنين (تبقى مكانها، زووم بطيء جداً) */
     .dragon-hero .d-img {
       position: absolute; inset: 0; width: 100%; height: 100%;
       object-fit: cover; object-position: center;
@@ -31,14 +31,11 @@
       to   { transform: scale(1.08) translate(-0.5%,-0.4%); }
     }
 
-    /* لهب النَفَس المتحرك على مسار نار الصورة */
     .dragon-hero .d-fire {
       position: absolute;
       left: 47%; top: 34%; width: 44%; height: 24%;
-      transform-origin: 0% 50%;
-      transform: rotate(26deg);
-      mix-blend-mode: screen; opacity: .9; pointer-events: none;
-      overflow: hidden;
+      transform-origin: 0% 50%; transform: rotate(26deg);
+      mix-blend-mode: screen; opacity: .9; pointer-events: none; overflow: hidden;
       -webkit-mask-image: linear-gradient(to right, transparent 0, #000 14%, #000 80%, transparent 100%);
               mask-image: linear-gradient(to right, transparent 0, #000 14%, #000 80%, transparent 100%);
       animation: fireFlicker 1.6s ease-in-out infinite alternate;
@@ -52,7 +49,6 @@
     @keyframes fireFlow { from { transform: translateX(0); } to { transform: translateX(-50%); } }
     @keyframes fireFlicker { from { opacity: .7; } to { opacity: 1; } }
 
-    /* وهج فم التنين */
     .dragon-hero .d-mouth {
       position: absolute; left: 42%; top: 35%; width: 17%; height: 22%;
       pointer-events: none; mix-blend-mode: screen;
@@ -61,7 +57,6 @@
     }
     @keyframes mouthPulse { from { opacity: .5; transform: scale(.96); } to { opacity: 1; transform: scale(1.06); } }
 
-    /* جمر خفيف */
     .dragon-hero .d-embers {
       position: absolute; inset: 0; overflow: hidden;
       mix-blend-mode: screen; opacity: .45; pointer-events: none;
@@ -74,19 +69,26 @@
     }
     @keyframes emberRise { from { transform: translateY(0); } to { transform: translateY(-50%); } }
 
-    /* تعتيم لقراءة النص */
     .dragon-hero .d-veil {
       position: absolute; inset: 0; pointer-events: none;
       background: linear-gradient(180deg, rgba(11,13,17,.45), rgba(11,13,17,.82));
     }
 
-    /* مساحة النص المتحرك فوق التنين */
+    /* طبقة النص فوق التنين */
     .hero-content { position: relative; z-index: 10; width: 100%; }
     .hero-content .text-veil {
-      position: absolute; inset: -10% -5%; z-index: -1; pointer-events: none;
-      background: radial-gradient(60% 70% at 50% 50%, rgba(11,13,17,.62), rgba(11,13,17,0) 72%);
+      position: absolute; inset: 0; pointer-events: none;
+      background: radial-gradient(55% 65% at 50% 50%, rgba(11,13,17,.66), rgba(11,13,17,0) 74%);
     }
-    .text-track { transition: transform .7s cubic-bezier(.4,0,.2,1); }
+
+    /* العرض الواحد: يتلاشى بدل ما يتحرك جانبياً (مفيش أي سحب جانبي) */
+    .hero-slides { position: relative; min-height: 175px; }
+    .hero-slide {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      opacity: 0; transition: opacity .7s ease; pointer-events: none;
+    }
+    .hero-slide.is-active { opacity: 1; pointer-events: auto; }
 
     @media (prefers-reduced-motion: reduce) {
       .dragon-hero .d-img, .dragon-hero .d-fire, .dragon-hero .d-fire::before,
@@ -102,16 +104,15 @@
     .motion-btn.active { color: #0b0d11; background: var(--accent, #38bdf8); border-color: transparent; }
     .paused .d-img, .paused .d-fire, .paused .d-fire::before,
     .paused .d-mouth, .paused .d-embers::before { animation-play-state: paused !important; }
-    .paused .text-track { transition: none; }
   </style>
  </head>
  <body>
 
   <div class="max-w-6xl mx-auto px-4 pt-6">
     <div class="sky-surface rounded-2xl p-4 mb-4 border border-white/10">
-      <div class="text-white font-bold mb-1">معاينة: التنين ثابت + سلايدر العروض بيتغيّر فوقه</div>
+      <div class="text-white font-bold mb-1">معاينة: التنين ثابت + العروض بتتبدّل فوقه</div>
       <p class="text-xs text-slate-400 leading-relaxed mb-3">
-        الصورة واللهب ثابتين وخلفية واحدة، وفوقهم <b>نفس الـ3 عروض</b> بتتبدّل لوحدها كل ~5 ثواني (زي السلايدر الحالي) — الكلام بيتغيّر والتنين ثابت. فيه زر إيقاف للهب لو حبيت تشوف الفرق.
+        خلفية واحدة وصورة ثابتة، واللهب بيتحرك. فوقها <b>نفس الـ3 عروض</b> بتتبدّل لوحدها كل ~5 ثواني بين بعض (بتلاشي ناعم). زر الإيقاف للهب بس لو حبيت تشوف الفرق.
       </p>
       <div class="flex flex-wrap gap-2">
         <button class="motion-btn active" id="playBtn">تشغيل لهب</button>
@@ -130,33 +131,27 @@
 
       <div class="hero-content">
         <div class="text-veil"></div>
-        <div class="overflow-hidden max-w-xl mx-auto">
-          <div id="textTrack" class="text-track flex">
-
-            <div class="w-full shrink-0 px-5 text-center">
-              <span class="inline-block pill-badge mb-3 font-mono-code">VERIFIED CREDITS</span>
-              <h3 class="text-xl sm:text-2xl font-bold text-white mb-2 tracking-tight drop-shadow">شحن كوينز تيك توك الرسمية</h3>
-              <p class="text-xs text-slate-300 mb-3 leading-relaxed">تسليم فوري ومباشر إلى حسابك بالاسم الرسمي لدعم البثوث والمشاريع بأمان تام.</p>
-              <div class="text-sm font-bold text-white mb-4 font-mono-code">تبدأ من 95 ج.م</div>
-              <a href="#sec-coins" onclick="return false" class="agentql-btn-primary py-2 px-6 rounded-xl text-xs inline-block">اشحن الآن ⚡</a>
-            </div>
-
-            <div class="w-full shrink-0 px-5 text-center">
-              <span class="inline-block pill-badge mb-3 font-mono-code">GLOBAL PAYMENTS</span>
-              <h3 class="text-xl sm:text-2xl font-bold text-white mb-2 tracking-tight drop-shadow">البطاقات الافتراضية الدولية (VCC)</h3>
-              <p class="text-xs text-slate-300 mb-3 leading-relaxed">تفعيل الاشتراكات الدولية، الحملات الإعلانية، والشراء من المواقع العالمية بالجنيه المصري.</p>
-              <div class="text-sm font-bold text-white mb-4 font-mono-code">تبدأ من 620 ج.م</div>
-              <a href="#sec-vcc" onclick="return false" class="agentql-btn-primary py-2 px-6 rounded-xl text-xs inline-block">طلب بطاقة 💳</a>
-            </div>
-
-            <div class="w-full shrink-0 px-5 text-center">
-              <span class="inline-block pill-badge mb-3 font-mono-code">OFFICIAL MIDASBUY</span>
-              <h3 class="text-xl sm:text-2xl font-bold text-white mb-2 tracking-tight drop-shadow">ببجي موبايل (3850 UC)</h3>
-              <p class="text-xs text-slate-300 mb-3 leading-relaxed">شحن معتمد ومباشر بالـ ID الرسمي مع استرجاع اسم الحساب لحظياً قبل التحويل.</p>
-              <div class="text-sm font-bold text-white mb-4 font-mono-code">3,100 ج.م</div>
-              <button onclick="return false" class="agentql-btn-primary py-2 px-6 rounded-xl text-xs inline-block cursor-pointer">شحن فوري بالـ ID ⚡</button>
-            </div>
-
+        <div class="hero-slides max-w-xl mx-auto">
+          <div class="hero-slide is-active px-5 text-center">
+            <span class="inline-block pill-badge mb-3 font-mono-code">VERIFIED CREDITS</span>
+            <h3 class="text-xl sm:text-2xl font-bold text-white mb-2 tracking-tight drop-shadow">شحن كوينز تيك توك الرسمية</h3>
+            <p class="text-xs text-slate-300 mb-3 leading-relaxed">تسليم فوري ومباشر إلى حسابك بالاسم الرسمي لدعم البثوث والمشاريع بأمان تام.</p>
+            <div class="text-sm font-bold text-white mb-3 font-mono-code">تبدأ من 95 ج.م</div>
+            <a href="#sec-coins" onclick="return false" class="agentql-btn-primary py-2 px-6 rounded-xl text-xs inline-block">اشحن الآن ⚡</a>
+          </div>
+          <div class="hero-slide px-5 text-center">
+            <span class="inline-block pill-badge mb-3 font-mono-code">GLOBAL PAYMENTS</span>
+            <h3 class="text-xl sm:text-2xl font-bold text-white mb-2 tracking-tight drop-shadow">البطاقات الافتراضية الدولية (VCC)</h3>
+            <p class="text-xs text-slate-300 mb-3 leading-relaxed">تفعيل الاشتراكات الدولية، الحملات الإعلانية، والشراء من المواقع العالمية بالجنيه المصري.</p>
+            <div class="text-sm font-bold text-white mb-3 font-mono-code">تبدأ من 620 ج.م</div>
+            <a href="#sec-vcc" onclick="return false" class="agentql-btn-primary py-2 px-6 rounded-xl text-xs inline-block">طلب بطاقة 💳</a>
+          </div>
+          <div class="hero-slide px-5 text-center">
+            <span class="inline-block pill-badge mb-3 font-mono-code">OFFICIAL MIDASBUY</span>
+            <h3 class="text-xl sm:text-2xl font-bold text-white mb-2 tracking-tight drop-shadow">ببجي موبايل (3850 UC)</h3>
+            <p class="text-xs text-slate-300 mb-3 leading-relaxed">شحن معتمد ومباشر بالـ ID الرسمي مع استرجاع اسم الحساب لحظياً قبل التحويل.</p>
+            <div class="text-sm font-bold text-white mb-3 font-mono-code">3,100 ج.م</div>
+            <button onclick="return false" class="agentql-btn-primary py-2 px-6 rounded-xl text-xs inline-block cursor-pointer">شحن فوري بالـ ID ⚡</button>
           </div>
         </div>
         <div class="flex justify-center gap-1.5 py-3" id="sliderDots">
@@ -169,17 +164,16 @@
   </section>
 
   <script>
-    // سلايدر الكتابة (الخلفية ثابتة)
+    // تبديل العروض (تلاشي) — الخلفية ثابتة
     let currentSlide = 0;
-    function updateSlider() {
-      const track = document.getElementById('textTrack');
-      if (track) track.style.transform = 'translateX(' + (currentSlide * 100) + '%)';
-      document.querySelectorAll('#sliderDots .dot').forEach(function(d, i){
-        d.classList.toggle('active', i === currentSlide);
-      });
+    const slides = document.querySelectorAll('.hero-slide');
+    const dots = document.querySelectorAll('#sliderDots .dot');
+    function show(i){
+      currentSlide = i % slides.length;
+      slides.forEach(function(s, k){ s.classList.toggle('is-active', k === currentSlide); });
+      dots.forEach(function(d, k){ d.classList.toggle('active', k === currentSlide); });
     }
-    setInterval(function(){ currentSlide = (currentSlide + 1) % 3; updateSlider(); }, 5000);
-    updateSlider();
+    setInterval(function(){ show(currentSlide + 1); }, 5000);
 
     // إيقاف/تشغيل اللهب
     const dh = document.getElementById('dh');
