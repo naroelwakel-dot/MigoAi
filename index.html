@@ -959,44 +959,52 @@
 <script src="https://cdn.commoninja.com/sdk/latest/commonninja.js" defer></script>
 <div class="commonninja_component pid-944e64e1-9c9f-4871-8e11-b8df82021b73"></div>
 <script>
-/* a11y: give the third-party chat widget's icon-only close button an accessible name
-   (the widget renders inside a shadow root, so we pierce shadow roots) */
+/* a11y: the third-party chat widget renders in a shadow root, so we pierce shadow roots
+   to give its icon-only close button a name and to hide decorative role=img icons. */
 (function(){
-  function name(el){
+  function labelBtn(el){
     if(!el || el.nodeType!==1 || el.tagName!=='BUTTON') return;
+    if(el.getAttribute('data-a11y-done')) return;
     var cls=(el.className&&el.className.toString())||'';
     var isClose=/close/i.test(cls) || (el.closest && el.closest('.chat-container'));
     if(!isClose) return;
     if((el.textContent||'').trim()) return;
-    if(el.getAttribute('title') || el.getAttribute('aria-labelledby')) return;
-    if(el.getAttribute('aria-label')) return;
+    if(el.getAttribute('title') || el.getAttribute('aria-labelledby') || el.getAttribute('aria-label')) return;
     el.setAttribute('aria-label','إغلاق');
   }
-  function nameSvg(el){
+  function hideIcon(el){
     if(!el || el.nodeType!==1 || el.tagName.toLowerCase()!=='svg') return;
+    if(el.getAttribute('data-a11y-done')) return;
     var role=(el.getAttribute('role')||'').toLowerCase();
     if(role!=='img' && role!=='graphics-document' && role!=='graphics-symbol') return;
     if(el.getAttribute('aria-label') || el.getAttribute('aria-labelledby') || el.querySelector('title')) return;
     var host=el.closest && el.closest('button,a,[role=button]');
     if(host && ((host.textContent||'').trim() || host.getAttribute('aria-label') || host.getAttribute('title'))){
       el.setAttribute('aria-hidden','true');
+      el.setAttribute('data-a11y-done','1');
     }
   }
-  function walk(root){
-    var btns, svgs;
-    try{ btns=root.querySelectorAll('button'); }catch(e){ btns=[]; }
-    for(var i=0;i<btns.length;i++) name(btns[i]);
-    try{ svgs=root.querySelectorAll('svg'); }catch(e){ svgs=[]; }
-    for(var s=0;s<svgs.length;s++) nameSvg(svgs[s]);
-    var all;
-    try{ all=root.querySelectorAll('*'); }catch(e){ return; }
-    for(var j=0;j<all.length;j++){ if(all[j].shadowRoot) walk(all[j].shadowRoot); }
+  function scan(root){
+    var els;
+    try{ els=root.querySelectorAll('button,svg'); }catch(e){ els=[]; }
+    for(var i=0;i<els.length;i++){ var e=els[i]; if(e.tagName==='BUTTON') labelBtn(e); else hideIcon(e); }
+    var hosts;
+    try{ hosts=root.querySelectorAll('*'); }catch(e){ return; }
+    for(var h=0;h<hosts.length;h++){ if(hosts[h].shadowRoot) scan(hosts[h].shadowRoot); }
   }
-  function fix(){ walk(document); }
+  function fix(){ scan(document); }
   fix();
   document.addEventListener('DOMContentLoaded',fix);
   window.addEventListener('load',fix);
-  var n=0, iv=setInterval(function(){ fix(); if(++n>30) clearInterval(iv); },600);
+  [500,1500,3000,6000,9000].forEach(function(ms){ setTimeout(fix,ms); });
+  try{
+    new MutationObserver(function(muts){
+      for(var i=0;i<muts.length;i++){
+        var a=muts[i].addedNodes;
+        for(var n=0;n<a.length;n++){ if(a[n] && a[n].nodeType===1) scan(a[n]); }
+      }
+    }).observe(document.documentElement,{childList:true,subtree:true});
+  }catch(e){}
 })();
 </script>
 </body>
