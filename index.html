@@ -3,6 +3,8 @@
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preload" as="style" href="tailwind.css?v=2026-10-31-3">
+  <link rel="preload" as="style" href="site.css?v=2026-10-31-11">
   <meta name="title" content="Migo AI Solution | شحن ألعاب بالـ ID وكوينز تيك توك وبطاقات VCC">
   <meta name="description" content="منصة متكاملة للشحن الفوري للألعاب بالـ ID، كوينز تيك توك ونجوم تليجرام، بطاقات VCC دولية، واشتراكات الذكاء الاصطناعي والسوشيال ميديا بالجنيه المصري مع تسليم فوري ودعم مباشر.">
   <link rel="canonical" href="https://naroelwakel-dot.github.io/MigoAi/">
@@ -194,7 +196,7 @@
      <label for="liveSearchInput" class="sr-only">بحث شامل في المتجر</label>
      <div class="relative flex items-center">
        <input type="text" id="liveSearchInput" oninput="handleLiveSearch(this.value)" placeholder="ابحث في كافة الألعاب، كوينز تيك توك، بطاقات VCC، خدمات السوشيال، والأدوات..." class="w-full bg-[#12151b] border border-white/10 focus:border-white/30 focus:bg-[#171c24] rounded-xl px-4 py-2.5 pl-10 text-xs text-slate-100 placeholder-slate-500 outline-none transition">
-       <button type="button" onclick="document.getElementById('liveSearchInput').value=''; document.getElementById('searchResultsDropdown').classList.add('hidden');" class="absolute left-3 text-slate-400 hover:text-white text-xs w-5 h-5 rounded-md flex items-center justify-center cursor-pointer">✕</button>
+       <button type="button" aria-label="مسح البحث" onclick="document.getElementById('liveSearchInput').value=''; document.getElementById('searchResultsDropdown').classList.add('hidden');" class="absolute left-2 text-slate-400 hover:text-white text-sm w-8 h-8 rounded-lg flex items-center justify-center cursor-pointer">✕</button>
      </div>
      <div id="searchResultsDropdown" class="hidden absolute top-full left-0 right-0 mt-2 bg-[#14181f] border border-white/15 rounded-2xl p-2 shadow-2xl z-50 max-h-80 overflow-y-auto custom-scrollbar backdrop-blur-xl"></div>
     </div>
@@ -957,20 +959,35 @@
 <script src="https://cdn.commoninja.com/sdk/latest/commonninja.js" defer></script>
 <div class="commonninja_component pid-944e64e1-9c9f-4871-8e11-b8df82021b73"></div>
 <script>
-/* a11y: label the third-party chat widget close button */
+/* a11y: give the third-party chat widget's icon-only buttons an accessible name */
 (function(){
-  function fix(){
-    document.querySelectorAll('.commonninja_component button, .chat-container button.close-button').forEach(function(b){
-      if(!(b.textContent||'').trim() && !b.getAttribute('aria-label') && !b.getAttribute('title')){
-        b.setAttribute('aria-label','إغلاق');
-      }
-    });
+  function tag(el){
+    if(!el || el.nodeType!==1 || el.tagName!=='BUTTON') return;
+    if((el.textContent||'').trim()) return;
+    if(el.getAttribute('aria-label') || el.getAttribute('title') || el.getAttribute('aria-labelledby')) return;
+    el.setAttribute('aria-label','إغلاق');
   }
-  window.addEventListener('DOMContentLoaded',fix);
+  function scan(root){
+    if(!root) return;
+    tag(root);
+    if(root.querySelectorAll) root.querySelectorAll('button').forEach(tag);
+  }
+  function fix(){
+    document.querySelectorAll('button.close-button, .chat-container button, .commonninja_component button').forEach(tag);
+  }
+  fix();
+  document.addEventListener('DOMContentLoaded',fix);
   window.addEventListener('load',fix);
-  [300,1000,2500,5000].forEach(function(t){setTimeout(fix,t);});
+  [300,1000,2000,3500,5000,8000,12000].forEach(function(t){setTimeout(fix,t);});
+  try{
+    new MutationObserver(function(muts){
+      for(var i=0;i<muts.length;i++){
+        var added=muts[i].addedNodes;
+        for(var j=0;j<added.length;j++) scan(added[j]);
+      }
+    }).observe(document.documentElement,{childList:true,subtree:true});
+  }catch(e){}
 })();
-</script>
 </body>
 </html>
 
