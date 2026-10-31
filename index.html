@@ -91,9 +91,13 @@
   <link rel="preconnect" href="https://cdn-public.eesel.ai" crossorigin>
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 
-  <!-- Preload the above-the-fold hero image so it is discovered early (speeds LCP) -->
+  <!-- Preload the above-the-fold web fonts + hero image so nothing swaps/waits after first paint -->
   <link rel="preload" as="image" type="image/webp" href="https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/4d0bdeddf0a84558bfbcf283f99f8e6e.webp" fetchpriority="high">
 
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.gstatic.com/s/tajawal/v12/Iura6YBj_oCad4k1nzSBC45I.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.gstatic.com/s/tajawal/v12/Iurf6YBj_oCad4k1l4qkHrRpiYlJ.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.gstatic.com/s/tajawal/v12/Iurf6YBj_oCad4k1l5anHrRpiYlJ.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.gstatic.com/s/tajawal/v12/Iura6YBj_oCad4k1nzGBCw.woff2">
   <link rel="stylesheet" href="tailwind.css?v=2026-10-31-3">
   <!-- Font Awesome icons load without blocking first paint (icons pop in a moment later) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
@@ -968,10 +972,22 @@
     if(el.getAttribute('aria-label')) return;
     el.setAttribute('aria-label','إغلاق');
   }
+  function nameSvg(el){
+    if(!el || el.nodeType!==1 || el.tagName.toLowerCase()!=='svg') return;
+    var role=(el.getAttribute('role')||'').toLowerCase();
+    if(role!=='img' && role!=='graphics-document' && role!=='graphics-symbol') return;
+    if(el.getAttribute('aria-label') || el.getAttribute('aria-labelledby') || el.querySelector('title')) return;
+    var host=el.closest && el.closest('button,a,[role=button]');
+    if(host && ((host.textContent||'').trim() || host.getAttribute('aria-label') || host.getAttribute('title'))){
+      el.setAttribute('aria-hidden','true');
+    }
+  }
   function walk(root){
-    var btns;
+    var btns, svgs;
     try{ btns=root.querySelectorAll('button'); }catch(e){ btns=[]; }
     for(var i=0;i<btns.length;i++) name(btns[i]);
+    try{ svgs=root.querySelectorAll('svg'); }catch(e){ svgs=[]; }
+    for(var s=0;s<svgs.length;s++) nameSvg(svgs[s]);
     var all;
     try{ all=root.querySelectorAll('*'); }catch(e){ return; }
     for(var j=0;j<all.length;j++){ if(all[j].shadowRoot) walk(all[j].shadowRoot); }
