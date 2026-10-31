@@ -928,16 +928,29 @@
   <!-- Dynamic Cache-Busting Module Loader -->
   <script>
     (function() {
-      const v = 'v=2026-10-31-12';
+      const v = 'v=2026-10-31-13';
       const files = ['games.js', 'live-coins.js', 'subscriptions.js', 'smm.js', 'ai-tools.js', 'app.js'];
-      files.forEach(file => {
-        const s = document.createElement('script');
-        s.src = file + '?' + v;
-        if (file === 'app.js') {
-          s.onload = function() { if (window.__installBinanceQr) window.__installBinanceQr(); };
-        }
-        document.body.appendChild(s);
-      });
+      function boot() {
+        files.forEach(file => {
+          const s = document.createElement('script');
+          s.src = file + '?' + v;
+          if (file === 'app.js') {
+            s.onload = function() { if (window.__installBinanceQr) window.__installBinanceQr(); };
+          }
+          document.body.appendChild(s);
+        });
+      }
+      // Load the catalog modules only after the hero image (the LCP element) has
+      // loaded and painted, so these scripts don't compete for bandwidth or block
+      // the main thread during the critical rendering window.
+      var started = false;
+      function start() { if (started) return; started = true; requestAnimationFrame(function(){ requestAnimationFrame(boot); }); }
+      var hero = document.querySelector('#dragonHero img.dh-img');
+      if (hero && !(hero.complete && hero.naturalWidth)) {
+        hero.addEventListener('load', start, { once: true });
+        hero.addEventListener('error', start, { once: true });
+        setTimeout(start, 1200);
+      } else { start(); }
     })();
   </script>
  
