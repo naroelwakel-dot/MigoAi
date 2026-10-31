@@ -10,7 +10,7 @@ const vccData = [
     name: "بطاقة VCC دولية (فيزا افتراضية)",
     balanceUsd: "حسب الطلب",
     priceEgp: 620,
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/292d99fa1e714baab0caadaef513ad3a.webp",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/725a5c22417b46109c5aa8a54e93f762.webp",
     badge: "تفعيل فوري 💳",
     description: "بطاقة فيزا افتراضية دولية تُفعّل الاشتراكات والحملات الإعلانية والشراء من المواقع العالمية، بالجنيه المصري مع كود التحقق 3DS.",
     packages: [
@@ -29,7 +29,7 @@ const smmPlatforms = [
     id: "tiktok",
     name: "تيك توك (TikTok)",
     icon: "fab fa-tiktok",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/85ef6a0f144d418c9f5d8f0f2c27ac36.webp",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/8487df546d17404b8189206a03d8cf81.webp",
     services: [
       {
         id: "2410",
@@ -77,7 +77,7 @@ const smmPlatforms = [
     id: "facebook",
     name: "فيسبوك (Facebook)",
     icon: "fab fa-facebook",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/d2730c84cf2c484ea9c539d5a8f38bad.webp",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/e519b9e2348340d5b51cae0c2882345b.webp",
     services: [
       {
         id: "3101",
@@ -105,7 +105,7 @@ const smmPlatforms = [
     id: "instagram",
     name: "انستقرام (Instagram)",
     icon: "fab fa-instagram",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/b45ccbcaee784d479870281a2c287493.webp",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/4918fadac99c466faf761ddb2740c7a0.webp",
     services: [
       {
         id: "4101",
@@ -133,7 +133,7 @@ const smmPlatforms = [
     id: "youtube",
     name: "يوتيوب (YouTube)",
     icon: "fab fa-youtube",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/e3138241574f4b93a96cbdae6a4c866f.webp",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/9a65ee2605ef4565a843042aa11835fa.webp",
     services: [
       {
         id: "5101",
@@ -161,7 +161,7 @@ const smmPlatforms = [
     id: "telegram",
     name: "تليجرام (Telegram)",
     icon: "fab fa-telegram",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/7fd23abd5b5b44b79490ae4fae49ca34.webp",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/bc68344c93cc434180f1f241b56b6a60.webp",
     services: [
       {
         id: "6101",
@@ -189,7 +189,7 @@ const smmPlatforms = [
     id: "twitter",
     name: "إكس / تويتر (Twitter / X)",
     icon: "fab fa-x-twitter",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/8243f09961cb4874ba5a328bd32b2003.webp",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/30be0b7cfe4048258b19055277e1d3c4.webp",
     services: [
       {
         id: "7101",
@@ -217,7 +217,7 @@ const smmPlatforms = [
     id: "snapchat",
     name: "سناب شات (Snapchat)",
     icon: "fab fa-snapchat",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/ae36f11e62fb4183ba23f282405c4c4d.webp",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/06995d0dd75944f3821b18d73299e97e.webp",
     services: [
       {
         id: "8101",
@@ -235,7 +235,7 @@ const smmPlatforms = [
     id: "twitch",
     name: "تويتش (Twitch)",
     icon: "fab fa-twitch",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/bdc023a2ff6a4d5e91b2057dc7b65398.webp",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/04ca90beea9d4b21bb9b7ab509273669.webp",
     services: [
       {
         id: "9101",
@@ -253,7 +253,7 @@ const smmPlatforms = [
     id: "kwai",
     name: "كواي (Kwai)",
     icon: "fas fa-video",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/b037e0f74f674cfaa2e4786c80a5efc3.webp",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/b7353ef3ba1a484ea0a4e33b3bf81f69.webp",
     services: [
       {
         id: "10101",
@@ -271,7 +271,7 @@ const smmPlatforms = [
     id: "linkedin",
     name: "لينكد إن (LinkedIn)",
     icon: "fab fa-linkedin",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/2c44165f2ad54ed194492913ef003747.webp",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/8d35775695454c98a3f13521638940a5.webp",
     services: [
       {
         id: "11101",
@@ -289,7 +289,7 @@ const smmPlatforms = [
     id: "discord",
     name: "ديسكورد (Discord)",
     icon: "fab fa-discord",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/0350706a905042fc910ec6318c11f8f5.webp",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/5a2ca3a143604ec69fa1c2a0e6ee8f7b.webp",
     services: [
       {
         id: "12101",
@@ -307,7 +307,7 @@ const smmPlatforms = [
     id: "spotify_smm",
     name: "سبوتيفاي (Spotify)",
     icon: "fab fa-spotify",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/ea18110bdad54f1dbb7215ba0b6a37ba.webp",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/8826fb4260be49efa12745bd00d181b0.webp",
     services: [
       {
         id: "13101",
@@ -325,7 +325,7 @@ const smmPlatforms = [
     id: "soundcloud",
     name: "ساوند كلاود (SoundCloud)",
     icon: "fab fa-soundcloud",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/e8811e505f054fb7bca4ae542712a975.webp",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/5ff451b5ae9c4b989cfea84a583ae538.webp",
     services: [
       {
         id: "14101",
@@ -343,7 +343,7 @@ const smmPlatforms = [
     id: "pinterest",
     name: "بينترست (Pinterest)",
     icon: "fab fa-pinterest",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/aa5b66b19a9e48bd8e1f6428e4130f56.webp",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/1d4bebb86cab461880de93e17ab58834.webp",
     services: [
       {
         id: "15101",
@@ -361,7 +361,7 @@ const smmPlatforms = [
     id: "threads",
     name: "ثريدز (Threads)",
     icon: "fas fa-at",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/150d854947d74ffc98f6855240283a6c.webp",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/11c8d91179df4d3498aefbb1cd1ef0ae.webp",
     services: [
       {
         id: "16101",
@@ -379,7 +379,7 @@ const smmPlatforms = [
     id: "reddit",
     name: "ريديت (Reddit)",
     icon: "fab fa-reddit",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/8df2772f61a44cfa825244b7bcf20d4a.webp",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/07563f9f07a041b19c62a65c9a815a9c.webp",
     services: [
       {
         id: "17101",
@@ -397,7 +397,7 @@ const smmPlatforms = [
     id: "kick",
     name: "كيك (Kick)",
     icon: "fas fa-play-circle",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/2b58b018962a4b6db87e7d37d63ecd0b.webp",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/d43882fe6d814a219cdeebc4cbbb6061.webp",
     services: [
       {
         id: "18101",
@@ -415,7 +415,7 @@ const smmPlatforms = [
     id: "trovo",
     name: "تروفو (Trovo)",
     icon: "fas fa-gamepad",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/1e74b83ef28249bca8cc5af38dfa307b.webp",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/fc2613091ff6480aaaa64d29a6e52cb5.webp",
     services: [
       {
         id: "19101",
@@ -433,7 +433,7 @@ const smmPlatforms = [
     id: "whatsapp",
     name: "واتساب (WhatsApp)",
     icon: "fab fa-whatsapp",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/be8c9366c356492bac5a6381d76f8995.webp",
+    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/ace79d94ca724d648384c8c51698a632.webp",
     services: [
       { id: "3159", name: "اعضاء قناه واتساب [ اعضاء من جميع العالم ][ أعضاء حقيقيين 100% ][ سريعه ] لا توجد اعاده تعبئه", category: "أعضاء", pricePer1k: 63.72, min: 1000, max: 10000, speed: "سريع ⚡", description: "بدون ضمان ⚠️" },
       { id: "2794", name: "اعضاء قناة واتساب |🎯100% أعضاء حقيقيون |⚡السرعة +10 ألف/اليوم |🔥بداية فورية |✅30 يوم ضمان", category: "أعضاء", pricePer1k: 324.87, min: 1000, max: 500000, speed: "فوري ⚡", description: "مع ضمان ♻️" },
