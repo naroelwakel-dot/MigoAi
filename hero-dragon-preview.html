@@ -15,7 +15,10 @@
 
     .dragon-hero {
       position: relative; overflow: hidden;
-      min-height: clamp(300px, 42vw, 440px);
+      /* نفس نسبة صورة التنين (16:9) => الصورة تتطابق 1:1 مع الصندوق
+         فالطبقات تفضل مطابقة لمسار النار على كل مقاسات الشاشة */
+      aspect-ratio: 16 / 9;
+      display: flex; align-items: center; justify-content: center;
     }
 
     /* صورة التنين (زووم بطيء خفيف) */
@@ -33,9 +36,10 @@
     /* لهب النَفَس: نسيج نار (screen) مائل على مسار اللهب، بتدفّق ووميض */
     .dragon-hero .d-fire {
       position: absolute;
-      left: 44%; top: 37%; width: 54%; height: 42%;
+      /* مطابق لمسار نار الصورة: من الفم ~ (48%,46%) نزولاً ناحية المدينة */
+      left: 47%; top: 34%; width: 44%; height: 24%;
       transform-origin: 0% 50%;
-      transform: rotate(28deg);
+      transform: rotate(26deg);
       mix-blend-mode: screen; opacity: .9; pointer-events: none;
       overflow: hidden;
       -webkit-mask-image: linear-gradient(to right, transparent 0, #000 14%, #000 80%, transparent 100%);
@@ -55,7 +59,7 @@
 
     /* وهج عند فم التنين (نبض أقوى) */
     .dragon-hero .d-mouth {
-      position: absolute; left: 40%; top: 34%; width: 20%; height: 28%;
+      position: absolute; left: 42%; top: 35%; width: 17%; height: 22%;
       pointer-events: none; mix-blend-mode: screen;
       background: radial-gradient(closest-side, rgba(255,170,60,.75), rgba(255,110,20,.28) 55%, rgba(0,0,0,0) 78%);
       animation: mouthPulse 2.1s ease-in-out infinite alternate;
