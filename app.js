@@ -4,7 +4,6 @@
 // ==============================================================================
 
 const USD_TO_EGP = 56.02; // سعر الدولار المحدث من السوق
-const USERS_STORAGE_KEY = 'migo_registered_users_v2';
 const SESSION_STORAGE_KEY = 'migo_active_member_v2';
 const CART_STORAGE_KEY = 'migo_cart_v2';
 const DENO_API_URL = "https://migoai-72.naroelwakel-dot.deno.net";
@@ -1420,9 +1419,6 @@ function renderReviews() {
     `).join('');
 }
 
-function getRegisteredUsers() { try { return JSON.parse(localStorage.getItem(USERS_STORAGE_KEY)) || []; } catch (e) { return []; } }
-function saveRegisteredUsers(u) { localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(u)); }
-function encodePass(str) { return btoa(unescape(encodeURIComponent('migo_salt_' + str))); }
 
 function openAuthModal(mode) {
     const modal = document.getElementById('authModal');
@@ -1446,41 +1442,73 @@ function switchAuthTab(mode) {
     if (tr) tr.className = (mode !== 'login') ? 'py-1.5 text-xs font-bold rounded-lg transition sky-btn cursor-pointer' : 'py-1.5 text-xs font-bold rounded-lg transition text-gray-400 cursor-pointer';
 }
 
-function handleRegister(e) {
-    e.preventDefault();
-    const emailEl = document.getElementById('regEmail');
-    const nameEl = document.getElementById('regName');
-    const phoneEl = document.getElementById('regPhone');
-    const passEl = document.getElementById('regPassword');
-    const email = emailEl ? emailEl.value.trim().toLowerCase() : '';
-    const users = getRegisteredUsers();
-    if (users.find(u => u.email === email)) return showToast('البريد مسجل بالفعل', 'error');
-    const newUser = { 
-        name: nameEl ? nameEl.value.trim() : '', 
-        email: email, 
-        phone: phoneEl ? phoneEl.value.trim() : '', 
-        passwordHash: encodePass(passEl ? passEl.value : '')
-    };
-    users.push(newUser);
-    saveRegisteredUsers(users);
-    localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(newUser));
+// --- Customer accounts over Supabase (database + email code) ---
+const SUPABASE_URL = 'https://tmfczgqewhkgsaeaupqu.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_1Jo8Tie65l5k_HPsyI0MDw_uZXxqblE';
+let __sb = null, __pending = null;
+function __sbClient() {
+    if (__sb) return Promise.resolve(__sb);
+    return import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm').then(function (m) {
+        __sb = m.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        return __sb;
+    });
+}
+function __authDone(name, email) {
+    try { localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify({ name: name, email: email })); } catch (e) {}
     updateNavbarAuthUI();
     closeAuthModal();
-    showToast('تم التسجيل بنجاح');
+}
+function __askOtp(email) {
+    let box = document.getElementById('otpBox');
+    if (!box) {
+        const form = document.getElementById('registerForm');
+        if (!form) return;
+        box = document.createElement('div');
+        box.id = 'otpBox';
+        box.className = 'mt-2';
+        box.innerHTML = '<input id="otpCode" class="otp-input" inputmode="numeric" maxlength="6" placeholder="كود التحقق (6 أرقام)"><button type="button" id="otpVerifyBtn" class="agentql-btn-primary w-full mt-2 py-2 rounded-xl cursor-pointer">تأكيد الكود</button><p class="otp-hint">لو وصلك لينك بدل الكود دوس عليه وبعدها سجّل دخول.</p>';
+        form.appendChild(box);
+    }
+    document.getElementById('otpVerifyBtn').onclick = function () {
+        const token = (document.getElementById('otpCode').value || '').trim();
+        if (token.length < 6) return showToast('اكتب الكود كامل', 'error');
+        __sbClient().then(c => c.auth.verifyOtp({ email: email, token: token, type: 'signup' }))
+            .then(res => {
+                if (res.error) return showToast('الكود غلط أو انتهى', 'error');
+                __authDone(__pending ? __pending.name : '', email);
+                showToast('تم تأكيد الإيميل 🎉');
+            }).catch(() => showToast('تعذّر التحقق', 'error'));
+    };
+}
+function handleRegister(e) {
+    e.preventDefault();
+    const email = (document.getElementById('regEmail') || {}).value ? document.getElementById('regEmail').value.trim().toLowerCase() : '';
+    const name = (document.getElementById('regName') || {}).value ? document.getElementById('regName').value.trim() : '';
+    const phone = (document.getElementById('regPhone') || {}).value ? document.getElementById('regPhone').value.trim() : '';
+    const password = (document.getElementById('regPassword') || {}).value || '';
+    if (!email || password.length < 6) return showToast('اكتب بريد صحيح وكلمة سر 6 أحرف على الأقل', 'error');
+    showToast('جاري إنشاء الحساب...');
+    __sbClient().then(c => c.auth.signUp({ email: email, password: password, options: { data: { name: name, phone: phone } } }))
+        .then(res => {
+            if (res.error) return showToast(res.error.message, 'error');
+            __pending = { name: name, email: email };
+            if (res.data && res.data.session) { __authDone(name, email); return showToast('تم التسجيل بنجاح 🎉'); }
+            showToast('بعتنالك كود على الإيميل');
+            __askOtp(email);
+        }).catch(() => showToast('تعذّر الاتصال بالسيرفر', 'error'));
 }
 
 function handleLogin(e) {
     e.preventDefault();
-    const emailEl = document.getElementById('loginEmail');
-    const passEl = document.getElementById('loginPassword');
-    const email = emailEl ? emailEl.value.trim().toLowerCase() : '';
-    const passHash = encodePass(passEl ? passEl.value : '');
-    const user = getRegisteredUsers().find(u => u.email === email && u.passwordHash === passHash);
-    if (!user) return showToast('بيانات الدخول غير صحيحة', 'error');
-    localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(user));
-    updateNavbarAuthUI();
-    closeAuthModal();
-    showToast(`أهلاً بك ${user.name}`);
+    const email = (document.getElementById('loginEmail') || {}).value ? document.getElementById('loginEmail').value.trim().toLowerCase() : '';
+    const password = (document.getElementById('loginPassword') || {}).value || '';
+    __sbClient().then(c => c.auth.signInWithPassword({ email: email, password: password }))
+        .then(res => {
+            if (res.error) return showToast('بيانات الدخول غير صحيحة', 'error');
+            const meta = (res.data && res.data.user && res.data.user.user_metadata) || {};
+            __authDone(meta.name || email.split('@')[0], email);
+            showToast('أهلاً بك ' + (meta.name || ''));
+        }).catch(() => showToast('تعذّر الاتصال بالسيرفر', 'error'));
 }
 
 function handleLogout() {
