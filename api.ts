@@ -1,6 +1,7 @@
-// build marker 2026-10-31T06:30Z (nudge rebuild): free sources (isan/jollymax) tried before the metered Volsever route
-// for the games they cover (pubg/freefire/mlbb/codm/valorant/genshin), so the Volsever daily budget is
-// spent first on the games only Volsever can serve. Normal fallback order otherwise unchanged.
+// build marker 2026-10-31T07:10Z: add a fire-and-forget usage counter (one row per provider attempt
+// in Supabase public.verification_calls) so we can measure real per-source usage (free vs Volsever).
+// Also: free sources (isan/jollymax) are tried before the metered Volsever route for the games they
+// cover (pubg/freefire/mlbb/codm/valorant/genshin). Normal fallback order otherwise unchanged.
 // ==============================================================================
 // Migo AI Solution - Verification Engine API (Deno Server)
 // Real account lookup only. No fabricated / placeholder names.
@@ -40,6 +41,32 @@ async function getJson(url: string, options: RequestInit = {}, ms = 6000): Promi
   } catch (_) {
     return null;
   }
+}
+
+// ----------------------------------------------------------------------------
+// Fire-and-forget usage counter. Records one row per provider attempt in
+// Supabase (public.verification_calls) so real usage per source can be measured
+// (free vs the metered Volsever route). Never awaited, never throws, and has no
+// effect on the response path. Public URL + publishable key (same key the
+// storefront already ships in app.js).
+// ----------------------------------------------------------------------------
+const SB_URL = "https://tmfczgqewhkgsaeaupqu.supabase.co";
+const SB_KEY = "sb_publishable_1Jo8Tie65l5k_HPsyI0MDw_uZXxqblE";
+function logCall(game: string, provider: string, ok: boolean): void {
+  try {
+    const p = fetch(`${SB_URL}/rest/v1/verification_calls`, {
+      method: "POST",
+      headers: {
+        "apikey": SB_KEY,
+        "Authorization": `Bearer ${SB_KEY}`,
+        "Content-Type": "application/json",
+        "Prefer": "return=minimal",
+      },
+      body: JSON.stringify({ game, provider, ok }),
+    }).catch(() => {});
+    // Deno Deploy: keep the isolate alive until the write settles.
+    (globalThis as any).EdgeRuntime?.waitUntil?.(p);
+  } catch (_) {}
 }
 
 // Pull the first plausible nickname out of an unknown JSON shape.
@@ -498,20 +525,24 @@ Deno.serve(async (req: Request) => {
       foundName = r.name;
       avatarUrl = r.avatar;
       trace.push(`tiktok:${foundName ? "ok" : "none"}`);
+      logCall("tiktok", "tiktok", !!foundName);
     } // ---- Telegram Stars ----
     else if (game === "telegram" || game === "telegramstars") {
       const r = await resolveTelegramUser(id);
       foundName = r.name;
       avatarUrl = r.avatar;
       trace.push(`telegram:${foundName ? "ok" : "none"}`);
+      logCall("telegram", "telegram", !!foundName);
     } // ---- Roblox (official) ----
     else if (game === "roblox") {
       if (isNumeric) foundName = await lookupRoblox(id);
       trace.push(`roblox:${foundName ? "ok" : "none"}`);
+      logCall("roblox", "roblox", !!foundName);
     } // ---- Genshin Impact: Enka first, then generic providers ----
     else if (game === "genshin") {
       if (isNumeric) foundName = await lookupGenshin(id);
       trace.push(`enka:${foundName ? "ok" : "none"}`);
+      logCall("genshin", "enka", !!foundName);
       if (!foundName) {
         for (const step of [
           { p: "isan", path: "gi" } as Step,
@@ -519,6 +550,7 @@ Deno.serve(async (req: Request) => {
         ]) {
           const r = await runStep(step, id, zoneId);
           trace.push(r.info);
+          logCall("genshin", step.p, !!r.name);
           foundName = r.name;
           if (foundName) break;
         }
@@ -543,6 +575,7 @@ Deno.serve(async (req: Request) => {
           if (!isNumeric && step.p === "jollymax") continue;
           const r = await runStep(step, id, zoneId);
           trace.push(r.info);
+          logCall(game, step.p, !!r.name);
           foundName = r.name;
           if (foundName) break;
         }
