@@ -412,3 +412,20 @@
 #sidebarContainer aside .grid > a:first-child:hover { border-color: #3b5998; box-shadow: 0 0 18px -4px rgba(59, 89, 152, 0.7); }
 #sidebarContainer aside .grid > a:last-child:hover { border-color: #25d366; box-shadow: 0 0 18px -4px rgba(37, 211, 102, 0.7); }
 
+/* ============================================================
+   Header accents: the cart count badge and the floating support
+   button were blue; recoloured to the site's gold identity.
+   ============================================================ */
+#cartBadge {
+    background: linear-gradient(135deg, #f3cf6b, #b8860b);
+    color: #2a1e05;
+    box-shadow: 0 3px 10px -3px rgba(212, 175, 55, 0.85);
+}
+a[aria-label="تواصل مع الدعم الفني"] {
+    background: linear-gradient(135deg, #f3cf6b, #b8860b) !important;
+    color: #2a1e05 !important;
+    box-shadow: 0 12px 26px -10px rgba(212, 175, 55, 0.75) !important;
+}
+a[aria-label="تواصل مع الدعم الفني"]:hover { filter: brightness(1.08); }
+a[aria-label="تواصل مع الدعم الفني"] svg { fill: #ffffff !important; }
+
