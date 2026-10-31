@@ -955,9 +955,9 @@
    setInterval(function(){ show(cur + 1); }, 5000);
   })();
  </script>
-<!-- Common Ninja AI Chatbot (free) -->
-<script src="https://cdn.commoninja.com/sdk/latest/commonninja.js" defer></script>
+<!-- Common Ninja AI Chatbot (free). Loaded only after the page is interactive, so it never competes with the hero for the main thread or first paint. -->
 <div class="commonninja_component pid-944e64e1-9c9f-4871-8e11-b8df82021b73"></div>
+<script>(function(){var d=false;function L(){if(d)return;d=true;var s=document.createElement('script');s.src='https://cdn.commoninja.com/sdk/latest/commonninja.js';s.defer=true;document.body.appendChild(s);}function S(){(window.requestIdleCallback)?requestIdleCallback(L,{timeout:2000}):setTimeout(L,1500);}(document.readyState==='complete')?S():window.addEventListener('load',S);['pointerdown','touchstart','keydown','scroll'].forEach(function(e){window.addEventListener(e,L,{once:true,passive:true});});})();</script>
 <script>
 /* a11y: the third-party chat widget renders in a shadow root, so we pierce shadow roots
    to give its icon-only close button a name and to hide decorative role=img icons. */
