@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex">
+<title>tailwind-build</title>
+</head>
+<body>
+<pre id="status">BOOT</pre>
+<div id="chunks"></div>
+<iframe id="store" src="index.html" style="width:1300px;height:900px;border:0"></iframe>
+<script>
+(function(){
+  var f = document.getElementById('store');
+  var status = document.getElementById('status');
+  var last = -1, stable = 0;
+  function totalStyleLen(doc){
+    var t = 0, ss = doc.querySelectorAll('style');
+    for (var i=0;i<ss.length;i++) t += (ss[i].textContent||'').length;
+    return {len:t, count:ss.length};
+  }
+  function allCss(doc){
+    var out='', ss=doc.querySelectorAll('style');
+    for (var i=0;i<ss.length;i++) out += (ss[i].textContent||'') + '\n';
+    return out;
+  }
+  function tick(){
+    if(!f.contentDocument){ status.textContent='NO-DOC'; return; }
+    var m = totalStyleLen(f.contentDocument);
+    if(m.len === last && m.len > 5000){ stable++; } else { stable=0; }
+    last = m.len;
+    status.textContent = 'styles='+m.count+' len='+m.len+' stable='+stable;
+    if(stable >= 3){ done(); return; }
+    setTimeout(tick, 1000);
+  }
+  function done(){
+    var css = allCss(f.contentDocument);
+    var box = document.getElementById('chunks');
+    var size = 3200, i=0;
+    for(var p=0;p<css.length;p+=size){
+      var pre=document.createElement('pre');
+      pre.textContent='@@TW'+i+'@@\n'+css.slice(p,p+size);
+      box.appendChild(pre);
+      i++;
+    }
+    status.textContent = 'READY len='+css.length+' chunks='+i;
+  }
+  f.addEventListener('load', function(){ setTimeout(tick, 1500); });
+})();
+</script>
+</body>
+</html>
