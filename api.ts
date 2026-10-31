@@ -1,4 +1,4 @@
-// build marker 2026-10-31T06:10Z: free sources (isan/jollymax) tried before the metered Volsever route
+// build marker 2026-10-31T06:30Z (nudge rebuild): free sources (isan/jollymax) tried before the metered Volsever route
 // for the games they cover (pubg/freefire/mlbb/codm/valorant/genshin), so the Volsever daily budget is
 // spent first on the games only Volsever can serve. Normal fallback order otherwise unchanged.
 // ==============================================================================
