@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="dark">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>معاينة: حركة الهيرو الخفيفة | Migo AI Solution</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="tailwind.css?v=2026-10-31-3">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="site.css">
+
+  <style>
+    /* --- المهمة: حركات خفيفة على صورة الهيرو فقط (transform/opacity -> GPU، بدون تحميل ملفات جديدة) --- */
+
+    /* الصورة داخل السلايد: نضيف لها الموشن حسب الاختيار */
+    #sliderTrack .slide-img {
+      transform-origin: center center;
+      will-change: transform;
+      backface-visibility: hidden;
+    }
+
+    /* 1) زووم بطيء (كين برنز) */
+    .motion-zoom .slide-img { animation: migoKbZoom 20s ease-in-out infinite alternate; }
+    @keyframes migoKbZoom {
+      from { transform: scale(1.02) translate(0,0); }
+      to   { transform: scale(1.16) translate(-1.6%,-1.4%); }
+    }
+
+    /* 2) انزلاق جانبي هادئ */
+    .motion-pan .slide-img { animation: migoKbPan 22s ease-in-out infinite alternate; }
+    @keyframes migoKbPan {
+      from { transform: scale(1.14) translateX(-2.6%); }
+      to   { transform: scale(1.14) translateX(2.6%); }
+    }
+
+    /* 3) نبض + إضاءة خفيفة */
+    .motion-breathe .slide-img { animation: migoBreathe 9s ease-in-out infinite alternate; }
+    @keyframes migoBreathe {
+      from { transform: scale(1.03); filter: brightness(1); }
+      to   { transform: scale(1.07); filter: brightness(1.09); }
+    }
+
+    /* احترام تفضيل تقليل الحركة */
+    @media (prefers-reduced-motion: reduce) {
+      #sliderTrack .slide-img { animation: none !important; }
+    }
+
+    .motion-btn {
+      border: 1px solid rgba(255,255,255,.14); border-radius: 9999px;
+      padding: .4rem .9rem; font-size: .72rem; font-weight: 700; color: #cbd5e1;
+      background: rgba(255,255,255,.04); cursor: pointer; transition: .25s;
+    }
+    .motion-btn:hover { color: #fff; background: rgba(255,255,255,.09); }
+    .motion-btn.active { color: #0b0d11; background: var(--accent, #38bdf8); border-color: transparent; }
+  </style>
+ </head>
+ <body>
+
+  <div class="max-w-6xl mx-auto px-4 pt-6">
+    <div class="sky-surface rounded-2xl p-4 mb-4 border border-white/10">
+      <div class="text-white font-bold mb-1">معاينة حركة الهيرو (نسخة خفيفة)</div>
+      <p class="text-xs text-slate-400 leading-relaxed mb-3">
+        دي صفحة معاينة بس مش الصفحة الحقيقية، فيها نفس السلايدر الحقيقي مع 3 حركات خفيفة.
+        اختار اللي يعجبك وأنا أطبقه على الصفحة الرئيسية. كلها CSS بس (بدون فيديو أو ملف جديد)، وبتقف تلقائياً لأي حد مفعّل عنده «تقليل الحركة».
+      </p>
+      <div class="flex flex-wrap gap-2" id="motionBar">
+        <button class="motion-btn" data-m="none">بدون حركة</button>
+        <button class="motion-btn active" data-m="zoom">زووم بطيء (كين برنز)</button>
+        <button class="motion-btn" data-m="pan">انزلاق جانبي هادئ</button>
+        <button class="motion-btn" data-m="breathe">نبض وإضاءة خفيفة</button>
+      </div>
+    </div>
+  </div>
+
+  <section class="max-w-6xl mx-auto px-4 pb-10">
+
+   <!-- Hero Slider Carousel (نفس الحقيقي) -->
+   <div id="heroWrap" class="motion-zoom relative w-full max-w-6xl mx-auto overflow-hidden rounded-2xl mb-4 border border-white/10 bg-[#12151b]" dir="rtl">
+    <div id="sliderTrack" class="flex transition-transform duration-700 ease-in-out">
+
+        <div class="w-full shrink-0">
+            <div class="relative py-14 px-6 text-center overflow-hidden">
+                <img src="images (6).jpeg" alt="" loading="eager" decoding="async" fetchpriority="high" class="slide-img absolute inset-0 w-full h-full object-cover object-center">
+                <div class="absolute inset-0" style="background:linear-gradient(180deg, rgba(11,13,17,.55), rgba(11,13,17,.86));"></div>
+                <span class="relative z-10 inline-block pill-badge mb-3 font-mono-code">VERIFIED CREDITS</span>
+                <div class="relative z-10 max-w-lg mx-auto">
+                  <h3 class="text-xl sm:text-2xl font-bold text-white mb-2 tracking-tight">شحن كوينز تيك توك الرسمية</h3>
+                  <p class="text-xs text-slate-400 mb-4 leading-relaxed">تسليم فوري ومباشر إلى حسابك بالاسم الرسمي لدعم البثوث والمشاريع بأمان تام.</p>
+                  <div class="text-sm font-bold text-white mb-4 font-mono-code">تبدأ من 95 ج.م</div>
+                  <a href="#sec-coins" onclick="return false" class="agentql-btn-primary py-2 px-6 rounded-xl text-xs inline-block">اشحن الآن ⚡</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="w-full shrink-0">
+            <div class="relative py-14 px-6 text-center overflow-hidden">
+                <img src="Square-VCC-Product-Focused-Blog.jpg" alt="" loading="lazy" decoding="async" class="slide-img absolute inset-0 w-full h-full object-cover object-center">
+                <div class="absolute inset-0" style="background:linear-gradient(180deg, rgba(11,13,17,.55), rgba(11,13,17,.86));"></div>
+                <span class="relative z-10 inline-block pill-badge mb-3 font-mono-code">GLOBAL PAYMENTS</span>
+                <div class="relative z-10 max-w-lg mx-auto">
+                  <h3 class="text-xl sm:text-2xl font-bold text-white mb-2 tracking-tight">البطاقات الافتراضية الدولية (VCC)</h3>
+                  <p class="text-xs text-slate-400 mb-4 leading-relaxed">تفعيل الاشتراكات الدولية، الحملات الإعلانية، والشراء من المواقع العالمية بالجنيه المصري.</p>
+                  <div class="text-sm font-bold text-white mb-4 font-mono-code">تبدأ من 620 ج.م</div>
+                  <a href="#sec-vcc" onclick="return false" class="agentql-btn-primary py-2 px-6 rounded-xl text-xs inline-block">طلب بطاقة 💳</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="w-full shrink-0">
+            <div class="relative py-14 px-6 text-center overflow-hidden">
+                <img src="https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/493e9482264c49fdbd4f25b89db9f800.webp" alt="" loading="lazy" decoding="async" class="slide-img absolute inset-0 w-full h-full object-cover object-center">
+                <div class="absolute inset-0" style="background:linear-gradient(180deg, rgba(11,13,17,.55), rgba(11,13,17,.86));"></div>
+                <span class="relative z-10 inline-block pill-badge mb-3 font-mono-code">OFFICIAL MIDASBUY</span>
+                <div class="relative z-10 max-w-lg mx-auto">
+                  <h3 class="text-xl sm:text-2xl font-bold text-white mb-2 tracking-tight">ببجي موبايل (3850 UC)</h3>
+                  <p class="text-xs text-slate-400 mb-4 leading-relaxed">شحن معتمد ومباشر بالـ ID الرسمي مع استرجاع اسم الحساب لحظياً قبل التحويل.</p>
+                  <div class="text-sm font-bold text-white mb-4 font-mono-code">3,100 ج.م</div>
+                  <button onclick="return false" class="agentql-btn-primary py-2 px-6 rounded-xl text-xs inline-block cursor-pointer">شحن فوري بالـ ID ⚡</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="flex justify-center gap-1.5 py-2.5 bg-[#0b0d11]/60 border-t border-white/10" id="sliderDots">
+        <span class="dot active" onclick="goToSlide(0)"></span>
+        <span class="dot" onclick="goToSlide(1)"></span>
+        <span class="dot" onclick="goToSlide(2)"></span>
+    </div>
+   </div>
+  </section>
+
+  <script>
+    // نفس منطق السلايدر الحقيقي
+    let currentSlide = 0;
+    function updateSlider() {
+      const track = document.getElementById('sliderTrack');
+      if (track) track.style.transform = 'translateX(' + (currentSlide * 100) + '%)';
+      const dots = document.querySelectorAll('#sliderDots .dot');
+      dots.forEach(function(d, i){ d.classList.toggle('active', i === currentSlide); });
+    }
+    function goToSlide(index) { currentSlide = index; updateSlider(); }
+    setInterval(function(){ currentSlide = (currentSlide + 1) % 3; updateSlider(); }, 5000);
+    updateSlider();
+
+    // أزرار اختيار الحركة
+    const wrap = document.getElementById('heroWrap');
+    document.querySelectorAll('#motionBar .motion-btn').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        document.querySelectorAll('#motionBar .motion-btn').forEach(function(b){ b.classList.remove('active'); });
+        btn.classList.add('active');
+        wrap.classList.remove('motion-zoom','motion-pan','motion-breathe');
+        if (btn.dataset.m !== 'none') wrap.classList.add('motion-' + btn.dataset.m);
+        // إعادة تشغيل الحركة من أولها
+        document.querySelectorAll('#sliderTrack .slide-img').forEach(function(img){
+          img.style.animation = 'none'; void img.offsetWidth; img.style.animation = '';
+        });
+      });
+    });
+  </script>
+ </body>
+</html>
