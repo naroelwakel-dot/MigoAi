@@ -6,60 +6,24 @@
 // 1. البطاقات الافتراضية الدولية (Virtual Credit Cards - VCC) مع إضافة بطاقة القيمة المخصصة
 const vccData = [
   {
-    id: "vcc_custom",
-    name: "بطاقة VCC دولية (قيمة مخصصة حسب طلبك)",
+    id: "vcc",
+    name: "بطاقة VCC دولية (فيزا افتراضية)",
     balanceUsd: "حسب الطلب",
     priceEgp: 620,
     banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/292d99fa1e714baab0caadaef513ad3a.webp",
-    badge: "اطلب قيمتك ⚡",
-    description: "اطلب القيمة والمبلغ الذي تحتاجه بالضبط (1$ أو أكثر) لأي منصة أو إعلان.",
-    packages: [
-      { name: "بطاقة برصيد 10$ — 620 ج.م", price: 620, usd: 10 },
-      { name: "بطاقة برصيد 25$ — 1,550 ج.م", price: 1550, usd: 25 },
-      { name: "بطاقة برصيد 50$ — 3,100 ج.م", price: 3100, usd: 50 },
-      { name: "بطاقة برصيد 100$ — 6,200 ج.م", price: 6200, usd: 100 },
-      { name: "بطاقة بقيمة مخصصة (تحديد المبلغ عبر واتساب)", price: 100, usd: 1 }
-    ]
-  },
-  {
-    id: "vcc_10",
-    name: "بطاقة VCC دولية (10$)",
-    balanceUsd: 10,
-    priceEgp: 620,
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/0173a821e2e24c2aa19d9d1b2700b519.jpg",
     badge: "تفعيل فوري 💳",
-    description: "صالحة للشراء الدولي وتفعيل الاشتراكات والإعلانات."
-  },
-  {
-    id: "vcc_25",
-    name: "بطاقة VCC دولية (25$)",
-    balanceUsd: 25,
-    priceEgp: 1550,
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/49041bbc9ca94ab28ad1342156677f38.webp",
-    badge: "الأكثر طلباً 🔥",
-    description: "مشحونة برصيد 25 دولار ومقبولة في مختلف المنصات العالمية."
-  },
-  {
-    id: "vcc_50",
-    name: "بطاقة VCC دولية (50$)",
-    balanceUsd: 50,
-    priceEgp: 3100,
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/72dbf242f8c14ca0892318cc3398eccf.webp",
-    badge: "رصيد مميز ⚡",
-    description: "مثالية للمدفوعات والحملات الإعلانية واشتراكات المطورين."
-  },
-  {
-    id: "vcc_100",
-    name: "بطاقة VCC دولية (100$)",
-    balanceUsd: 100,
-    priceEgp: 6200,
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/4c7d1d1fb4b446c2bff42e58b128e88b.jpg",
-    badge: "باقة النخبة 💎",
-    description: "بطاقة دفع رقمية برصيد 100 دولار كاملة مع كود التحقق 3DS."
+    description: "بطاقة فيزا افتراضية دولية تُفعّل الاشتراكات والحملات الإعلانية والشراء من المواقع العالمية، بالجنيه المصري مع كود التحقق 3DS.",
+    packages: [
+      { id: "vcc_10", name: "بطاقة برصيد 10$ — 620 ج.م", price: 620, usd: 10 },
+      { id: "vcc_25", name: "بطاقة برصيد 25$ — 1,550 ج.م", price: 1550, usd: 25 },
+      { id: "vcc_50", name: "بطاقة برصيد 50$ — 3,100 ج.م", price: 3100, usd: 50 },
+      { id: "vcc_100", name: "بطاقة برصيد 100$ — 6,200 ج.م", price: 6200, usd: 100 },
+      { id: "vcc_custom", name: "بطاقة بقيمة مخصصة (تحديد المبلغ عبر واتساب)", price: 100, usd: 1 }
+    ]
   }
 ];
 
-// 2. محرك خدمات السوشيال ميديا للمنصات الـ 18 (كاملة وبدون أي نقص)
+// 2. محرك خدمات السوشيال ميديا للمنصات الـ 20 (كاملة وبدون أي نقص)
 const smmPlatforms = [
   {
     id: "tiktok",
