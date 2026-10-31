@@ -93,7 +93,6 @@
 
   <!-- Preload the above-the-fold web fonts + hero image so nothing swaps/waits after first paint -->
   <link rel="preload" as="image" href="https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/18b249edef654147b5e5193c58378344.png" fetchpriority="high">
-  <link rel="preload" as="image" href="https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/fc5ae269c18e408ea0865ba815576344.webp" fetchpriority="high">
 
   <link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.gstatic.com/s/tajawal/v12/Iura6YBj_oCad4k1nzSBC45I.woff2">
   <link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.gstatic.com/s/tajawal/v12/Iurf6YBj_oCad4k1l4qkHrRpiYlJ.woff2">
@@ -142,7 +141,7 @@
 
   <!-- Global Header Engine -->
   <header class="border-b border-white/10 sticky top-0 z-50 backdrop-blur-2xl bg-[#0b0d11]/85 transition-all relative">
-   <div class="absolute inset-0 bg-cover bg-center opacity-20 pointer-events-none" style="background-image:url('https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/fc5ae269c18e408ea0865ba815576344.webp');"></div>
+   <!-- header decorative texture removed: it was an above-the-fold background image competing for bandwidth and able to become the LCP -->
    <div class="max-w-6xl mx-auto px-4 py-3 relative z-10">
     <div class="flex justify-between items-center gap-3">
 
