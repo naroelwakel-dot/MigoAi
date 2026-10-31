@@ -3,7 +3,6 @@
 // المحرك التشغيلي الرئيسي المتكامل - بدون أي اختصار أو حذف لسطر واحد
 // ==============================================================================
 
-const USD_TO_EGP = 56.02; // سعر الدولار المحدث من السوق
 const SESSION_STORAGE_KEY = 'migo_active_member_v2';
 const CART_STORAGE_KEY = 'migo_cart_v2';
 const DENO_API_URL = "https://migoai-72.naroelwakel-dot.deno.net";
@@ -19,14 +18,18 @@ let isExpressModal = false;
 let selectedVccItem = null;
 let selectedPayment = null;
 
-// أكواد الخصم المعتمدة (جديدة وغير معلنة للعملاء - الرقم = نسبة الخصم %)
-const validCoupons = {
-    'MIGO5': { discount: 0.05 },
-    'MIGO10': { discount: 0.10 },
-    'MIGO15': { discount: 0.15 }
+// أكواد الخصم المعتمدة - مخزّنة كهاش SHA-256 وليست نصاً صريحاً (الرقم = نسبة الخصم %)
+const validCouponHashes = {
+    'f4b1d9700666a113313efa5699e9f78a9057114664802fde648a284a3feb531b': 0.05,
+    '7dd935ecab84ae5149f19bfae23fc0204ed00e4fdeffdba725d6dfc126d1e12c': 0.10,
+    '18c6bd3667a83f0da28901f00d5f25411e143983ee29e97b0eef2316135d392f': 0.15
 };
+async function sha256Hex(str) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
 
-// خريطة أيقونات المنصات الـ 18 لإظهار الشعارات الرسمية الملونة بدقة
+// خريطة أيقونات المنصات الـ 20 لإظهار الشعارات الرسمية الملونة بدقة
 const SMM_ICONS = {
     tiktok: "fab fa-tiktok text-pink-400",
     facebook: "fab fa-facebook text-blue-500",
@@ -162,19 +165,6 @@ function showToast(msg, type = 'success') {
     }, 3200);
 }
 
-function initCountdown() {
-    let totalSeconds = 5 * 3600 + 42 * 60 + 19;
-    setInterval(() => {
-        if (totalSeconds <= 0) totalSeconds = 6 * 3600;
-        totalSeconds--;
-        const h = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
-        const m = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
-        const s = String(totalSeconds % 60).padStart(2, '0');
-        const el = document.getElementById('promoCountdown');
-        if (el) el.innerText = `${h}:${m}:${s}`;
-    }, 1000);
-}
-
 function updateSlider() {
     const track = document.getElementById('sliderTrack');
     if (track) track.style.transform = `translateX(${currentSlide * 100}%)`;
@@ -202,7 +192,7 @@ function triggerSocialProof() {
     if (iconEl) iconEl.innerText = tpl.icon;
     popup.classList.remove('translate-y-24', 'opacity-0');
     setTimeout(() => popup.classList.add('translate-y-24', 'opacity-0'), 4500);
-    setTimeout(triggerSocialProof, Math.floor(Math.random() * 10000) + 12000);
+    setTimeout(triggerSocialProof, Math.floor(Math.random() * 30000) + 75000);
 }
 
 function initVisitorCounter() {
@@ -276,19 +266,20 @@ function updateCartUI() {
     calculateCartTotal();
 }
 
-function applyCartCoupon() {
+async function applyCartCoupon() {
     const inp = document.getElementById('cartCouponInput');
     if (!inp) return;
     const code = inp.value.trim().toUpperCase();
     if (!code) return showToast('أدخل كود الخصم أولاً', 'error');
-    const coupon = validCoupons[code];
-    if (!coupon) return showToast('كود غير صالح', 'error');
-    appliedCoupon = { code: code, discount: coupon.discount };
+    let discount = null;
+    try { discount = validCouponHashes[await sha256Hex(code)]; } catch (e) { discount = null; }
+    if (discount == null) return showToast('كود غير صالح', 'error');
+    appliedCoupon = { code: code, discount: discount };
     const statusEl = document.getElementById('cartCouponStatus');
     if (statusEl) {
         statusEl.classList.remove('hidden');
         statusEl.className = 'text-[10px] font-bold text-emerald-400';
-        statusEl.innerText = `✅ تم تطبيق خصم ${(coupon.discount * 100)}% بنجاح`;
+        statusEl.innerText = `✅ تم تطبيق خصم ${(discount * 100)}% بنجاح`;
     }
     calculateCartTotal();
 }
@@ -1541,7 +1532,6 @@ function toggleSidebar() {
 window.onload = function() {
     try { updateNavbarAuthUI(); } catch (e) {}
     try { initVisitorCounter(); } catch (e) {}
-    try { initCountdown(); } catch (e) {}
     try { loadCartFromStorage(); } catch (e) {}
     try { renderCoinsAndStars(); } catch (e) {}
     try { renderLiveApps(); } catch (e) {}
@@ -1570,4 +1560,5 @@ window.onload = function() {
         if (!e.target.closest('.coin-picker')) { closeAllCoinPickers(); }
     });
 };
+
 
