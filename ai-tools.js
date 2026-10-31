@@ -225,7 +225,7 @@ if (typeof subscriptionsData !== 'undefined' && Array.isArray(subscriptionsData)
       '<div class="h-28 sm:h-32 relative bg-cover bg-center" style="background-image: url(\'' + banner + '\');">' +
         '<div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent p-3 flex flex-col justify-between">' +
           '<span class="text-[9px] bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 px-2.5 py-0.5 rounded-full font-bold w-fit">' + (a.badge || a.tag || 'API') + '</span>' +
-          '<h4 class="font-extrabold text-sm sm:text-base text-white drop-shadow-md">' + a.name + '</h4>' +
+          '<h3 class="font-extrabold text-sm sm:text-base text-white drop-shadow-md">' + a.name + '</h3>' +
         '</div>' +
       '</div>' +
       '<div class="p-3 bg-slate-900/60 flex-1 flex flex-col justify-between">' +
