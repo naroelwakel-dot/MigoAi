@@ -1,23 +1,17 @@
-<!doctype html><html><head><meta charset="utf-8"><title>cls-probe</title>
+<!doctype html><html><head><meta charset="utf-8"><title>lcp-probe</title>
 <meta name="robots" content="noindex, nofollow">
 <style>body{margin:0;background:#111;color:#eee;font:12px monospace}#f{width:412px;height:823px;border:1px solid #444;background:#000}</style>
 </head><body>
 <pre id="out" style="white-space:pre-wrap;padding:6px"></pre>
-<iframe id="f" src="index.html?cls=3"></iframe>
+<iframe id="f" src="index.html?lcp=9"></iframe>
 <script>
 var f=document.getElementById('f'), out=document.getElementById('out');
 f.addEventListener('load',function(){
   var w=f.contentWindow, d=f.contentDocument;
-  function rect(sel){ var el=d.querySelector(sel); if(!el) return sel+'=x'; var r=el.getBoundingClientRect(); return sel+'='+Math.round(r.top)+','+Math.round(r.height)+'x'+Math.round(r.width); }
-  function snap(){ return [rect('header'),rect('h1'),rect('.sec-grid'),rect('.sec-grid > a'),rect('.sec-ic'),rect('#dragonHero'),rect('#sec-coins'),rect('main')].join(' '); }
   try{
-    w.eval("window.__sh=[];try{new PerformanceObserver(function(l){l.getEntries().forEach(function(e){window.__sh.push({t:Math.round(e.startTime),v:+e.value.toFixed(4),src:(e.sources||[]).map(function(s){var n=s.node;return n?(n.tagName+(n.id?'#'+n.id:'')+(n.className?'.'+String(n.className).trim().split(/\\s+/)[0]:'')):'?';}).join(',')});});}).observe({type:'layout-shift',buffered:true});}catch(err){}");
+    w.eval("window.__lcp=[];try{new PerformanceObserver(function(l){l.getEntries().forEach(function(e){var el=e.element;window.__lcp.push({t:Math.round(e.startTime),size:e.size,url:e.url||'',el:el?(el.tagName+(el.id?'#'+el.id:'')+(el.className?'.'+String(el.className).trim().split(/\\s+/)[0]:'')):'?'});});}).observe({type:'largest-contentful-paint',buffered:true});}catch(err){window.__lcp.push({err:''+err});}");
   }catch(e){ out.textContent='ERR '+e; }
-  setTimeout(function(){
-    var sh=[], cum=0; try{ sh=w.__sh||[]; }catch(e){}
-    var lines=sh.map(function(e){return 'SHIFT t='+e.t+' v='+e.v+' src='+e.src;});
-    out.textContent='FINAL\n'+snap()+'\n'+lines.join('\n');
-  }, 9000);
+  setTimeout(function(){ var s; try{s=JSON.stringify(w.__lcp,null,1);}catch(e){s='read '+e;} out.textContent='LCP '+s; }, 11000);
 });
 </script>
 </body></html>
