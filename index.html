@@ -102,8 +102,7 @@
   <!-- Font Awesome icons load without blocking first paint (icons pop in a moment later) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Tajawal:wght@400;500;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=block" rel="stylesheet" media="print" onload="this.media='all'">
-  <noscript><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Tajawal:wght@400;500;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=block" rel="stylesheet"></noscript>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Tajawal:wght@400;500;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=optional" rel="stylesheet">
 
   <link rel="stylesheet" href="site.css?v=2026-10-31-11">
  <style>
@@ -118,7 +117,7 @@
   .dragon-hero .dh-mouth{position:absolute;left:42%;top:35%;width:17%;height:22%;pointer-events:none;mix-blend-mode:screen;background:radial-gradient(closest-side,rgba(255,170,60,.75),rgba(255,110,20,.28) 55%,rgba(0,0,0,0) 78%);animation:migoHeroMouth 2.1s ease-in-out infinite alternate}
   @keyframes migoHeroMouth{from{opacity:.5;transform:scale(.96)}to{opacity:1;transform:scale(1.06)}}
   .dragon-hero .dh-veil{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(11,13,17,.45),rgba(11,13,17,.82))}
-  .dragon-hero .dh-content{position:relative;z-index:10;width:100%}
+  .dragon-hero .dh-content{position:absolute;left:0;right:0;top:0;bottom:0;z-index:10;display:flex;flex-direction:column;justify-content:center}
   .dragon-hero .dh-textveil{position:absolute;inset:0;pointer-events:none;background:radial-gradient(55% 65% at 50% 50%,rgba(11,13,17,.66),rgba(11,13,17,0) 74%)}
   .dragon-hero .dh-slides{position:relative;min-height:175px}
   .dragon-hero .dh-slide{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transition:opacity .7s ease;pointer-events:none}
@@ -926,24 +925,19 @@
     window.addEventListener('load', function() { window.__installBinanceQr(); });
   </script>
 
-  <!-- Dynamic Cache-Busting Module Loader (deferred so product data/app JS never blocks the first paint) -->
+  <!-- Dynamic Cache-Busting Module Loader -->
   <script>
     (function() {
-      function boot() {
-        var v = 'v=2026-10-31-12';
-        var files = ['games.js', 'live-coins.js', 'subscriptions.js', 'smm.js', 'ai-tools.js', 'app.js'];
-        files.forEach(function(file) {
-          var s = document.createElement('script');
-          s.src = file + '?' + v;
-          if (file === 'app.js') {
-            s.onload = function() { if (window.__installBinanceQr) window.__installBinanceQr(); };
-          }
-          document.body.appendChild(s);
-        });
-      }
-      function idle() { (window.requestIdleCallback || function(f){ setTimeout(f, 1); })(boot, { timeout: 2500 }); }
-      if (document.readyState === 'complete') { idle(); }
-      else { window.addEventListener('load', idle); }
+      const v = 'v=2026-10-31-12';
+      const files = ['games.js', 'live-coins.js', 'subscriptions.js', 'smm.js', 'ai-tools.js', 'app.js'];
+      files.forEach(file => {
+        const s = document.createElement('script');
+        s.src = file + '?' + v;
+        if (file === 'app.js') {
+          s.onload = function() { if (window.__installBinanceQr) window.__installBinanceQr(); };
+        }
+        document.body.appendChild(s);
+      });
     })();
   </script>
  
