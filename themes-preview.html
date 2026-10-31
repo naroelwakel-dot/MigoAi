@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="dark">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>معاينة 10 ألوان للصفحة | Migo AI Solution</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="tailwind.css?v=2026-10-31-3">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* صفحة معاينة: 10 باليتات ألوان لنفس الصفحة (هيدر + هيرو التنين + كروت + منتج) */
+    html, body { margin: 0; overflow-x: hidden; }
+    #stage {
+      --bg:#0b0d11; --panel:#14181f; --card:#171c24; --elev:#1f2530;
+      --border:rgba(255,255,255,.08); --border-h:rgba(255,255,255,.22);
+      --accent:#4f7df0; --accent-b:#7fa0f7; --text:#e8ecf4; --muted:#98a2b3;
+      --chip:#0b0d11; --shadow:rgba(0,0,0,.5);
+      background: var(--bg); color: var(--text);
+      min-height: 100vh; transition: background .3s, color .3s;
+      font-family:'Tajawal',sans-serif; letter-spacing:-.015em;
+    }
+    .font-mono-code{font-family:'JetBrains Mono',monospace}
+    .wrap{max-width:1080px;margin:0 auto;padding:14px 16px}
+
+    .nav{display:flex;align-items:center;justify-content:space-between;gap:10px;
+      background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:10px 14px;margin-bottom:12px}
+    .brand{font-weight:800}
+    .brand b{color:var(--accent-b)}
+    .nav a{color:var(--muted);text-decoration:none;font-size:13px;margin-inline-start:14px}
+    .nav a:hover{color:var(--text)}
+    .nav .cta{background:var(--accent);color:var(--chip);padding:6px 14px;border-radius:10px;font-weight:700;font-size:13px}
+
+    .h1{font-size:26px;font-weight:800;text-align:center;margin:10px 4px 4px}
+    .sub{font-size:13px;color:var(--muted);text-align:center;margin:0 auto 14px;max-width:640px}
+
+    .hub{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+    @media(max-width:640px){.hub{grid-template-columns:repeat(2,1fr)}}
+    .hcard{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px;text-align:center;transition:.25s}
+    .hcard:hover{border-color:var(--accent);box-shadow:0 10px 26px -16px var(--accent)}
+    .hcard .ic{width:30px;height:30px;border-radius:9px;margin:0 auto 7px;background:var(--accent);opacity:.9}
+    .hcard .t{font-size:12.5px;font-weight:700}
+    .hcard .s{font-size:10.5px;color:var(--muted)}
+
+    .hero{position:relative;border:1px solid var(--border);border-radius:18px;overflow:hidden;aspect-ratio:16/9;
+      display:flex;align-items:center;justify-content:center;margin-bottom:14px;background:var(--card)}
+    .hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+    .hero .veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,8,12,.5),rgba(6,8,12,.82))}
+    .hero .cin{position:relative;z-index:2;text-align:center;padding:0 16px;color:#fff}
+    .badge{display:inline-block;border:1px solid var(--accent);color:var(--accent-b);background:rgba(0,0,0,.25);
+      border-radius:999px;padding:3px 12px;font-size:11px;font-weight:700;margin-bottom:8px}
+    .hero h3{margin:0 0 6px;font-size:22px}
+    .hero p{margin:0 auto 8px;font-size:12.5px;max-width:420px;color:#e5e7eb}
+    .price{font-weight:800;margin-bottom:10px}
+    .cta{display:inline-block;background:var(--accent);color:var(--chip);padding:9px 22px;border-radius:12px;font-weight:800;font-size:13px;border:0;cursor:pointer}
+    .dots{display:flex;gap:6px;justify-content:center;padding:10px 0}
+    .dots i{width:6px;height:6px;border-radius:99px;background:var(--elev);display:inline-block}
+    .dots i.on{background:var(--accent);width:18px}
+
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    @media(max-width:640px){.grid2{grid-template-columns:1fr}}
+    .pcard{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:.25s}
+    .pcard:hover{border-color:var(--accent)}
+    .pcard .img{height:120px;background:linear-gradient(135deg,var(--accent),var(--elev))}
+    .pcard .body{padding:12px}
+    .pcard .t{font-weight:700;font-size:14px;margin-bottom:2px}
+    .pcard .s{font-size:11px;color:var(--muted);margin-bottom:8px}
+    .pcard .row{display:flex;align-items:center;justify-content:space-between}
+    .pcard .pr{font-weight:800;color:var(--accent-b)}
+    .pcard .buy{background:var(--elev);border:1px solid var(--border);color:var(--text);border-radius:9px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer}
+    .pcard .buy:hover{background:var(--accent);color:var(--chip);border-color:transparent}
+
+    /* شريط اختيار الألوان */
+    .bar{position:sticky;top:0;z-index:50;background:#05070b;border-bottom:1px solid rgba(255,255,255,.1);
+      padding:10px 12px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+    .sw{border:1px solid rgba(255,255,255,.16);border-radius:999px;padding:6px 12px;font-size:12px;font-weight:700;
+      color:#cbd5e1;background:rgba(255,255,255,.04);cursor:pointer;display:flex;align-items:center;gap:7px;transition:.2s}
+    .sw:hover{color:#fff;background:rgba(255,255,255,.1)}
+    .sw.on{color:#05070b;background:#fff;border-color:transparent}
+    .sw .d{width:12px;height:12px;border-radius:99px;display:inline-block}
+  </style>
+ </head>
+ <body>
+
+  <div class="bar" id="bar"></div>
+
+  <div id="stage">
+   <div class="wrap">
+    <div class="nav">
+     <div class="brand">Migo <b>AI</b> Solution</div>
+     <div>
+      <a href="#">الألعاب</a><a href="#">الاشتراكات</a><a href="#">السوشيال</a>
+      <span class="cta">اشحن الآن</span>
+     </div>
+    </div>
+
+    <h1 class="h1">شحن الألعاب والخدمات الرقمية بالـ ID في مصر</h1>
+    <p class="sub">كوينز تيك توك ونجوم تليجرام، بطاقات VCC دولية، واشتراكات الذكاء الاصطناعي والسوشيال ميديا بالجنيه المصري.</p>
+
+    <div class="hub">
+     <div class="hcard"><div class="ic"></div><div class="t">عملات ونجوم</div><div class="s">تبدأ من 95 ج.م</div></div>
+     <div class="hcard"><div class="ic"></div><div class="t">بطاقات VCC</div><div class="s">تبدأ من 620 ج.م</div></div>
+     <div class="hcard"><div class="ic"></div><div class="t">شحن الألعاب</div><div class="s">16 لعبة بالـ ID</div></div>
+     <div class="hcard"><div class="ic"></div><div class="t">الذكاء الاصطناعي</div><div class="s">ChatGPT، Claude</div></div>
+    </div>
+
+    <div class="hero">
+     <img src="https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/2c2a6dc93e854b44989d41acd8e2deed.png" alt="هيرو">
+     <div class="veil"></div>
+     <div class="cin">
+      <span class="badge font-mono-code">VERIFIED CREDITS</span>
+      <h3>شحن كوينز تيك توك الرسمية</h3>
+      <p>تسليم فوري ومباشر إلى حسابك بالاسم الرسمي لدعم البثوث والمشاريع بأمان تام.</p>
+      <div class="price font-mono-code">تبدأ من 95 ج.م</div><br>
+      <button class="cta">اشحن الآن ⚡</button>
+     </div>
+    </div>
+    <div class="dots"><i class="on"></i><i></i><i></i></div>
+
+    <div class="grid2">
+     <div class="pcard">
+      <div class="img"></div>
+      <div class="body">
+       <div class="t">ببجي موبايل (3850 UC)</div>
+       <div class="s">شحن مباشر بالـ ID الرسمي</div>
+       <div class="row"><div class="pr font-mono-code">3,100 ج.م</div><button class="buy">اشحن الآن</button></div>
+      </div>
+     </div>
+     <div class="pcard">
+      <div class="img"></div>
+      <div class="body">
+       <div class="t">بطاقة VCC دولية</div>
+       <div class="s">رصيد 10$ — تفعيل فوري</div>
+       <div class="row"><div class="pr font-mono-code">620 ج.م</div><button class="buy">اطلب بطاقة</button></div>
+      </div>
+     </div>
+    </div>
+
+    <p class="sub" style="margin-top:16px">هذه معاينة ألوان فقط (نفس العناصر بألوان مختلفة). اختار اللي يعجبك وأطبّقه على الموقع كله.</p>
+   </div>
+  </div>
+
+  <script>
+    var PALETTES = [
+      {id:'navy',   name:'الأزرق الليلي (الحالي)', a:'#4f7df0', bg:'#0b0d11', panel:'#14181f', card:'#171c24', elev:'#1f2530', text:'#e8ecf4', muted:'#98a2b3', chip:'#0b0d11', border:'rgba(255,255,255,.08)'},
+      {id:'light',  name:'أبيض نهارى',            a:'#2f6df6', bg:'#f6f8fc', panel:'#ffffff', card:'#ffffff', elev:'#eef2f8', text:'#0f172a', muted:'#5b6472', chip:'#ffffff', border:'rgba(15,23,42,.10)'},
+      {id:'gray',   name:'رمادى فاتح',            a:'#4f46e5', bg:'#eef0f4', panel:'#ffffff', card:'#f7f8fb', elev:'#e6eaf1', text:'#111827', muted:'#6b7280', chip:'#ffffff', border:'rgba(15,23,42,.10)'},
+      {id:'gold',   name:'أسود وذهبى',            a:'#d4af37', bg:'#0c0a06', panel:'#15110a', card:'#1a150d', elev:'#241d10', text:'#f7f2e6', muted:'#b9ad8f', chip:'#0c0a06', border:'rgba(255,215,130,.18)'},
+      {id:'purple', name:'بنفسجى',               a:'#8b5cf6', bg:'#0d0a16', panel:'#151126', card:'#1a1530', elev:'#241d40', text:'#efeafc', muted:'#a99fc7', chip:'#0d0a16', border:'rgba(255,255,255,.10)'},
+      {id:'green',  name:'أخضر زمردى',           a:'#10b981', bg:'#04100c', panel:'#0a1a14', card:'#0d211a', elev:'#123027', text:'#e7f7f1', muted:'#86b3a5', chip:'#04100c', border:'rgba(255,255,255,.10)'},
+      {id:'fire',   name:'برتقالى نارى (يليق بالتنين)', a:'#f97316', bg:'#120804', panel:'#1c0d06', card:'#23100a', elev:'#2e170e', text:'#fff3e9', muted:'#c8a48e', chip:'#120804', border:'rgba(255,150,70,.20)'},
+      {id:'cyan',   name:'تركواز',               a:'#06b6d4', bg:'#04121a', panel:'#0a1e2a', card:'#0d2734', elev:'#123546', text:'#e6f6fb', muted:'#86a8b3', chip:'#04121a', border:'rgba(255,255,255,.10)'},
+      {id:'rose',   name:'وردى فاتح',            a:'#e11d48', bg:'#fdf2f6', panel:'#ffffff', card:'#fff5f8', elev:'#fde7ef', text:'#3b0a1e', muted:'#8a5a6e', chip:'#ffffff', border:'rgba(190,24,93,.14)'},
+      {id:'cream',  name:'كريمى دافئ',           a:'#b45309', bg:'#faf6ef', panel:'#fffdf8', card:'#f6efe3', elev:'#efe5d4', text:'#2b1d0e', muted:'#7c6a52', chip:'#ffffff', border:'rgba(120,80,20,.16)'}
+    ];
+
+    function apply(p){
+      var s = document.getElementById('stage').style;
+      s.setProperty('--bg', p.bg);
+      s.setProperty('--panel', p.panel);
+      s.setProperty('--card', p.card);
+      s.setProperty('--elev', p.elev);
+      s.setProperty('--accent', p.a);
+      s.setProperty('--accent-b', p.a);
+      s.setProperty('--text', p.text);
+      s.setProperty('--muted', p.muted);
+      s.setProperty('--chip', p.chip);
+      s.setProperty('--border', p.border);
+      s.setProperty('--border-h', p.a);
+      document.querySelectorAll('.sw').forEach(function(b){ b.classList.toggle('on', b.dataset.id === p.id); });
+    }
+
+    var bar = document.getElementById('bar');
+    PALETTES.forEach(function(p, i){
+      var b = document.createElement('button');
+      b.className = 'sw' + (i === 0 ? ' on' : '');
+      b.dataset.id = p.id;
+      b.innerHTML = '<span class="d" style="background:' + p.a + '"></span>' + p.name;
+      b.onclick = function(){ apply(p); };
+      bar.appendChild(b);
+    });
+  </script>
+ </body>
+</html>
