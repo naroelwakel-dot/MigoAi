@@ -346,7 +346,7 @@
 .sec-grid {
     display: flex;
     flex-wrap: nowrap;
-    gap: 10px;
+    gap: 8px;
     overflow-x: auto;
     overflow-y: hidden;
     padding: 12px 2px 12px;
@@ -355,15 +355,15 @@
 }
 .sec-grid > a {
     flex: 0 0 auto;
-    width: 106px;
-    padding: 10px 8px;
-    gap: 6px;
+    width: 116px;
+    padding: 12px 9px;
+    gap: 7px;
     scroll-snap-align: start;
 }
-.sec-grid > a .sec-ic { width: 2.25rem; height: 2.25rem; border-radius: 12px; }
-.sec-grid > a .sec-ic .sec-ico { width: 1.15rem; height: 1.15rem; }
-.sec-grid > a > .text-xs { font-size: 11px; line-height: 1.25; }
-.sec-grid > a > .text-\[10px\] { font-size: 9px; line-height: 1.2; }
+.sec-grid > a .sec-ic { width: 2.6rem; height: 2.6rem; border-radius: 14px; }
+.sec-grid > a .sec-ic .sec-ico { width: 1.4rem; height: 1.4rem; }
+.sec-grid > a > .text-xs { font-size: 12px; line-height: 1.25; }
+.sec-grid > a > .text-\[10px\] { font-size: 10px; line-height: 1.2; }
 
 /* ============================================================
    Sidebar (hamburger drawer): a designed cover for every row,
