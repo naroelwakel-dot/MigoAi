@@ -91,11 +91,7 @@
   <link rel="preconnect" href="https://cdn-public.eesel.ai" crossorigin>
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 
-  <!-- Preload the above-the-fold web fonts and hero image so nothing swaps/waits after first paint (removes layout shift + speeds LCP) -->
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.gstatic.com/s/tajawal/v12/Iura6YBj_oCad4k1nzSBC45I.woff2">
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.gstatic.com/s/tajawal/v12/Iurf6YBj_oCad4k1l4qkHrRpiYlJ.woff2">
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.gstatic.com/s/tajawal/v12/Iurf6YBj_oCad4k1l5anHrRpiYlJ.woff2">
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.gstatic.com/s/tajawal/v12/Iura6YBj_oCad4k1nzGBCw.woff2">
+  <!-- Preload the above-the-fold hero image so it is discovered early (speeds LCP) -->
   <link rel="preload" as="image" type="image/webp" href="https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/4d0bdeddf0a84558bfbcf283f99f8e6e.webp" fetchpriority="high">
 
   <link rel="stylesheet" href="tailwind.css?v=2026-10-31-3">
@@ -959,35 +955,34 @@
 <script src="https://cdn.commoninja.com/sdk/latest/commonninja.js" defer></script>
 <div class="commonninja_component pid-944e64e1-9c9f-4871-8e11-b8df82021b73"></div>
 <script>
-/* a11y: give the third-party chat widget's icon-only buttons an accessible name */
+/* a11y: give the third-party chat widget's icon-only close button an accessible name
+   (the widget renders inside a shadow root, so we pierce shadow roots) */
 (function(){
-  function tag(el){
+  function name(el){
     if(!el || el.nodeType!==1 || el.tagName!=='BUTTON') return;
+    var cls=(el.className&&el.className.toString())||'';
+    var isClose=/close/i.test(cls) || (el.closest && el.closest('.chat-container'));
+    if(!isClose) return;
     if((el.textContent||'').trim()) return;
-    if(el.getAttribute('aria-label') || el.getAttribute('title') || el.getAttribute('aria-labelledby')) return;
+    if(el.getAttribute('title') || el.getAttribute('aria-labelledby')) return;
+    if(el.getAttribute('aria-label')) return;
     el.setAttribute('aria-label','إغلاق');
   }
-  function scan(root){
-    if(!root) return;
-    tag(root);
-    if(root.querySelectorAll) root.querySelectorAll('button').forEach(tag);
+  function walk(root){
+    var btns;
+    try{ btns=root.querySelectorAll('button'); }catch(e){ btns=[]; }
+    for(var i=0;i<btns.length;i++) name(btns[i]);
+    var all;
+    try{ all=root.querySelectorAll('*'); }catch(e){ return; }
+    for(var j=0;j<all.length;j++){ if(all[j].shadowRoot) walk(all[j].shadowRoot); }
   }
-  function fix(){
-    document.querySelectorAll('button.close-button, .chat-container button, .commonninja_component button').forEach(tag);
-  }
+  function fix(){ walk(document); }
   fix();
   document.addEventListener('DOMContentLoaded',fix);
   window.addEventListener('load',fix);
-  [300,1000,2000,3500,5000,8000,12000].forEach(function(t){setTimeout(fix,t);});
-  try{
-    new MutationObserver(function(muts){
-      for(var i=0;i<muts.length;i++){
-        var added=muts[i].addedNodes;
-        for(var j=0;j<added.length;j++) scan(added[j]);
-      }
-    }).observe(document.documentElement,{childList:true,subtree:true});
-  }catch(e){}
+  var n=0, iv=setInterval(function(){ fix(); if(++n>30) clearInterval(iv); },600);
 })();
+</script>
 </body>
 </html>
 
