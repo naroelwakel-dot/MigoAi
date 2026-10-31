@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="dark">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>معاينة: هيرو التنين بالجمر المتحرك | Migo AI Solution</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="tailwind.css?v=2026-10-31-3">
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="site.css">
+
+  <style>
+    /* ===== هيرو "حيّ" من صورة ساكنة: تنين + طبقة جمر متحركة (بدون فيديو) ===== */
+
+    .dragon-hero { position: relative; overflow: hidden; }
+
+    /* صورة التنين: زووم بطيء مستمر */
+    .dragon-hero .d-img {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; object-position: center;
+      transform-origin: center center; will-change: transform;
+      animation: dZoom 26s ease-in-out infinite alternate;
+    }
+    @keyframes dZoom {
+      from { transform: scale(1.04) translate(0,0); }
+      to   { transform: scale(1.16) translate(-1.5%,-1.2%); }
+    }
+
+    /* طبقة الجمر: نسيج مبلّط عمودياً يطلع لفوق، ويُدمج بـ screen فيختفي الأسود */
+    .dragon-hero .d-embers {
+      position: absolute; inset: 0; overflow: hidden;
+      mix-blend-mode: screen; opacity: .85; pointer-events: none;
+    }
+    .dragon-hero .d-embers::before {
+      content: ""; position: absolute; left: 0; right: 0; top: 0; height: 200%;
+      background-image: url("https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/19d6bf311dc742478f36d66f48a822e2.png");
+      background-repeat: repeat-y;
+      background-size: 100% 50%;      /* البلاطة = ارتفاع الهيرو => التكرار سلس */
+      animation: emberRise 11s linear infinite;
+    }
+    @keyframes emberRise {
+      from { transform: translateY(0); }
+      to   { transform: translateY(-50%); }
+    }
+
+    /* توهّج نار عند فم التنين (وميض خفيف) */
+    .dragon-hero .d-glow {
+      position: absolute; inset: 0; pointer-events: none;
+      background: radial-gradient(60% 55% at 68% 62%, rgba(255,138,40,.42), rgba(255,90,20,.12) 45%, rgba(0,0,0,0) 72%);
+      mix-blend-mode: screen;
+      animation: glowFlicker 4.5s ease-in-out infinite alternate;
+    }
+    @keyframes glowFlicker {
+      from { opacity: .55; }
+      to   { opacity: 1; }
+    }
+
+    /* تعتيم لقراءة النص (نفس أسلوب الموقع) */
+    .dragon-hero .d-veil {
+      position: absolute; inset: 0; pointer-events: none;
+      background: linear-gradient(180deg, rgba(11,13,17,.45), rgba(11,13,17,.88));
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .dragon-hero .d-img, .dragon-hero .d-embers::before, .dragon-hero .d-glow { animation: none !important; }
+    }
+
+    .motion-btn {
+      border: 1px solid rgba(255,255,255,.14); border-radius: 9999px;
+      padding: .4rem .9rem; font-size: .72rem; font-weight: 700; color: #cbd5e1;
+      background: rgba(255,255,255,.04); cursor: pointer; transition: .25s;
+    }
+    .motion-btn:hover { color: #fff; background: rgba(255,255,255,.09); }
+    .motion-btn.active { color: #0b0d11; background: var(--accent, #38bdf8); border-color: transparent; }
+    .paused .d-img, .paused .d-embers::before, .paused .d-glow { animation-play-state: paused !important; }
+  </style>
+ </head>
+ <body>
+
+  <div class="max-w-6xl mx-auto px-4 pt-6">
+    <div class="sky-surface rounded-2xl p-4 mb-4 border border-white/10">
+      <div class="text-white font-bold mb-1">معاينة: هيرو «التنين الحيّ» (صورة ساكنة + حركة، بدون فيديو)</div>
+      <p class="text-xs text-slate-400 leading-relaxed mb-3">
+        نفس الصورة اللي عجبتك، لكن فوقها طبقة جمر وشرر بتطلع لفوق مع توهّج نار بتحت التنين، وكلها بتلف مستمرة. مفيش أي ملف فيديو — كل ده صور + CSS فخفيف جداً. شوفها على موبايلك وقولي رأيك.
+      </p>
+      <div class="flex flex-wrap gap-2">
+        <button class="motion-btn active" id="playBtn" data-m="play">تشغيل الحركة</button>
+        <button class="motion-btn" id="pauseBtn" data-m="pause">إيقاف مؤقت (تشوف الفرق)</button>
+      </div>
+    </div>
+  </div>
+
+  <section class="max-w-6xl mx-auto px-4 pb-12">
+    <div id="dh" class="dragon-hero w-full max-w-6xl mx-auto rounded-2xl mb-4 border border-white/10 bg-[#12151b]" dir="rtl">
+      <img class="d-img" src="https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/2c2a6dc93e854b44989d41acd8e2deed.png" alt="تنين ينفث النار فوق مدينة ليلية" loading="eager" decoding="async" fetchpriority="high">
+      <div class="d-glow"></div>
+      <div class="d-embers"></div>
+      <div class="d-veil"></div>
+
+      <div class="relative z-10 py-16 px-6 text-center">
+        <span class="inline-block pill-badge mb-3 font-mono-code">MIGO AI SOLUTION</span>
+        <div class="max-w-xl mx-auto">
+          <h1 class="text-2xl sm:text-3xl font-extrabold text-white mb-3 tracking-tight drop-shadow">قوة النار… لكل احتياجاتك الرقمية</h1>
+          <p class="text-sm text-slate-300 mb-5 leading-relaxed">شحن ألعاب بالـ ID، كوينز تيك توك ونجوم تليجرام، بطاقات VCC دولية، واشتراكات الذكاء الاصطناعي — بتسليم فوري وبالجنيه المصري.</p>
+          <a href="#" onclick="return false" class="agentql-btn-primary py-2.5 px-7 rounded-xl text-sm inline-block font-bold">اكتشف المنتجات 🔥</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const dh = document.getElementById('dh');
+    document.getElementById('playBtn').addEventListener('click', function(){
+      dh.classList.remove('paused');
+      document.getElementById('playBtn').classList.add('active');
+      document.getElementById('pauseBtn').classList.remove('active');
+    });
+    document.getElementById('pauseBtn').addEventListener('click', function(){
+      dh.classList.add('paused');
+      document.getElementById('pauseBtn').classList.add('active');
+      document.getElementById('playBtn').classList.remove('active');
+    });
+  </script>
+ </body>
+</html>
