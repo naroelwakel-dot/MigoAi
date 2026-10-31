@@ -1,0 +1,25 @@
+# Migo AI Solution
+
+> متجر مصري للشحن الرقمي: شحن الألعاب بالـ ID، كوينز تيك توك ونجوم تليجرام، بطاقات VCC دولية، واشتراكات الذكاء الاصطناعي والسوشيال ميديا، بأسعار بالجنيه المصري (EGP) وتسليم فوري.
+> Egyptian digital storefront for in-game top-ups by Player ID, TikTok coins, Telegram stars, international VCC cards, and AI/social subscriptions, priced in Egyptian Pounds (EGP) with instant delivery.
+
+Key facts:
+- Currency: Egyptian Pound (EGP). Store price = supplier price x 1.12.
+- Delivery: to the player ID / username, usually within 2 to 5 minutes, no password required.
+- Payments: Vodafone Cash, Etisalat Cash, InstaPay, Telda, Binance Pay, RedotPay, PayPal, Credit or Debit Card, valU, Tamara, Tabby, Souhoola, Forsa, Aman.
+- Ordering and support: WhatsApp https://wa.me/201060934020
+- Language: Arabic (ar), right-to-left.
+
+## Full price list (static HTML, no JavaScript needed)
+- [All products and prices](https://naroelwakel-dot.github.io/MigoAi/catalog.html): the hub page listing every section with its prices in EGP.
+- [Games top-up by Player ID](https://naroelwakel-dot.github.io/MigoAi/catalog-games.html): PUBG Mobile, Roblox, Free Fire, Clash of Clans, eFootball, Brawl Stars, Genshin Impact, Mobile Legends, Call of Duty, Valorant, Fortnite, Wild Rift, Arena Breakout, Honor of Kings, Diablo Immortal, Top Eleven.
+- [TikTok coins and Telegram stars](https://naroelwakel-dot.github.io/MigoAi/catalog-coins.html): TikTok coins (13 packages) and Telegram stars (7 packages).
+- [Live streaming apps](https://naroelwakel-dot.github.io/MigoAi/catalog-live.html): BIGO Live, Chamet, Poppo Live, Yalla Ludo, SUGO, MeYo.
+- [Virtual cards (VCC)](https://naroelwakel-dot.github.io/MigoAi/catalog-vcc.html): international virtual Visa cards for subscriptions, ads and global payments.
+- [Software and subscriptions](https://naroelwakel-dot.github.io/MigoAi/catalog-tools.html): Adobe Creative Cloud, Canva Pro, Microsoft Office 365, ExpressVPN, NordVPN, Spotify Premium, Netflix Premium, Shahid VIP, YouTube Premium and more.
+- [Social media services](https://naroelwakel-dot.github.io/MigoAi/catalog-social.html): followers, likes and views for 20 platforms, priced per 1000.
+- [AI tools and APIs](https://naroelwakel-dot.github.io/MigoAi/catalog-ai.html): Claude AI, ChatGPT Plus, Perplexity Pro, Super Grok, Midjourney, Suno AI, ElevenLabs, Google Gemini Pro, GitHub Copilot, Cursor AI Pro and more.
+
+## Optional
+- [Homepage](https://naroelwakel-dot.github.io/MigoAi/)
+- [Sitemap](https://naroelwakel-dot.github.io/MigoAi/sitemap.xml)
