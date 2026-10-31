@@ -20,15 +20,17 @@
 
     body {
         font-family: 'Tajawal', sans-serif;
-        background-color: var(--bg-void);
+        background-color: #08090d;
         background-image:
-            radial-gradient(ellipse 85% 50% at 50% -12%, rgba(212, 175, 55, 0.18), transparent 65%),
-            radial-gradient(ellipse 55% 38% at 88% 8%, rgba(249, 115, 22, 0.10), transparent 70%),
-            linear-gradient(rgba(11, 13, 17, 0.60), rgba(11, 13, 17, 0.78)),
-            url('https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/acc4b445599f4b16a9fb47f45f4d0c95.webp');
-        background-size: 100% 100%, 100% 100%, 100% 100%, cover;
-        background-repeat: no-repeat, no-repeat, no-repeat, no-repeat;
-        background-position: center center;
+            radial-gradient(125% 72% at 50% -14%, rgba(212, 175, 55, 0.22), transparent 62%),
+            radial-gradient(85% 58% at 102% 106%, rgba(168, 132, 42, 0.13), transparent 66%),
+            radial-gradient(62% 46% at -2% 16%, rgba(249, 115, 22, 0.08), transparent 70%),
+            linear-gradient(rgba(242, 210, 122, 0.028) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(242, 210, 122, 0.028) 1px, transparent 1px),
+            linear-gradient(180deg, #0b0d11 0%, #07080b 52%, #0b0d11 100%);
+        background-size: 100% 100%, 100% 100%, 100% 100%, 46px 46px, 46px 46px, 100% 100%;
+        background-repeat: no-repeat, no-repeat, no-repeat, repeat, repeat, no-repeat;
+        background-position: 50% -8%, 104% 108%, -4% 12%, 0 0, 0 0, center center;
         background-attachment: fixed;
         color: #e8ecf4;
         overflow-x: hidden;
@@ -334,3 +336,79 @@
 /* ---- Customer auth: email code field ---- */
 .otp-input{width:100%;background:#12151b;border:1px solid rgba(212,175,55,.30);border-radius:12px;padding:10px;color:#fff;text-align:center;letter-spacing:6px;font-weight:700}
 .otp-hint{font-size:10px;color:#b3ac9c;margin-top:6px;text-align:center}
+
+/* ============================================================
+   Home section quick-cards = compact single-row strip
+   (this replaces the old top category pill bar: the same
+   sections, but as smaller icons sitting side by side instead
+   of a tall multi-row grid. Scrolls sideways on small screens.)
+   ============================================================ */
+.sec-grid {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 10px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 2px 2px 8px;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+}
+.sec-grid > a {
+    flex: 0 0 auto;
+    width: 106px;
+    padding: 10px 8px;
+    gap: 6px;
+    scroll-snap-align: start;
+}
+.sec-grid > a .sec-ic { width: 2.25rem; height: 2.25rem; border-radius: 12px; }
+.sec-grid > a .sec-ic .sec-ico { width: 1.15rem; height: 1.15rem; }
+.sec-grid > a > .text-xs { font-size: 11px; line-height: 1.25; }
+.sec-grid > a > .text-\[10px\] { font-size: 9px; line-height: 1.2; }
+
+/* ============================================================
+   Sidebar (hamburger drawer): a designed cover for every row,
+   in the site's gold-on-black identity, with a coloured edge
+   accent per row so the menu reads alive instead of plain.
+   ============================================================ */
+#sidebarContainer aside .space-y-1 > a {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.015));
+    border: 1px solid rgba(212, 175, 55, 0.16);
+    border-radius: 13px;
+    box-shadow: inset 0 1px 0 rgba(242, 210, 122, 0.07);
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+#sidebarContainer aside .space-y-1 > a::before {
+    content: "";
+    position: absolute;
+    top: 0; bottom: 0; right: 0;
+    width: 3px;
+    background: var(--side-c, var(--accent));
+    opacity: 0.9;
+}
+#sidebarContainer aside .space-y-1 > a:hover {
+    transform: translateX(-4px);
+    border-color: rgba(242, 210, 122, 0.5);
+    background: linear-gradient(180deg, rgba(242, 210, 122, 0.14), rgba(255, 255, 255, 0.03));
+    box-shadow: 0 12px 26px -16px rgba(0, 0, 0, 0.8), 0 0 20px -6px var(--accent-glow);
+}
+#sidebarContainer aside .space-y-1 > a:nth-child(1) { --side-c: #e69500; }
+#sidebarContainer aside .space-y-1 > a:nth-child(2) { --side-c: #e11d48; }
+#sidebarContainer aside .space-y-1 > a:nth-child(3) { --side-c: #0ea5a5; }
+#sidebarContainer aside .space-y-1 > a:nth-child(4) { --side-c: #2fb56a; }
+#sidebarContainer aside .space-y-1 > a:nth-child(5) { --side-c: #d4af37; }
+#sidebarContainer aside .space-y-1 > a:nth-child(6) { --side-c: #f97316; }
+#sidebarContainer aside .space-y-1 > a:nth-child(7) { --side-c: #f43f6e; }
+#sidebarContainer aside .space-y-1 > a:nth-child(8) { --side-c: #c2703a; }
+#sidebarContainer aside .space-y-1 > a:nth-child(9) { --side-c: #84cc16; }
+#sidebarContainer aside .space-y-1 > a:nth-child(10) { --side-c: #d4af37; }
+
+/* drawer social buttons keep their own brand tint on hover */
+#sidebarContainer aside .grid > a {
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+#sidebarContainer aside .grid > a:hover { transform: translateY(-2px); }
+#sidebarContainer aside .grid > a:first-child:hover { border-color: #3b5998; box-shadow: 0 0 18px -4px rgba(59, 89, 152, 0.7); }
+#sidebarContainer aside .grid > a:last-child:hover { border-color: #25d366; box-shadow: 0 0 18px -4px rgba(37, 211, 102, 0.7); }
+
