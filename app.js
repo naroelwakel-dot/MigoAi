@@ -19,13 +19,11 @@ let isExpressModal = false;
 let selectedVccItem = null;
 let selectedPayment = null;
 
-// أكواد الخصم المعتمدة
+// أكواد الخصم المعتمدة (جديدة وغير معلنة للعملاء - الرقم = نسبة الخصم %)
 const validCoupons = {
-    'SIAFFC15': { discount: 0.15 },
-    'SIAF15': { discount: 0.15 },
-    'SIAFGAMING15': { discount: 0.15 },
-    'MIGO15': { discount: 0.15 },
-    'WELCOME10': { discount: 0.10 }
+    'MIGO5': { discount: 0.05 },
+    'MIGO10': { discount: 0.10 },
+    'MIGO15': { discount: 0.15 }
 };
 
 // خريطة أيقونات المنصات الـ 18 لإظهار الشعارات الرسمية الملونة بدقة
@@ -1572,3 +1570,4 @@ window.onload = function() {
         if (!e.target.closest('.coin-picker')) { closeAllCoinPickers(); }
     });
 };
+
