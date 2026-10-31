@@ -7,6 +7,7 @@
 </head>
 <body>
 <pre id="status">BOOT</pre>
+<p><a id="dl" download="tailwind.css" style="display:none">Download tailwind.css</a></p>
 <pre id="out"></pre>
 <iframe id="store" src="index.html" style="width:1300px;height:900px;border:0"></iframe>
 <script>
@@ -50,8 +51,15 @@
     setTimeout(tick, 1000);
   }
   function done(){
-    B64 = toB64(allCss(f.contentDocument));
+    var css = allCss(f.contentDocument);
+    B64 = toB64(css);
     CH = chunkify(B64, 4000);
+    try {
+      var blob = new Blob([css], {type:'text/css'});
+      var a = document.getElementById('dl');
+      a.href = URL.createObjectURL(blob);
+      a.style.display = 'inline-block';
+    } catch(e){}
     f.parentNode.removeChild(f);
     render();
   }
