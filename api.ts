@@ -311,6 +311,44 @@ async function rapidApiLookup(slugs: string[], id: string): Promise<{ name: stri
 }
 
 // ----------------------------------------------------------------------------
+// Free best-effort: Codashop public "check ID" (no key). GATED: only runs when
+// force=cosh is passed, so it never affects normal traffic until verified.
+// ----------------------------------------------------------------------------
+type CodaCfg = { type: string; svc?: string; ppid?: string; zone?: boolean; shop: string };
+const CODA_CFG: Record<string, CodaCfg> = {
+  freefire: { type: "FREEFIRE", ppid: "270288", shop: "id_ID" },
+  mlbb: { type: "MOBILE_LEGENDS", ppid: "5199", zone: true, shop: "id_ID" },
+  genshin: { type: "GENSHIN_IMPACT", ppid: "338498", zone: true, shop: "id_ID" },
+  valorant: { type: "VALORANT", ppid: "950525", shop: "id_ID" },
+  codm: { type: "CALL_OF_DUTY", ppid: "270251", shop: "id_ID" },
+};
+
+async function codashopLookup(cfg: CodaCfg, id: string, zoneId: string): Promise<{ name: string; info: string }> {
+  const body = new URLSearchParams();
+  body.set("type", cfg.type);
+  body.set("id", id);
+  if (cfg.svc) body.set("service", cfg.svc);
+  if (cfg.ppid) body.set("pricePointId", cfg.ppid);
+  body.set("shopLang", cfg.shop);
+  if (cfg.zone && zoneId) body.set("zoneId", zoneId);
+  const d = await getJson("https://order-sg.codashop.com/initPayment.action", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      "User-Agent": UA,
+      "Origin": "https://www.codashop.com",
+      "Referer": "https://www.codashop.com/",
+      "Accept": "application/json, text/plain, */*",
+    },
+    body: body.toString(),
+  }, 8000);
+  const cf = d?.confirmationFields;
+  const raw = cf?.username || (Array.isArray(cf?.roles) && cf.roles[0] && (cf.roles[0].role || cf.roles[0].roleName)) || "";
+  const name = typeof raw === "string" ? raw.trim() : "";
+  return { name, info: `cosh:${cfg.type}:code=${d?.errorCode ?? d?.error ?? (d ? "json" : "nil")}:${name ? "ok" : "none"}` };
+}
+
+// ----------------------------------------------------------------------------
 // Provider routes per store game id.
 //   vol = Volsever gateway slug (uses id + optional zone)
 //   nef = NeferByte slug (uses id + optional server)
@@ -319,7 +357,7 @@ async function rapidApiLookup(slugs: string[], id: string): Promise<{ name: stri
 //   jollymax = free PUBG fallback
 //   enka = official Genshin lookup
 // ----------------------------------------------------------------------------
-type Step = { p: "vol" | "nef" | "rap" | "isan" | "jollymax" | "enka" | "osirion"; slug?: string; zone?: boolean; path?: string };
+type Step = { p: "vol" | "nef" | "rap" | "isan" | "jollymax" | "enka" | "osirion" | "cosh"; slug?: string; zone?: boolean; path?: string; svc?: string; ppid?: string; shop?: string };
 
 const ROUTES: Record<string, Step[]> = {
   pubg: [
@@ -416,6 +454,8 @@ function runStep(step: Step, id: string, zoneId: string): Promise<{ name: string
       return lookupGenshin(id).then((n) => ({ name: n, info: `enka:${n ? "ok" : "none"}` }));
     case "osirion":
       return lookupFortnite(id);
+    case "cosh":
+      return codashopLookup({ type: (step.slug || ""), svc: step.svc, ppid: step.ppid, zone: step.zone, shop: step.shop || "id_ID" }, id, zoneId);
     default:
       return Promise.resolve({ name: "", info: "unknown-step" });
   }
@@ -480,14 +520,27 @@ Deno.serve(async (req: Request) => {
       }
     } // ---- Everything else: provider route table ----
     else {
-      const steps = ROUTES[game] || [];
-      // Free providers that only accept a numeric ID skip non-numeric input.
-      for (const step of steps) {
-        if (!isNumeric && step.p === "jollymax") continue;
-        const r = await runStep(step, id, zoneId);
-        trace.push(r.info);
-        foundName = r.name;
-        if (foundName) break;
+      const force = (url.searchParams.get("force") || "").trim().toLowerCase();
+      if (force === "cosh") {
+        const cfg = CODA_CFG[game];
+        if (cfg) {
+          const r = await codashopLookup(cfg, id, zoneId);
+          trace.push(r.info);
+          foundName = r.name;
+        } else {
+          trace.push(`cosh:${game}:no-config`);
+        }
+      } else {
+        let steps = ROUTES[game] || [];
+        if (force) steps = steps.filter((st) => st.p === force);
+        // Free providers that only accept a numeric ID skip non-numeric input.
+        for (const step of steps) {
+          if (!isNumeric && step.p === "jollymax") continue;
+          const r = await runStep(step, id, zoneId);
+          trace.push(r.info);
+          foundName = r.name;
+          if (foundName) break;
+        }
       }
     }
 
@@ -515,3 +568,4 @@ Deno.serve(async (req: Request) => {
     );
   }
 });
+
