@@ -1442,7 +1442,7 @@ function switchAuthTab(mode) {
     if (tr) tr.className = (mode !== 'login') ? 'py-1.5 text-xs font-bold rounded-lg transition sky-btn cursor-pointer' : 'py-1.5 text-xs font-bold rounded-lg transition text-gray-400 cursor-pointer';
 }
 
-// --- Customer accounts over Supabase (database + email code) ---
+// --- Customer accounts over Supabase (database + email confirmation link) ---
 const SUPABASE_URL = 'https://tmfczgqewhkgsaeaupqu.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_1Jo8Tie65l5k_HPsyI0MDw_uZXxqblE';
 let __sb = null, __pending = null;
@@ -1458,28 +1458,31 @@ function __authDone(name, email) {
     updateNavbarAuthUI();
     closeAuthModal();
 }
-function __askOtp(email) {
+function __awaitConfirm(email) {
     let box = document.getElementById('otpBox');
     if (!box) {
         const form = document.getElementById('registerForm');
-        if (!form) return;
+        if (!form) { showToast('بعتنالك لينك تأكيد على إيميلك'); return; }
         box = document.createElement('div');
         box.id = 'otpBox';
         box.className = 'mt-2';
-        box.innerHTML = '<input id="otpCode" class="otp-input" inputmode="numeric" maxlength="6" placeholder="كود التحقق (6 أرقام)"><button type="button" id="otpVerifyBtn" class="agentql-btn-primary w-full mt-2 py-2 rounded-xl cursor-pointer">تأكيد الكود</button><p class="otp-hint">لو وصلك لينك بدل الكود دوس عليه وبعدها سجّل دخول.</p>';
         form.appendChild(box);
     }
-    document.getElementById('otpVerifyBtn').onclick = function () {
-        const token = (document.getElementById('otpCode').value || '').trim();
-        if (token.length < 6) return showToast('اكتب الكود كامل', 'error');
-        __sbClient().then(c => c.auth.verifyOtp({ email: email, token: token, type: 'signup' }))
-            .then(res => {
-                if (res.error) return showToast('الكود غلط أو انتهى', 'error');
-                __authDone(__pending ? __pending.name : '', email);
-                showToast('تم تأكيد الإيميل 🎉');
-            }).catch(() => showToast('تعذّر التحقق', 'error'));
-    };
+    box.innerHTML = '<p class="otp-hint">بعتنالك لينك تأكيد على إيميلك <b>' + email + '</b>.<br>افتح الإيميل ودوس على اللينك، وبعدها ارجع هنا وسجّل دخول.</p>';
+    showToast('بعتنالك لينك تأكيد على إيميلك');
 }
+function __finishFromUrl() {
+    if (!location.hash || location.hash.indexOf('access_token') === -1) return;
+    __sbClient().then(c => c.auth.getSession()).then(res => {
+        const s = res && res.data && res.data.session;
+        if (!s || !s.user) return;
+        const meta = s.user.user_metadata || {};
+        __authDone(meta.name || (s.user.email || '').split('@')[0], s.user.email || '');
+        showToast('تم تأكيد إيميلك 🎉');
+        try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {}
+    }).catch(function () {});
+}
+if (document.readyState !== 'loading') { __finishFromUrl(); } else { document.addEventListener('DOMContentLoaded', __finishFromUrl); }
 function handleRegister(e) {
     e.preventDefault();
     const email = (document.getElementById('regEmail') || {}).value ? document.getElementById('regEmail').value.trim().toLowerCase() : '';
@@ -1488,13 +1491,11 @@ function handleRegister(e) {
     const password = (document.getElementById('regPassword') || {}).value || '';
     if (!email || password.length < 6) return showToast('اكتب بريد صحيح وكلمة سر 6 أحرف على الأقل', 'error');
     showToast('جاري إنشاء الحساب...');
-    __sbClient().then(c => c.auth.signUp({ email: email, password: password, options: { data: { name: name, phone: phone } } }))
+    __sbClient().then(c => c.auth.signUp({ email: email, password: password, options: { data: { name: name, phone: phone }, emailRedirectTo: 'https://naroelwakel-dot.github.io/MigoAi/' } }))
         .then(res => {
             if (res.error) return showToast(res.error.message, 'error');
-            __pending = { name: name, email: email };
             if (res.data && res.data.session) { __authDone(name, email); return showToast('تم التسجيل بنجاح 🎉'); }
-            showToast('بعتنالك كود على الإيميل');
-            __askOtp(email);
+            __awaitConfirm(email);
         }).catch(() => showToast('تعذّر الاتصال بالسيرفر', 'error'));
 }
 
