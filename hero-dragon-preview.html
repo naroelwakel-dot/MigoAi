@@ -4,18 +4,21 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, nofollow">
-  <title>معاينة: هيرو التنين بالجمر المتحرك | Migo AI Solution</title>
+  <title>معاينة: هيرو التنين — لهب متحرك | Migo AI Solution</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="stylesheet" href="tailwind.css?v=2026-10-31-3">
   <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="site.css">
 
   <style>
-    /* ===== هيرو "حيّ" من صورة ساكنة: تنين + طبقة جمر متحركة (بدون فيديو) ===== */
+    /* ===== هيرو «التنين»: صورة ساكنة + لهب النَفَس متحرك (بدون فيديو) ===== */
 
-    .dragon-hero { position: relative; overflow: hidden; }
+    .dragon-hero {
+      position: relative; overflow: hidden;
+      min-height: clamp(300px, 42vw, 440px);
+    }
 
-    /* صورة التنين: زووم بطيء مستمر */
+    /* صورة التنين (زووم بطيء خفيف) */
     .dragon-hero .d-img {
       position: absolute; inset: 0; width: 100%; height: 100%;
       object-fit: cover; object-position: center;
@@ -23,47 +26,65 @@
       animation: dZoom 26s ease-in-out infinite alternate;
     }
     @keyframes dZoom {
-      from { transform: scale(1.04) translate(0,0); }
-      to   { transform: scale(1.16) translate(-1.5%,-1.2%); }
+      from { transform: scale(1.03) translate(0,0); }
+      to   { transform: scale(1.10) translate(-0.8%,-0.6%); }
     }
 
-    /* طبقة الجمر: نسيج مبلّط عمودياً يطلع لفوق، ويُدمج بـ screen فيختفي الأسود */
+    /* لهب النَفَس: نسيج نار (screen) مائل على مسار اللهب، بتدفّق ووميض */
+    .dragon-hero .d-fire {
+      position: absolute;
+      left: 44%; top: 37%; width: 54%; height: 42%;
+      transform-origin: 0% 50%;
+      transform: rotate(28deg);
+      mix-blend-mode: screen; opacity: .9; pointer-events: none;
+      overflow: hidden;
+      -webkit-mask-image: linear-gradient(to right, transparent 0, #000 14%, #000 80%, transparent 100%);
+              mask-image: linear-gradient(to right, transparent 0, #000 14%, #000 80%, transparent 100%);
+      animation: fireFlicker 1.6s ease-in-out infinite alternate;
+    }
+    .dragon-hero .d-fire::before {
+      content: ""; position: absolute; left: 0; top: 0; width: 200%; height: 100%;
+      background-image: url("https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/bded9d811d32497da2eb70582081dcda.png");
+      background-repeat: repeat-x;
+      background-size: 50% 100%;
+      animation: fireFlow 3.2s linear infinite;
+      will-change: transform;
+    }
+    @keyframes fireFlow { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    @keyframes fireFlicker { from { opacity: .7; } to { opacity: 1; } }
+
+    /* وهج عند فم التنين (نبض أقوى) */
+    .dragon-hero .d-mouth {
+      position: absolute; left: 40%; top: 34%; width: 20%; height: 28%;
+      pointer-events: none; mix-blend-mode: screen;
+      background: radial-gradient(closest-side, rgba(255,170,60,.75), rgba(255,110,20,.28) 55%, rgba(0,0,0,0) 78%);
+      animation: mouthPulse 2.1s ease-in-out infinite alternate;
+    }
+    @keyframes mouthPulse { from { opacity: .5; transform: scale(.96); } to { opacity: 1; transform: scale(1.06); } }
+
+    /* جمر وشرر خفيف بيطلع لفوق في العموم */
     .dragon-hero .d-embers {
       position: absolute; inset: 0; overflow: hidden;
-      mix-blend-mode: screen; opacity: .85; pointer-events: none;
+      mix-blend-mode: screen; opacity: .5; pointer-events: none;
     }
     .dragon-hero .d-embers::before {
       content: ""; position: absolute; left: 0; right: 0; top: 0; height: 200%;
       background-image: url("https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/19d6bf311dc742478f36d66f48a822e2.png");
       background-repeat: repeat-y;
-      background-size: 100% 50%;      /* البلاطة = ارتفاع الهيرو => التكرار سلس */
-      animation: emberRise 11s linear infinite;
+      background-size: 100% 50%;
+      animation: emberRise 13s linear infinite;
     }
-    @keyframes emberRise {
-      from { transform: translateY(0); }
-      to   { transform: translateY(-50%); }
-    }
+    @keyframes emberRise { from { transform: translateY(0); } to { transform: translateY(-50%); } }
 
-    /* توهّج نار عند فم التنين (وميض خفيف) */
-    .dragon-hero .d-glow {
-      position: absolute; inset: 0; pointer-events: none;
-      background: radial-gradient(60% 55% at 68% 62%, rgba(255,138,40,.42), rgba(255,90,20,.12) 45%, rgba(0,0,0,0) 72%);
-      mix-blend-mode: screen;
-      animation: glowFlicker 4.5s ease-in-out infinite alternate;
-    }
-    @keyframes glowFlicker {
-      from { opacity: .55; }
-      to   { opacity: 1; }
-    }
-
-    /* تعتيم لقراءة النص (نفس أسلوب الموقع) */
+    /* تعتيم لقراءة النص */
     .dragon-hero .d-veil {
       position: absolute; inset: 0; pointer-events: none;
-      background: linear-gradient(180deg, rgba(11,13,17,.45), rgba(11,13,17,.88));
+      background: linear-gradient(180deg, rgba(11,13,17,.5), rgba(11,13,17,.86));
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .dragon-hero .d-img, .dragon-hero .d-embers::before, .dragon-hero .d-glow { animation: none !important; }
+      .dragon-hero .d-img, .dragon-hero .d-fire, .dragon-hero .d-fire::before,
+      .dragon-hero .d-mouth, .dragon-hero .d-embers::before { animation: none !important; }
     }
 
     .motion-btn {
@@ -73,20 +94,21 @@
     }
     .motion-btn:hover { color: #fff; background: rgba(255,255,255,.09); }
     .motion-btn.active { color: #0b0d11; background: var(--accent, #38bdf8); border-color: transparent; }
-    .paused .d-img, .paused .d-embers::before, .paused .d-glow { animation-play-state: paused !important; }
+    .paused .d-img, .paused .d-fire, .paused .d-fire::before,
+    .paused .d-mouth, .paused .d-embers::before { animation-play-state: paused !important; }
   </style>
  </head>
  <body>
 
   <div class="max-w-6xl mx-auto px-4 pt-6">
     <div class="sky-surface rounded-2xl p-4 mb-4 border border-white/10">
-      <div class="text-white font-bold mb-1">معاينة: هيرو «التنين الحيّ» (صورة ساكنة + حركة، بدون فيديو)</div>
+      <div class="text-white font-bold mb-1">معاينة: هيرو «التنين» — لهب النَفَس بقى بيتحرك</div>
       <p class="text-xs text-slate-400 leading-relaxed mb-3">
-        نفس الصورة اللي عجبتك، لكن فوقها طبقة جمر وشرر بتطلع لفوق مع توهّج نار بتحت التنين، وكلها بتلف مستمرة. مفيش أي ملف فيديو — كل ده صور + CSS فخفيف جداً. شوفها على موبايلك وقولي رأيك.
+        نفس الصورة، بس دلوقتي <b>اللهب اللي التنين بينفثه</b> هو اللي بيتحرك (تدفّق + وميض + وهج عند الفم)، مع جمر خفيف في الخلفية. لسه مفيش أي فيديو — صور + CSS بس. جرّب زر الإيقاف تشوف الفرق.
       </p>
       <div class="flex flex-wrap gap-2">
-        <button class="motion-btn active" id="playBtn" data-m="play">تشغيل الحركة</button>
-        <button class="motion-btn" id="pauseBtn" data-m="pause">إيقاف مؤقت (تشوف الفرق)</button>
+        <button class="motion-btn active" id="playBtn">تشغيل الحركة</button>
+        <button class="motion-btn" id="pauseBtn">إيقاف مؤقت (تشوف الفرق)</button>
       </div>
     </div>
   </div>
@@ -94,7 +116,8 @@
   <section class="max-w-6xl mx-auto px-4 pb-12">
     <div id="dh" class="dragon-hero w-full max-w-6xl mx-auto rounded-2xl mb-4 border border-white/10 bg-[#12151b]" dir="rtl">
       <img class="d-img" src="https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/2c2a6dc93e854b44989d41acd8e2deed.png" alt="تنين ينفث النار فوق مدينة ليلية" loading="eager" decoding="async" fetchpriority="high">
-      <div class="d-glow"></div>
+      <div class="d-mouth"></div>
+      <div class="d-fire"></div>
       <div class="d-embers"></div>
       <div class="d-veil"></div>
 
