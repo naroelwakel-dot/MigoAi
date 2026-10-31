@@ -18,16 +18,7 @@ let isExpressModal = false;
 let selectedVccItem = null;
 let selectedPayment = null;
 
-// أكواد الخصم المعتمدة - مخزّنة كهاش SHA-256 وليست نصاً صريحاً (الرقم = نسبة الخصم %)
-const validCouponHashes = {
-    'f4b1d9700666a113313efa5699e9f78a9057114664802fde648a284a3feb531b': 0.05,
-    '7dd935ecab84ae5149f19bfae23fc0204ed00e4fdeffdba725d6dfc126d1e12c': 0.10,
-    '18c6bd3667a83f0da28901f00d5f25411e143983ee29e97b0eef2316135d392f': 0.15
-};
-async function sha256Hex(str) {
-    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
-    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
-}
+// أكواد الخصم تُتحقّق على السيرفر (Supabase RPC: validate_coupon) — الأكواد غير مكشوفة في الواجهة
 
 // خريطة أيقونات المنصات الـ 20 لإظهار الشعارات الرسمية الملونة بدقة
 const SMM_ICONS = {
@@ -272,8 +263,12 @@ async function applyCartCoupon() {
     const code = inp.value.trim().toUpperCase();
     if (!code) return showToast('أدخل كود الخصم أولاً', 'error');
     let discount = null;
-    try { discount = validCouponHashes[await sha256Hex(code)]; } catch (e) { discount = null; }
-    if (discount == null) return showToast('كود غير صالح', 'error');
+    try {
+        const c = await __sbClient();
+        const res = await c.rpc('validate_coupon', { p_code: code });
+        if (!res.error && res.data != null) discount = Number(res.data);
+    } catch (e) { discount = null; }
+    if (discount == null || isNaN(discount) || discount <= 0) return showToast('كود غير صالح', 'error');
     appliedCoupon = { code: code, discount: discount };
     const statusEl = document.getElementById('cartCouponStatus');
     if (statusEl) {
