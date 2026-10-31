@@ -93,7 +93,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Tajawal:wght@400;500;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="site.css?v=2026-10-31-9">
+  <link rel="stylesheet" href="site.css?v=2026-10-31-10">
  <style>
   /* Dragon hero (home) */
   .dragon-hero{position:relative;overflow:hidden;aspect-ratio:16 / 9;display:flex;align-items:center;justify-content:center}
@@ -750,7 +750,7 @@
     <div class="border-t border-white/10 pt-3 space-y-2">
      <div class="flex gap-2">
       <label for="cartCouponInput" class="sr-only">كود الخصم</label>
-      <input type="text" id="cartCouponInput" placeholder="كود الخصم (SIAFFC15 أو SIAF15)" class="flex-1 bg-[#1f2530] border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-mono-code focus:border-white/30 outline-none uppercase">
+      <input type="text" id="cartCouponInput" placeholder="كود الخصم" class="flex-1 bg-[#1f2530] border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-mono-code focus:border-white/30 outline-none uppercase">
       <button type="button" onclick="applyCartCoupon()" class="sky-btn text-xs font-bold px-3 py-2 cursor-pointer font-mono-code">Apply</button>
      </div>
      <div id="cartCouponStatus" class="hidden text-[10px] font-bold"></div>
@@ -922,7 +922,7 @@
   <!-- Dynamic Cache-Busting Module Loader -->
   <script>
     (function() {
-      const v = 'v=2026-10-31-7';
+      const v = 'v=2026-10-31-10';
       const files = ['games.js', 'live-coins.js', 'subscriptions.js', 'smm.js', 'ai-tools.js', 'app.js'];
       files.forEach(file => {
         const s = document.createElement('script');
