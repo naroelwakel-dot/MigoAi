@@ -1,4 +1,4 @@
-// Migo AI Solution - Deno service (verification + /chat). Rebuild marker: chat-live-3
+// Migo AI Solution - Deno service (verification + /chat). Rebuild marker: chat-live-4
 // build marker 2026-10-31T07:10Z: add a fire-and-forget usage counter (one row per provider attempt
 // in Supabase public.verification_calls) so we can measure real per-source usage (free vs Volsever).
 // Also: free sources (isan/jollymax) are tried before the metered Volsever route for the games they
@@ -500,6 +500,7 @@ function runStep(step: Step, id: string, zoneId: string): Promise<{ name: string
 // never in the browser. Answers come from the store's own prices (public.catalog).
 // ============================================================================
 const GEMINI_MODEL = "gemini-flash-latest";
+const GEMINI_MODELS = ["gemini-flash-latest", "gemini-2.5-flash", "gemini-2.0-flash"];
 const SITE_URL = "https://naroelwakel-dot.github.io/MigoAi/";
 const WHATSAPP = "https://wa.me/201060934020";
 
@@ -576,29 +577,34 @@ async function handleChat(req: Request): Promise<Response> {
     contents,
     generationConfig: { temperature: 0.6, maxOutputTokens: 320 },
   };
+  let text = "";
   let gStatus = 0;
   let gBody = "";
-  let res: any = null;
-  try {
-    const r = await fetchWithTimeout(
-      `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`,
-      { method: "POST", headers: { "Content-Type": "application/json", "x-goog-api-key": key }, body: JSON.stringify(payload) },
-      15000,
-    );
-    gStatus = r.status;
-    gBody = await r.text();
-    res = JSON.parse(gBody);
-  } catch (e) {
-    gBody = "ERR:" + String(e).slice(0, 300);
+  let lastModel = "";
+  for (const model of GEMINI_MODELS) {
+    lastModel = model;
+    try {
+      const r = await fetchWithTimeout(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
+        { method: "POST", headers: { "Content-Type": "application/json", "x-goog-api-key": key }, body: JSON.stringify(payload) },
+        15000,
+      );
+      gStatus = r.status;
+      gBody = await r.text();
+      const j: any = JSON.parse(gBody);
+      text = j?.candidates?.[0]?.content?.parts?.map((p: any) => p.text).join("") || "";
+      if (text) break;
+    } catch (e) {
+      gBody = "ERR:" + String(e).slice(0, 300);
+    }
   }
-  const text = res?.candidates?.[0]?.content?.parts?.map((p: any) => p.text).join("") || "";
   if (!text) {
     try {
       const dbg = (gBody || "").split(key).join("[key]").slice(0, 1500);
       const lp = fetch(`${SB_URL}/rest/v1/chat_debug`, {
         method: "POST",
         headers: { "apikey": SB_KEY, "Authorization": `Bearer ${SB_KEY}`, "Content-Type": "application/json", "Prefer": "return=minimal" },
-        body: JSON.stringify({ status: gStatus, note: "key-present", body: dbg }),
+        body: JSON.stringify({ status: gStatus, note: "key-present:" + lastModel, body: dbg }),
       }).catch(() => {});
       (globalThis as any).EdgeRuntime?.waitUntil?.(lp);
     } catch (_) {}
