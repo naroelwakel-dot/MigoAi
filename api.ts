@@ -499,7 +499,8 @@ function runStep(step: Step, id: string, zoneId: string): Promise<{ name: string
 // Store chat assistant (Gemini). The Gemini API key lives ONLY here (Deno env),
 // never in the browser. Answers come from the store's own prices (public.catalog).
 // ============================================================================
-const GEMINI_MODEL = "gemini-2.5-flash";
+const GEMINI_MODEL = "gemini-3.8-flash";
+const GEMINI_MODELS = ["gemini-3.8-flash", "gemini-flash-latest"];
 const SITE_URL = "https://naroelwakel-dot.github.io/MigoAi/";
 const WHATSAPP = "https://wa.me/201060934020";
 
@@ -579,18 +580,23 @@ async function handleChat(req: Request): Promise<Response> {
   let text = "";
   let gStatus = 0;
   let gBody = "";
-  try {
-    const r = await fetchWithTimeout(
-      `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`,
-      { method: "POST", headers: { "Content-Type": "application/json", "x-goog-api-key": key }, body: JSON.stringify(payload) },
-      12000,
-    );
-    gStatus = r.status;
-    gBody = await r.text();
-    const j: any = JSON.parse(gBody);
-    text = j?.candidates?.[0]?.content?.parts?.map((p: any) => p.text).join("") || "";
-  } catch (e) {
-    gBody = "ERR:" + String(e).slice(0, 300);
+  let lastModel = "";
+  for (const model of GEMINI_MODELS) {
+    lastModel = model;
+    try {
+      const r = await fetchWithTimeout(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
+        { method: "POST", headers: { "Content-Type": "application/json", "x-goog-api-key": key }, body: JSON.stringify(payload) },
+        12000,
+      );
+      gStatus = r.status;
+      gBody = await r.text();
+      const j: any = JSON.parse(gBody);
+      text = j?.candidates?.[0]?.content?.parts?.map((p: any) => p.text).join("") || "";
+      if (text) break;
+    } catch (e) {
+      gBody = "ERR:" + String(e).slice(0, 300);
+    }
   }
   if (!text) {
     try {
@@ -598,7 +604,7 @@ async function handleChat(req: Request): Promise<Response> {
       const lp = fetch(`${SB_URL}/rest/v1/chat_debug`, {
         method: "POST",
         headers: { "apikey": SB_KEY, "Authorization": `Bearer ${SB_KEY}`, "Content-Type": "application/json", "Prefer": "return=minimal" },
-        body: JSON.stringify({ status: gStatus, note: "key-present", body: dbg }),
+        body: JSON.stringify({ status: gStatus, note: "key-present:" + lastModel, body: dbg }),
       }).catch(() => {});
       (globalThis as any).EdgeRuntime?.waitUntil?.(lp);
     } catch (_) {}
