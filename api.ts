@@ -493,12 +493,112 @@ function runStep(step: Step, id: string, zoneId: string): Promise<{ name: string
   }
 }
 
+
+// ============================================================================
+// Store chat assistant (Gemini). The Gemini API key lives ONLY here (Deno env),
+// never in the browser. Answers come from the store's own prices (public.catalog).
+// ============================================================================
+const GEMINI_MODEL = "gemini-flash-latest";
+const SITE_URL = "https://naroelwakel-dot.github.io/MigoAi/";
+const WHATSAPP = "https://wa.me/201060934020";
+
+let __catalog: { sku: string; price: number; kind: string }[] | null = null;
+let __catalogAt = 0;
+async function getCatalog(): Promise<{ sku: string; price: number; kind: string }[]> {
+  const now = Date.now();
+  if (__catalog && now - __catalogAt < 10 * 60 * 1000) return __catalog;
+  const rows = await getJson(`${SB_URL}/rest/v1/rpc/get_catalog`, {
+    method: "POST",
+    headers: { "apikey": SB_KEY, "Authorization": `Bearer ${SB_KEY}`, "Content-Type": "application/json" },
+    body: "{}",
+  }, 6000);
+  if (Array.isArray(rows) && rows.length) {
+    __catalog = rows.map((r: any) => ({ sku: String(r.sku), price: Number(r.price), kind: String(r.kind || "") }));
+    __catalogAt = now;
+  }
+  return __catalog || [];
+}
+
+function pickRelevant(msg: string, cat: { sku: string; price: number }[], limit = 16) {
+  const words = (msg || "").toLowerCase().split(/[^\p{L}\p{N}]+/u).filter((w) => w.length >= 2);
+  if (!words.length) return [] as { sku: string; price: number }[];
+  return cat
+    .map((r) => {
+      const s = r.sku.toLowerCase();
+      let sc = 0;
+      for (const w of words) if (s.includes(w)) sc += w.length >= 4 ? 2 : 1;
+      return { r, sc };
+    })
+    .filter((x) => x.sc > 0)
+    .sort((a, b) => b.sc - a.sc)
+    .slice(0, limit)
+    .map((x) => x.r);
+}
+
+function buildSystem(cat: { sku: string; price: number }[], msg: string): string {
+  const rel = pickRelevant(msg, cat, 16);
+  const priceLines = rel.map((r) => `- ${r.sku} : ${r.price} ج.م`).join("\n");
+  return `أنت "مساعد Migo"، مساعد الدعم في متجر Migo AI Solution (شحن ألعاب وخدمات رقمية بالـ ID في مصر).
+قواعد:
+- ردّ بالعربي، بأسلوب ودود ومبسّط، في 3 أسطر كحد أقصى، وبدون مقدمات إنشائية.
+- أعطِ السعر والمدة فوراً من القائمة أدناه بالضبط. لا تخترع أي سعر أو مدة أبداً.
+- كل الأسعار بالجنيه المصري (ج.م)، والتسليم عادةً من 2 إلى 5 دقائق بعد الدفع.
+- لو المعلومة مش موجودة في القائمة، قول بصراحة إنها مش متاحة هنا، ووجّه العميل لواتساب: ${WHATSAPP}
+- لما يحب يشتري، اطلب منه رقم الـ ID (معرّف اللعبة/الحساب) وطريقة الدفع.
+- متتكلمش عن أسعار الموردين ولا أي حاجة مش من المتجر.
+صفحة كل الأسعار: ${SITE_URL}catalog.html
+${priceLines ? "أسعار من المتجر تطابق سؤال العميل:\n" + priceLines : "(مفيش منتج مطابق واضح لسؤال العميل في القائمة.)"}`;
+}
+
+async function handleChat(req: Request): Promise<Response> {
+  const key = Deno.env.get("GEMINI_API_KEY") || "";
+  if (!key) {
+    return new Response(JSON.stringify({ ok: false, error: "no-key" }), { status: 200, headers: CORS_HEADERS });
+  }
+  let body: any = {};
+  try { body = await req.json(); } catch (_) { body = {}; }
+  const message = String(body.message || "").slice(0, 800).trim();
+  if (!message) {
+    return new Response(JSON.stringify({ ok: false, error: "empty" }), { status: 200, headers: CORS_HEADERS });
+  }
+  const hist = Array.isArray(body.history) ? body.history.slice(-6) : [];
+  const cat = await getCatalog();
+  const contents = [
+    ...hist.map((h: any) => ({
+      role: h && h.role === "model" ? "model" : "user",
+      parts: [{ text: String((h && h.text) || "").slice(0, 500) }],
+    })),
+    { role: "user", parts: [{ text: message }] },
+  ];
+  const payload = {
+    systemInstruction: { parts: [{ text: buildSystem(cat, message) }] },
+    contents,
+    generationConfig: { temperature: 0.6, maxOutputTokens: 320 },
+  };
+  const res = await getJson(
+    `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`,
+    { method: "POST", headers: { "Content-Type": "application/json", "x-goog-api-key": key }, body: JSON.stringify(payload) },
+    15000,
+  );
+  const text = res?.candidates?.[0]?.content?.parts?.map((p: any) => p.text).join("") || "";
+  if (!text) {
+    return new Response(
+      JSON.stringify({ ok: true, reply: `معلش مش قادر أجاوب دلوقتي. كلّمنا على واتساب: ${WHATSAPP}`, fallback: true }),
+      { status: 200, headers: CORS_HEADERS },
+    );
+  }
+  return new Response(JSON.stringify({ ok: true, reply: String(text).trim() }), { status: 200, headers: CORS_HEADERS });
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 204, headers: CORS_HEADERS });
   }
 
   const url = new URL(req.url);
+  if (req.method === "POST" && url.pathname.replace(/\/+$/, "").endsWith("/chat")) {
+    return await handleChat(req);
+  }
   let game = (url.searchParams.get("game") || "").toLowerCase().trim();
   const id = (url.searchParams.get("id") || "").trim();
   const zoneId = (url.searchParams.get("zoneId") || "").trim();
