@@ -15,15 +15,27 @@
     return e;
   }
 
+  // شعار Migo المتحرك (نفس شعار الهيدر) - معرّف تدرّج مختلف عشان مايتعارضش مع شعار الصفحة
+  function logoSVG(id) {
+    return '<svg viewBox="0 0 48 48" role="img" aria-label="Migo AI Solution">' +
+      '<defs><linearGradient id="' + id + '" x1="0" y1="0" x2="1" y2="1">' +
+        '<stop offset="0" stop-color="#f2d27a"/><stop offset="1" stop-color="#b8860b"/></linearGradient></defs>' +
+      '<circle cx="24" cy="24" r="8.5" fill="url(#' + id + ')" class="migo-core"/>' +
+      '<circle cx="24" cy="24" r="16.5" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="1.6"/>' +
+      '<circle cx="24" cy="24" r="16.5" fill="none" stroke="url(#' + id + ')" stroke-width="2.2" stroke-linecap="round" class="migo-ring"/>' +
+      '<g class="migo-spin"><circle cx="24" cy="7.5" r="3" fill="#ffe9a8"/></g>' +
+    '</svg>';
+  }
+
   function build() {
     if (document.getElementById('migoChat')) return;
     var root = el('div', 'migo-chat');
     root.id = 'migoChat';
     root.innerHTML =
-      '<button class="migo-chat__btn" type="button" aria-label="اسأل مساعد ميجو">💬</button>' +
+      '<button class="migo-chat__btn" type="button" aria-label="اسأل مساعد ميجو">' + logoSVG('migoOrbitFab') + '</button>' +
       '<div class="migo-chat__panel" hidden>' +
         '<div class="migo-chat__head"><span>مساعد Migo</span>' +
-          '<button class="migo-chat__x" type="button" aria-label="إغلاق">×</button></div>' +
+          '<button class="migo-chat__x" type="button" aria-label="إغلاق المحادثة">إغلاق <b>✕</b></button></div>' +
         '<div class="migo-chat__body"></div>' +
         '<form class="migo-chat__form">' +
           '<input class="migo-chat__in" type="text" placeholder="اسأل عن أي سعر أو خدمة..." autocomplete="off" maxlength="400" />' +
