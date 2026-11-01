@@ -8,10 +8,11 @@
   var WA = 'https://wa.me/201060934020';
   var history = [];
   var REPLY_TIMEOUT_MS = 20000;   // أقصى وقت نستنى فيه رد السيرفر
-  var TICKER_MS = 60000;          // سطر الذكر يتغيّر كل دقيقة
+  var NOTE_EVERY_MS = 30000;      // كل قد إيه يظهر تنبيه جديد فوق أيقونة الشات
+  var NOTE_SHOW_MS = 2500;        // مدة ظهور التنبيه قبل ما يختفي (ثانيتين ونص)
 
-  // سطر الذكر والصلاة فوق المحادثة. عدّل الكلمات من هنا وهو مش محتاج أي حاجة تانية.
-  var TICKER = [
+  // تنبيهات الذكر والصلاة اللي بتظهر صغيرة فوق أيقونة الشات (مش جوّه المحادثة). عدّل الكلمات من هنا.
+  var NOTES = [
     'اذكر الله، تطمئن القلوب 🤍',
     'اللهم صلِّ وسلّم على نبينا محمد ﷺ',
     'هل صليت اليوم؟ متأجّلش الصلاة',
@@ -41,21 +42,25 @@
     '</svg>';
   }
 
-  // سطر الذكر: يعرض أول جملة فورًا، وبعدها يتغيّر كل دقيقة بتلاشي ناعم.
-  function startTicker(node) {
-    if (!node || !TICKER.length) return;
+  // تنبيه صغير فوق أيقونة الشات: جملة تظهر ثانيتين ونص وتختفي بتلاشي ناعم، وتتكرر كل فترة.
+  // بيتوقف وهو مفتوح (isPanelOpen) عشان مايزحمش المحادثة.
+  function startNotes(node, isPanelOpen) {
+    if (!node || !NOTES.length) return;
     var i = 0;
-    node.textContent = TICKER[i];
-    node.classList.add('is-in');
-    i++;
-    setInterval(function () {
-      node.classList.remove('is-in');
+    var showing = false;
+    function show() {
+      if (showing || (isPanelOpen && isPanelOpen())) return;
+      showing = true;
+      node.textContent = NOTES[i % NOTES.length];
+      i++;
+      node.classList.add('is-in');
       setTimeout(function () {
-        node.textContent = TICKER[i % TICKER.length];
-        node.classList.add('is-in');
-        i++;
-      }, 420);
-    }, TICKER_MS);
+        node.classList.remove('is-in');
+        setTimeout(function () { showing = false; }, 450);
+      }, NOTE_SHOW_MS);
+    }
+    setTimeout(show, 5000);           // أول تنبيه بعد ثواني من فتح الصفحة
+    setInterval(show, NOTE_EVERY_MS);
   }
 
   function build() {
@@ -64,10 +69,10 @@
     root.id = 'migoChat';
     root.innerHTML =
       '<button class="migo-chat__btn" type="button" aria-label="اسأل مساعد ميجو">' + logoSVG('migoOrbitFab') + '</button>' +
+      '<div class="migo-chat__note" role="status" aria-live="polite"></div>' +
       '<div class="migo-chat__panel" hidden>' +
         '<div class="migo-chat__head"><span>مساعد Migo</span>' +
           '<button class="migo-chat__x" type="button" aria-label="إغلاق المحادثة">إغلاق <b>✕</b></button></div>' +
-        '<div class="migo-chat__ticker" aria-live="polite"></div>' +
         '<div class="migo-chat__body"></div>' +
         '<form class="migo-chat__form">' +
           '<input class="migo-chat__in" type="text" placeholder="اسأل عن أي سعر أو خدمة..." autocomplete="off" maxlength="400" />' +
@@ -81,6 +86,7 @@
     var input = root.querySelector('.migo-chat__in');
     var form = root.querySelector('.migo-chat__form');
     var fab = root.querySelector('.migo-chat__btn');
+    var note = root.querySelector('.migo-chat__note');
 
     function bubble(text, who) {
       var b = el('div', 'migo-chat__msg migo-chat__msg--' + who, text);
@@ -90,11 +96,12 @@
     }
 
     bubble('أهلاً! 👋 اسألني عن أي سعر أو خدمة وأنا أرد عليك في ثانية.', 'bot');
-    startTicker(root.querySelector('.migo-chat__ticker'));
+    startNotes(note, function () { return !panel.hidden; });
 
     fab.addEventListener('click', function () {
       panel.hidden = false;
       fab.style.display = 'none';
+      note.classList.remove('is-in');
       input.focus();
     });
     root.querySelector('.migo-chat__x').addEventListener('click', function () {
