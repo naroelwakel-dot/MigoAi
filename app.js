@@ -1526,11 +1526,12 @@ function toggleSidebar() {
 // رسم أقسام المتجر بمجرد تشغيل app.js (بيتنفذ بعد ملفات بيانات الأقسام بسبب async=false)،
 // بدل ما نستنى window.load اللي بيتأخر لحد ما كل الصور والخطوط تخلّص تحميل.
 var __migoStoreRendered = false;
-function renderStoreSections() {
-    if (__migoStoreRendered) return;
+function renderStoreSections(force) {
+    if (__migoStoreRendered && !force) return;
+    var first = !__migoStoreRendered;
     __migoStoreRendered = true;
     try { updateNavbarAuthUI(); } catch (e) {}
-    try { initVisitorCounter(); } catch (e) {}
+    if (first) { try { initVisitorCounter(); } catch (e) {} }
     try { loadCartFromStorage(); } catch (e) {}
     try { renderCoinsAndStars(); } catch (e) {}
     try { renderLiveApps(); } catch (e) {}
@@ -1553,7 +1554,10 @@ if (document.readyState === 'loading') {
 }
 
 window.addEventListener('load', function() {
-    renderStoreSections();
+    // Re-render once everything (including the data modules) has loaded, so no section
+    // is left empty if its data file finished after app.js ran. innerHTML replaces, so
+    // running the render functions twice is safe; the visitor counter only runs once.
+    renderStoreSections(true);
 
     setInterval(() => {
         currentSlide = (currentSlide + 1) % 3;
