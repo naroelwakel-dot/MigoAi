@@ -447,6 +447,22 @@ a[aria-label="تواصل مع الدعم الفني"] svg { fill: #ffffff !impor
         display: none !important;
     }
 
+/* Collapsible header search: full field while at the top, a small magnifier icon
+   once the page is scrolled, and the field reappears over the header when tapped. */
+#searchToggleBtn {
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+header.sticky.is-scrolled #searchToggleBtn { display: inline-flex; }
+header.sticky.is-scrolled #searchRow { display: none; }
+header.sticky.is-scrolled.search-open #searchRow {
+    display: block;
+    animation: migoSearchDrop .22s ease-out;
+}
+@keyframes migoSearchDrop { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { header.sticky.is-scrolled.search-open #searchRow { animation: none; } }
+
 /* Mobile: keep the search box usable. A 16px input stops iOS from zooming on focus
    (the zoom is what drops the phone keyboard), and we drop the heavy header blur so
    typing doesn't force a full-screen repaint on every keystroke. */
