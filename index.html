@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="preload" as="style" href="tailwind.css?v=2026-10-31-3">
-  <link rel="preload" as="style" href="site.css?v=2026-11-01-5">
+  <link rel="preload" as="style" href="site.css?v=2026-11-01-6">
   <meta name="title" content="Migo AI Solution | شحن ألعاب بالـ ID وكوينز تيك توك وبطاقات VCC">
   <meta name="description" content="منصة متكاملة للشحن الفوري للألعاب بالـ ID، كوينز تيك توك ونجوم تليجرام، بطاقات VCC دولية، واشتراكات الذكاء الاصطناعي والسوشيال ميديا بالجنيه المصري مع تسليم فوري ودعم مباشر.">
   <link rel="canonical" href="https://naroelwakel-dot.github.io/MigoAi/">
@@ -102,7 +102,7 @@
   <!-- Font Awesome icons load without blocking first paint (icons pop in a moment later) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
-  <link rel="stylesheet" href="site.css?v=2026-11-01-5">
+  <link rel="stylesheet" href="site.css?v=2026-11-01-6">
  <style>
   /* Dragon hero (home) */
   .dragon-hero{position:relative;overflow:hidden;aspect-ratio:16 / 9;display:flex;align-items:center;justify-content:center}
@@ -121,7 +121,13 @@
   .dragon-hero .dh-slide{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transition:opacity .7s ease;pointer-events:none}
   .dragon-hero .dh-slide.is-active{opacity:1;pointer-events:auto}
   @media (prefers-reduced-motion: reduce){.dragon-hero .dh-img,.dragon-hero .dh-fire,.dragon-hero .dh-fire::before,.dragon-hero .dh-mouth{animation:none!important}}
- </style>
+  /* Taller hero on phones so the slide copy (badge + title + description + price + button) is never clipped */
+  @media (max-width:640px){
+   .dragon-hero{aspect-ratio:auto;min-height:440px}
+   .dragon-hero .dh-slides{min-height:340px}
+   .dragon-hero .dh-slide{padding-inline:18px}
+  }
+</style>
 </head>
  
  <body class="min-h-screen selection:bg-blue-500/30 selection:text-white pb-24">
@@ -193,7 +199,7 @@
     <div class="mt-3 relative">
      <label for="liveSearchInput" class="sr-only">بحث شامل في المتجر</label>
      <div class="relative flex items-center">
-       <input type="text" id="liveSearchInput" oninput="handleLiveSearch(this.value)" placeholder="ابحث في كافة الألعاب، كوينز تيك توك، بطاقات VCC، خدمات السوشيال، والأدوات..." class="w-full bg-[#12151b] border border-white/10 focus:border-white/30 focus:bg-[#171c24] rounded-xl px-4 py-2.5 pl-10 text-xs text-slate-100 placeholder-slate-500 outline-none transition">
+       <input type="text" id="liveSearchInput" oninput="handleSearchInput(this.value)" placeholder="ابحث في كافة الألعاب، كوينز تيك توك، بطاقات VCC، خدمات السوشيال، والأدوات..." class="w-full bg-[#12151b] border border-white/10 focus:border-white/30 focus:bg-[#171c24] rounded-xl px-4 py-2.5 pl-10 text-xs text-slate-100 placeholder-slate-500 outline-none transition">
        <button type="button" aria-label="مسح البحث" onclick="document.getElementById('liveSearchInput').value=''; document.getElementById('searchResultsDropdown').classList.add('hidden');" class="absolute left-2 text-slate-400 hover:text-white text-sm w-8 h-8 rounded-lg flex items-center justify-center cursor-pointer">✕</button>
      </div>
      <div id="searchResultsDropdown" class="hidden absolute top-full left-0 right-0 mt-2 bg-[#14181f] border border-white/15 rounded-2xl p-2 shadow-2xl z-50 max-h-80 overflow-y-auto custom-scrollbar backdrop-blur-xl"></div>
@@ -252,7 +258,7 @@
 
       <!-- Dragon Hero: fixed dragon + moving fire + rotating offers -->
    <div id="dragonHero" class="dragon-hero w-full max-w-6xl mx-auto rounded-2xl mb-4 border border-white/10 bg-[#12151b]" dir="rtl">
-    <img class="dh-img" src="https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/18b249edef654147b5e5193c58378344.png" alt="شحن الألعاب والخدمات الرقمية بسرعة النار" loading="eager" fetchpriority="high">
+    <img class="dh-img" src="https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/18b249edef654147b5e5193c58378344.png" alt="شحن الألعاب والخدمات الرقمية بسرعة النار" loading="eager" fetchpriority="high" decoding="async">
     <div class="dh-mouth"></div>
     <div class="dh-fire"></div>
     <div class="dh-veil"></div>
@@ -924,32 +930,38 @@
     window.addEventListener('load', function() { window.__installBinanceQr(); });
   </script>
 
+  <!-- Debounce for the header search: don't rebuild the results list on every keystroke -->
+  <script>
+    function handleSearchInput(v){
+      if (window.__searchTimer) clearTimeout(window.__searchTimer);
+      window.__searchTimer = setTimeout(function(){
+        if (typeof handleLiveSearch === 'function') handleLiveSearch(v);
+      }, 180);
+    }
+  </script>
+
   <!-- Dynamic Cache-Busting Module Loader -->
   <script>
     (function() {
-      const v = 'v=2026-11-01-5';
+      const v = 'v=2026-11-01-6';
       const files = ['games.js', 'live-coins.js', 'subscriptions.js', 'smm.js', 'ai-tools.js', 'app.js', 'chat-widget.js'];
       function boot() {
         files.forEach(file => {
           const s = document.createElement('script');
           s.src = file + '?' + v;
+          s.async = false; // execute in the order listed above (data modules first, app.js last)
           if (file === 'app.js') {
             s.onload = function() { if (window.__installBinanceQr) window.__installBinanceQr(); };
           }
           document.body.appendChild(s);
         });
       }
-      // Load the catalog modules only after the hero image (the LCP element) has
-      // loaded and painted, so these scripts don't compete for bandwidth or block
-      // the main thread during the critical rendering window.
+      // Start right after the first paint rather than waiting for the hero image to
+      // finish downloading, so the catalog sections render without waiting on the
+      // large hero PNG. async=false above keeps the files executing in order.
       var started = false;
       function start() { if (started) return; started = true; requestAnimationFrame(function(){ requestAnimationFrame(boot); }); }
-      var hero = document.querySelector('#dragonHero img.dh-img');
-      if (hero && !(hero.complete && hero.naturalWidth)) {
-        hero.addEventListener('load', start, { once: true });
-        hero.addEventListener('error', start, { once: true });
-        setTimeout(start, 1200);
-      } else { start(); }
+      start();
     })();
   </script>
  
@@ -1011,6 +1023,8 @@
   try{
     new MutationObserver(function(muts){
       for(var i=0;i<muts.length;i++){
+        var t=muts[i].target;
+        if(t && t.nodeType===1 && t.closest && t.closest('#searchResultsDropdown')) continue;
         var a=muts[i].addedNodes;
         for(var n=0;n<a.length;n++){ if(a[n] && a[n].nodeType===1) scan(a[n]); }
       }
