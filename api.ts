@@ -1,4 +1,4 @@
-// Migo AI Solution - Deno service (verification + /chat). Rebuild marker: chat-live-5
+// Migo AI Solution - Deno service (verification + /chat). Rebuild marker: chat-live-6
 // build marker 2026-10-31T07:10Z: add a fire-and-forget usage counter (one row per provider attempt
 // in Supabase public.verification_calls) so we can measure real per-source usage (free vs Volsever).
 // Also: free sources (isan/jollymax) are tried before the metered Volsever route for the games they
@@ -499,7 +499,6 @@ function runStep(step: Step, id: string, zoneId: string): Promise<{ name: string
 // Store chat assistant (Gemini). The Gemini API key lives ONLY here (Deno env),
 // never in the browser. Answers come from the store's own prices (public.catalog).
 // ============================================================================
-const GEMINI_MODEL = "gemini-3.8-flash";
 const GEMINI_MODELS = ["gemini-3.8-flash", "gemini-flash-latest"];
 const SITE_URL = "https://naroelwakel-dot.github.io/MigoAi/";
 const WHATSAPP = "https://wa.me/201060934020";
