@@ -50,8 +50,8 @@ async function getJson(url: string, options: RequestInit = {}, ms = 6000): Promi
 // effect on the response path. Public URL + publishable key (same key the
 // storefront already ships in app.js).
 // ----------------------------------------------------------------------------
-const SB_URL = "https://tmfczgqewhkgsaeaupqu.supabase.co";
-const SB_KEY = "sb_publishable_1Jo8Tie65l5k_HPsyI0MDw_uZXxqblE";
+const SB_URL = "https://qjlivjzgrqyitqxcdtlk.supabase.co";
+const SB_KEY = "sb_publishable_ezC_W2lpGW88bSbjBRJFfw_reCr3vlw";
 function logCall(game: string, provider: string, ok: boolean): void {
   try {
     const p = fetch(`${SB_URL}/rest/v1/verification_calls`, {
