@@ -1,4 +1,4 @@
-// Migo AI Solution - Deno service (verification + /chat). Rebuild marker: chat-live-6
+// Migo AI Solution - Deno service (verification + /chat). Rebuild marker: chat-live-7
 // build marker 2026-10-31T07:10Z: add a fire-and-forget usage counter (one row per provider attempt
 // in Supabase public.verification_calls) so we can measure real per-source usage (free vs Volsever).
 // Also: free sources (isan/jollymax) are tried before the metered Volsever route for the games they
@@ -499,8 +499,7 @@ function runStep(step: Step, id: string, zoneId: string): Promise<{ name: string
 // Store chat assistant (Gemini). The Gemini API key lives ONLY here (Deno env),
 // never in the browser. Answers come from the store's own prices (public.catalog).
 // ============================================================================
-const GEMINI_MODEL = "gemini-3.8-flash";
-const GEMINI_MODELS = ["gemini-3.8-flash", "gemini-flash-latest"];
+const GEMINI_MODELS = ["gemini-flash-lite-latest", "gemini-3.5-flash-lite", "gemini-3.8-flash"];
 const SITE_URL = "https://naroelwakel-dot.github.io/MigoAi/";
 const WHATSAPP = "https://wa.me/201060934020";
 
@@ -584,27 +583,26 @@ async function handleChat(req: Request): Promise<Response> {
   const attempts: string[] = [];
   for (const model of GEMINI_MODELS) {
     lastModel = model;
-    const t0 = Date.now();
     try {
       const r = await fetchWithTimeout(
         `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
         { method: "POST", headers: { "Content-Type": "application/json", "x-goog-api-key": key }, body: JSON.stringify(payload) },
-        20000,
+        12000,
       );
       gStatus = r.status;
       gBody = await r.text();
-      attempts.push(`${model}|${gStatus}|${Date.now() - t0}ms|${gBody.slice(0, 220)}`);
+      attempts.push(`${model}|${gStatus}|${gBody.slice(0, 180)}`);
       const j: any = JSON.parse(gBody);
       text = j?.candidates?.[0]?.content?.parts?.map((p: any) => p.text).join("") || "";
       if (text) break;
     } catch (e) {
       gBody = "ERR:" + String(e).slice(0, 300);
-      attempts.push(`${model}|EXC|${Date.now() - t0}ms|${gBody}`);
+      attempts.push(`${model}|EXC|${gBody}`);
     }
   }
   if (!text) {
     try {
-      const dbg = attempts.join("\n").split(key).join("[key]").slice(0, 1900);
+      const dbg = (attempts.join("\n") || gBody || "").split(key).join("[key]").slice(0, 1900);
       const lp = fetch(`${SB_URL}/rest/v1/chat_debug`, {
         method: "POST",
         headers: { "apikey": SB_KEY, "Authorization": `Bearer ${SB_KEY}`, "Content-Type": "application/json", "Prefer": "return=minimal" },
