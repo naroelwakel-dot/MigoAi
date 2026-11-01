@@ -7,6 +7,20 @@
   var API = 'https://migoai-72.naroelwakel-dot.deno.net/chat';
   var WA = 'https://wa.me/201060934020';
   var history = [];
+  var REPLY_TIMEOUT_MS = 20000;   // أقصى وقت نستنى فيه رد السيرفر
+  var TICKER_MS = 60000;          // سطر الذكر يتغيّر كل دقيقة
+
+  // سطر الذكر والصلاة فوق المحادثة. عدّل الكلمات من هنا وهو مش محتاج أي حاجة تانية.
+  var TICKER = [
+    'اذكر الله، تطمئن القلوب 🤍',
+    'اللهم صلِّ وسلّم على نبينا محمد ﷺ',
+    'هل صليت اليوم؟ متأجّلش الصلاة',
+    'سبحان الله وبحمده، سبحان الله العظيم',
+    'لا تنسَ أذكار الصباح والمساء',
+    'أستغفر الله العظيم وأتوب إليه',
+    'تبسّم، فتبسّمك في وجه أخيك صدقة',
+    'الحمد لله على كل حال'
+  ];
 
   function el(tag, cls, txt) {
     var e = document.createElement(tag);
@@ -27,6 +41,23 @@
     '</svg>';
   }
 
+  // سطر الذكر: يعرض أول جملة فورًا، وبعدها يتغيّر كل دقيقة بتلاشي ناعم.
+  function startTicker(node) {
+    if (!node || !TICKER.length) return;
+    var i = 0;
+    node.textContent = TICKER[i];
+    node.classList.add('is-in');
+    i++;
+    setInterval(function () {
+      node.classList.remove('is-in');
+      setTimeout(function () {
+        node.textContent = TICKER[i % TICKER.length];
+        node.classList.add('is-in');
+        i++;
+      }, 420);
+    }, TICKER_MS);
+  }
+
   function build() {
     if (document.getElementById('migoChat')) return;
     var root = el('div', 'migo-chat');
@@ -36,6 +67,7 @@
       '<div class="migo-chat__panel" hidden>' +
         '<div class="migo-chat__head"><span>مساعد Migo</span>' +
           '<button class="migo-chat__x" type="button" aria-label="إغلاق المحادثة">إغلاق <b>✕</b></button></div>' +
+        '<div class="migo-chat__ticker" aria-live="polite"></div>' +
         '<div class="migo-chat__body"></div>' +
         '<form class="migo-chat__form">' +
           '<input class="migo-chat__in" type="text" placeholder="اسأل عن أي سعر أو خدمة..." autocomplete="off" maxlength="400" />' +
@@ -58,6 +90,7 @@
     }
 
     bubble('أهلاً! 👋 اسألني عن أي سعر أو خدمة وأنا أرد عليك في ثانية.', 'bot');
+    startTicker(root.querySelector('.migo-chat__ticker'));
 
     fab.addEventListener('click', function () {
       panel.hidden = false;
@@ -78,20 +111,38 @@
       var past = history.slice(-6);
       history.push({ role: 'user', text: t });
       var pending = bubble('...', 'bot');
+      var settled = false;
+      var ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+
+      // مؤقت أمان: مهما حصل، البابل مش هيفضل "..." للأبد.
+      var guard = setTimeout(function () {
+        if (settled) return;
+        settled = true;
+        if (ctrl) ctrl.abort();
+        pending.textContent = 'الرد بيتأخر شوية. جرّب تسأل تاني، أو كلّمنا على واتساب ونساعدك فورًا: ' + WA;
+        bodyEl.scrollTop = bodyEl.scrollHeight;
+      }, REPLY_TIMEOUT_MS);
 
       fetch(API, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: t, history: past })
+        body: JSON.stringify({ message: t, history: past }),
+        signal: ctrl ? ctrl.signal : undefined
       })
         .then(function (r) { return r.json(); })
         .then(function (d) {
+          if (settled) return;
+          settled = true;
+          clearTimeout(guard);
           var reply = d && d.reply ? d.reply : 'معلش حصلت مشكلة، جرّب تاني أو كلّمنا واتساب.';
           pending.textContent = reply;
           bodyEl.scrollTop = bodyEl.scrollHeight;
           history.push({ role: 'model', text: reply });
         })
         .catch(function () {
+          if (settled) return;
+          settled = true;
+          clearTimeout(guard);
           pending.textContent = 'معلش فيه مشكلة في الاتصال دلوقتي. كلّمنا على واتساب: ' + WA;
           bodyEl.scrollTop = bodyEl.scrollHeight;
         });
