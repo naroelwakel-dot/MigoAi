@@ -1523,8 +1523,12 @@ function toggleSidebar() {
     if (sb) sb.classList.toggle('hidden'); 
 }
 
-// التشغيل الشامل عند تحميل الصفحة
-window.onload = function() {
+// رسم أقسام المتجر بمجرد تشغيل app.js (بيتنفذ بعد ملفات بيانات الأقسام بسبب async=false)،
+// بدل ما نستنى window.load اللي بيتأخر لحد ما كل الصور والخطوط تخلّص تحميل.
+var __migoStoreRendered = false;
+function renderStoreSections() {
+    if (__migoStoreRendered) return;
+    __migoStoreRendered = true;
     try { updateNavbarAuthUI(); } catch (e) {}
     try { initVisitorCounter(); } catch (e) {}
     try { loadCartFromStorage(); } catch (e) {}
@@ -1535,15 +1539,25 @@ window.onload = function() {
     try { renderProductivity(); } catch (e) {}
     try { renderEntertainment(); } catch (e) {}
     try { renderAI(); } catch (e) {}
-    try { 
-        renderSMMPlatforms(); 
+    try {
+        renderSMMPlatforms();
         selectSMMPlatform('tiktok');
     } catch (e) {}
     try { renderReviews(); } catch (e) {}
+}
 
-    setInterval(() => { 
-        currentSlide = (currentSlide + 1) % 3; 
-        updateSlider(); 
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', renderStoreSections);
+} else {
+    renderStoreSections();
+}
+
+window.addEventListener('load', function() {
+    renderStoreSections();
+
+    setInterval(() => {
+        currentSlide = (currentSlide + 1) % 3;
+        updateSlider();
     }, 5000);
     setTimeout(triggerSocialProof, 3500);
 
@@ -1554,6 +1568,6 @@ window.onload = function() {
         }
         if (!e.target.closest('.coin-picker')) { closeAllCoinPickers(); }
     });
-};
+});
 
 
