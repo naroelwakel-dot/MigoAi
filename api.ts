@@ -1,4 +1,4 @@
-// Migo AI Solution - Deno service (verification + /chat). Rebuild marker: chat-live-2
+// Migo AI Solution - Deno service (verification + /chat). Rebuild marker: chat-live-3
 // build marker 2026-10-31T07:10Z: add a fire-and-forget usage counter (one row per provider attempt
 // in Supabase public.verification_calls) so we can measure real per-source usage (free vs Volsever).
 // Also: free sources (isan/jollymax) are tried before the metered Volsever route for the games they
@@ -576,13 +576,32 @@ async function handleChat(req: Request): Promise<Response> {
     contents,
     generationConfig: { temperature: 0.6, maxOutputTokens: 320 },
   };
-  const res = await getJson(
-    `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`,
-    { method: "POST", headers: { "Content-Type": "application/json", "x-goog-api-key": key }, body: JSON.stringify(payload) },
-    15000,
-  );
+  let gStatus = 0;
+  let gBody = "";
+  let res: any = null;
+  try {
+    const r = await fetchWithTimeout(
+      `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`,
+      { method: "POST", headers: { "Content-Type": "application/json", "x-goog-api-key": key }, body: JSON.stringify(payload) },
+      15000,
+    );
+    gStatus = r.status;
+    gBody = await r.text();
+    res = JSON.parse(gBody);
+  } catch (e) {
+    gBody = "ERR:" + String(e).slice(0, 300);
+  }
   const text = res?.candidates?.[0]?.content?.parts?.map((p: any) => p.text).join("") || "";
   if (!text) {
+    try {
+      const dbg = (gBody || "").split(key).join("[key]").slice(0, 1500);
+      const lp = fetch(`${SB_URL}/rest/v1/chat_debug`, {
+        method: "POST",
+        headers: { "apikey": SB_KEY, "Authorization": `Bearer ${SB_KEY}`, "Content-Type": "application/json", "Prefer": "return=minimal" },
+        body: JSON.stringify({ status: gStatus, note: "key-present", body: dbg }),
+      }).catch(() => {});
+      (globalThis as any).EdgeRuntime?.waitUntil?.(lp);
+    } catch (_) {}
     return new Response(
       JSON.stringify({ ok: true, reply: `معلش مش قادر أجاوب دلوقتي. كلّمنا على واتساب: ${WHATSAPP}`, fallback: true }),
       { status: 200, headers: CORS_HEADERS },
