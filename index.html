@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="preload" as="style" href="tailwind.css?v=2026-10-31-3">
-  <link rel="preload" as="style" href="site.css?v=2026-10-31-12">
+  <link rel="preload" as="style" href="site.css?v=2026-11-01-2">
   <meta name="title" content="Migo AI Solution | شحن ألعاب بالـ ID وكوينز تيك توك وبطاقات VCC">
   <meta name="description" content="منصة متكاملة للشحن الفوري للألعاب بالـ ID، كوينز تيك توك ونجوم تليجرام، بطاقات VCC دولية، واشتراكات الذكاء الاصطناعي والسوشيال ميديا بالجنيه المصري مع تسليم فوري ودعم مباشر.">
   <link rel="canonical" href="https://naroelwakel-dot.github.io/MigoAi/">
@@ -102,7 +102,7 @@
   <!-- Font Awesome icons load without blocking first paint (icons pop in a moment later) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" media="print" onload="this.media='all'">
   <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
-  <link rel="stylesheet" href="site.css?v=2026-10-31-12">
+  <link rel="stylesheet" href="site.css?v=2026-11-01-2">
  <style>
   /* Dragon hero (home) */
   .dragon-hero{position:relative;overflow:hidden;aspect-ratio:16 / 9;display:flex;align-items:center;justify-content:center}
@@ -927,8 +927,8 @@
   <!-- Dynamic Cache-Busting Module Loader -->
   <script>
     (function() {
-      const v = 'v=2026-11-01-1';
-      const files = ['games.js', 'live-coins.js', 'subscriptions.js', 'smm.js', 'ai-tools.js', 'app.js'];
+      const v = 'v=2026-11-01-2';
+      const files = ['games.js', 'live-coins.js', 'subscriptions.js', 'smm.js', 'ai-tools.js', 'app.js', 'chat-widget.js'];
       function boot() {
         files.forEach(file => {
           const s = document.createElement('script');
@@ -967,9 +967,8 @@
    setInterval(function(){ show(cur + 1); }, 5000);
   })();
  </script>
-<!-- Common Ninja AI Chatbot (free). Loaded only after the page is interactive, so it never competes with the hero for the main thread or first paint. -->
-<div class="commonninja_component pid-944e64e1-9c9f-4871-8e11-b8df82021b73"></div>
-<script>(function(){var d=false;function L(){if(d)return;d=true;var s=document.createElement('script');s.src='https://cdn.commoninja.com/sdk/latest/commonninja.js';s.defer=true;document.body.appendChild(s);}function S(){(window.requestIdleCallback)?requestIdleCallback(L,{timeout:2000}):setTimeout(L,1500);}(document.readyState==='complete')?S():window.addEventListener('load',S);['pointerdown','touchstart','keydown','scroll'].forEach(function(e){window.addEventListener(e,L,{once:true,passive:true});});})();</script>
+<!-- Store chat assistant (Migo, powered by Gemini) is loaded by the module loader above
+     (chat-widget.js) after the hero paints, so it never competes for the main thread or first paint. -->
 <script>
 /* a11y: the third-party chat widget renders in a shadow root, so we pierce shadow roots
    to give its icon-only close button a name and to hide decorative role=img icons. */
