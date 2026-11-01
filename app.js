@@ -1427,8 +1427,8 @@ function switchAuthTab(mode) {
 }
 
 // --- Customer accounts over Supabase (database + email confirmation link) ---
-const SUPABASE_URL = 'https://tmfczgqewhkgsaeaupqu.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_1Jo8Tie65l5k_HPsyI0MDw_uZXxqblE';
+const SUPABASE_URL = 'https://qjlivjzgrqyitqxcdtlk.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_ezC_W2lpGW88bSbjBRJFfw_reCr3vlw';
 let __sb = null, __pending = null;
 function __sbClient() {
     if (__sb) return Promise.resolve(__sb);
