@@ -499,6 +499,7 @@ function runStep(step: Step, id: string, zoneId: string): Promise<{ name: string
 // Store chat assistant (Gemini). The Gemini API key lives ONLY here (Deno env),
 // never in the browser. Answers come from the store's own prices (public.catalog).
 // ============================================================================
+const GEMINI_MODEL = "gemini-3.8-flash";
 const GEMINI_MODELS = ["gemini-3.8-flash", "gemini-flash-latest"];
 const SITE_URL = "https://naroelwakel-dot.github.io/MigoAi/";
 const WHATSAPP = "https://wa.me/201060934020";
@@ -580,26 +581,30 @@ async function handleChat(req: Request): Promise<Response> {
   let gStatus = 0;
   let gBody = "";
   let lastModel = "";
+  const attempts: string[] = [];
   for (const model of GEMINI_MODELS) {
     lastModel = model;
+    const t0 = Date.now();
     try {
       const r = await fetchWithTimeout(
         `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
         { method: "POST", headers: { "Content-Type": "application/json", "x-goog-api-key": key }, body: JSON.stringify(payload) },
-        12000,
+        20000,
       );
       gStatus = r.status;
       gBody = await r.text();
+      attempts.push(`${model}|${gStatus}|${Date.now() - t0}ms|${gBody.slice(0, 220)}`);
       const j: any = JSON.parse(gBody);
       text = j?.candidates?.[0]?.content?.parts?.map((p: any) => p.text).join("") || "";
       if (text) break;
     } catch (e) {
       gBody = "ERR:" + String(e).slice(0, 300);
+      attempts.push(`${model}|EXC|${Date.now() - t0}ms|${gBody}`);
     }
   }
   if (!text) {
     try {
-      const dbg = (gBody || "").split(key).join("[key]").slice(0, 1500);
+      const dbg = attempts.join("\n").split(key).join("[key]").slice(0, 1900);
       const lp = fetch(`${SB_URL}/rest/v1/chat_debug`, {
         method: "POST",
         headers: { "apikey": SB_KEY, "Authorization": `Bearer ${SB_KEY}`, "Content-Type": "application/json", "Prefer": "return=minimal" },
