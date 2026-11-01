@@ -60,3 +60,39 @@
     init();
   }
 })();
+
+/* ==== مصدر احتياطي مجاني لفحص الأيدي ====
+   لو السيرفر الأساسي للموقع (migoai-72) ما قدرش يتحقق من اللعبة، بنجرب مصدر
+   مجاني بيجمع أكتر من API في مكان واحد (نفس المصادر اللي البوت بيستخدمها).
+   الملف ده بيُحمَّل بعد app.js فبيغلّف fetch من غير ما نلمس المنطق الأصلي. */
+(function () {
+  var SHARED = "https://migostore-bot.naroelwakel-dot.deno.net/id";
+  if (!window.fetch || window.__migoIdFallback) return;
+  window.__migoIdFallback = true;
+  var origFetch = window.fetch.bind(window);
+  window.fetch = function (input, init) {
+    var url = (typeof input === "string") ? input : (input && input.url) || "";
+    var p = origFetch(input, init);
+    if (url.indexOf("migoai-72.naroelwakel-dot.deno.net") === -1) return p;
+    return p.then(function (res) {
+      return res.clone().json().then(function (d) {
+        var nm = d && (d.username || d.name || (d.data && (d.data.username || d.data.name)));
+        if (d && d.success && nm) return res;
+        if (url.indexOf("game=") === -1) return res;
+        var q;
+        try { q = new URL(url, location.href).searchParams; } catch (e) { return res; }
+        var fbUrl = SHARED + "?game=" + encodeURIComponent(q.get("game") || "") +
+          "&id=" + encodeURIComponent(q.get("id") || "") +
+          (q.get("zoneId") ? "&zoneId=" + encodeURIComponent(q.get("zoneId")) : "");
+        return origFetch(fbUrl).then(function (r) { return r.json(); }).then(function (fd) {
+          if (fd && fd.success && fd.username) {
+            return new Response(JSON.stringify({ success: true, username: fd.username }), {
+              status: 200, headers: { "content-type": "application/json" }
+            });
+          }
+          return res;
+        }).catch(function () { return res; });
+      }).catch(function () { return res; });
+    });
+  };
+})();
