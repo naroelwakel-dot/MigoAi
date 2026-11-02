@@ -39,8 +39,9 @@
       'style="width:100%;height:100%;border-radius:50%;object-fit:cover;display:block' + tf + '" />';
   }
 
-  // شخصيات الشات: الزائر ياخد شخصية واحدة تفضل معاه (بنحفظ اختياره في المتصفح)،
-  // وكل شخصية ليها اسم وصورة وترحيب. صورة "عمر" هي الصورة الحالية، والتلاتة التانية مولّدة.
+  // شخصيات الشات: كل زيارة (فتح/ريفريش للصفحة) بتاخد شخصية، ولو الزائر خرج ورجع تاني
+  // بيديله شخصية مختلفة عن اللي شافها قبل كدا. الشخصية بتفضل ثابتة معاه طول ما هوا في الصفحة.
+  // ولو طلب يتحول لحد من الفريق، بيتحول لشخصية تانية (بيحصل من عند السيرفر).
   // ملاحظة: الـ id لازم يطابق المفاتيح في api.ts (PERSONAS).
   var PERSONAS = [
     { id: 'omar', name: 'عمر', avatar: LOGO_SRC, t: 'scale(1.16) translateX(6%)',
@@ -52,15 +53,22 @@
     { id: 'habiba', name: 'حبيبة', avatar: 'https://cdn-public.eesel.ai/074824bf-1845-4f1a-84b0-bee6be6e26c4/d4192abd-748b-421a-b849-2768da08e88e/1612572bc8ea4e3eba8ca4ee8b1de9dd.webp',
       greet: 'يا هلا! 👋 حبيبة معاك من Migo AI، قولّي محتاج إيه.' }
   ];
-  var PERSONA_KEY = 'migo_chat_persona';
+  var LAST_KEY = 'migo_chat_last';
+  // بنحفظ آخر شخصية اتعرّضت في sessionStorage (جلسة التاب بس، ومش بتفضل للأبد)
+  // ونستبعدها في الزيارة اللي بعدها، فالزائر لما يخرج ويرجع بيشوف شخصية تانية على طول.
   function pickPersona() {
-    var saved = null;
-    try { saved = localStorage.getItem(PERSONA_KEY); } catch (e) {}
-    for (var i = 0; i < PERSONAS.length; i++) {
-      if (saved && PERSONAS[i].id === saved) return PERSONAS[i];
+    var last = '';
+    try { last = sessionStorage.getItem(LAST_KEY) || ''; } catch (e) {}
+    var pool = PERSONAS;
+    if (last) {
+      var filtered = [];
+      for (var i = 0; i < PERSONAS.length; i++) {
+        if (PERSONAS[i].id !== last) filtered.push(PERSONAS[i]);
+      }
+      if (filtered.length) pool = filtered;
     }
-    var p = PERSONAS[Math.floor(Math.random() * PERSONAS.length)];
-    try { localStorage.setItem(PERSONA_KEY, p.id); } catch (e) {}
+    var p = pool[Math.floor(Math.random() * pool.length)];
+    try { sessionStorage.setItem(LAST_KEY, p.id); } catch (e) {}
     return p;
   }
 
@@ -118,6 +126,25 @@
       return b;
     }
 
+    // تبديل الشخصية جوّه نفس المحادثة: بيحصل لما العميل يطلب يتكلّم مع حد من الفريق،
+    // السيرفر بيرجّع الشخصية الجديدة وإحنا بنغيّر الصورة والاسم على طول.
+    function applyPersona(id) {
+      var found = null;
+      for (var i = 0; i < PERSONAS.length; i++) {
+        if (PERSONAS[i].id === id) found = PERSONAS[i];
+      }
+      if (!found) return;
+      persona = found;
+      var img = fab.querySelector('img');
+      if (img) {
+        img.src = found.avatar || LOGO_SRC;
+        img.style.transform = found.t || '';
+      }
+      var nameEl = root.querySelector('.migo-chat__head span');
+      if (nameEl) nameEl.textContent = found.name + ' · مساعد Migo';
+      fab.setAttribute('aria-label', 'اسأل ' + found.name + ' مساعد ميجو');
+    }
+
     bubble(persona.greet, 'bot');
     startNotes(note, function () { return !panel.hidden; });
 
@@ -168,6 +195,7 @@
           pending.textContent = reply;
           bodyEl.scrollTop = bodyEl.scrollHeight;
           history.push({ role: 'model', text: reply });
+          if (d && d.handoff && d.persona) applyPersona(d.persona);
         })
         .catch(function () {
           if (settled) return;
