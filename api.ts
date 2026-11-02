@@ -535,6 +535,10 @@ function runStep(step: Step, id: string, zoneId: string): Promise<{ name: string
 // never in the browser. Answers come from the store's own prices (public.catalog).
 // ============================================================================
 const GEMINI_MODELS = ["gemini-flash-lite-latest", "gemini-3.5-flash-lite", "gemini-3.8-flash"];
+// Fallback (free) provider: Groq. Runs only when every Gemini attempt fails
+// (e.g. the free Gemini quota is exhausted). Key = Deno env var GROQ_API_KEY.
+const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
+const GROQ_MODELS = ["qwen/qwen3.8-27b", "openai/gpt-oss-120b"];
 const SITE_URL = "https://naroelwakel-dot.github.io/MigoAi/";
 const WHATSAPP = "https://wa.me/201060934020";
 
@@ -586,9 +590,52 @@ function buildSystem(cat: { sku: string; price: number }[], msg: string): string
 ${priceLines ? "أسعار من المتجر تطابق سؤال العميل:\n" + priceLines : "(مفيش منتج مطابق واضح لسؤال العميل في القائمة.)"}`;
 }
 
+// Groq fallback (free). Same system prompt + history as Gemini; runs only when
+// every Gemini model failed. Returns "" (with a short note) if Groq also fails.
+async function groqChat(
+  groqKey: string,
+  cat: { sku: string; price: number }[],
+  hist: any[],
+  message: string,
+): Promise<{ text: string; model: string; note: string }> {
+  const messages = [
+    { role: "system", content: buildSystem(cat, message) },
+    ...hist.map((h: any) => ({
+      role: h && h.role === "model" ? "assistant" : "user",
+      content: String((h && h.text) || "").slice(0, 500),
+    })),
+    { role: "user", content: message },
+  ];
+  let model = "";
+  let note = "";
+  for (const m of GROQ_MODELS) {
+    model = m;
+    try {
+      const r = await fetchWithTimeout(
+        GROQ_URL,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${groqKey}` },
+          body: JSON.stringify({ model: m, messages, temperature: 0.6, max_tokens: 400 }),
+        },
+        12000,
+      );
+      const raw = await r.text();
+      const j: any = JSON.parse(raw);
+      const t = j?.choices?.[0]?.message?.content || "";
+      note = `groq:${m}:${r.status}:${t ? "ok" : "empty"}`;
+      if (t) return { text: String(t).trim(), model: m, note };
+    } catch (e) {
+      note = `groq:${m}:EXC:${String(e).slice(0, 200)}`;
+    }
+  }
+  return { text: "", model, note };
+}
+
 async function handleChat(req: Request): Promise<Response> {
   const key = Deno.env.get("GEMINI_API_KEY") || "";
-  if (!key) {
+  const groqKey = envKey("GROQ_API_KEY", "GROQ_KEY");
+  if (!key && !groqKey) {
     return new Response(JSON.stringify({ ok: false, error: "no-key" }), { status: 200, headers: CORS_HEADERS });
   }
   let body: any = {};
@@ -617,6 +664,7 @@ async function handleChat(req: Request): Promise<Response> {
   let lastModel = "";
   const attempts: string[] = [];
   for (const model of GEMINI_MODELS) {
+    if (!key) break;
     lastModel = model;
     try {
       const r = await fetchWithTimeout(
@@ -634,6 +682,12 @@ async function handleChat(req: Request): Promise<Response> {
       gBody = "ERR:" + String(e).slice(0, 300);
       attempts.push(`${model}|EXC|${gBody}`);
     }
+  }
+  // ---- Fallback: Groq (free) when Gemini is unavailable or out of quota ----
+  if (!text && groqKey) {
+    const g = await groqChat(groqKey, cat, hist, message);
+    attempts.push(g.note);
+    text = g.text;
   }
   if (!text) {
     try {
