@@ -142,6 +142,15 @@ function calculateAutoPrice(basePrice) {
     return Math.round(Number(basePrice));
 }
 
+// سعر الوحدة لخدمات SMM: نحفظ الكسور بدل التقريب لعدد صحيح،
+// عشان الخدمات الرخيصة (أقل من 1 ج.م لكل 1000) ما تتحولش لصفر.
+// مثال: 0.14 تفضل 0.14، و63.72 تفضل 63.72.
+function smmUnitPrice(basePrice) {
+    const n = Number(basePrice);
+    if (!n || isNaN(n)) return 0;
+    return Math.round(n * 100) / 100;
+}
+
 function showToast(msg, type = 'success') {
     const container = document.getElementById('toastContainer');
     if (!container) return;
@@ -915,7 +924,7 @@ function onSMMCategoryChange() {
 
     if (srvSelect) {
         srvSelect.innerHTML = availableServices.map(srv => {
-            const adjustedSmmPrice = calculateAutoPrice(srv.pricePer1k);
+            const adjustedSmmPrice = smmUnitPrice(srv.pricePer1k);
             return `<option value="${srv.id}">#${srv.id} - ${srv.name} (${adjustedSmmPrice} ج.م / 1k)</option>`;
         }).join('');
     }
@@ -938,7 +947,7 @@ function onSMMServiceChange() {
     const limits = document.getElementById('smmLimitsNote');
     const meta = document.getElementById('smmServiceMeta');
 
-    const adjustedSmmPrice = calculateAutoPrice(srv.pricePer1k);
+    const adjustedSmmPrice = smmUnitPrice(srv.pricePer1k);
 
     if (badgeId) badgeId.innerText = 'ID: #' + srv.id;
     if (limits) limits.innerText = `الحدود: ${srv.min.toLocaleString()} - ${srv.max.toLocaleString()}`;
@@ -957,7 +966,7 @@ function calculateSMMCost() {
     const qtyInp = document.getElementById('smmQtyInput');
     const qty = Math.max(srv.min, parseFloat(qtyInp ? qtyInp.value : srv.min) || srv.min);
     
-    const adjustedSmmPrice = calculateAutoPrice(srv.pricePer1k);
+    const adjustedSmmPrice = smmUnitPrice(srv.pricePer1k);
     const totalEGP = Math.round(((qty / 1000) * adjustedSmmPrice) * 100) / 100;
     
     const priceEl = document.getElementById('smmPriceEGP');
@@ -1322,7 +1331,7 @@ function handleLiveSearch(query) {
         smmPlatforms.forEach(p => {
             if (p.name.toLowerCase().includes(query)) {
                 p.services.forEach(srv => {
-                    results.push({ name: `${p.name} - ${srv.name}`, price: calculateAutoPrice(srv.pricePer1k), type: 'smm', platformId: p.id });
+                    results.push({ name: `${p.name} - ${srv.name}`, price: smmUnitPrice(srv.pricePer1k), type: 'smm', platformId: p.id });
                 });
             }
         });
