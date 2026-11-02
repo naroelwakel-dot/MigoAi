@@ -535,10 +535,11 @@ function runStep(step: Step, id: string, zoneId: string): Promise<{ name: string
 // never in the browser. Answers come from the store's own prices (public.catalog).
 // ============================================================================
 const GEMINI_MODELS = ["gemini-flash-lite-latest", "gemini-3.5-flash-lite", "gemini-3.8-flash"];
-// Fallback (free) provider: Groq. Runs only when every Gemini attempt fails
-// (e.g. the free Gemini quota is exhausted). Key = Deno env var GROQ_API_KEY.
+// Free provider #2: Groq (OpenAI-compatible). Load-balanced with Gemini and used
+// as its fallback (see providers[] in handleChat). Key = Deno env var GROQ_API_KEY.
+// السريع الأول: لو أول موديل اتأخر/فشل، بنجرّب اللي بعده.
 const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
-const GROQ_MODELS = ["qwen/qwen3.8-27b", "openai/gpt-oss-120b"];
+const GROQ_MODELS = ["openai/gpt-oss-120b", "qwen/qwen3.8-27b"];
 const SITE_URL = "https://naroelwakel-dot.github.io/MigoAi/";
 const WHATSAPP = "https://wa.me/201060934020";
 
@@ -655,7 +656,7 @@ async function groqChat(
           headers: { "Content-Type": "application/json", "Authorization": `Bearer ${groqKey}` },
           body: JSON.stringify({ model: m, messages, temperature: 0.6, max_tokens: 400 }),
         },
-        12000,
+        7000,
       );
       const raw = await r.text();
       const j: any = JSON.parse(raw);
@@ -725,7 +726,7 @@ async function handleChat(req: Request): Promise<Response> {
           const r = await fetchWithTimeout(
             `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
             { method: "POST", headers: { "Content-Type": "application/json", "x-goog-api-key": key }, body: JSON.stringify(payload) },
-            12000,
+            7000,
           );
           gStatus = r.status;
           gBody = await r.text();
