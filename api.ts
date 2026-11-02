@@ -552,6 +552,26 @@ const PERSONAS: Record<string, { name: string; gender: "m" | "f"; style: string 
   habiba: { name: "حبيبة", gender: "f", style: "شبابية وحيوية وحماسية، بتتكلم ببساطة وود وبتستخدم إيموجي خفيفة." },
 };
 
+// لو العميل طلب في الشات يتكلّم مع حد من الفريق/موظف/وكيل: نسلمه رقم الواتساب
+// ونبدّله لشخصية تانية (الزميل التاني)، وكمان نسيبه لو حابب يكمل استفساره هنا.
+const HANDOFF_RE =
+  /(خدمة\s*العملاء|خدمه\s*العملاء|خدمة\s*عملاء|أكلم\s*حد|اكلم\s*حد|عا[ييو]ز\s*(أ|ا)?كلم|كلّ?م\s*حد|أكلم\s*مين|اكلم\s*مين|موظف|بني\s*آدم|بنى\s*ادم|حد\s*من\s*الفريق|وكيل|مسؤول|مسئول|أشتكي|اشتكي|شكوى|شكوه|حوّ?لني|مش\s*بوت|إنسان|انسان|agent|human|support|representative)/i;
+
+const WHATSAPP_NUM = "01060934020"; // نفس رقم الواتساب (بصيغة محلية مصرية) للعرض في الرسالة
+
+function handoffReply(currentId: string): { reply: string; persona: string } {
+  const ids = Object.keys(PERSONAS);
+  const others = ids.filter((x) => x !== currentId);
+  const nextId = others.length ? others[Math.floor(Math.random() * others.length)] : (ids[0] || "omar");
+  const p = PERSONAS[nextId] || PERSONAS.omar;
+  return {
+    persona: nextId,
+    reply:
+      `تمام، أنا ${p.name} ومعاك 👋 لو حابب تكلم حد من الفريق، كلّمنا على واتساب: ${WHATSAPP_NUM} (${WHATSAPP}) ونساعدك فورًا. ` +
+      `ولو استفسارك عن سعر أو خدمة أقدر أساعدك حالًا.`,
+  };
+}
+
 let __catalog: { sku: string; price: number; kind: string }[] | null = null;
 let __catalogAt = 0;
 async function getCatalog(): Promise<{ sku: string; price: number; kind: string }[]> {
@@ -663,6 +683,14 @@ async function handleChat(req: Request): Promise<Response> {
   }
   const hist = Array.isArray(body.history) ? body.history.slice(-6) : [];
   const persona = String(body.persona || "").slice(0, 24).trim();
+  // طلب التحويل لحد من الفريق: نرد فوراً (من غير ما نكلّم الموديل) ونبدّل الشخصية.
+  if (HANDOFF_RE.test(message)) {
+    const ho = handoffReply(persona);
+    return new Response(
+      JSON.stringify({ ok: true, reply: ho.reply, handoff: true, persona: ho.persona }),
+      { status: 200, headers: CORS_HEADERS },
+    );
+  }
   const cat = await getCatalog();
   const contents = [
     ...hist.map((h: any) => ({
