@@ -57,11 +57,15 @@ const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML,
   log('ml', await j('https://api.isan.eu.org/nickname/ml?id=1114917746&zone=13486', { headers: { 'User-Agent': UA } }));
   log('pubg', await j('https://api.isan.eu.org/nickname/pubg?id=5942485795', { headers: { 'User-Agent': UA } }));
 
-  log('== rapidapi id-game-checker (existing key) ==');
-  const KEY = '04c7fee3aamshd0586dcb6ccc650p1d66f2jsne4624799cc03';
-  const rh = { 'X-RapidAPI-Key': KEY, 'X-RapidAPI-Host': 'id-game-checker.p.rapidapi.com' };
-  log('pubgm-global', await j('https://id-game-checker.p.rapidapi.com/pubgm-global?id=5942485795', { headers: rh }));
-  log('pubgm', await j('https://id-game-checker.p.rapidapi.com/pubgm?id=5942485795', { headers: rh }));
+  log('== rapidapi id-game-checker (key from env) ==');
+  const KEY = process.env.RAPIDAPI_KEY || '';
+  if (!KEY) {
+    log('skip: RAPIDAPI_KEY not set in the environment');
+  } else {
+    const rh = { 'X-RapidAPI-Key': KEY, 'X-RapidAPI-Host': 'id-game-checker.p.rapidapi.com' };
+    log('pubgm-global', await j('https://id-game-checker.p.rapidapi.com/pubgm-global?id=5942485795', { headers: rh }));
+    log('pubgm', await j('https://id-game-checker.p.rapidapi.com/pubgm?id=5942485795', { headers: rh }));
+  }
 
   log('== done ==');
   const text = out.join('\n') + '\n';
