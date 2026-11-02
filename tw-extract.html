@@ -7,7 +7,7 @@
 </head>
 <body>
 <pre id="status">BOOT</pre>
-<p><a id="dl" download="tailwind.css" style="display:none">Download tailwind.css</a></p>
+<p><a id="dl" download="tailwind-extracted.css" style="display:none">Download tailwind-extracted.css</a></p>
 <pre id="out"></pre>
 <iframe id="store" src="index.html" style="width:1300px;height:900px;border:0"></iframe>
 <script>
@@ -20,8 +20,19 @@
   var last = -1, stable = 0;
 
   function allCss(doc){
-    var s='', ss=doc.querySelectorAll('style');
-    for (var i=0;i<ss.length;i++) s += (ss[i].textContent||'') + '\n';
+    // اجمع كل قواعد CSS الفعلية (الـ <style> المدمجة + ملفات الستايل المربوطة) عبر styleSheets.
+    // الأوراق من أصل مختلف بترمي استثناء عند قراءة cssRules، فنتجاهلها بأمان.
+    var s='', sheets=doc.styleSheets||[];
+    for (var j=0;j<sheets.length;j++){
+      try {
+        var rules=sheets[j].cssRules||[];
+        for (var k=0;k<rules.length;k++) s += rules[k].cssText + '\n';
+      } catch(e){}
+    }
+    if(!s){
+      var ss=doc.querySelectorAll('style');
+      for (var i=0;i<ss.length;i++) s += (ss[i].textContent||'') + '\n';
+    }
     return s;
   }
   function totalLen(doc){
@@ -44,7 +55,7 @@
   function tick(){
     if(!f.contentDocument){ status.textContent='NO-DOC'; return; }
     var len = totalLen(f.contentDocument);
-    if(len === last && len > 5000){ stable++; } else { stable=0; }
+    if(len === last && len > 0){ stable++; } else { stable=0; }
     last = len;
     status.textContent = 'len='+len+' stable='+stable;
     if(stable >= 3){ done(); return; }
