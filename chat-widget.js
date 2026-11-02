@@ -7,7 +7,7 @@
   var API = 'https://migoai-72.naroelwakel-dot.deno.net/chat';
   var WA = 'https://wa.me/201060934020';
   var history = [];
-  var REPLY_TIMEOUT_MS = 20000;   // أقصى وقت نستنى فيه رد السيرفر
+  var REPLY_TIMEOUT_MS = 45000;   // أقصى وقت نستنى فيه رد السيرفر (السيرفر بيجرّب كذا مزوّد، فممكن ياخد لحد ~42 ثانية)
   var NOTE_EVERY_MS = 30000;      // كل قد إيه يظهر تنبيه جديد فوق أيقونة الشات
   var NOTE_SHOW_MS = 2500;        // مدة ظهور التنبيه قبل ما يختفي (ثانيتين ونص)
 
