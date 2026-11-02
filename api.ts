@@ -537,9 +537,9 @@ function runStep(step: Step, id: string, zoneId: string): Promise<{ name: string
 const GEMINI_MODELS = ["gemini-flash-lite-latest", "gemini-3.5-flash-lite", "gemini-3.8-flash"];
 // Free provider #2: Groq (OpenAI-compatible). Load-balanced with Gemini and used
 // as its fallback (see providers[] in handleChat). Key = Deno env var GROQ_API_KEY.
-// السريع الأول: لو أول موديل اتأخر/فشل، بنجرّب اللي بعده.
+// qwen الأول عن قصد: اتجرّب وطلعت دقيق في الأسعار؛ gpt-oss كان بيخترع أسعار، فسايبينه الثاني بس.
 const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
-const GROQ_MODELS = ["openai/gpt-oss-120b", "qwen/qwen3.8-27b"];
+const GROQ_MODELS = ["qwen/qwen3.8-27b", "openai/gpt-oss-120b"];
 const SITE_URL = "https://naroelwakel-dot.github.io/MigoAi/";
 const WHATSAPP = "https://wa.me/201060934020";
 
