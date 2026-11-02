@@ -542,6 +542,16 @@ const GROQ_MODELS = ["qwen/qwen3.8-27b", "openai/gpt-oss-120b"];
 const SITE_URL = "https://naroelwakel-dot.github.io/MigoAi/";
 const WHATSAPP = "https://wa.me/201060934020";
 
+// Store-chat personalities. The widget picks one per visitor and sends its id as
+// `persona`; replies keep that name + gender grammar so the customer always talks to
+// the same character. Keep these ids in sync with chat-widget.js.
+const PERSONAS: Record<string, { name: string; gender: "m" | "f"; style: string }> = {
+  omar: { name: "عمر", gender: "m", style: "ودود وبسيط وسريع، بتحب تساعد على طول وبتتكلم باختصار ولطف." },
+  karim: { name: "كريم", gender: "m", style: "محترف ومرتّب وهادي، بترد باحترافية وبتأكد على الأسعار والأرقام بدقة." },
+  mirna: { name: "ميرنا", gender: "f", style: "دافئة وحنينة، بتشرح بخطوات واضحة وبتتأكد إن العميل فهم ومطمن." },
+  habiba: { name: "حبيبة", gender: "f", style: "شبابية وحيوية وحماسية، بتتكلم ببساطة وود وبتستخدم إيموجي خفيفة." },
+};
+
 let __catalog: { sku: string; price: number; kind: string }[] | null = null;
 let __catalogAt = 0;
 async function getCatalog(): Promise<{ sku: string; price: number; kind: string }[]> {
@@ -575,10 +585,16 @@ function pickRelevant(msg: string, cat: { sku: string; price: number }[], limit 
     .map((x) => x.r);
 }
 
-function buildSystem(cat: { sku: string; price: number }[], msg: string): string {
+function buildSystem(cat: { sku: string; price: number }[], msg: string, personaId?: string): string {
+  const p = PERSONAS[personaId || ""] || PERSONAS.omar;
   const rel = pickRelevant(msg, cat, 16);
   const priceLines = rel.map((r) => `- ${r.sku} : ${r.price} ج.م`).join("\n");
-  return `أنت "مساعد Migo"، مساعد الدعم في متجر Migo AI Solution (شحن ألعاب وخدمات رقمية بالـ ID في مصر).
+  const who = p.gender === "f"
+    ? 'بنت (أنثى)، واتكلم عن نفسك دايماً بصيغة المؤنث: "أنا مساعدة"، "أقدر أساعدك"، "أنا مبسوطة أساعدك".'
+    : 'ولد (ذكر)، واتكلم عن نفسك دايماً بصيغة المذكر: "أنا مساعد"، "أقدر أساعدك"، "أنا مبسوط أساعدك".';
+  return `أنت "${p.name}" من فريق دعم متجر Migo AI Solution (شحن ألعاب وخدمات رقمية بالـ ID في مصر).
+هويتك: اسمك "${p.name}"، وأنت ${who} لو حد سألك مين إنت أو اسمك، عرّف نفسك باسمك "${p.name}" من فريق Migo.
+طريقتك في الكلام: ${p.style}
 قواعد:
 - ردّ بالعربي، بأسلوب ودود ومبسّط، في 3 أسطر كحد أقصى، وبدون مقدمات إنشائية.
 - أعطِ السعر والمدة فوراً من القائمة أدناه بالضبط. لا تخترع أي سعر أو مدة أبداً.
@@ -590,16 +606,17 @@ function buildSystem(cat: { sku: string; price: number }[], msg: string): string
 ${priceLines ? "أسعار من المتجر تطابق سؤال العميل:\n" + priceLines : "(مفيش منتج مطابق واضح لسؤال العميل في القائمة.)"}`;
 }
 
-// Groq fallback (free). Same system prompt + history as Gemini; runs only when
-// every Gemini model failed. Returns "" (with a short note) if Groq also fails.
+// Groq (free, OpenAI-compatible). Same system prompt + history as Gemini; used
+// alongside Gemini (load-balanced) and as its fallback. Returns "" on failure.
 async function groqChat(
   groqKey: string,
   cat: { sku: string; price: number }[],
   hist: any[],
   message: string,
+  personaId: string,
 ): Promise<{ text: string; model: string; note: string }> {
   const messages = [
-    { role: "system", content: buildSystem(cat, message) },
+    { role: "system", content: buildSystem(cat, message, personaId) },
     ...hist.map((h: any) => ({
       role: h && h.role === "model" ? "assistant" : "user",
       content: String((h && h.text) || "").slice(0, 500),
@@ -645,6 +662,7 @@ async function handleChat(req: Request): Promise<Response> {
     return new Response(JSON.stringify({ ok: false, error: "empty" }), { status: 200, headers: CORS_HEADERS });
   }
   const hist = Array.isArray(body.history) ? body.history.slice(-6) : [];
+  const persona = String(body.persona || "").slice(0, 24).trim();
   const cat = await getCatalog();
   const contents = [
     ...hist.map((h: any) => ({
@@ -654,7 +672,7 @@ async function handleChat(req: Request): Promise<Response> {
     { role: "user", parts: [{ text: message }] },
   ];
   const payload = {
-    systemInstruction: { parts: [{ text: buildSystem(cat, message) }] },
+    systemInstruction: { parts: [{ text: buildSystem(cat, message, persona) }] },
     contents,
     generationConfig: { temperature: 0.6, maxOutputTokens: 320 },
   };
@@ -663,31 +681,40 @@ async function handleChat(req: Request): Promise<Response> {
   let gBody = "";
   let lastModel = "";
   const attempts: string[] = [];
-  for (const model of GEMINI_MODELS) {
-    if (!key) break;
-    lastModel = model;
-    try {
-      const r = await fetchWithTimeout(
-        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
-        { method: "POST", headers: { "Content-Type": "application/json", "x-goog-api-key": key }, body: JSON.stringify(payload) },
-        12000,
-      );
-      gStatus = r.status;
-      gBody = await r.text();
-      attempts.push(`${model}|${gStatus}|${gBody.slice(0, 180)}`);
-      const j: any = JSON.parse(gBody);
-      text = j?.candidates?.[0]?.content?.parts?.map((p: any) => p.text).join("") || "";
-      if (text) break;
-    } catch (e) {
-      gBody = "ERR:" + String(e).slice(0, 300);
-      attempts.push(`${model}|EXC|${gBody}`);
+  // Load-balance the two free providers: with both keys present, each request has an
+  // even chance of starting on Gemini or Groq and falls back to the other if it fails,
+  // so neither provider's daily quota runs out before the other's.
+  const providers: string[] = [];
+  if (key) providers.push("gemini");
+  if (groqKey) providers.push("groq");
+  if (providers.length === 2 && Math.random() < 0.5) providers.reverse();
+  for (const prov of providers) {
+    if (text) break;
+    if (prov === "gemini") {
+      for (const model of GEMINI_MODELS) {
+        lastModel = model;
+        try {
+          const r = await fetchWithTimeout(
+            `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
+            { method: "POST", headers: { "Content-Type": "application/json", "x-goog-api-key": key }, body: JSON.stringify(payload) },
+            12000,
+          );
+          gStatus = r.status;
+          gBody = await r.text();
+          attempts.push(`${model}|${gStatus}|${gBody.slice(0, 180)}`);
+          const j: any = JSON.parse(gBody);
+          text = j?.candidates?.[0]?.content?.parts?.map((p: any) => p.text).join("") || "";
+          if (text) break;
+        } catch (e) {
+          gBody = "ERR:" + String(e).slice(0, 300);
+          attempts.push(`${model}|EXC|${gBody}`);
+        }
+      }
+    } else if (prov === "groq") {
+      const g = await groqChat(groqKey, cat, hist, message, persona);
+      attempts.push(g.note);
+      text = g.text;
     }
-  }
-  // ---- Fallback: Groq (free) when Gemini is unavailable or out of quota ----
-  if (!text && groqKey) {
-    const g = await groqChat(groqKey, cat, hist, message);
-    attempts.push(g.note);
-    text = g.text;
   }
   if (!text) {
     try {
