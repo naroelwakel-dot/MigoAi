@@ -1,0 +1,582 @@
+/* ============================================================
+       Migo AI Solution — Dark Blue design system
+       (redesign layer: overrides the JS-rendered cards too,
+        so app.js keeps working untouched)
+       ============================================================ */
+    :root {
+        --bg-void: #0b0d11;
+        --bg-panel: #14181f;
+        --bg-card: #171c24;
+        --bg-elev: #1f2530;
+        --border-subtle: rgba(255, 255, 255, 0.08);
+        --border-hover: rgba(212, 175, 55, 0.50);
+        --accent: #d4af37;
+        --accent-bright: #f2d27a;
+        --accent-deep: #a8842a;
+        --accent-glow: rgba(212, 175, 55, 0.22);
+        --text-soft: #b3ac9c;
+    }
+    * { box-sizing: border-box; }
+
+    body {
+        font-family: 'Tajawal', sans-serif;
+        background-color: #08090d;
+        background-image:
+            radial-gradient(125% 72% at 50% -14%, rgba(212, 175, 55, 0.22), transparent 62%),
+            radial-gradient(85% 58% at 102% 106%, rgba(168, 132, 42, 0.13), transparent 66%),
+            radial-gradient(62% 46% at -2% 16%, rgba(249, 115, 22, 0.08), transparent 70%),
+            linear-gradient(rgba(242, 210, 122, 0.028) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(242, 210, 122, 0.028) 1px, transparent 1px),
+            linear-gradient(180deg, #0b0d11 0%, #07080b 52%, #0b0d11 100%);
+        background-size: 100% 100%, 100% 100%, 100% 100%, 46px 46px, 46px 46px, 100% 100%;
+        background-repeat: no-repeat, no-repeat, no-repeat, repeat, repeat, no-repeat;
+        background-position: 50% -8%, 104% 108%, -4% 12%, 0 0, 0 0, center center;
+        background-attachment: fixed;
+        color: #e8ecf4;
+        overflow-x: hidden;
+        margin: 0;
+        padding: 0;
+        letter-spacing: -0.015em;
+    }
+
+    .font-mono-code { font-family: 'JetBrains Mono', monospace; }
+    .font-en-sans { font-family: 'Plus Jakarta Sans', sans-serif; }
+
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: var(--bg-void); }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #2a3140; border-radius: 9999px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #3a4356; }
+    details > summary { list-style: none; }
+    details > summary::-webkit-details-marker { display: none; }
+
+    .sky-surface {
+        background: linear-gradient(180deg, rgba(48, 43, 30, 0.34), rgba(18, 18, 20, 0.24));
+        border: 1px solid rgba(212, 175, 55, 0.20);
+        border-radius: 20px;
+        position: relative;
+        backdrop-filter: blur(26px) saturate(150%);
+        -webkit-backdrop-filter: blur(26px) saturate(150%);
+        box-shadow: inset 0 1px 0 0 rgba(242, 210, 122, 0.12), 0 22px 50px -28px rgba(0, 0, 0, 0.75);
+    }
+
+    .sky-card {
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.015));
+        border: 1px solid rgba(212, 175, 55, 0.16);
+        border-radius: 16px;
+        backdrop-filter: blur(16px) saturate(135%);
+        -webkit-backdrop-filter: blur(16px) saturate(135%);
+        box-shadow: inset 0 1px 0 0 rgba(242, 210, 122, 0.08);
+        transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
+    }
+    .sky-card:hover {
+        border-color: var(--border-hover);
+        background: linear-gradient(180deg, rgba(242, 210, 122, 0.12), rgba(255, 255, 255, 0.03));
+        box-shadow: 0 18px 40px -14px rgba(0, 0, 0, 0.7), 0 0 22px var(--accent-glow);
+        transform: translateY(-2px);
+    }
+
+    .agentql-btn-primary {
+        background: linear-gradient(135deg, #f3cf6b, #b8860b);
+        color: #2a1e05;
+        font-weight: 800;
+        border: 1px solid rgba(255, 231, 150, 0.45);
+        transition: all 0.2s ease;
+        box-shadow: 0 8px 20px -10px rgba(212, 175, 55, 0.75);
+    }
+    .agentql-btn-primary:hover {
+        filter: brightness(1.08);
+        transform: translateY(-1px);
+        box-shadow: 0 12px 26px -10px rgba(212, 175, 55, 0.85);
+    }
+
+    .sky-btn {
+        background: var(--bg-elev);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        color: #dbe2ef;
+        border-radius: 12px;
+        transition: all 0.2s ease;
+    }
+    .sky-btn:hover {
+        background: #262d3a;
+        border-color: var(--border-hover);
+        transform: translateY(-1px);
+    }
+
+    .sky-active-tab {
+        border: 1px solid var(--accent) !important;
+        background: rgba(212, 175, 55, 0.18) !important;
+        color: #ffffff !important;
+    }
+
+    select, select option {
+        background-color: var(--bg-panel) !important;
+        color: #e8eefc !important;
+    }
+
+    .pill-badge {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        color: #b9c2d4;
+        font-size: 11px;
+        font-weight: 600;
+        border-radius: 9999px;
+        padding: 4px 12px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .dot { height: 5px; width: 5px; background-color: #2a3140; border-radius: 50%; display: inline-block; cursor: pointer; transition: 0.3s; }
+    .dot.active { background-color: var(--accent); width: 18px; border-radius: 9999px; }
+
+    @keyframes anim-vcc-float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-3px); }
+    }
+    .anim-vcc { animation: anim-vcc-float 3.5s infinite ease-in-out; }
+
+    /* ---- Bridge layer: retune the classes app.js emits, so product
+            cards, cart rows, checkout and modals all match the blue
+            identity without editing app.js ---- */
+    .bg-slate-950 { background-color: rgba(9, 12, 18, 0.5) !important; }
+    .bg-slate-950\/90 { background-color: rgba(15, 19, 27, 0.6) !important; }
+    .bg-slate-900\/60 { background-color: rgba(23, 28, 36, 0.45) !important; }
+    .bg-slate-800 { background-color: rgba(31, 37, 48, 0.55) !important; }
+    .bg-slate-800\/80 { background-color: rgba(31, 37, 48, 0.5) !important; }
+    .bg-gray-900, .bg-gray-800 { background-color: rgba(23, 28, 36, 0.45) !important; }
+
+    .border-slate-700 { border-color: var(--border-subtle) !important; }
+    .border-slate-800 { border-color: var(--border-subtle) !important; }
+    .border-slate-700\/50 { border-color: rgba(255, 255, 255, 0.08) !important; }
+
+    .text-slate-950 { color: #ffffff !important; }
+    .text-gray-300 { color: #cfd6e4 !important; }
+    .text-gray-400 { color: var(--text-soft) !important; }
+
+    .bg-amber-500, .bg-amber-400 {
+        background: linear-gradient(135deg, #f3cf6b, #b8860b) !important;
+        color: #2a1e05 !important;
+    }
+    .hover\:bg-amber-400:hover { filter: brightness(1.08); }
+    .text-amber-400, .text-amber-300 { color: var(--accent-bright) !important; }
+
+    .text-sky-400, .text-sky-300, .text-sky-600 { color: var(--accent-bright) !important; }
+    .border-sky-400 { border-color: var(--accent) !important; }
+    .bg-sky-500\/20 { background-color: rgba(212, 175, 55, 0.14) !important; }
+    .border-sky-500\/40 { border-color: rgba(242, 210, 122, 0.32) !important; }
+
+    /* tint every coloured badge/pill to the single accent */
+    .bg-indigo-500\/20, .bg-purple-500\/20, .bg-cyan-500\/20,
+    .bg-rose-500\/20, .bg-emerald-500\/20, .bg-pink-500\/20 {
+        background-color: rgba(212, 175, 55, 0.12) !important;
+    }
+    .border-indigo-500\/40, .border-purple-500\/40, .border-cyan-500\/40,
+    .border-rose-500\/40, .border-emerald-500\/40, .border-pink-500\/40 {
+        border-color: rgba(255, 255, 255, 0.12) !important;
+    }
+    .text-indigo-300, .text-purple-300, .text-cyan-300,
+    .text-rose-300, .text-emerald-300, .text-pink-400, .text-pink-300,
+    .text-indigo-400, .text-purple-400 {
+        color: var(--accent-bright) !important;
+    }
+
+    /* keep overlays readable */
+    .bg-black\/80, .bg-black\/85 { background-color: rgba(8, 9, 12, 0.82) !important; }
+    .bg-black\/50, .bg-black\/60 { background-color: rgba(18, 21, 27, 0.7) !important; }
+    .bg-black\/40 { background-color: rgba(18, 21, 27, 0.5) !important; }
+
+    /* ---- Uniform full-bleed product art frame ----
+            Every product card shows its real image full-bleed in the SAME frame:
+            a square tile (1:1) cropped to fill edge to edge, exactly like the
+            suppliers' own grids. Tiles line up section to section and resize with
+            the window (games / live / VCC / software / entertainment / AI). ---- */
+    #gamesCardsContainer .sky-card > div:first-child,
+    #liveAppsContainer .sky-card > div:first-child,
+    #vccCardsContainer .sky-card > div:first-child,
+    #productivityContainer .sky-card > div:first-child,
+    #entertainmentCardsContainer .sky-card > div:first-child,
+    #aiCardsContainer .sky-card > div:first-child {
+        height: auto !important;
+        aspect-ratio: 1 / 1 !important;
+        background-size: cover !important;
+        background-repeat: no-repeat !important;
+        background-position: center !important;
+        background-color: transparent !important;
+    }
+
+    /* ---- SMM dispatch banner: show the platform image sharp and clear
+            (it was washed out at 70% opacity on a dark box) ---- */
+    #selectedPlatformBannerImg {
+        opacity: 1 !important;
+    }
+
+    /* ---- Migo animated orbit logo ---- */
+    @keyframes migo-spin { to { transform: rotate(360deg); } }
+    @keyframes migo-core { 0%,100% { transform: scale(.84); opacity:.72; } 50% { transform: scale(1.08); opacity:1; } }
+    @keyframes migo-ring { 0% { stroke-dashoffset:104; } 60% { stroke-dashoffset:0; } 100% { stroke-dashoffset:0; opacity:.85; } }
+    .migo-spin { transform-origin:24px 24px; animation:migo-spin 11s linear infinite; }
+    .migo-core { transform-origin:24px 24px; animation:migo-core 2.8s ease-in-out infinite; }
+    .migo-ring { stroke-dasharray:104; animation:migo-ring 3.6s ease-out infinite; }
+    @media (prefers-reduced-motion: reduce){ .migo-spin,.migo-core,.migo-ring { animation:none; } }
+
+    /* ---- Home section quick-cards: animated, interactive icon badges ---- */
+    .sec-grid > a { position: relative; overflow: hidden; }
+    .sec-grid > a::after {
+        content: "";
+        position: absolute; top: 0; left: -140%; width: 120%; height: 100%;
+        background: linear-gradient(105deg, transparent 0%, rgba(255,255,255,.10) 45%, rgba(242,210,122,.22) 50%, transparent 100%);
+        transform: skewX(-18deg);
+        transition: left .65s cubic-bezier(.16,1,.3,1);
+        pointer-events: none;
+    }
+    .sec-grid > a:hover {
+        transform: translateY(-5px);
+        border-color: rgba(242,210,122,.45);
+        box-shadow: 0 18px 38px -16px rgba(0,0,0,.8), 0 0 26px -4px rgba(212,175,55,.55);
+    }
+    .sec-grid > a:hover::after { left: 140%; }
+    .sec-grid > a:active { transform: translateY(-2px) scale(.985); }
+    .sec-grid > a:focus-visible { outline: 2px solid var(--accent-bright); outline-offset: 2px; }
+
+    .sec-ic {
+        position: relative;
+        width: 2.75rem; height: 2.75rem;
+        display: inline-flex; align-items: center; justify-content: center;
+        font-size: 1.45rem; line-height: 1;
+        border-radius: 15px;
+        background: radial-gradient(circle at 32% 24%, rgba(242,210,122,.38), rgba(168,132,42,.10) 70%);
+        border: 1px solid rgba(242,210,122,.28);
+        box-shadow: inset 0 0 16px rgba(242,210,122,.16), 0 0 0 0 rgba(242,210,122,.34);
+        animation: secFloat 3.6s ease-in-out infinite, secPulse 3.6s ease-in-out infinite;
+        transition: transform .3s cubic-bezier(.16,1,.3,1), box-shadow .3s ease, border-color .3s ease;
+    }
+    .sec-grid > a:nth-child(2n) .sec-ic { animation-delay: .45s; }
+    .sec-grid > a:nth-child(3n) .sec-ic { animation-delay: .9s; }
+    .sec-grid > a:hover .sec-ic {
+        animation: none;
+        transform: scale(1.12) rotate(-6deg);
+        border-color: rgba(242,210,122,.7);
+        box-shadow: inset 0 0 20px rgba(242,210,122,.3), 0 0 26px -2px rgba(212,175,55,.75);
+    }
+    @keyframes secFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+    @keyframes secPulse {
+        0%,100% { box-shadow: inset 0 0 16px rgba(242,210,122,.16), 0 0 0 0 rgba(242,210,122,.34); }
+        50% { box-shadow: inset 0 0 20px rgba(242,210,122,.26), 0 0 0 7px rgba(242,210,122,0); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+        .sec-ic { animation: none; }
+        .sec-grid > a::after { display: none; }
+        .sec-grid > a:hover { transform: translateY(-2px); }
+    }
+
+    /* ---- Custom SVG line icons inside the animated section badges ---- */
+    .sec-ic { color: var(--accent-bright); }
+    .sec-ic .sec-ico {
+        width: 1.5rem; height: 1.5rem; display: block;
+        fill: none; stroke: currentColor; stroke-width: 1.8;
+        stroke-linecap: round; stroke-linejoin: round;
+    }
+
+    /* ---- Section icon badges v2: colourful gradient tiles, white icons,
+            coloured glow ring. Keeps the float/hover/shine from above. ---- */
+    .sec-ic {
+        color: #ffffff;
+        background: linear-gradient(145deg, var(--c1, #d4af37), var(--c2, #8a6a1f));
+        border: 1px solid rgba(255, 255, 255, 0.24);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.30), inset 0 0 12px rgba(255, 255, 255, 0.10), 0 8px 20px -8px var(--c1, #d4af37);
+        animation: secFloat 3.6s ease-in-out infinite;
+        overflow: visible;
+    }
+    .sec-ic::before {
+        content: "";
+        position: absolute; inset: 0; border-radius: inherit;
+        border: 1px solid var(--c1, #d4af37);
+        animation: secRing 3.6s ease-out infinite;
+        pointer-events: none;
+    }
+    .sec-ic .sec-ico {
+        animation: secIcon 3.6s ease-in-out infinite;
+        filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.35));
+    }
+    .sec-grid > a:hover .sec-ic {
+        animation: none;
+        transform: scale(1.12) rotate(-6deg);
+        border-color: rgba(255, 255, 255, 0.5);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 12px 28px -8px var(--c1, #d4af37);
+    }
+
+    .sec-grid > a:nth-child(1) .sec-ic { --c1: #e69500; --c2: #b45309; }
+    .sec-grid > a:nth-child(2) .sec-ic { --c1: #e11d48; --c2: #9f1239; }
+    .sec-grid > a:nth-child(3) .sec-ic { --c1: #0ea5a5; --c2: #0f766e; }
+    .sec-grid > a:nth-child(4) .sec-ic { --c1: #2fb56a; --c2: #15803d; }
+    .sec-grid > a:nth-child(5) .sec-ic { --c1: #d4af37; --c2: #8a6a1f; }
+    .sec-grid > a:nth-child(6) .sec-ic { --c1: #f97316; --c2: #c2410c; }
+    .sec-grid > a:nth-child(7) .sec-ic { --c1: #f43f6e; --c2: #be123c; }
+    .sec-grid > a:nth-child(8) .sec-ic { --c1: #c2703a; --c2: #8a4a22; }
+    .sec-grid > a:nth-child(9) .sec-ic { --c1: #84cc16; --c2: #4d7c0f; }
+
+    @keyframes secRing { 0% { transform: scale(1); opacity: .55; } 70% { transform: scale(1.4); opacity: 0; } 100% { transform: scale(1.4); opacity: 0; } }
+    @keyframes secIcon { 0%, 100% { transform: scale(1) rotate(0); } 50% { transform: scale(1.07) rotate(-3deg); } }
+
+    @media (prefers-reduced-motion: reduce) {
+        .sec-ic, .sec-ic::before, .sec-ic .sec-ico { animation: none; }
+    }
+
+/* Compact coin/stars package picker (replaces full-screen native select on mobile) */
+.coin-picker { position: relative; }
+.coin-picker-btn { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 8px; background: rgba(2, 6, 23, .9); border: 1px solid #334155; border-radius: 12px; padding: 8px 10px; font-size: 12px; font-weight: 700; color: #f9a8d4; cursor: pointer; text-align: right; }
+.coin-picker-caret { opacity: .7; font-size: 11px; }
+.coin-picker-list { position: absolute; z-index: 30; left: 0; right: 0; margin-top: 4px; background: #0f141c; border: 1px solid #334155; border-radius: 12px; max-height: 190px; overflow-y: auto; box-shadow: 0 12px 30px rgba(0, 0, 0, .5); }
+.coin-picker-opt { display: flex; justify-content: space-between; gap: 8px; width: 100%; padding: 8px 10px; font-size: 12px; color: #e2e8f0; background: transparent; border: 0; border-bottom: 1px solid rgba(255, 255, 255, .06); cursor: pointer; text-align: right; }
+.coin-picker-opt:last-child { border-bottom: 0; }
+.coin-picker-opt.is-active { background: rgba(236, 72, 153, .15); color: #f9a8d4; }
+.coin-picker-opt:hover { background: rgba(255, 255, 255, .05); }
+.coin-picker-price { color: #fbbf24; font-weight: 700; white-space: nowrap; }
+
+/* ---- Customer auth: email code field ---- */
+.otp-input{width:100%;background:#12151b;border:1px solid rgba(212,175,55,.30);border-radius:12px;padding:10px;color:#fff;text-align:center;letter-spacing:6px;font-weight:700}
+.otp-hint{font-size:10px;color:#b3ac9c;margin-top:6px;text-align:center}
+
+/* ============================================================
+   Home section quick-cards = compact single-row strip
+   (this replaces the old top category pill bar: the same
+   sections, but as smaller icons sitting side by side instead
+   of a tall multi-row grid. Scrolls sideways on small screens.)
+   ============================================================ */
+.sec-grid {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 8px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 12px 2px 12px;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+}
+.sec-grid > a {
+    flex: 0 0 auto;
+    width: 116px;
+    padding: 12px 9px;
+    gap: 7px;
+    scroll-snap-align: start;
+}
+.sec-grid > a .sec-ic { width: 2.6rem; height: 2.6rem; border-radius: 14px; }
+.sec-grid > a .sec-ic .sec-ico { width: 1.4rem; height: 1.4rem; }
+.sec-grid > a > .text-xs { font-size: 12px; line-height: 1.25; }
+.sec-grid > a > .text-\[10px\] { font-size: 10px; line-height: 1.2; }
+
+/* ============================================================
+   Sidebar (hamburger drawer): a designed cover for every row,
+   in the site's gold-on-black identity, with a coloured edge
+   accent per row so the menu reads alive instead of plain.
+   ============================================================ */
+#sidebarContainer aside .space-y-1 > a {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.015));
+    border: 1px solid rgba(212, 175, 55, 0.16);
+    border-radius: 13px;
+    box-shadow: inset 0 1px 0 rgba(242, 210, 122, 0.07);
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+#sidebarContainer aside .space-y-1 > a::before {
+    content: "";
+    position: absolute;
+    top: 0; bottom: 0; right: 0;
+    width: 3px;
+    background: var(--side-c, var(--accent));
+    opacity: 0.9;
+}
+#sidebarContainer aside .space-y-1 > a:hover {
+    transform: translateX(-4px);
+    border-color: rgba(242, 210, 122, 0.5);
+    background: linear-gradient(180deg, rgba(242, 210, 122, 0.14), rgba(255, 255, 255, 0.03));
+    box-shadow: 0 12px 26px -16px rgba(0, 0, 0, 0.8), 0 0 20px -6px var(--accent-glow);
+}
+#sidebarContainer aside .space-y-1 > a:nth-child(1) { --side-c: #e69500; }
+#sidebarContainer aside .space-y-1 > a:nth-child(2) { --side-c: #e11d48; }
+#sidebarContainer aside .space-y-1 > a:nth-child(3) { --side-c: #0ea5a5; }
+#sidebarContainer aside .space-y-1 > a:nth-child(4) { --side-c: #2fb56a; }
+#sidebarContainer aside .space-y-1 > a:nth-child(5) { --side-c: #d4af37; }
+#sidebarContainer aside .space-y-1 > a:nth-child(6) { --side-c: #f97316; }
+#sidebarContainer aside .space-y-1 > a:nth-child(7) { --side-c: #f43f6e; }
+#sidebarContainer aside .space-y-1 > a:nth-child(8) { --side-c: #c2703a; }
+#sidebarContainer aside .space-y-1 > a:nth-child(9) { --side-c: #84cc16; }
+#sidebarContainer aside .space-y-1 > a:nth-child(10) { --side-c: #d4af37; }
+
+/* drawer social buttons keep their own brand tint on hover */
+#sidebarContainer aside .grid > a {
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+#sidebarContainer aside .grid > a:hover { transform: translateY(-2px); }
+#sidebarContainer aside .grid > a:first-child:hover { border-color: #3b5998; box-shadow: 0 0 18px -4px rgba(59, 89, 152, 0.7); }
+#sidebarContainer aside .grid > a:last-child:hover { border-color: #25d366; box-shadow: 0 0 18px -4px rgba(37, 211, 102, 0.7); }
+
+/* ============================================================
+   Header accents: the cart count badge and the floating support
+   button were blue; recoloured to the site's gold identity.
+   ============================================================ */
+#cartBadge {
+    background: linear-gradient(135deg, #f3cf6b, #b8860b);
+    color: #2a1e05;
+    box-shadow: 0 3px 10px -3px rgba(212, 175, 55, 0.85);
+}
+a[aria-label="تواصل مع الدعم الفني"] {
+    background: linear-gradient(135deg, #f3cf6b, #b8860b) !important;
+    color: #2a1e05 !important;
+    box-shadow: 0 12px 26px -10px rgba(212, 175, 55, 0.75) !important;
+}
+a[aria-label="تواصل مع الدعم الفني"]:hover { filter: brightness(1.08); }
+a[aria-label="تواصل مع الدعم الفني"] svg { fill: #ffffff !important; }
+
+
+/* Cart discount row: was blue (text-blue-400); gold to match the identity */
+#cartDiscountRow { color: var(--accent-bright) !important; }
+
+    /* --- Merge the sticky header with the page background (2026-10-31, editor) ---
+       The top title bar was reading as a separate band (own shade + a bottom
+       divider + a texture overlay). Make it transparent so the fixed page
+       background runs straight through it, drop the divider, and hide the
+       texture overlay. The backdrop blur stays, so anything scrolling under the
+       header still softens. */
+    header.sticky {
+        background: transparent !important;
+        border-bottom: 0 !important;
+    }
+    header.sticky > div.absolute.inset-0 {
+        display: none !important;
+    }
+
+/* Collapsible header search: full field while at the top, a small magnifier icon
+   once the page is scrolled, and the field reappears over the header when tapped. */
+#searchToggleBtn {
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+header.sticky.is-scrolled #searchToggleBtn { display: inline-flex; }
+header.sticky.is-scrolled #searchRow { display: none; }
+header.sticky.is-scrolled.search-open #searchRow {
+    display: block;
+    animation: migoSearchDrop .22s ease-out;
+}
+@keyframes migoSearchDrop { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { header.sticky.is-scrolled.search-open #searchRow { animation: none; } }
+
+/* Mobile: keep the search box usable. A 16px input stops iOS from zooming on focus
+   (the zoom is what drops the phone keyboard), and we drop the heavy header blur so
+   typing doesn't force a full-screen repaint on every keystroke. */
+@media (max-width: 640px) {
+    header.sticky {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+    }
+    #searchResultsDropdown {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+    }
+    #liveSearchInput {
+        font-size: 16px !important;
+    }
+}
+
+/* Self-hosted Google Fonts @font-face (replaces the render-blocking third-party stylesheet) */
+/* cyrillic-ext */ @font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 400; font-display: optional; src: url(https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPx3cwhsk.woff2) format('woff2'); unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F; } /* cyrillic */ @font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 400; font-display: optional; src: url(https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxTcwhsk.woff2) format('woff2'); unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; } /* greek */ @font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 400; font-display: optional; src: url(https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxPcwhsk.woff2) format('woff2'); unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF; } /* vietnamese */ @font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 400; font-display: optional; src: url(https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPx_cwhsk.woff2) format('woff2'); unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB; } /* latin-ext */ @font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 400; font-display: optional; src: url(https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPx7cwhsk.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; } /* latin */ @font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 400; font-display: optional; src: url(https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxDcwg.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; } /* cyrillic-ext */ @font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 600; font-display: optional; src: url(https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPx3cwhsk.woff2) format('woff2'); unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F; } /* cyrillic */ @font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 600; font-display: optional; src: url(https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxTcwhsk.woff2) format('woff2'); unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; } /* greek */ @font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 600; font-display: optional; src: url(https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxPcwhsk.woff2) format('woff2'); unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF; } /* vietnamese */ @font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 600; font-display: optional; src: url(https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPx_cwhsk.woff2) format('woff2'); unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB; } /* latin-ext */ @font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 600; font-display: optional; src: url(https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPx7cwhsk.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; } /* latin */ @font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 600; font-display: optional; src: url(https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxDcwg.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; } /* cyrillic-ext */ @font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 700; font-display: optional; src: url(https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPx3cwhsk.woff2) format('woff2'); unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F; } /* cyrillic */ @font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 700; font-display: optional; src: url(https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxTcwhsk.woff2) format('woff2'); unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116; } /* greek */ @font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 700; font-display: optional; src: url(https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxPcwhsk.woff2) format('woff2'); unicode-range: U+0370-0377, U+037A-037F, U+0384-038A, U+038C, U+038E-03A1, U+03A3-03FF; } /* vietnamese */ @font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 700; font-display: optional; src: url(https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPx_cwhsk.woff2) format('woff2'); unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB; } /* latin-ext */ @font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 700; font-display: optional; src: url(https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPx7cwhsk.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; } /* latin */ @font-face { font-family: 'JetBrains Mono'; font-style: normal; font-weight: 700; font-display: optional; src: url(https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxDcwg.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; } /* cyrillic-ext */ @font-face { font-family: 'Plus Jakarta Sans'; font-style: normal; font-weight: 400; font-display: optional; src: url(https://fonts.gstatic.com/s/plusjakartasans/v12/LDIoaomQNQcsA88c7O9yZ4KMCoOg4Ko70yyygA.woff2) format('woff2'); unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F; } /* vietnamese */ @font-face { font-family: 'Plus Jakarta Sans'; font-style: normal; font-weight: 400; font-display: optional; src: url(https://fonts.gstatic.com/s/plusjakartasans/v12/LDIoaomQNQcsA88c7O9yZ4KMCoOg4Ko50yyygA.woff2) format('woff2'); unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB; } /* latin-ext */ @font-face { font-family: 'Plus Jakarta Sans'; font-style: normal; font-weight: 400; font-display: optional; src: url(https://fonts.gstatic.com/s/plusjakartasans/v12/LDIoaomQNQcsA88c7O9yZ4KMCoOg4Ko40yyygA.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; } /* latin */ @font-face { font-family: 'Plus Jakarta Sans'; font-style: normal; font-weight: 400; font-display: optional; src: url(https://fonts.gstatic.com/s/plusjakartasans/v12/LDIoaomQNQcsA88c7O9yZ4KMCoOg4Ko20yw.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; } /* cyrillic-ext */ @font-face { font-family: 'Plus Jakarta Sans'; font-style: normal; font-weight: 500; font-display: optional; src: url(https://fonts.gstatic.com/s/plusjakartasans/v12/LDIoaomQNQcsA88c7O9yZ4KMCoOg4Ko70yyygA.woff2) format('woff2'); unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F; } /* vietnamese */ @font-face { font-family: 'Plus Jakarta Sans'; font-style: normal; font-weight: 500; font-display: optional; src: url(https://fonts.gstatic.com/s/plusjakartasans/v12/LDIoaomQNQcsA88c7O9yZ4KMCoOg4Ko50yyygA.woff2) format('woff2'); unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB; } /* latin-ext */ @font-face { font-family: 'Plus Jakarta Sans'; font-style: normal; font-weight: 500; font-display: optional; src: url(https://fonts.gstatic.com/s/plusjakartasans/v12/LDIoaomQNQcsA88c7O9yZ4KMCoOg4Ko40yyygA.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; } /* latin */ @font-face { font-family: 'Plus Jakarta Sans'; font-style: normal; font-weight: 500; font-display: optional; src: url(https://fonts.gstatic.com/s/plusjakartasans/v12/LDIoaomQNQcsA88c7O9yZ4KMCoOg4Ko20yw.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; } /* cyrillic-ext */ @font-face { font-family: 'Plus Jakarta Sans'; font-style: normal; font-weight: 600; font-display: optional; src: url(https://fonts.gstatic.com/s/plusjakartasans/v12/LDIoaomQNQcsA88c7O9yZ4KMCoOg4Ko70yyygA.woff2) format('woff2'); unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F; } /* vietnamese */ @font-face { font-family: 'Plus Jakarta Sans'; font-style: normal; font-weight: 600; font-display: optional; src: url(https://fonts.gstatic.com/s/plusjakartasans/v12/LDIoaomQNQcsA88c7O9yZ4KMCoOg4Ko50yyygA.woff2) format('woff2'); unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB; } /* latin-ext */ @font-face { font-family: 'Plus Jakarta Sans'; font-style: normal; font-weight: 600; font-display: optional; src: url(https://fonts.gstatic.com/s/plusjakartasans/v12/LDIoaomQNQcsA88c7O9yZ4KMCoOg4Ko40yyygA.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; } /* latin */ @font-face { font-family: 'Plus Jakarta Sans'; font-style: normal; font-weight: 600; font-display: optional; src: url(https://fonts.gstatic.com/s/plusjakartasans/v12/LDIoaomQNQcsA88c7O9yZ4KMCoOg4Ko20yw.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; } /* cyrillic-ext */ @font-face { font-family: 'Plus Jakarta Sans'; font-style: normal; font-weight: 700; font-display: optional; src: url(https://fonts.gstatic.com/s/plusjakartasans/v12/LDIoaomQNQcsA88c7O9yZ4KMCoOg4Ko70yyygA.woff2) format('woff2'); unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F; } /* vietnamese */ @font-face { font-family: 'Plus Jakarta Sans'; font-style: normal; font-weight: 700; font-display: optional; src: url(https://fonts.gstatic.com/s/plusjakartasans/v12/LDIoaomQNQcsA88c7O9yZ4KMCoOg4Ko50yyygA.woff2) format('woff2'); unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB; } /* latin-ext */ @font-face { font-family: 'Plus Jakarta Sans'; font-style: normal; font-weight: 700; font-display: optional; src: url(https://fonts.gstatic.com/s/plusjakartasans/v12/LDIoaomQNQcsA88c7O9yZ4KMCoOg4Ko40yyygA.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; } /* latin */ @font-face { font-family: 'Plus Jakarta Sans'; font-style: normal; font-weight: 700; font-display: optional; src: url(https://fonts.gstatic.com/s/plusjakartasans/v12/LDIoaomQNQcsA88c7O9yZ4KMCoOg4Ko20yw.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; } /* cyrillic-ext */ @font-face { font-family: 'Plus Jakarta Sans'; font-style: normal; font-weight: 800; font-display: optional; src: url(https://fonts.gstatic.com/s/plusjakartasans/v12/LDIoaomQNQcsA88c7O9yZ4KMCoOg4Ko70yyygA.woff2) format('woff2'); unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F; } /* vietnamese */ @font-face { font-family: 'Plus Jakarta Sans'; font-style: normal; font-weight: 800; font-display: optional; src: url(https://fonts.gstatic.com/s/plusjakartasans/v12/LDIoaomQNQcsA88c7O9yZ4KMCoOg4Ko50yyygA.woff2) format('woff2'); unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB; } /* latin-ext */ @font-face { font-family: 'Plus Jakarta Sans'; font-style: normal; font-weight: 800; font-display: optional; src: url(https://fonts.gstatic.com/s/plusjakartasans/v12/LDIoaomQNQcsA88c7O9yZ4KMCoOg4Ko40yyygA.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF; } /* latin */ @font-face { font-family: 'Plus Jakarta Sans'; font-style: normal; font-weight: 800; font-display: optional; src: url(https://fonts.gstatic.com/s/plusjakartasans/v12/LDIoaomQNQcsA88c7O9yZ4KMCoOg4Ko20yw.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; } /* arabic */ @font-face { font-family: 'Tajawal'; font-style: normal; font-weight: 400; font-display: optional; src: url(https://fonts.gstatic.com/s/tajawal/v12/Iura6YBj_oCad4k1nzSBC45I.woff2) format('woff2'); unicode-range: U+0600-06FF, U+0750-077F, U+0870-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC, U+102E0-102FB, U+10E60-10E7E, U+10EC2-10EC7, U+10EC9-10EEE, U+10EF0-10EFF, U+1EE00-1EE03, U+1EE05-1EE1F, U+1EE21-1EE22, U+1EE24, U+1EE27, U+1EE29-1EE32, U+1EE34-1EE37, U+1EE39, U+1EE3B, U+1EE42, U+1EE47, U+1EE49, U+1EE4B, U+1EE4D-1EE4F, U+1EE51-1EE52, U+1EE54, U+1EE57, U+1EE59, U+1EE5B, U+1EE5D, U+1EE5F, U+1EE61-1EE62, U+1EE64, U+1EE67-1EE6A, U+1EE6C-1EE72, U+1EE74-1EE77, U+1EE79-1EE7C, U+1EE7E, U+1EE80-1EE89, U+1EE8B-1EE9B, U+1EEA1-1EEA3, U+1EEA5-1EEA9, U+1EEAB-1EEBB, U+1EEF0-1EEF1; } /* latin */ @font-face { font-family: 'Tajawal'; font-style: normal; font-weight: 400; font-display: optional; src: url(https://fonts.gstatic.com/s/tajawal/v12/Iura6YBj_oCad4k1nzGBCw.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; } /* arabic */ @font-face { font-family: 'Tajawal'; font-style: normal; font-weight: 500; font-display: optional; src: url(https://fonts.gstatic.com/s/tajawal/v12/Iurf6YBj_oCad4k1l8KiHrRpiYlJ.woff2) format('woff2'); unicode-range: U+0600-06FF, U+0750-077F, U+0870-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC, U+102E0-102FB, U+10E60-10E7E, U+10EC2-10EC7, U+10EC9-10EEE, U+10EF0-10EFF, U+1EE00-1EE03, U+1EE05-1EE1F, U+1EE21-1EE22, U+1EE24, U+1EE27, U+1EE29-1EE32, U+1EE34-1EE37, U+1EE39, U+1EE3B, U+1EE42, U+1EE47, U+1EE49, U+1EE4B, U+1EE4D-1EE4F, U+1EE51-1EE52, U+1EE54, U+1EE57, U+1EE59, U+1EE5B, U+1EE5D, U+1EE5F, U+1EE61-1EE62, U+1EE64, U+1EE67-1EE6A, U+1EE6C-1EE72, U+1EE74-1EE77, U+1EE79-1EE7C, U+1EE7E, U+1EE80-1EE89, U+1EE8B-1EE9B, U+1EEA1-1EEA3, U+1EEA5-1EEA9, U+1EEAB-1EEBB, U+1EEF0-1EEF1; } /* latin */ @font-face { font-family: 'Tajawal'; font-style: normal; font-weight: 500; font-display: optional; src: url(https://fonts.gstatic.com/s/tajawal/v12/Iurf6YBj_oCad4k1l8KiHrFpiQ.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; } /* arabic */ @font-face { font-family: 'Tajawal'; font-style: normal; font-weight: 700; font-display: optional; src: url(https://fonts.gstatic.com/s/tajawal/v12/Iurf6YBj_oCad4k1l4qkHrRpiYlJ.woff2) format('woff2'); unicode-range: U+0600-06FF, U+0750-077F, U+0870-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC, U+102E0-102FB, U+10E60-10E7E, U+10EC2-10EC7, U+10EC9-10EEE, U+10EF0-10EFF, U+1EE00-1EE03, U+1EE05-1EE1F, U+1EE21-1EE22, U+1EE24, U+1EE27, U+1EE29-1EE32, U+1EE34-1EE37, U+1EE39, U+1EE3B, U+1EE42, U+1EE47, U+1EE49, U+1EE4B, U+1EE4D-1EE4F, U+1EE51-1EE52, U+1EE54, U+1EE57, U+1EE59, U+1EE5B, U+1EE5D, U+1EE5F, U+1EE61-1EE62, U+1EE64, U+1EE67-1EE6A, U+1EE6C-1EE72, U+1EE74-1EE77, U+1EE79-1EE7C, U+1EE7E, U+1EE80-1EE89, U+1EE8B-1EE9B, U+1EEA1-1EEA3, U+1EEA5-1EEA9, U+1EEAB-1EEBB, U+1EEF0-1EEF1; } /* latin */ @font-face { font-family: 'Tajawal'; font-style: normal; font-weight: 700; font-display: optional; src: url(https://fonts.gstatic.com/s/tajawal/v12/Iurf6YBj_oCad4k1l4qkHrFpiQ.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; } /* arabic */ @font-face { font-family: 'Tajawal'; font-style: normal; font-weight: 800; font-display: optional; src: url(https://fonts.gstatic.com/s/tajawal/v12/Iurf6YBj_oCad4k1l5anHrRpiYlJ.woff2) format('woff2'); unicode-range: U+0600-06FF, U+0750-077F, U+0870-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC, U+102E0-102FB, U+10E60-10E7E, U+10EC2-10EC7, U+10EC9-10EEE, U+10EF0-10EFF, U+1EE00-1EE03, U+1EE05-1EE1F, U+1EE21-1EE22, U+1EE24, U+1EE27, U+1EE29-1EE32, U+1EE34-1EE37, U+1EE39, U+1EE3B, U+1EE42, U+1EE47, U+1EE49, U+1EE4B, U+1EE4D-1EE4F, U+1EE51-1EE52, U+1EE54, U+1EE57, U+1EE59, U+1EE5B, U+1EE5D, U+1EE5F, U+1EE61-1EE62, U+1EE64, U+1EE67-1EE6A, U+1EE6C-1EE72, U+1EE74-1EE77, U+1EE79-1EE7C, U+1EE7E, U+1EE80-1EE89, U+1EE8B-1EE9B, U+1EEA1-1EEA3, U+1EEA5-1EEA9, U+1EEAB-1EEBB, U+1EEF0-1EEF1; } /* latin */ @font-face { font-family: 'Tajawal'; font-style: normal; font-weight: 800; font-display: optional; src: url(https://fonts.gstatic.com/s/tajawal/v12/Iurf6YBj_oCad4k1l5anHrFpiQ.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; } /* arabic */ @font-face { font-family: 'Tajawal'; font-style: normal; font-weight: 900; font-display: optional; src: url(https://fonts.gstatic.com/s/tajawal/v12/Iurf6YBj_oCad4k1l7KmHrRpiYlJ.woff2) format('woff2'); unicode-range: U+0600-06FF, U+0750-077F, U+0870-0891, U+0897-08E1, U+08E3-08FF, U+200C-200E, U+2010-2011, U+204F, U+2E41, U+FB50-FDFF, U+FE70-FE74, U+FE76-FEFC, U+102E0-102FB, U+10E60-10E7E, U+10EC2-10EC7, U+10EC9-10EEE, U+10EF0-10EFF, U+1EE00-1EE03, U+1EE05-1EE1F, U+1EE21-1EE22, U+1EE24, U+1EE27, U+1EE29-1EE32, U+1EE34-1EE37, U+1EE39, U+1EE3B, U+1EE42, U+1EE47, U+1EE49, U+1EE4B, U+1EE4D-1EE4F, U+1EE51-1EE52, U+1EE54, U+1EE57, U+1EE59, U+1EE5B, U+1EE5D, U+1EE5F, U+1EE61-1EE62, U+1EE64, U+1EE67-1EE6A, U+1EE6C-1EE72, U+1EE74-1EE77, U+1EE79-1EE7C, U+1EE7E, U+1EE80-1EE89, U+1EE8B-1EE9B, U+1EEA1-1EEA3, U+1EEA5-1EEA9, U+1EEAB-1EEBB, U+1EEF0-1EEF1; } /* latin */ @font-face { font-family: 'Tajawal'; font-style: normal; font-weight: 900; font-display: optional; src: url(https://fonts.gstatic.com/s/tajawal/v12/Iurf6YBj_oCad4k1l7KmHrFpiQ.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+/* ============================================================
+   Migo store chat assistant (Gemini) — floating widget
+   ============================================================ */
+    .migo-chat { position: fixed; z-index: 200; font-family: 'Tajawal', sans-serif; }
+    .migo-chat__btn {
+        position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px;
+        border-radius: 50%; border: 2px solid var(--accent, #d4af37);
+        background: radial-gradient(circle at 50% 40%, #1b2130 0%, #0b0d11 78%);
+        display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0;
+        box-shadow: 0 8px 24px rgba(0,0,0,.5), 0 0 0 0 rgba(212,175,55,.45);
+        animation: migo-fab-pulse 2.6s ease-out infinite;
+        transition: transform .15s ease, box-shadow .15s ease;
+    }
+    .migo-chat__btn:hover { transform: translateY(-2px) scale(1.05); box-shadow: 0 12px 30px rgba(0,0,0,.55), 0 0 0 6px rgba(212,175,55,.18); animation-play-state: paused; }
+    .migo-chat__btn svg { width: 38px; height: 38px; display: block; }
+    @keyframes migo-fab-pulse {
+        0%   { box-shadow: 0 8px 24px rgba(0,0,0,.5), 0 0 0 0 rgba(212,175,55,.45); }
+        70%  { box-shadow: 0 8px 24px rgba(0,0,0,.5), 0 0 0 14px rgba(212,175,55,0); }
+        100% { box-shadow: 0 8px 24px rgba(0,0,0,.5), 0 0 0 0 rgba(212,175,55,0); }
+    }
+    @media (prefers-reduced-motion: reduce){ .migo-chat__btn { animation: none; } }
+    .migo-chat__panel {
+        position: fixed; bottom: 20px; right: 20px; width: 340px; max-width: calc(100vw - 32px);
+        height: 460px; max-height: calc(100vh - 40px); display: flex; flex-direction: column;
+        background: var(--bg-panel, #14181f); border: 1px solid var(--border-subtle, rgba(255,255,255,.08));
+        border-radius: 18px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,.55);
+    }
+    .migo-chat__panel[hidden] { display: none; }
+    .migo-chat__head {
+        display: flex; align-items: center; justify-content: space-between; padding: 12px 14px;
+        background: var(--bg-elev, #1f2530); border-bottom: 1px solid var(--border-subtle, rgba(255,255,255,.08));
+        color: #fff; font-weight: 700;
+    }
+    .migo-chat__x {
+        display: inline-flex; align-items: center; gap: 5px;
+        background: rgba(255,255,255,.08); border: 1px solid var(--border-subtle, rgba(255,255,255,.14));
+        color: #fff; font-family: inherit; font-size: 14px; font-weight: 700; line-height: 1;
+        cursor: pointer; padding: 7px 12px; border-radius: 999px; transition: background .15s ease, border-color .15s ease;
+    }
+    .migo-chat__x:hover { background: rgba(212,175,55,.22); border-color: var(--accent, #d4af37); }
+    .migo-chat__x b { font-size: 17px; line-height: 1; font-weight: 700; }
+    /* فقاعة تنبيه صغيرة فوق أيقونة الشات: تظهر ثانيتين ونص وتختفي بتلاشي ناعم */
+    .migo-chat__note {
+        position: fixed; right: 20px; bottom: 94px; z-index: 199;
+        max-width: 250px; padding: 9px 14px;
+        background: linear-gradient(135deg, rgba(20,24,31,.97), rgba(11,13,17,.97));
+        border: 1px solid var(--accent, #d4af37);
+        border-radius: 14px; border-bottom-right-radius: 4px;
+        color: #f4e6c0; font-family: 'Tajawal', sans-serif;
+        font-size: 12.5px; line-height: 1.7; text-align: right; direction: rtl;
+        box-shadow: 0 10px 28px rgba(0,0,0,.5);
+        opacity: 0; transform: translateY(6px) scale(.98);
+        transition: opacity .42s ease, transform .42s ease;
+        pointer-events: none;
+    }
+    .migo-chat__note.is-in { opacity: 1; transform: translateY(0) scale(1); }
+    @media (prefers-reduced-motion: reduce){ .migo-chat__note { transition: none; } }
+    @media (max-width: 480px){ .migo-chat__note { max-width: 200px; font-size: 12px; bottom: 88px; } }
+
+    .migo-chat__body {
+        flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px;
+        background: var(--bg-void, #0b0d11);
+    }
+    .migo-chat__msg {
+        max-width: 85%; padding: 9px 12px; border-radius: 14px; font-size: 14px; line-height: 1.7;
+        white-space: pre-wrap; word-break: break-word;
+    }
+    .migo-chat__msg--bot {
+        align-self: flex-start; background: var(--bg-card, #171c24); color: #e8e6df;
+        border: 1px solid var(--border-subtle, rgba(255,255,255,.08)); border-bottom-right-radius: 4px;
+    }
+    .migo-chat__msg--me {
+        align-self: flex-end; background: var(--accent, #d4af37); color: #14181f; font-weight: 600;
+        border-bottom-left-radius: 4px;
+    }
+    .migo-chat__form {
+        display: flex; gap: 8px; padding: 10px; background: var(--bg-elev, #1f2530);
+        border-top: 1px solid var(--border-subtle, rgba(255,255,255,.08));
+    }
+    .migo-chat__in {
+        flex: 1; padding: 10px 12px; border-radius: 10px; border: 1px solid var(--border-subtle, rgba(255,255,255,.08));
+        background: var(--bg-void, #0b0d11); color: #fff; font-family: inherit; font-size: 14px; outline: none;
+    }
+    .migo-chat__in:focus { border-color: var(--border-hover, rgba(212,175,55,.5)); }
+    .migo-chat__form button {
+        padding: 0 16px; border-radius: 10px; border: none; cursor: pointer; font-family: inherit; font-weight: 700;
+        background: linear-gradient(145deg, var(--accent-bright, #f2d27a), var(--accent-deep, #a8842a)); color: #14181f;
+    }
+    .migo-chat__form button:hover { filter: brightness(1.06); }
+    @media (max-width: 480px) {
+        .migo-chat__panel {
+            right: 10px; left: 10px; bottom: 10px; top: auto;
+            width: auto; max-width: none; height: 74vh; max-height: 74vh; border-radius: 16px;
+        }
+        .migo-chat__btn { bottom: 14px; right: 14px; width: 54px; height: 54px; }
+        .migo-chat__btn svg { width: 34px; height: 34px; }
+        .migo-chat__head { padding: 10px 12px; font-size: 15px; }
+    }
