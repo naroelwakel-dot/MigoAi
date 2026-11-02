@@ -12,12 +12,47 @@
 // and the storefront lets the customer continue.
 // ==============================================================================
 
-const CORS_HEADERS = {
-  "Content-Type": "application/json; charset=utf-8",
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type",
-};
+// متجر Migo: نسمح بطلبات المتصفح من أصل موقعنا بس (مش "*") عشان مانخليش أي موقع
+// تاني يستدعي الـ API من متصفح الزوار. الموقعان (MigoAi و MigoStore) على نفس الأصل.
+// ملاحظة: الـ CORS بيتحكم في متصفحات الزوار فقط؛ النداءات من السيرفر (البوت) مش متأثرة.
+const ALLOWED_ORIGINS = ["https://naroelwakel-dot.github.io"];
+function corsHeaders(req?: Request): Record<string, string> {
+  const origin = req?.headers?.get("origin") || "";
+  const allow = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+  return {
+    "Content-Type": "application/json; charset=utf-8",
+    "Access-Control-Allow-Origin": allow,
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+    "Vary": "Origin",
+  };
+}
+const CORS_HEADERS = corsHeaders();
+
+// --------------------------------------------------------------------------
+// حدّ بسيط لعدد الطلبات لكل IP (في الذاكرة، لكل isolate). بيقلل إساءة استخدام
+// الـ quota (Volsever/NeferByte/RapidAPI/Gemini) من غير ما يحتاج خدمة خارجية.
+// --------------------------------------------------------------------------
+const RATE_LIMIT = 60;          // أقصى عدد طلبات
+const RATE_WINDOW = 60_000;     // في الدقيقة لكل IP
+const RATE_MAP = new Map<string, { n: number; t: number }>();
+function rateLimited(req: Request): boolean {
+  try {
+    const ip = (req.headers.get("x-forwarded-for") || "").split(",")[0].trim() || "unknown";
+    const now = Date.now();
+    if (RATE_MAP.size > 5000) RATE_MAP.clear(); // تخلص من النمو الزايد
+    const rec = RATE_MAP.get(ip);
+    if (!rec || now - rec.t > RATE_WINDOW) { RATE_MAP.set(ip, { n: 1, t: now }); return false; }
+    rec.n++;
+    return rec.n > RATE_LIMIT;
+  } catch (_) { return false; }
+}
+
+// أدوات التشخيص (force/debug) متاحة بس لما هيدر x-migo-admin يطابق ADMIN_TOKEN في البيئة.
+const ADMIN_TOKEN = (globalThis as any).Deno?.env?.get?.("ADMIN_TOKEN") || "";
+function isAdmin(req: Request): boolean {
+  return !!ADMIN_TOKEN && req.headers.get("x-migo-admin") === ADMIN_TOKEN;
+}
 
 const UA =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36";
@@ -620,7 +655,14 @@ async function handleChat(req: Request): Promise<Response> {
 
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
-    return new Response(null, { status: 204, headers: CORS_HEADERS });
+    return new Response(null, { status: 204, headers: corsHeaders(req) });
+  }
+
+  if (rateLimited(req)) {
+    return new Response(
+      JSON.stringify({ success: false, message: "محاولات كتير في وقت قصير، جرّب تاني بعد شوية." }),
+      { status: 429, headers: { ...corsHeaders(req), "Retry-After": "60" } },
+    );
   }
 
   const url = new URL(req.url);
@@ -643,7 +685,7 @@ Deno.serve(async (req: Request) => {
   let foundName = "";
   let avatarUrl = "";
   const isNumeric = /^\d+$/.test(id);
-  const debug = url.searchParams.get("debug") === "1";
+  const debug = url.searchParams.get("debug") === "1" && isAdmin(req);
   const trace: string[] = [];
 
   try {
@@ -685,7 +727,7 @@ Deno.serve(async (req: Request) => {
       }
     } // ---- Everything else: provider route table ----
     else {
-      const force = (url.searchParams.get("force") || "").trim().toLowerCase();
+      const force = isAdmin(req) ? (url.searchParams.get("force") || "").trim().toLowerCase() : "";
       if (force === "cosh") {
         const cfg = CODA_CFG[game];
         if (cfg) {
