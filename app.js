@@ -780,7 +780,7 @@ function renderAI() {
     container.innerHTML = aiList.map(a => {
         const pkgs = a.packages || [{ name: a.tag || a.name, price: a.price, duration: a.tag }];
         const defaultPrice = calculateAutoPrice(pkgs[0].price);
-        const bannerUrl = a.banner || "https://images.unsplash.com/photo-1677442136019-21780efad99a?auto=format&fit=crop&w=1200&q=80";
+        const bannerUrl = a.banner || "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/426e107c076a407fbd71e30b58253a4c.webp";
 
         return `
             <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg">
