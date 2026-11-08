@@ -6,6 +6,11 @@
 (function () {
   var API = 'https://migoai-72.naroelwakel-dot.deno.net/chat';
   var WA = 'https://wa.me/201060934020';
+  // سوبا بيز بتاعت المتجر: بنرفع عليها صورة التحويل، والمفتاح ده (anon) للرفع بس -
+  // الجدول والبَكِت مقفولين للقراءة، فمفيش حد يقرأ صور العملاء من برّه.
+  var SB_URL = 'https://qjlivjzgrqyitqxcdtlk.supabase.co';
+  var SB_KEY = 'sb_publishable_ezC_W2lpGW88bSbjBRJFfw_reCr3vlw';
+  var SESSION_ID = 'w' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
   var history = [];
   var REPLY_TIMEOUT_MS = 45000;   // أقصى وقت نستنى فيه رد السيرفر (السيرفر بيجرّب كذا مزوّد، فممكن ياخد لحد ~42 ثانية)
   var NOTE_EVERY_MS = 30000;      // كل قد إيه يظهر تنبيه جديد فوق أيقونة الشات
@@ -108,6 +113,8 @@
         '<form class="migo-chat__form">' +
           '<button class="migo-chat__mic" type="button" aria-label="اتكلم بالصوت" hidden>🎤</button>' +
           '<input class="migo-chat__in" type="text" placeholder="اسأل عن أي سعر أو خدمة..." autocomplete="off" maxlength="400" />' +
+          '<button class="migo-chat__file" type="button" aria-label="ارفع صورة التحويل" hidden>📎</button>' +
+          '<input class="migo-chat__proof" type="file" accept="image/*" hidden />' +
           '<button type="submit">إرسال</button>' +
         '</form>' +
       '</div>';
@@ -122,6 +129,19 @@
 
     function bubble(text, who) {
       var b = el('div', 'migo-chat__msg migo-chat__msg--' + who, text);
+      bodyEl.appendChild(b);
+      bodyEl.scrollTop = bodyEl.scrollHeight;
+      return b;
+    }
+
+    // فقاعة فيها صورة (بنستخدمها لمعاينة صورة التحويل اللي العميل بعتها).
+    function bubbleImg(src, who) {
+      var b = el('div', 'migo-chat__msg migo-chat__msg--' + who);
+      var img = el('img');
+      img.src = src;
+      img.alt = 'صورة التحويل';
+      img.style.cssText = 'max-width:180px;width:100%;border-radius:10px;display:block';
+      b.appendChild(img);
       bodyEl.appendChild(b);
       bodyEl.scrollTop = bodyEl.scrollHeight;
       return b;
@@ -205,6 +225,91 @@
           pending.textContent = 'معلش فيه مشكلة في الاتصال دلوقتي. كلّمنا على واتساب: ' + WA;
           bodyEl.scrollTop = bodyEl.scrollHeight;
         });
+    }
+
+    // ---- صورة التحويل ----
+    // العميل يبعت صورة التحويل من الشات. بنصغّرها في المتصفح (أسرع وأخف)،
+    // بنرفعها على بَكِت خاص في سوبا بيز، وبنكتب صف في الجدول. القراءة مقفولة،
+    // يعني مفيش حد يقدر يفتح صور العملاء من برّه. مفيش تأكيد دفع هنا: بنقول
+    // «وصلت وهنراجعها»، والتأكيد بيتحسب من الفريق.
+    var fileBtn = root.querySelector('.migo-chat__file');
+    var fileIn = root.querySelector('.migo-chat__proof');
+    if (fileBtn && fileIn && window.FileReader && document.createElement('canvas').getContext) {
+      fileBtn.hidden = false;
+      fileBtn.style.cssText = 'background:none;border:0;font-size:19px;line-height:1;cursor:pointer;padding:0 6px;color:#111';
+
+      // تصغير الصورة لأقصى عرض 1600 بكسل وضغطها JPEG، عشان ترفع بسرعة.
+      function shrink(file, cb) {
+        var fr = new FileReader();
+        fr.onload = function () {
+          var im = new Image();
+          im.onload = function () {
+            var MAX = 1600;
+            var w = im.width, h = im.height;
+            if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
+            var cv = document.createElement('canvas');
+            cv.width = w; cv.height = h;
+            cv.getContext('2d').drawImage(im, 0, 0, w, h);
+            var out;
+            try { out = cv.toDataURL('image/jpeg', 0.82); } catch (e) { out = ''; }
+            if (!out || out.length < 100) { cb(null, null); return; }  // متصفح قديم؟ نرفض بأمان
+            cb(out, Math.round((out.length - 22) * 3 / 4));
+          };
+          im.onerror = function () { cb(null, null); };
+          im.src = String(fr.result);
+        };
+        fr.onerror = function () { cb(null, null); };
+        fr.readAsDataURL(file);
+      }
+
+      function uploadProof(dataUrl, bytes) {
+        var path = 'proofs/' + Date.now() + '-' + Math.random().toString(36).slice(2, 8) + '.jpg';
+        var bin = atob(dataUrl.split(',')[1]);
+        var u8 = new Uint8Array(bin.length);
+        for (var i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+        // من غير upsert: سياسة الرفع بتسمح بإضافة ملف جديد بس (واسم الملف فريد).
+        return fetch(SB_URL + '/storage/v1/object/payment-proofs/' + path, {
+          method: 'POST',
+          headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY, 'Content-Type': 'image/jpeg' },
+          body: u8
+        }).then(function (r) {
+          if (!r.ok) throw new Error('up ' + r.status);
+          return fetch(SB_URL + '/rest/v1/payment_proofs', {
+            method: 'POST',
+            headers: {
+              'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY,
+              'Content-Type': 'application/json', 'Prefer': 'return=minimal'
+            },
+            body: JSON.stringify({ session_id: SESSION_ID, storage_path: path, mime: 'image/jpeg', bytes: bytes })
+          });
+        }).then(function (r) {
+          if (!r.ok) throw new Error('row ' + r.status);
+          return path;
+        });
+      }
+
+      fileBtn.addEventListener('click', function () { fileIn.click(); });
+
+      fileIn.addEventListener('change', function () {
+        var file = fileIn.files && fileIn.files[0];
+        fileIn.value = '';
+        if (!file) return;
+        if (file.size > 5242880) { bubble('الصورة كبيرة شوية (أكتر من 5 ميجا). جرّب صورة أصغر 🙏', 'bot'); return; }
+        var wait = bubble('بنرفع صورة التحويل...', 'bot');
+        shrink(file, function (dataUrl, bytes) {
+          if (!dataUrl) {
+            wait.textContent = 'معلش مش عارفين نجهّز الصورة دي. ابعتلنا على واتساب: ' + WA;
+            return;
+          }
+          uploadProof(dataUrl, bytes).then(function () {
+            wait.textContent = 'وصلتنا صورة التحويل ✅ هنراجعها ونأكدلك على واتساب: ' + WA;
+            bubbleImg(dataUrl, 'me');
+            send('(بعت صورة التحويل)');
+          }).catch(function () {
+            wait.textContent = 'معلش الرفع مكمّلش. ابعتلنا الصورة على واتساب: ' + WA;
+          });
+        });
+      });
     }
 
     form.addEventListener('submit', function (e) {
