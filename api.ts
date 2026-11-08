@@ -643,16 +643,40 @@ function pickDetails(msg: string, details: any[], limit = 2): any[] {
   return scored.filter((x) => x.sc >= top * 0.6).slice(0, limit).map((x) => x.d);
 }
 
-function pickRelevant(msg: string, cat: { sku: string; price: number }[], limit = 16) {
+// آخر رسايل العميل، عشان «كم سعره؟» تعرف هي عن إيه.
+function matchCtx(hist: any[], msg: string): string {
+  const prev: string[] = [];
+  for (let i = (hist || []).length - 1; i >= 0 && prev.length < 2; i--) {
+    const h = hist[i];
+    if (h && h.role === "user" && h.text) prev.unshift(String(h.text).slice(0, 120));
+  }
+  return [msg].concat(prev).join(" ");
+}
+
+// صف القايمة ده يخص الخدمة اللي طلعت من التفاصيل؟ نقارن كلمات اسم الخدمة
+// بأول كلمات الـ sku، عشان العربي (نيتفليكس) يلاقي اللاتيني (Netflix Premium).
+function linkSku(sku: string, det: any[]): boolean {
+  const head = normAr(sku).split(" ").slice(0, 6);
+  for (const d of det) {
+    for (const k of [d.name, d.ar]) {
+      const kt = normAr(k).split(" ").filter((w) => w.length >= 4);
+      if (kt.length && kt.every((w) => head.indexOf(w) !== -1)) return true;
+    }
+  }
+  return false;
+}
+
+function skuScore(msg: string, sku: string): number {
   const words = (msg || "").toLowerCase().split(/[^\p{L}\p{N}]+/u).filter((w) => w.length >= 2);
-  if (!words.length) return [] as { sku: string; price: number }[];
+  const s = String(sku || "").toLowerCase();
+  let sc = 0;
+  for (const w of words) if (s.includes(w)) sc += w.length >= 4 ? 2 : 1;
+  return sc;
+}
+
+function pickRelevant(msg: string, cat: { sku: string; price: number }[], limit = 16) {
   return cat
-    .map((r) => {
-      const s = r.sku.toLowerCase();
-      let sc = 0;
-      for (const w of words) if (s.includes(w)) sc += w.length >= 4 ? 2 : 1;
-      return { r, sc };
-    })
+    .map((r) => ({ r, sc: skuScore(msg, r.sku) }))
     .filter((x) => x.sc > 0)
     .sort((a, b) => b.sc - a.sc)
     .slice(0, limit)
@@ -664,11 +688,26 @@ function buildSystem(
   msg: string,
   personaId?: string,
   details: any[] = [],
+  hist: any[] = [],
 ): string {
   const p = PERSONAS[personaId || ""] || PERSONAS.omar;
+  const ctx = matchCtx(hist, msg);
+  // الخدمة اللي العميل بيتكلم عنها. لو رسالته متابعة («كم سعره؟») ناخد آخر رسايله معاها.
+  let det = pickDetails(msg, details, 2);
+  if (!det.length) det = pickDetails(ctx, details, 2);
   const rel = pickRelevant(msg, cat, 16);
+  if (det.length) {
+    // صفوف أسعار نفس الخدمة من القايمة الحيّة (السعر دايمًا من القايمة، مش من هنا).
+    const linked = cat.filter((r) => linkSku(r.sku, det))
+      .map((r) => ({ r, sc: skuScore(msg, r.sku) }))
+      .sort((a, b) => b.sc - a.sc)
+      .map((x) => x.r);
+    for (const r of linked) {
+      if (rel.length >= 24) break;
+      if (!rel.some((x) => x.sku === r.sku)) rel.push(r);
+    }
+  }
   const priceLines = rel.map((r) => `- ${r.sku} : ${r.price} ج.م`).join("\n");
-  const det = pickDetails(msg, details, 2);
   const detailLines = det.map((d) => {
     const pk = (d.packages && d.packages.length) ? "\n  المتاح: " + d.packages.join(" | ") : "";
     const nd = d.needs ? "\n  المطلوب من العميل: " + d.needs : "";
@@ -704,7 +743,7 @@ async function groqChat(
 ): Promise<{ text: string; model: string; note: string }> {
   const details = await getDetails();
   const messages = [
-    { role: "system", content: buildSystem(cat, message, personaId, details) },
+    { role: "system", content: buildSystem(cat, message, personaId, details, hist) },
     ...hist.map((h: any) => ({
       role: h && h.role === "model" ? "assistant" : "user",
       content: String((h && h.text) || "").slice(0, 500),
@@ -769,7 +808,7 @@ async function handleChat(req: Request): Promise<Response> {
     { role: "user", parts: [{ text: message }] },
   ];
   const payload = {
-    systemInstruction: { parts: [{ text: buildSystem(cat, message, persona, details) }] },
+    systemInstruction: { parts: [{ text: buildSystem(cat, message, persona, details, hist) }] },
     contents,
     generationConfig: { temperature: 0.6, maxOutputTokens: 320 },
   };
