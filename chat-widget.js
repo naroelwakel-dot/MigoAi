@@ -106,6 +106,7 @@
           '<button class="migo-chat__x" type="button" aria-label="إغلاق المحادثة">إغلاق <b>✕</b></button></div>' +
         '<div class="migo-chat__body"></div>' +
         '<form class="migo-chat__form">' +
+          '<button class="migo-chat__mic" type="button" aria-label="اتكلم بالصوت" hidden>🎤</button>' +
           '<input class="migo-chat__in" type="text" placeholder="اسأل عن أي سعر أو خدمة..." autocomplete="off" maxlength="400" />' +
           '<button type="submit">إرسال</button>' +
         '</form>' +
@@ -159,9 +160,9 @@
       fab.style.display = '';
     });
 
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-      var t = input.value.trim();
+    // إرسال رسالة: بنستخدمها من زرار الإرسال ومن المايك.
+    function send(raw) {
+      var t = (raw || '').trim();
       if (!t) return;
       input.value = '';
       bubble(t, 'me');
@@ -204,7 +205,37 @@
           pending.textContent = 'معلش فيه مشكلة في الاتصال دلوقتي. كلّمنا على واتساب: ' + WA;
           bodyEl.scrollTop = bodyEl.scrollHeight;
         });
+    }
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      send(input.value);
     });
+
+    // إدخال صوتي: العميل يتكلم بدل ما يكتب.
+    // الصوت بيتحول نص في المتصفح، والنص يمشي على نفس /chat. مفيش أي حاجة على السيرفر.
+    var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    var mic = root.querySelector('.migo-chat__mic');
+    var rec = null, listening = false;
+    if (SR && mic) {
+      mic.hidden = false;
+      mic.style.cssText = 'background:none;border:0;font-size:20px;line-height:1;cursor:pointer;padding:0 6px;color:#111';
+      rec = new SR();
+      rec.lang = 'ar-EG';
+      rec.interimResults = false;
+      rec.maxAlternatives = 1;
+      rec.onresult = function (e) {
+        var said = (e.results && e.results[0] && e.results[0][0] ? e.results[0][0].transcript : '').trim();
+        if (said) send(said);
+      };
+      rec.onend = function () { listening = false; mic.textContent = '🎤'; };
+      rec.onerror = function () { listening = false; mic.textContent = '🎤'; };
+      mic.addEventListener('click', function () {
+        if (listening) { rec.stop(); return; }
+        try { rec.start(); listening = true; mic.textContent = '⏺'; input.focus(); }
+        catch (err) { listening = false; mic.textContent = '🎤'; }
+      });
+    }
   }
 
   if (document.readyState === 'loading') {
