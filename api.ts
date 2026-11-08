@@ -590,6 +590,59 @@ async function getCatalog(): Promise<{ sku: string; price: number; kind: string 
   return __catalog || [];
 }
 
+// --- تفاصيل الخدمات من ملفات المتجر: وصف ومتطلبات ومددة فقط، بدون أي سعر ---
+const DETAILS_URL = "https://naroelwakel-dot.github.io/MigoAi/details.json";
+let __details: any[] | null = null;
+let __detailsAt = 0;
+async function getDetails(): Promise<any[]> {
+  const now = Date.now();
+  if (__details && now - __detailsAt < 10 * 60 * 1000) return __details;
+  try {
+    const rows = await getJson(DETAILS_URL, {}, 6000);
+    if (Array.isArray(rows) && rows.length) {
+      __details = rows;
+      __detailsAt = now;
+    }
+  } catch (_) {
+    // الملف مش متاح؟ البوت يشتغل زي ما هو بالظبط، من غير تفاصيل.
+  }
+  return __details || [];
+}
+
+// توحيد الكلام العربي: نشيل التشكيل والتطويل، ونوحّد الألف واليا والتاء المربوطة.
+function normAr(s: string): string {
+  return String(s || "").toLowerCase()
+    .replace(/[\u064B-\u0652\u0640]/g, "")
+    .replace(/[أإآٱ]/g, "ا")
+    .replace(/ى/g, "ي")
+    .replace(/ة/g, "ه")
+    .replace(/[^\p{L}\p{N}]+/gu, " ")
+    .trim();
+}
+
+// مطابقة سؤال العميل بأسماء الخدمات: الاسم العربي، الإنجليزي، والكلمات البديلة.
+function pickDetails(msg: string, details: any[], limit = 2): any[] {
+  const q = normAr(msg);
+  if (!q) return [];
+  const qWords = q.split(" ").filter((w) => w.length >= 3);
+  if (!qWords.length) return [];
+  const scored = details.map((d) => {
+    let sc = 0;
+    for (const k of [d.name, d.ar, ...(d.aliases || [])].map(normAr)) {
+      if (!k) continue;
+      if (q.includes(k)) { sc = Math.max(sc, k.length + 4); continue; }
+      const kW = k.split(" ").filter(Boolean);
+      let hits = 0;
+      for (const w of kW) if (w.length >= 3 && qWords.indexOf(w) !== -1) hits++;
+      if (hits) sc = Math.max(sc, hits * 3 + (hits * 2 >= kW.length ? 2 : 0));
+    }
+    return { d, sc };
+  }).filter((x) => x.sc > 0).sort((a, b) => b.sc - a.sc);
+  if (!scored.length) return [];
+  const top = scored[0].sc;
+  return scored.filter((x) => x.sc >= top * 0.6).slice(0, limit).map((x) => x.d);
+}
+
 function pickRelevant(msg: string, cat: { sku: string; price: number }[], limit = 16) {
   const words = (msg || "").toLowerCase().split(/[^\p{L}\p{N}]+/u).filter((w) => w.length >= 2);
   if (!words.length) return [] as { sku: string; price: number }[];
@@ -606,10 +659,21 @@ function pickRelevant(msg: string, cat: { sku: string; price: number }[], limit 
     .map((x) => x.r);
 }
 
-function buildSystem(cat: { sku: string; price: number }[], msg: string, personaId?: string): string {
+function buildSystem(
+  cat: { sku: string; price: number }[],
+  msg: string,
+  personaId?: string,
+  details: any[] = [],
+): string {
   const p = PERSONAS[personaId || ""] || PERSONAS.omar;
   const rel = pickRelevant(msg, cat, 16);
   const priceLines = rel.map((r) => `- ${r.sku} : ${r.price} ج.م`).join("\n");
+  const det = pickDetails(msg, details, 2);
+  const detailLines = det.map((d) => {
+    const pk = (d.packages && d.packages.length) ? "\n  المتاح: " + d.packages.join(" | ") : "";
+    const nd = d.needs ? "\n  المطلوب من العميل: " + d.needs : "";
+    return `- ${d.name}: ${d.desc || ""}${pk}${nd}`;
+  }).join("\n");
   const who = p.gender === "f"
     ? 'بنت (أنثى)، واتكلم عن نفسك دايماً بصيغة المؤنث: "أنا مساعدة"، "أقدر أساعدك"، "أنا مبسوطة أساعدك".'
     : 'ولد (ذكر)، واتكلم عن نفسك دايماً بصيغة المذكر: "أنا مساعد"، "أقدر أساعدك"، "أنا مبسوط أساعدك".';
@@ -618,13 +682,15 @@ function buildSystem(cat: { sku: string; price: number }[], msg: string, persona
 طريقتك في الكلام: ${p.style}
 قواعد:
 - ردّ بالعربي، بأسلوب ودود ومبسّط، في 3 أسطر كحد أقصى، وبدون مقدمات إنشائية.
-- أعطِ السعر والمدة فوراً من القائمة أدناه بالضبط. لا تخترع أي سعر أو مدة أبداً.
+- السعر دايمًا من قائمة الأسعار أدناه بالضبط. ممنوع تغييره أو تخمينه أو مقارنته بأي سعر من بره المتجر.
+- وصف الخدمة ومتطلباتها والمدد المتاحة من قسم «تفاصيل من المتجر» أدناه، ومتخترعش تفاصيل من عندك.
 - كل الأسعار بالجنيه المصري (ج.م)، والتسليم عادةً من 2 إلى 5 دقائق بعد الدفع.
 - لو المعلومة مش موجودة في القائمة، قول بصراحة إنها مش متاحة هنا، ووجّه العميل لواتساب: ${WHATSAPP}
 - لما يحب يشتري، اطلب منه رقم الـ ID (معرّف اللعبة/الحساب) وطريقة الدفع.
 - متتكلمش عن أسعار الموردين ولا أي حاجة مش من المتجر.
 صفحة كل الأسعار: ${SITE_URL}catalog.html
-${priceLines ? "أسعار من المتجر تطابق سؤال العميل:\n" + priceLines : "(مفيش منتج مطابق واضح لسؤال العميل في القائمة.)"}`;
+${priceLines ? "أسعار من المتجر تطابق سؤال العميل:\n" + priceLines : "(مفيش منتج مطابق واضح لسؤال العميل في القائمة.)"}
+${detailLines ? "تفاصيل من المتجر عن اللي العميل بيسأل عنه (وصف ومتطلبات ومدة، وبدون أسعار):\n" + detailLines : ""}`;
 }
 
 // Groq (free, OpenAI-compatible). Same system prompt + history as Gemini; used
@@ -636,8 +702,9 @@ async function groqChat(
   message: string,
   personaId: string,
 ): Promise<{ text: string; model: string; note: string }> {
+  const details = await getDetails();
   const messages = [
-    { role: "system", content: buildSystem(cat, message, personaId) },
+    { role: "system", content: buildSystem(cat, message, personaId, details) },
     ...hist.map((h: any) => ({
       role: h && h.role === "model" ? "assistant" : "user",
       content: String((h && h.text) || "").slice(0, 500),
@@ -693,6 +760,7 @@ async function handleChat(req: Request): Promise<Response> {
     );
   }
   const cat = await getCatalog();
+  const details = await getDetails();
   const contents = [
     ...hist.map((h: any) => ({
       role: h && h.role === "model" ? "model" : "user",
@@ -701,7 +769,7 @@ async function handleChat(req: Request): Promise<Response> {
     { role: "user", parts: [{ text: message }] },
   ];
   const payload = {
-    systemInstruction: { parts: [{ text: buildSystem(cat, message, persona) }] },
+    systemInstruction: { parts: [{ text: buildSystem(cat, message, persona, details) }] },
     contents,
     generationConfig: { temperature: 0.6, maxOutputTokens: 320 },
   };
