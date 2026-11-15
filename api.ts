@@ -15,7 +15,7 @@
 // متجر Migo: نسمح بطلبات المتصفح من أصل موقعنا بس (مش "*") عشان مانخليش أي موقع
 // تاني يستدعي الـ API من متصفح الزوار. الموقعان (MigoAi و MigoStore) على نفس الأصل.
 // ملاحظة: الـ CORS بيتحكم في متصفحات الزوار فقط؛ النداءات من السيرفر (البوت) مش متأثرة.
-const ALLOWED_ORIGINS = ["https://naroelwakel-dot.github.io"];
+const ALLOWED_ORIGINS = ["https://migoai.shop", "https://www.migoai.shop", "https://naroelwakel-dot.github.io"];
 function corsHeaders(req?: Request): Record<string, string> {
   const origin = req?.headers?.get("origin") || "";
   const allow = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
@@ -27,7 +27,6 @@ function corsHeaders(req?: Request): Record<string, string> {
     "Vary": "Origin",
   };
 }
-const CORS_HEADERS = corsHeaders();
 
 // --------------------------------------------------------------------------
 // حدّ بسيط لعدد الطلبات لكل IP (في الذاكرة، لكل isolate). بيقلل إساءة استخدام
@@ -781,13 +780,13 @@ async function handleChat(req: Request): Promise<Response> {
   const key = Deno.env.get("GEMINI_API_KEY") || "";
   const groqKey = envKey("GROQ_API_KEY", "GROQ_KEY");
   if (!key && !groqKey) {
-    return new Response(JSON.stringify({ ok: false, error: "no-key" }), { status: 200, headers: CORS_HEADERS });
+    return new Response(JSON.stringify({ ok: false, error: "no-key" }), { status: 200, headers: corsHeaders(req) });
   }
   let body: any = {};
   try { body = await req.json(); } catch (_) { body = {}; }
   const message = String(body.message || "").slice(0, 800).trim();
   if (!message) {
-    return new Response(JSON.stringify({ ok: false, error: "empty" }), { status: 200, headers: CORS_HEADERS });
+    return new Response(JSON.stringify({ ok: false, error: "empty" }), { status: 200, headers: corsHeaders(req) });
   }
   const hist = Array.isArray(body.history) ? body.history.slice(-6) : [];
   const persona = String(body.persona || "").slice(0, 24).trim();
@@ -796,7 +795,7 @@ async function handleChat(req: Request): Promise<Response> {
     const ho = handoffReply(persona);
     return new Response(
       JSON.stringify({ ok: true, reply: ho.reply, handoff: true, persona: ho.persona }),
-      { status: 200, headers: CORS_HEADERS },
+      { status: 200, headers: corsHeaders(req) },
     );
   }
   const cat = await getCatalog();
@@ -865,10 +864,10 @@ async function handleChat(req: Request): Promise<Response> {
     } catch (_) {}
     return new Response(
       JSON.stringify({ ok: true, reply: `معلش مش قادر أجاوب دلوقتي. كلّمنا على واتساب: ${WHATSAPP}`, fallback: true }),
-      { status: 200, headers: CORS_HEADERS },
+      { status: 200, headers: corsHeaders(req) },
     );
   }
-  return new Response(JSON.stringify({ ok: true, reply: String(text).trim() }), { status: 200, headers: CORS_HEADERS });
+  return new Response(JSON.stringify({ ok: true, reply: String(text).trim() }), { status: 200, headers: corsHeaders(req) });
 }
 
 Deno.serve(async (req: Request) => {
@@ -896,7 +895,7 @@ Deno.serve(async (req: Request) => {
   if (!game || !id) {
     return new Response(
       JSON.stringify({ success: false, message: "يرجى تحديد اللعبة ورقم المعرف (Player ID)" }),
-      { status: 200, headers: CORS_HEADERS },
+      { status: 200, headers: corsHeaders(req) },
     );
   }
 
@@ -973,7 +972,7 @@ Deno.serve(async (req: Request) => {
     if (foundName) {
       return new Response(
         JSON.stringify({ success: true, username: foundName, name: foundName, avatar: avatarUrl || undefined, trace: debug ? trace : undefined }),
-        { status: 200, headers: CORS_HEADERS },
+        { status: 200, headers: corsHeaders(req) },
       );
     }
     return new Response(
@@ -982,7 +981,7 @@ Deno.serve(async (req: Request) => {
         message: "تعذّر الفحص التلقائي لهذا المعرّف الآن، وهذا لا يمنع إتمام طلبك: اكتب اسم حسابك ثم اضغط متابعة.",
         trace: debug ? trace : undefined,
       }),
-      { status: 200, headers: CORS_HEADERS },
+      { status: 200, headers: corsHeaders(req) },
     );
   } catch (_) {
     return new Response(
@@ -990,7 +989,7 @@ Deno.serve(async (req: Request) => {
         success: false,
         message: "اكتب اسم حسابك ثم اضغط متابعة لإتمام طلبك فوراً.",
       }),
-      { status: 200, headers: CORS_HEADERS },
+      { status: 200, headers: corsHeaders(req) },
     );
   }
 });
