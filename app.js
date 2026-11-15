@@ -353,8 +353,8 @@ function renderCoinsAndStars() {
                             </div>
                         </div>
                         <div class="flex gap-2 pt-2 border-t border-slate-800/80">
-                            <button onclick="handleCoinAction('tiktok', true)" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs py-2 rounded-xl cursor-pointer shadow">شحن فوري ⚡</button>
-                            <button onclick="handleCoinAction('tiktok', false)" class="sky-btn font-bold text-xs px-4 py-2 rounded-xl cursor-pointer shadow">🛒 للسلة</button>
+                            <button onclick="handleCoinAction('tiktok', true)" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs py-2 rounded-xl cursor-pointer shadow">اشحن الآن ⚡</button>
+                            <button onclick="handleCoinAction('tiktok', false)" class="sky-btn font-bold text-xs px-4 py-2 rounded-xl cursor-pointer shadow">أضف للسلة 🛒</button>
                         </div>
                     </div>
                 </div>
@@ -387,8 +387,8 @@ function renderCoinsAndStars() {
                             </div>
                         </div>
                         <div class="flex gap-2 pt-2 border-t border-slate-800/80">
-                            <button onclick="handleCoinAction('telegram', true)" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs py-2 rounded-xl cursor-pointer shadow">شحن فوري ⚡</button>
-                            <button onclick="handleCoinAction('telegram', false)" class="sky-btn font-bold text-xs px-4 py-2 rounded-xl cursor-pointer shadow">🛒 للسلة</button>
+                            <button onclick="handleCoinAction('telegram', true)" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs py-2 rounded-xl cursor-pointer shadow">اشحن الآن ⚡</button>
+                            <button onclick="handleCoinAction('telegram', false)" class="sky-btn font-bold text-xs px-4 py-2 rounded-xl cursor-pointer shadow">أضف للسلة 🛒</button>
                         </div>
                     </div>
                 </div>
@@ -503,8 +503,8 @@ function renderGames() {
                     </div>
 
                     <div class="flex gap-2 pt-2 border-t border-slate-800">
-                        <button onclick="handleGameAction('${g.id}', true)" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs py-2 rounded-xl cursor-pointer shadow">شحن فوري ⚡</button>
-                        <button onclick="handleGameAction('${g.id}', false)" class="sky-btn font-bold text-xs px-3 py-2 rounded-xl cursor-pointer shadow">🛒 للسلة</button>
+                        <button onclick="handleGameAction('${g.id}', true)" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs py-2 rounded-xl cursor-pointer shadow">اشحن الآن ⚡</button>
+                        <button onclick="handleGameAction('${g.id}', false)" class="sky-btn font-bold text-xs px-3 py-2 rounded-xl cursor-pointer shadow">أضف للسلة 🛒</button>
                     </div>
                 </div>
             </div>
@@ -558,8 +558,8 @@ function renderLiveApps() {
                         </select>
                     </div>
                     <div class="flex gap-2 pt-2 border-t border-slate-800">
-                        <button onclick="handleLiveAction('${app.id}', true)" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs py-2 rounded-xl cursor-pointer shadow">شحن فوري ⚡</button>
-                        <button onclick="handleLiveAction('${app.id}', false)" class="sky-btn font-bold text-xs px-3 py-2 rounded-xl cursor-pointer shadow">🛒 للسلة</button>
+                        <button onclick="handleLiveAction('${app.id}', true)" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs py-2 rounded-xl cursor-pointer shadow">اشحن الآن ⚡</button>
+                        <button onclick="handleLiveAction('${app.id}', false)" class="sky-btn font-bold text-xs px-3 py-2 rounded-xl cursor-pointer shadow">أضف للسلة 🛒</button>
                     </div>
                 </div>
             </div>
@@ -613,8 +613,8 @@ function renderVccCards() {
                     </div>
 
                     <div class="pt-2 border-t border-slate-800 flex items-center justify-between">
-                        <button onclick="handleVccAction('${v.id}', true)" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs py-2 rounded-xl cursor-pointer shadow mr-1">طلب فوري ⚡</button>
-                        <button onclick="handleVccAction('${v.id}', false)" class="sky-btn font-bold text-xs px-3 py-2 rounded-xl cursor-pointer shadow">🛒 للسلة</button>
+                        <button onclick="handleVccAction('${v.id}', true)" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs py-2 rounded-xl cursor-pointer shadow mr-1">اطلب البطاقة 💳</button>
+                        <button onclick="handleVccAction('${v.id}', false)" class="sky-btn font-bold text-xs px-3 py-2 rounded-xl cursor-pointer shadow">أضف للسلة 🛒</button>
                     </div>
                 </div>
             </div>
@@ -738,8 +738,8 @@ function renderProductivity() {
                     </div>
 
                     <div class="pt-2 border-t border-slate-800 flex gap-2">
-                        <button onclick="handleSubscriptionAction('${p.id}', true)" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-[10px] py-1.5 rounded-lg cursor-pointer">فوري ⚡</button>
-                        <button onclick="handleSubscriptionAction('${p.id}', false)" class="sky-btn font-bold text-[10px] px-3 py-1.5 rounded-lg cursor-pointer">🛒 للسلة</button>
+                        <button onclick="handleSubscriptionAction('${p.id}', true)" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-[10px] py-1.5 rounded-lg cursor-pointer">اشترِ الآن ⚡</button>
+                        <button onclick="handleSubscriptionAction('${p.id}', false)" class="sky-btn font-bold text-[10px] px-3 py-1.5 rounded-lg cursor-pointer">أضف للسلة 🛒</button>
                     </div>
                 </div>
             </div>
@@ -784,8 +784,8 @@ function renderEntertainment() {
                     </div>
 
                     <div class="pt-2 border-t border-slate-800 flex gap-2">
-                        <button onclick="handleSubscriptionAction('${e.id}', true)" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-[10px] py-1.5 rounded-lg cursor-pointer">فوري ⚡</button>
-                        <button onclick="handleSubscriptionAction('${e.id}', false)" class="sky-btn font-bold text-[10px] px-3 py-1.5 rounded-lg cursor-pointer">🛒 للسلة</button>
+                        <button onclick="handleSubscriptionAction('${e.id}', true)" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-[10px] py-1.5 rounded-lg cursor-pointer">اشترِ الآن ⚡</button>
+                        <button onclick="handleSubscriptionAction('${e.id}', false)" class="sky-btn font-bold text-[10px] px-3 py-1.5 rounded-lg cursor-pointer">أضف للسلة 🛒</button>
                     </div>
                 </div>
             </div>
@@ -834,8 +834,8 @@ function renderAI() {
                     </div>
 
                     <div class="pt-2 border-t border-slate-800 flex gap-2">
-                        <button onclick="handleAIAction('${a.id}', true)" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs py-2 rounded-xl cursor-pointer shadow">شحن فوري ⚡</button>
-                        <button onclick="handleAIAction('${a.id}', false)" class="sky-btn font-bold text-xs px-3 py-2 rounded-xl cursor-pointer shadow">🛒 للسلة</button>
+                        <button onclick="handleAIAction('${a.id}', true)" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs py-2 rounded-xl cursor-pointer shadow">اشترِ الآن ⚡</button>
+                        <button onclick="handleAIAction('${a.id}', false)" class="sky-btn font-bold text-xs px-3 py-2 rounded-xl cursor-pointer shadow">أضف للسلة 🛒</button>
                     </div>
                 </div>
             </div>
