@@ -298,8 +298,22 @@ if (typeof subscriptionsData !== 'undefined' && Array.isArray(subscriptionsData)
     var apiC = document.getElementById('apiTokensContainer');
     if (!aiC || !apiC) return false;
     var isApi = function (p) { return /^ai_api_/.test(p.id); };
+    // Preserve the visitor's package selections across the rebuild, or every
+    // re-render would silently reset each card to its first package.
+    var prevSel = {};
+    [aiC, apiC].forEach(function (c) {
+      var sels = c.querySelectorAll('select[id^="ai_pkg_"]');
+      for (var i = 0; i < sels.length; i++) prevSel[sels[i].id] = sels[i].value;
+    });
     aiC.innerHTML = ai.filter(function (p) { return !isApi(p); }).map(cardHtml).join('');
     apiC.innerHTML = ai.filter(isApi).map(cardHtml).join('');
+    Object.keys(prevSel).forEach(function (id) {
+      var s = document.getElementById(id);
+      if (s && prevSel[id] !== '' && s.querySelector('option[value="' + prevSel[id] + '"]')) {
+        s.value = prevSel[id];
+        if (typeof updateCardPriceDisplay === 'function') updateCardPriceDisplay('ai', id.slice('ai_pkg_'.length));
+      }
+    });
     return true;
   }
 
