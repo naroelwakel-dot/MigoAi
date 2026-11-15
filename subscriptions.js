@@ -11,7 +11,7 @@ const subscriptionsData = [
     provider: "Adobe الرسمي",
     category: "design",
     badge: "الحزمة الشاملة 🎨",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/3c6d969086634a6482652cc7e9ff737e.webp",
+    banner: "images/subs/adobe_cc.webp", bannerAnim: "images/subs/adobe_cc-anim.webp",
     description: "جميع برامج أدوبي الرسمية مع تفعيل خاص واشتراكات مدعومة.",
     packages: [
       { id: "adobe_1m", name: "شهر واحد (خاص) — 699 ج.م", duration: "شهر واحد", price: 699 },
@@ -28,7 +28,7 @@ const subscriptionsData = [
     provider: "Adobe الرسمي",
     category: "design",
     badge: "تفعيل رسمي مباشر ✒️",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/86246f949916449bb42b0b9ac5e93d35.webp",
+    banner: "images/subs/adobe_express.webp", bannerAnim: "images/subs/adobe_express-anim.webp",
     description: "رابط تفعيل رسمي مباشر لإنشاء تصاميم السوشيال ميديا بسرعة.",
     packages: [
       { id: "adobe_exp_12m", name: "12 شهر (Adobe Express 12M) — 107 ج.م", duration: "12 شهر", price: 107 }
@@ -40,7 +40,7 @@ const subscriptionsData = [
     provider: "Figma الرسمي",
     category: "design",
     badge: "تصميم واجهات UI/UX 📐",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/aae7318237ae4bc08b78a0e5de64c353.webp",
+    banner: "images/subs/figma_pro.webp", bannerAnim: "images/subs/figma_pro-anim.webp",
     description: "خطة سنتين مع رصيد لتصميم المواقع والتطبيقات.",
     packages: [
       { id: "figma_2y", name: "Figma Pro Edu 2yrs — 314 ج.م", duration: "سنتان", price: 314 }
@@ -52,7 +52,7 @@ const subscriptionsData = [
     provider: "Canva الرسمي",
     category: "design",
     badge: "الأكثر مبيعاً 🖌️",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/2c9380c2cb4045ea8ef58c05b0f52e1e.webp",
+    banner: "images/subs/canva_pro.webp", bannerAnim: "images/subs/canva_pro-anim.webp",
     description: "خيارات متعددة للتفعيل لفتح كافة الميزات والقوالب المدفوعة.",
     packages: [
       { id: "canva_2yrs", name: "سنتان (انضمام فريق Edu) — 56 ج.م", duration: "سنتان", price: 56 },
@@ -70,7 +70,7 @@ const subscriptionsData = [
     provider: "Notion Labs",
     category: "productivity",
     badge: "إدارة المشاريع 📖",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/889d15a992d740759be7221a4f987e1d.webp",
+    banner: "images/subs/notion_plus.webp", bannerAnim: "images/subs/notion_plus-anim.webp",
     description: "إدارة المهام والملاحظات وقواعد البيانات باحترافية تامة.",
     packages: [
       { id: "notion_1y", name: "Notion Plus 12M — 124 ج.م", duration: "سنة واحدة", price: 124 },
@@ -83,7 +83,7 @@ const subscriptionsData = [
     provider: "Microsoft الرسمي",
     category: "productivity",
     badge: "حزمة أوفيس كاملة 📊",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/0fe7f17ca6334ec2ac25f13399f34dda.webp",
+    banner: "images/subs/ms_office_365.webp", bannerAnim: "images/subs/ms_office_365-anim.webp",
     description: "جميع برامج أوفيس الرسمية (Word, Excel, PowerPoint) وتخزين سحابي.",
     packages: [
       { id: "office_1y", name: "Office 365 Plus 1year — 147 ج.م", duration: "سنة واحدة", price: 147 }
@@ -95,7 +95,7 @@ const subscriptionsData = [
     provider: "iLovePDF الرسمي",
     category: "productivity",
     badge: "أدوات PDF شاملة 📄",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/21f5d04878de4ed1a294048def52d702.webp",
+    banner: "images/subs/ilovepdf.webp", bannerAnim: "images/subs/ilovepdf-anim.webp",
     description: "تعديل وتحويل ودمج وضغط ملفات الـ PDF بلا قيود.",
     packages: [
       { id: "ilovepdf_1y", name: "iLovePdf Premium 1Y — 94 ج.م", duration: "سنة واحدة", price: 94 }
@@ -107,7 +107,7 @@ const subscriptionsData = [
     provider: "LinkedIn الرسمي",
     category: "productivity",
     badge: "تطوير مهني وتوظيف 💼",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/8d35775695454c98a3f13521638940a5.webp",
+    banner: "images/subs/linkedin_career.webp", bannerAnim: "images/subs/linkedin_career-anim.webp",
     description: "ترقية الحساب للحصول على ميزات التوظيف ودورات التعلم.",
     packages: [
       { id: "linkedin_3m", name: "3 أشهر — 168 ج.م", duration: "3 أشهر", price: 168 }
@@ -119,7 +119,7 @@ const subscriptionsData = [
     provider: "Duolingo الرسمي",
     category: "productivity",
     badge: "تعلم لغات 🗣️",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/846a83cc1c5342b887a60d498ddf0289.webp",
+    banner: "images/subs/duolingo_super.webp", bannerAnim: "images/subs/duolingo_super-anim.webp",
     description: "تعلم اللغات بدون إعلانات وبقلوب غير محدودة ومراجعة الأخطاء.",
     packages: [
       { id: "duolingo_12m", name: "12 شهر — 100 ج.م", duration: "12 شهر", price: 100 }
@@ -131,7 +131,7 @@ const subscriptionsData = [
     provider: "Miro الرسمي",
     category: "productivity",
     badge: "لوحة عمل مدى الحياة 📋",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/26c9aa75a88d44db88baa51613829ddc.webp",
+    banner: "images/subs/miro_panel.webp", bannerAnim: "images/subs/miro_panel-anim.webp",
     description: "لوحة عمل مرئية وتفاعلية للعصف الذهني والفرق ومدى الحياة.",
     packages: [
       { id: "miro_life", name: "Miro Lifetime Panel — 628 ج.م", duration: "مدى الحياة", price: 628 }
@@ -143,7 +143,7 @@ const subscriptionsData = [
     provider: "Google الموثق",
     category: "productivity",
     badge: "حساب موثق ✉️",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/beb8b7fbe90241a9aba1be0015a7d167.webp",
+    banner: "images/subs/gmail_accounts.webp", bannerAnim: "images/subs/gmail_accounts-anim.webp",
     description: "حساب جاهز وموثق بالكامل للتسليم الفوري والاستخدام المباشر.",
     packages: [
       { id: "gmail_1acc", name: "Gmails Accounts — 50 ج.م", duration: "حساب دائم", price: 50 }
@@ -155,7 +155,7 @@ const subscriptionsData = [
     provider: "Microsoft الموثق",
     category: "productivity",
     badge: "تفعيل فوري 📭",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/2742ea9d7eea4fb0b163281895201983.webp",
+    banner: "images/subs/outlook_accounts.webp", bannerAnim: "images/subs/outlook_accounts-anim.webp",
     description: "حساب مايكروسوفت رسمي جاهز وموثق للتسليم الفوري.",
     packages: [
       { id: "outlook_1acc", name: "Emails Outlook/hotmail — 6 ج.م", duration: "حساب دائم", price: 6 }
@@ -169,7 +169,7 @@ const subscriptionsData = [
     provider: "MBC / Shahid الرسمي",
     category: "entertainment",
     badge: "بث ترفيهي عربي 📺",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/9760453c51604c68a5d00e5c210275bc.webp",
+    banner: "images/subs/shahid_vip.webp", bannerAnim: "images/subs/shahid_vip-anim.webp",
     description: "اشتراك رسمي لمتابعة أحدث الأعمال والمسلسلات العربية الحصرية.",
     packages: [
       { id: "shahid_7m", name: "Shahid VIP 7M — 144 ج.م", duration: "7 أشهر", price: 144 },
@@ -182,7 +182,7 @@ const subscriptionsData = [
     provider: "Google / YouTube",
     category: "entertainment",
     badge: "بدون إعلانات ▶️",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/9a65ee2605ef4565a843042aa11835fa.webp",
+    banner: "images/subs/youtube_premium.webp", bannerAnim: "images/subs/youtube_premium-anim.webp",
     description: "مشاهدة بدون فواصل إعلانية، تشغيل في الخلفية، واشتراك Music.",
     packages: [
       { id: "yt_1m", name: "شهر واحد — 82 ج.م", duration: "شهر واحد", price: 82 },
@@ -195,7 +195,7 @@ const subscriptionsData = [
     provider: "Amazon الرسمي",
     category: "entertainment",
     badge: "أفلام ومسلسلات 🍿",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/fbae1a6ecf3a47f589838295199ba89b.webp",
+    banner: "images/subs/prime_video.webp", bannerAnim: "images/subs/prime_video-anim.webp",
     description: "مكتبة سينمائية ضخمة بجودة 4K على حساب رسمي ومضمون.",
     packages: [
       { id: "prime_6m", name: "Prime Video 6M — 251 ج.م", duration: "6 أشهر", price: 251 }
@@ -207,7 +207,7 @@ const subscriptionsData = [
     provider: "Apple الرسمي",
     category: "entertainment",
     badge: "صوت مكاني فائق 🎧",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/db860c8e127542d5ad930437c3e4b03a.webp",
+    banner: "images/subs/apple_music.webp", bannerAnim: "images/subs/apple_music-anim.webp",
     description: "استماع لملايين المقاطع الموسيقية بنقاء Spatial Audio وبدون إعلانات.",
     packages: [
       { id: "apple_music_5m", name: "5 أشهر — 161 ج.م", duration: "5 أشهر", price: 161 }
@@ -219,7 +219,7 @@ const subscriptionsData = [
     provider: "Spotify الرسمي",
     category: "entertainment",
     badge: "موسيقى بدون قيود 🎵",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/8826fb4260be49efa12745bd00d181b0.webp",
+    banner: "images/subs/spotify_premium.webp", bannerAnim: "images/subs/spotify_premium-anim.webp",
     description: "استماع وتحميل بلا اتصال بالإنترنت وتخطي لا محدود للمسارات.",
     packages: [
       { id: "spotify_1m", name: "Spotify premium 1M — 94 ج.م", duration: "شهر واحد", price: 94 },
@@ -233,7 +233,7 @@ const subscriptionsData = [
     provider: "Netflix الرسمي",
     category: "entertainment",
     badge: "حساب Admin بضمان 🎬",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/312d8c562c1242be84a6068996f12176.webp",
+    banner: "images/subs/netflix_premium.webp", bannerAnim: "images/subs/netflix_premium-anim.webp",
     description: "حساب مسؤول Admin رسمي كامل بدقة Ultra HD 4K مع ضمان الاستمرارية.",
     packages: [
       { id: "netflix_full", name: "حساب كامل — 310 ج.م", duration: "حساب كامل", price: 310 }
@@ -247,7 +247,7 @@ const subscriptionsData = [
     provider: "ExpressVPN الرسمي",
     category: "productivity",
     badge: "حماية فائقة 🔒",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/bf1a38851f23437ab2b636e392959fc4.webp",
+    banner: "images/subs/express_vpn.webp", bannerAnim: "images/subs/express_vpn-anim.webp",
     description: "تصفح آمن وسريع مع خوادم عالمية فائقة السرعة.",
     packages: [
       { id: "express_1m", name: "ExpressVPN 1M — 100 ج.م", duration: "شهر واحد", price: 100 }
@@ -259,7 +259,7 @@ const subscriptionsData = [
     provider: "NordVPN الرسمي",
     category: "productivity",
     badge: "حماية وVPN 🔒",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/deb4d85faa9049debd07434f91235b36.webp",
+    banner: "images/subs/nordvpn.webp", bannerAnim: "images/subs/nordvpn-anim.webp",
     description: "اشتراك NordVPN لكود تفعيل ثلاث شهور.",
     packages: [
       { id: "nordvpn_coupon_3m", name: "NordVPN Coupon — 3 شهور — 154 ج.م", duration: "3 شهور (Coupon)", price: 154 },
@@ -272,7 +272,7 @@ const subscriptionsData = [
     provider: "Coursera",
     category: "productivity",
     badge: "تعلم وكورسات 📚",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/a1fb2b35b0dd45b485524b1a11ac33f5.webp",
+    banner: "images/subs/coursera_premium.webp", bannerAnim: "images/subs/coursera_premium-anim.webp",
     description: "اشتراك Coursera Premium للوصول لكل الكورسات والشهادات.",
     packages: [
       { id: "coursera_12m", name: "Coursera Premium — 12 شهر — 250 ج.م", duration: "12 شهر", price: 250 }
