@@ -250,8 +250,8 @@ if (typeof subscriptionsData !== 'undefined' && Array.isArray(subscriptionsData)
           '<select id="ai_pkg_' + a.id + '" onchange="updateCardPriceDisplay(\'ai\', \'' + a.id + '\')" class="w-full bg-slate-950 border border-slate-700 rounded-xl p-2 text-xs text-indigo-300 font-bold outline-none mb-2">' + opts + '</select>' +
         '</div>' +
         '<div class="pt-2 border-t border-slate-800 flex gap-2">' +
-          '<button onclick="handleAIAction(\'' + a.id + '\', true)" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs py-2 rounded-xl cursor-pointer shadow">شحن فوري ⚡</button>' +
-          '<button onclick="handleAIAction(\'' + a.id + '\', false)" class="sky-btn font-bold text-xs px-3 py-2 rounded-xl cursor-pointer shadow">🛒 للسلة</button>' +
+          '<button onclick="handleAIAction(\'' + a.id + '\', true)" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs py-2 rounded-xl cursor-pointer shadow">اشترِ الآن ⚡</button>' +
+          '<button onclick="handleAIAction(\'' + a.id + '\', false)" class="sky-btn font-bold text-xs px-3 py-2 rounded-xl cursor-pointer shadow">أضف للسلة 🛒</button>' +
         '</div>' +
       '</div></div>';
   }
