@@ -867,12 +867,48 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
    var dots = document.querySelectorAll('#heroDots .dot');
    if (!slides.length) return;
    var cur = 0;
+   function setFocusables(slide, on){
+    var f = slide.querySelectorAll('a[href], button');
+    for (var n = 0; n < f.length; n++) {
+     if (on) {
+      if (f[n].hasAttribute('data-hero-tab')) { f[n].setAttribute('tabindex', f[n].getAttribute('data-hero-tab')); f[n].removeAttribute('data-hero-tab'); }
+      else f[n].removeAttribute('tabindex');
+     } else {
+      if (!f[n].hasAttribute('data-hero-tab')) f[n].setAttribute('data-hero-tab', f[n].getAttribute('tabindex') || '');
+      f[n].setAttribute('tabindex', '-1');
+     }
+    }
+   }
    function show(i){
     cur = (i + slides.length) % slides.length;
-    for (var k = 0; k < slides.length; k++) slides[k].classList.toggle('is-active', k === cur);
+    for (var k = 0; k < slides.length; k++) {
+     var on = (k === cur);
+     slides[k].classList.toggle('is-active', on);
+     slides[k].setAttribute('aria-hidden', on ? 'false' : 'true');
+     setFocusables(slides[k], on);
+    }
     for (var j = 0; j < dots.length; j++) dots[j].classList.toggle('active', j === cur);
    }
-   setInterval(function(){ show(cur + 1); }, 5000);
+   var timer = null;
+   function startRot(){
+    if (timer) return;
+    // Never (re)start while the pointer is over the slider or focus is
+    // inside it: a mouseleave or focusout on its own must not resume
+    // rotation while the other is still engaged.
+    if (hero && (hero.matches(':hover') || hero.contains(document.activeElement))) return;
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    timer = setInterval(function(){ show(cur + 1); }, 5000);
+   }
+   function stopRot(){ if (timer) { clearInterval(timer); timer = null; } }
+   var hero = document.getElementById('dragonHero');
+   if (hero) {
+    hero.addEventListener('mouseenter', stopRot);
+    hero.addEventListener('mouseleave', startRot);
+    hero.addEventListener('focusin', stopRot);
+    hero.addEventListener('focusout', startRot);
+   }
+   show(0);
+   startRot();
   })();
  </script>
 <!-- Store chat assistant Migo, -->
@@ -933,7 +969,7 @@ var w=document.createElement('div');w.style.cssText='position:fixed;inset:0;z-in
 w.innerHTML='<div style="background:#141414;color:#fff;padding:18px;border-radius:12px;width:300px;max-width:90vw"><p style="margin:0 0 10px">كلمة السر الجديدة (6+)</p><input id="migoRecPw" type="password" minlength="6" autocomplete="new-password" style="width:100%;padding:9px;border-radius:8px;border:1px solid #444;background:#1d1d1d;color:#fff;box-sizing:border-box"><div style="display:flex;gap:8px;margin-top:10px"><button id="migoRecOk" style="flex:1;padding:9px;border:0;border-radius:8px;background:#b8860b;color:#fff;font-weight:700">حفظ</button><button id="migoRecCancel" style="padding:9px;border:1px solid #444;border-radius:8px;background:0;color:#ccc">إلغاء</button></div></div>';
 document.body.appendChild(w);var i=document.getElementById('migoRecPw');i.focus();
 document.getElementById('migoRecCancel').onclick=function(){w.remove()};
-document.getElementById('migoRecOk').onclick=function(){var p=i.value;if(!p||p.length<6)return showToast('قصيرة','error');window.__sbClient().then(function(k){return k.auth.updateUser({password:p})}).then(function(r){w.remove();showToast(r&&r.error?r.error.message:'تم تغيير كلمة السر')}).catch(function(){showToast('تعذّر الاتصال','error')})}}
+document.getElementById('migoRecOk').onclick=function(){var p=i.value;if(!p||p.length<6)return showToast('قصيرة','error');window.__sbClient().then(function(k){return k.auth.updateUser({password:p})}).then(function(r){if(r&&r.error){showToast(r.error.message,'error')}else{w.remove();showToast('تم تغيير كلمة السر')}}).catch(function(){showToast('تعذّر الاتصال','error')})}}
 rec()})();</script>
 <script>(function(){window.addEventListener('load',function(){var o=window.finalizeOrderWhatsApp;if(typeof o!=='function')return;window.finalizeOrderWhatsApp=function(){try{(window.dataLayer=window.dataLayer||[]).push({event:'whatsapp_click'})}catch(x){}try{var it=(typeof cart!=='undefined'&&cart?cart:[]).map(function(x){return{name:x.name,price:x.price,details:x.details||''}}),te=document.getElementById('cartTotal'),sa=document.getElementById('senderAccountInput'),se=null;try{se=JSON.parse(localStorage.getItem('migo_active_member_v2'))}catch(x){}var pl={customer_email:se&&se.email||null,payment:typeof selectedPayment!=='undefined'?selectedPayment:null,sender_account:sa?sa.value.trim():null,items:it,total_text:te?te.innerText:null,coupon:typeof appliedCoupon!=='undefined'&&appliedCoupon?appliedCoupon.code:null};fetch(SUPABASE_URL+'/rest/v1/orders',{method:'POST',keepalive:true,headers:{'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify(pl)}).then(function(r){if(!r.ok)throw 0;try{(window.dataLayer=window.dataLayer||[]).push({event:'order_placed',value:(function(){var t=parseFloat(String(pl.total_text||'').replace(/[^0-9.]/g,''));if(isNaN(t))t=it.reduce(function(a,x){return a+(typeof x.price==='number'?x.price:0)},0);return t})(),currency:'EGP'})}catch(x){}}).catch(function(){try{var q=JSON.parse(localStorage.getItem('migo_orders_backup_v1')||'[]');q.push({t:Date.now(),order:pl});localStorage.setItem('migo_orders_backup_v1',JSON.stringify(q.slice(-50)))}catch(x){}})}catch(x){}return o.apply(this,arguments)}})});</script>
 </body>
