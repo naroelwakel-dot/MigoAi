@@ -6,7 +6,7 @@
 Key facts:
 - Currency: Egyptian Pound (EGP). Store price = supplier price x 1.12.
 - Delivery: to the player ID / username, usually within 2 to 5 minutes, no password required.
-- Payments: Vodafone Cash, Etisalat Cash, InstaPay, Telda, Binance Pay, RedotPay, PayPal, Credit or Debit Card, valU, Tamara, Tabby, Souhoola, Forsa, Aman.
+- Payments: Vodafone Cash, Etisalat Cash, InstaPay, Telda, Binance Pay, RedotPay, Credit or Debit Card, valU, Tamara, Tabby, Souhoola, Forsa, Aman.
 - Ordering and support: WhatsApp https://wa.me/201060934020
 - Language: Arabic (ar), right-to-left.
 
