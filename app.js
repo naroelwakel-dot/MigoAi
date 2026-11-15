@@ -217,6 +217,7 @@ function saveCartToStorage() {
 function addToCart(item) {
     cart.push({ ...item, cartId: Date.now() + Math.random() });
     saveCartToStorage();
+    try { (window.dataLayer = window.dataLayer || []).push({ event: 'add_to_cart', item_id: (item.id || item.name || null), value: (typeof item.price === 'number' ? item.price : null), currency: 'EGP' }); } catch (e) {}
     showToast(`تمت إضافة "${item.name}" إلى السلة 🛒`);
 }
 
@@ -1197,6 +1198,7 @@ function submitPlayerIdModal() {
 function expressCheckout(item) {
     cart.push({ ...item, cartId: Date.now() + Math.random() });
     saveCartToStorage();
+    try { (window.dataLayer = window.dataLayer || []).push({ event: 'add_to_cart', item_id: (item.id || item.name || null), value: (typeof item.price === 'number' ? item.price : null), currency: 'EGP' }); } catch (e) {}
     proceedToCheckout();
 }
 
