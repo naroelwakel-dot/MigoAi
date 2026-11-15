@@ -865,16 +865,22 @@ function handleAIAction(itemId, isExpress = false) {
     else addToCart(cartItem);
 }
 
-function handleSubscriptionAction(itemId, isExpress = false) {
+function handleSubscriptionAction(itemId, isExpress = false, pkgIndex = null) {
     let item = (typeof subscriptionsData !== 'undefined') ? subscriptionsData.find(s => s.id === itemId) : null;
     if (!item) return;
 
     let selectedPkg = item.packages[0];
-    const selectEl = document.getElementById(`prod_pkg_${itemId}`) || 
-                     document.getElementById(`ent_pkg_${itemId}`);
+    if (pkgIndex !== null && item.packages[pkgIndex]) {
+        // Caller named the package explicitly (e.g. global search shows the
+        // first package's price, so checkout must use that same package).
+        selectedPkg = item.packages[pkgIndex];
+    } else {
+        const selectEl = document.getElementById(`prod_pkg_${itemId}`) || 
+                         document.getElementById(`ent_pkg_${itemId}`);
 
-    if (selectEl) {
-        selectedPkg = item.packages[parseInt(selectEl.value, 10)] || item.packages[0];
+        if (selectEl) {
+            selectedPkg = item.packages[parseInt(selectEl.value, 10)] || item.packages[0];
+        }
     }
 
     const finalPrice = calculateAutoPrice(selectedPkg.price);
@@ -1475,7 +1481,7 @@ function onGlobalSearchClick(encodedItem) {
     } else if (item.type === 'vcc') {
         openVccModalCustom(item.id);
     } else if (item.type === 'sub') {
-        handleSubscriptionAction(item.id, true);
+        handleSubscriptionAction(item.id, true, 0);
     }
 }
 
