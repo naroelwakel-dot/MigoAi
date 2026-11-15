@@ -516,7 +516,7 @@ if (typeof module !== "undefined" && module.exports) {
 // == Migo AI Solution - added 2026-10-31 from supplier SMM Scorpion (smmscorpion-media.xyz) ==
 // New social-media services only. Price = supplier rate x1.5 (50% margin). Min shown 1000.
 // Each id is the supplier's own service number, kept so an order can be traced back.
-window.smmScorpionServices = [
+var smmScorpionServices = [
   { platform: "tiktok", id: "4682", name: "متابعين تيك توك مصري و عرب حقيقي (من الاعلانات المموله| ⚡السرعة 1 الف/يوم | ✅30 يوم ضمان", category: "متابعين", pricePer1k: 365.33, min: 1000, max: 100000, speed: "⚡", description: "مع ضمان ♻️" },
   { platform: "tiktok", id: "4687", name: "متابعين تيك توك مصرين و عرب حقيقيين|⚡السرعة 200-500 /يوم | ✅30 يوم ضمان", category: "متابعين", pricePer1k: 295.2, min: 1000, max: 10000, speed: "⚡", description: "مع ضمان ♻️" },
   { platform: "tiktok", id: "4331", name: "تيك توك | متابعين مصريين وعرب حقيقيين (من الإعلانات الممولة) | ضمان 30 يومًا ♻️", category: "متابعين", pricePer1k: 408.5, min: 1000, max: 20000, speed: "⚡", description: "مع ضمان ♻️" },
@@ -526,7 +526,7 @@ window.smmScorpionServices = [
   { platform: "tiktok", id: "2941", name: "مشاهدات تيك توك [ بدء فوري ][ بدون نقص ][ سريعه][ لا يوجد اعاده تعبئه⛔ ]", category: "مشاهدات", pricePer1k: 6.57, min: 1000, max: 2147483647, speed: "فوري ⚡", description: "بدون ضمان ⚠️" },
   { platform: "tiktok", id: "2992", name: "مشاهدات تيك توك |🔥بدون نقص |⚡السرعة 10 مليون |✅90 يوم ضمان", category: "مشاهدات", pricePer1k: 6.2, min: 1000, max: 2147483647, speed: "⚡", description: "مع ضمان ♻️" },
   { platform: "tiktok", id: "4761", name: "تعليقات تيك توك | عشوائي | حساب حقيقي | الحد الأقصى 10K | 10K يوميًا | فوري | ضمان ♻️ 30 يوم", category: "تعليقات", pricePer1k: 389.34, min: 1000, max: 10000, speed: "فوري ⚡", description: "مع ضمان ♻️" },
-  { platform: "tiktok", id: "4762", name: "تعليقات تيك توك | إيموجي | حساب حقيقي | الحد الأقصى 10K | 10K يوميًا | فوري | ضمان ♻️ 30 يوم", category: "تعليقات", pricePer1k: 389.34, min: 1000, max: 100000000, speed: "فوري ⚡", description: "مع ضمان ♻️" },
+  { platform: "tiktok", id: "4762", name: "تعليقات تيك توك | إيموجي | حساب حقيقي | الحد الأقصى 10K | 10K يوميًا | فوري | ضمان ♻️ 30 يوم", category: "تعليقات", pricePer1k: 389.34, min: 1000, max: 10000, speed: "فوري ⚡", description: "مع ضمان ♻️" },
   { platform: "instagram", id: "2332", name: "متابعين انستجرام [مصرين 100%][جوده عاليه][سرعه متوسطه][8 - 10يوم][اعاده تعبئه 365 يوم] ♻️", category: "متابعين", pricePer1k: 360.93, min: 1000, max: 5000, speed: "⚡", description: "مع ضمان ♻️" },
   { platform: "instagram", id: "4799", name: "متابعين إنستغرام |🎯حسابات مصرية |⚡السرعة +100ل1000/اليوم |⛔ضمان بدون [ بدء 0ل24ساعه]", category: "متابعين", pricePer1k: 181.5, min: 1000, max: 5000, speed: "⚡", description: "بدون ضمان ⚠️" },
   { platform: "instagram", id: "4754", name: "متابعين انستجرام | ميكس حقيقي (ضمان 30 يوم ♻️) فوري | سرعة يومية من 3 إلى 5 آلاف", category: "متابعين", pricePer1k: 98.85, min: 1000, max: 30000, speed: "فوري ⚡", description: "مع ضمان ♻️" },
@@ -602,8 +602,9 @@ window.smmScorpionServices = [
   { platform: "threads", id: "4092", name: "تعليقات مخصصة ثريدز|✨جودة حقيقية |🔥 حد أقصى 500 |✅30 يوم ضمان", category: "تعليقات", pricePer1k: 1418.75, min: 1000, max: 1000, speed: "⚡", description: "مع ضمان ♻️" },
 ];
 (function () {
-  const list = window.smmScorpionServices || [];
-  const platforms = window.smmPlatforms || [];
+  const list = (typeof smmScorpionServices !== "undefined") ? smmScorpionServices : [];
+  if (typeof window !== "undefined") window.smmScorpionServices = list;
+  const platforms = (typeof smmPlatforms !== "undefined") ? smmPlatforms : [];
   const byId = {};
   platforms.forEach(function (p) { byId[p.id] = p; });
   list.forEach(function (s) {
