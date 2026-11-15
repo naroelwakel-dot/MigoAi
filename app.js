@@ -233,19 +233,39 @@ function closeCartModal() {
     m.classList.remove('flex');
 }
 
+function escapeHtml(str) {
+    return String(str == null ? '' : str).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+}
+
+function restoreLastOrder() {
+    try {
+        var snap = JSON.parse(localStorage.getItem('migo_last_order_v1') || 'null');
+        if (!snap || !Array.isArray(snap.cart) || snap.cart.length === 0) return;
+        cart = snap.cart;
+        appliedCoupon = snap.coupon || null;
+        saveCartToStorage();
+        updateCartUI();
+        showToast('تمت استعادة آخر طلب', 'success');
+    } catch (e) {}
+}
+
 function updateCartUI() {
     const badge = document.getElementById('cartBadge');
     if (badge) badge.innerText = cart.length;
     const container = document.getElementById('cartItemsContainer');
     if (container) {
         if (cart.length === 0) {
-            container.innerHTML = '<div class="text-center text-gray-400 py-6 text-xs">سلة المشتريات فارغة</div>';
+            var hasSnap = false;
+            try { var snap0 = JSON.parse(localStorage.getItem('migo_last_order_v1') || 'null'); hasSnap = !!(snap0 && Array.isArray(snap0.cart) && snap0.cart.length); } catch (e) {}
+            container.innerHTML = '<div class="text-center text-gray-400 py-6 text-xs">سلة المشتريات فارغة</div>' + (hasSnap ? '<button onclick="restoreLastOrder()" class="block mx-auto mb-4 text-[11px] font-bold text-amber-400 border border-amber-500/40 rounded-lg px-3 py-1.5 cursor-pointer">استعادة آخر طلب</button>' : '');
         } else {
             container.innerHTML = cart.map(item => `
                 <div class="bg-slate-950 border border-slate-700 rounded-xl p-2.5 flex justify-between items-center gap-2">
                     <div class="flex-1 min-w-0">
-                        <h3 class="text-xs font-bold text-white truncate">${item.name}</h3>
-                        <div class="text-[10px] text-sky-400 truncate">${item.details || ''}</div>
+                        <h3 class="text-xs font-bold text-white truncate">${escapeHtml(item.name)}</h3>
+                        <div class="text-[10px] text-sky-400 truncate">${escapeHtml(item.details || '')}</div>
                     </div>
                     <div class="text-left shrink-0">
                         <div class="text-xs font-black text-amber-400 font-mono">${Number(item.price).toLocaleString()} ج.م</div>
@@ -1314,6 +1334,7 @@ function finalizeOrderWhatsApp() {
     msg += `\n*الإجمالي المطلوب:* ${totEl ? totEl.innerText : ''}`;
     if (appliedCoupon) msg += `\n*(كود الخصم المطبق: ${appliedCoupon.code})*`;
 
+    try { localStorage.setItem('migo_last_order_v1', JSON.stringify({ t: Date.now(), orderId: orderId, cart: cart, coupon: appliedCoupon })); } catch (e) {}
     cart = [];
     appliedCoupon = null;
     saveCartToStorage();
@@ -1443,7 +1464,7 @@ function onGlobalSearchClick(encodedItem) {
     } else if (item.type === 'coin_tg') {
         openPlayerIdModal('نجوم تليجرام', `${item.stars} نجمة`, item.price, true, 'telegram');
     } else if (item.type === 'vcc') {
-        openVccModal(item.id);
+        openVccModalCustom(item.id);
     } else if (item.type === 'sub') {
         handleSubscriptionAction(item.id, true);
     }
@@ -1541,7 +1562,7 @@ function handleRegister(e) {
     const password = (document.getElementById('regPassword') || {}).value || '';
     if (!email || password.length < 6) return showToast('اكتب بريد صحيح وكلمة سر 6 أحرف على الأقل', 'error');
     showToast('جاري إنشاء الحساب...');
-    __sbClient().then(c => c.auth.signUp({ email: email, password: password, options: { data: { name: name, phone: phone }, emailRedirectTo: 'https://naroelwakel-dot.github.io/MigoAi/' } }))
+    __sbClient().then(c => c.auth.signUp({ email: email, password: password, options: { data: { name: name, phone: phone }, emailRedirectTo: 'https://migoai.shop/' } }))
         .then(res => {
             if (res.error) return showToast(res.error.message, 'error');
             if (res.data && res.data.session) { __authDone(name, email); return showToast('تم التسجيل بنجاح 🎉'); }
