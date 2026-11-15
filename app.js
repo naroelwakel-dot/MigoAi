@@ -317,11 +317,12 @@ function renderCoinsAndStars() {
         const ttContainer = document.getElementById('tiktokCoinsGrid');
         if (ttContainer) {
             const ttBanner = tiktokCoinsList.banner || "images (6).jpeg";
+            const ttAnim = tiktokCoinsList.bannerAnim || "";
             const ttPkgs = tiktokCoinsList.packages || tiktokCoinsList;
             const defaultFinalPrice = calculateAutoPrice(ttPkgs[0].price);
             ttContainer.innerHTML = `
-                <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg relative" style="min-height: 180px;">
-                    <img src="${ttBanner}" alt="" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover object-center opacity-40">
+                <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg relative" style="min-height: 180px;" onclick="if(event.target.closest('button')) return; var i=this.querySelector('img[data-anim]'); if(i) playCardAnim(i);">
+                    <img src="${ttBanner}"${ttAnim ? ` data-anim="${ttAnim}"` : ''} alt="" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover object-center opacity-40">
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent"></div>
                     <div class="relative z-10 p-4 flex flex-col justify-between h-full gap-3">
                         <div class="flex items-center justify-between">
@@ -350,11 +351,12 @@ function renderCoinsAndStars() {
         const tgContainer = document.getElementById('telegramStarsGrid');
         if (tgContainer) {
             const tgBanner = telegramStarsList.banner || "telegram.jpeg";
+            const tgAnim = telegramStarsList.bannerAnim || "";
             const tgPkgs = telegramStarsList.packages || telegramStarsList;
             const defaultFinalPrice = calculateAutoPrice(tgPkgs[0].price);
             tgContainer.innerHTML = `
-                <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg relative" style="min-height: 180px;">
-                    <img src="${tgBanner}" alt="" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover object-center opacity-40">
+                <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg relative" style="min-height: 180px;" onclick="if(event.target.closest('button')) return; var i=this.querySelector('img[data-anim]'); if(i) playCardAnim(i);">
+                    <img src="${tgBanner}"${tgAnim ? ` data-anim="${tgAnim}"` : ''} alt="" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover object-center opacity-40">
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent"></div>
                     <div class="relative z-10 p-4 flex flex-col justify-between h-full gap-3">
                         <div class="flex items-center justify-between">
@@ -436,6 +438,20 @@ function handleCoinAction(type, isExpress) {
     openPlayerIdModal(name, label, finalPrice, isExpress, type);
 }
 
+// ===== Animated card banners: a light static poster loads first; the animation file loads only when the visitor taps the banner =====
+function playCardAnim(img) {
+    if (!img) return;
+    var animUrl = img.getAttribute('data-anim');
+    if (!animUrl) return;
+    img.removeAttribute('data-anim');
+    img.src = animUrl;
+    var holder = img.parentElement;
+    if (holder) {
+        var badge = holder.querySelector('.migo-anim-badge');
+        if (badge) badge.remove();
+    }
+}
+
 function renderGames() {
     const gamesList = (typeof gamesData !== 'undefined') ? gamesData : [];
     const container = document.getElementById('gamesCardsContainer');
@@ -444,12 +460,13 @@ function renderGames() {
     container.innerHTML = gamesList.map(g => {
         const pkgs = g.packages || [];
         const bannerUrl = g.banner || "https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80";
+        const animUrl = g.bannerAnim || "";
         const badgeText = g.badge || "شحن فوري ⚡";
         const defaultPrice = pkgs.length ? calculateAutoPrice(pkgs[0].price) : 0;
 
         return `
             <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg">
-                <div class="h-28 sm:h-32 relative overflow-hidden bg-[#12151b]"><img src="${bannerUrl}" alt="" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover object-center">
+                <div class="h-28 sm:h-32 relative overflow-hidden bg-[#12151b]" onclick="var i=this.querySelector('img[data-anim]'); if(i) playCardAnim(i);"><img src="${bannerUrl}"${animUrl ? ` data-anim="${animUrl}"` : ''} alt="" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover object-center">${animUrl ? '<span class="migo-anim-badge" style="position:absolute;inset-inline-end:8px;bottom:8px;z-index:30;width:30px;height:30px;border-radius:9999px;background:rgba(11,13,17,.72);border:1px solid #F2B53D;color:#F3CF6B;display:flex;align-items:center;justify-content:center;font-size:12px;line-height:1;pointer-events:none;backdrop-filter:blur(4px)">▶</span>' : ''}
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent p-3 flex flex-col justify-between">
                         <div class="flex justify-between items-start">
                             <span class="text-[9px] font-bold text-emerald-300 bg-emerald-500/20 px-2.5 py-0.5 rounded-full border border-emerald-500/40 backdrop-blur-md">
@@ -500,12 +517,13 @@ function renderLiveApps() {
     container.innerHTML = liveList.map(app => {
         const pkgs = app.packages || [];
         const bannerUrl = app.banner || "https://images.unsplash.com/photo-1516251193007-45ef944ab0c6?auto=format&fit=crop&w=1200&q=80";
+        const animUrl = app.bannerAnim || "";
         const badgeText = app.badge || "بث مباشر 🔴";
         const defaultPrice = pkgs.length ? calculateAutoPrice(pkgs[0].price) : 0;
 
         return `
             <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg">
-                <div class="h-28 sm:h-32 relative overflow-hidden bg-[#12151b]"><img src="${bannerUrl}" alt="" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover object-center">
+                <div class="h-28 sm:h-32 relative overflow-hidden bg-[#12151b]" onclick="var i=this.querySelector('img[data-anim]'); if(i) playCardAnim(i);"><img src="${bannerUrl}"${animUrl ? ` data-anim="${animUrl}"` : ''} alt="" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover object-center">${animUrl ? '<span class="migo-anim-badge" style="position:absolute;inset-inline-end:8px;bottom:8px;z-index:30;width:30px;height:30px;border-radius:9999px;background:rgba(11,13,17,.72);border:1px solid #F2B53D;color:#F3CF6B;display:flex;align-items:center;justify-content:center;font-size:12px;line-height:1;pointer-events:none;backdrop-filter:blur(4px)">▶</span>' : ''}
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent p-3 flex flex-col justify-between">
                         <div>
                             <span class="text-[9px] font-bold text-rose-300 bg-rose-500/20 px-2.5 py-0.5 rounded-full border border-rose-500/40 backdrop-blur-md">
@@ -555,10 +573,11 @@ function renderVccCards() {
         const pkgs = v.packages || [{ name: v.name, price: v.priceEgp }];
         const defaultPrice = calculateAutoPrice(pkgs[0].price);
         const bannerUrl = v.banner || "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=1200&q=80";
+        const animUrl = v.bannerAnim || "";
 
         return `
             <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg">
-                <div class="h-28 relative overflow-hidden bg-[#12151b]"><img src="${bannerUrl}" alt="" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover object-center">
+                <div class="h-28 relative overflow-hidden bg-[#12151b]" onclick="var i=this.querySelector('img[data-anim]'); if(i) playCardAnim(i);"><img src="${bannerUrl}"${animUrl ? ` data-anim="${animUrl}"` : ''} alt="" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover object-center">${animUrl ? '<span class="migo-anim-badge" style="position:absolute;inset-inline-end:8px;bottom:8px;z-index:30;width:30px;height:30px;border-radius:9999px;background:rgba(11,13,17,.72);border:1px solid #F2B53D;color:#F3CF6B;display:flex;align-items:center;justify-content:center;font-size:12px;line-height:1;pointer-events:none;backdrop-filter:blur(4px)">▶</span>' : ''}
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent p-3 flex flex-col justify-between">
                         <span class="text-[9px] bg-amber-500/20 text-amber-300 border border-amber-500/40 px-2.5 py-0.5 rounded-full font-bold w-fit">
                             ${v.badge || 'فيزا دولية'}
@@ -679,10 +698,11 @@ function renderProductivity() {
         const pkgs = p.packages || [{ name: p.name, price: 0 }];
         const defaultPrice = calculateAutoPrice(pkgs[0].price);
         const bannerUrl = p.banner || "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?auto=format&fit=crop&w=1200&q=80";
+        const animUrl = p.bannerAnim || "";
 
         return `
             <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg">
-                <div class="h-24 relative overflow-hidden bg-[#12151b]"><img src="${bannerUrl}" alt="" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover object-center">
+                <div class="h-24 relative overflow-hidden bg-[#12151b]" onclick="var i=this.querySelector('img[data-anim]'); if(i) playCardAnim(i);"><img src="${bannerUrl}"${animUrl ? ` data-anim="${animUrl}"` : ''} alt="" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover object-center">${animUrl ? '<span class="migo-anim-badge" style="position:absolute;inset-inline-end:8px;bottom:8px;z-index:30;width:30px;height:30px;border-radius:9999px;background:rgba(11,13,17,.72);border:1px solid #F2B53D;color:#F3CF6B;display:flex;align-items:center;justify-content:center;font-size:12px;line-height:1;pointer-events:none;backdrop-filter:blur(4px)">▶</span>' : ''}
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent p-2.5 flex flex-col justify-between">
                         <span class="text-[9px] bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 px-2 py-0.5 rounded-full font-bold w-fit">
                             ${p.badge || 'إنتاجية'}
@@ -724,10 +744,11 @@ function renderEntertainment() {
         const pkgs = e.packages || [{ name: e.name, price: 0 }];
         const defaultPrice = calculateAutoPrice(pkgs[0].price);
         const bannerUrl = e.banner || "https://images.unsplash.com/photo-1522869635100-9f4c5e86aa37?auto=format&fit=crop&w=1200&q=80";
+        const animUrl = e.bannerAnim || "";
 
         return `
             <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg">
-                <div class="h-24 relative overflow-hidden bg-[#12151b]"><img src="${bannerUrl}" alt="" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover object-center">
+                <div class="h-24 relative overflow-hidden bg-[#12151b]" onclick="var i=this.querySelector('img[data-anim]'); if(i) playCardAnim(i);"><img src="${bannerUrl}"${animUrl ? ` data-anim="${animUrl}"` : ''} alt="" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover object-center">${animUrl ? '<span class="migo-anim-badge" style="position:absolute;inset-inline-end:8px;bottom:8px;z-index:30;width:30px;height:30px;border-radius:9999px;background:rgba(11,13,17,.72);border:1px solid #F2B53D;color:#F3CF6B;display:flex;align-items:center;justify-content:center;font-size:12px;line-height:1;pointer-events:none;backdrop-filter:blur(4px)">▶</span>' : ''}
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent p-2.5 flex flex-col justify-between">
                         <span class="text-[9px] bg-purple-500/20 text-purple-300 border border-purple-500/40 px-2 py-0.5 rounded-full font-bold w-fit">
                             ${e.badge || 'ترفيه وبث'}
@@ -772,11 +793,12 @@ function renderAI() {
     container.innerHTML = aiList.map(a => {
         const pkgs = a.packages || [{ name: a.tag || a.name, price: a.price, duration: a.tag }];
         const defaultPrice = calculateAutoPrice(pkgs[0].price);
-        const bannerUrl = a.banner || "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/426e107c076a407fbd71e30b58253a4c.webp";
+        const bannerUrl = a.banner || "images/ai/ai_api_claude.webp";
+        const animUrl = a.bannerAnim || "";
 
         return `
             <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg">
-                <div class="h-28 sm:h-32 relative overflow-hidden bg-[#12151b]"><img src="${bannerUrl}" alt="" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover object-center">
+                <div class="h-28 sm:h-32 relative overflow-hidden bg-[#12151b]" onclick="var i=this.querySelector('img[data-anim]'); if(i) playCardAnim(i);"><img src="${bannerUrl}"${animUrl ? ` data-anim="${animUrl}"` : ''} alt="" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover object-center">${animUrl ? '<span class="migo-anim-badge" style="position:absolute;inset-inline-end:8px;bottom:8px;z-index:30;width:30px;height:30px;border-radius:9999px;background:rgba(11,13,17,.72);border:1px solid #F2B53D;color:#F3CF6B;display:flex;align-items:center;justify-content:center;font-size:12px;line-height:1;pointer-events:none;backdrop-filter:blur(4px)">▶</span>' : ''}
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent p-3 flex flex-col justify-between">
                         <span class="text-[9px] bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 px-2.5 py-0.5 rounded-full font-bold w-fit">
                             ${a.badge || a.tag || 'ذكاء اصطناعي'}
@@ -894,6 +916,28 @@ function selectSMMPlatform(pid) {
     
     if (bannerImg && currentSMMPlatform.banner) {
         bannerImg.src = currentSMMPlatform.banner;
+        var smmBadge = document.getElementById('smmAnimBadge');
+        if (currentSMMPlatform.bannerAnim) {
+            bannerImg.setAttribute('data-anim', currentSMMPlatform.bannerAnim);
+            var holder = bannerImg.parentElement;
+            if (holder && !holder.dataset.animWired) {
+                holder.dataset.animWired = '1';
+                holder.style.cursor = 'pointer';
+                holder.addEventListener('click', function () { playCardAnim(bannerImg); });
+            }
+            if (!smmBadge && holder) {
+                smmBadge = document.createElement('span');
+                smmBadge.id = 'smmAnimBadge';
+                smmBadge.className = 'migo-anim-badge';
+                smmBadge.setAttribute('style', 'position:absolute;inset-inline-end:8px;bottom:8px;z-index:30;width:30px;height:30px;border-radius:9999px;background:rgba(11,13,17,.72);border:1px solid #F2B53D;color:#F3CF6B;display:flex;align-items:center;justify-content:center;font-size:12px;line-height:1;pointer-events:none;backdrop-filter:blur(4px)');
+                smmBadge.textContent = '▶';
+                holder.appendChild(smmBadge);
+            }
+            if (smmBadge) smmBadge.style.display = 'flex';
+        } else {
+            bannerImg.removeAttribute('data-anim');
+            if (smmBadge) smmBadge.style.display = 'none';
+        }
     }
 
     if (catSelect && currentSMMPlatform.services) {
