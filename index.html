@@ -1,6 +1,13 @@
 <!doctype html>
 <html lang="ar" dir="rtl" class="dark">
  <head>
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-P9N6CKPN');</script>
+<!-- End Google Tag Manager -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="preload" as="style" href="tailwind.css?v=2026-10-31-3">
@@ -120,6 +127,10 @@
 </style>
 </head>
  <body class="min-h-screen selection:bg-blue-500/30 selection:text-white pb-24">
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-P9N6CKPN"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
   <!-- Toast Notification Container -->
   <div id="toastContainer" class="fixed top-5 left-5 z-[120] flex flex-col gap-2 pointer-events-none"></div>
   <!-- Social Proof Live Badge -->
@@ -942,6 +953,6 @@ document.body.appendChild(w);var i=document.getElementById('migoRecPw');i.focus(
 document.getElementById('migoRecCancel').onclick=function(){w.remove()};
 document.getElementById('migoRecOk').onclick=function(){var p=i.value;if(!p||p.length<6)return showToast('قصيرة','error');window.__sbClient().then(function(k){return k.auth.updateUser({password:p})}).then(function(r){w.remove();showToast(r&&r.error?r.error.message:'تم تغيير كلمة السر')}).catch(function(){showToast('تعذّر الاتصال','error')})}}
 rec()})();</script>
-<script>(function(){window.addEventListener('load',function(){var o=window.finalizeOrderWhatsApp;if(typeof o!=='function')return;window.finalizeOrderWhatsApp=function(){try{var it=(typeof cart!=='undefined'&&cart?cart:[]).map(function(x){return{name:x.name,price:x.price,details:x.details||''}}),te=document.getElementById('cartTotal'),sa=document.getElementById('senderAccountInput'),se=null;try{se=JSON.parse(localStorage.getItem('migo_active_member_v2'))}catch(x){}var pl={customer_email:se&&se.email||null,payment:typeof selectedPayment!=='undefined'?selectedPayment:null,sender_account:sa?sa.value.trim():null,items:it,total_text:te?te.innerText:null,coupon:typeof appliedCoupon!=='undefined'&&appliedCoupon?appliedCoupon.code:null};fetch(SUPABASE_URL+'/rest/v1/orders',{method:'POST',keepalive:true,headers:{'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify(pl)}).then(function(r){if(!r.ok)throw 0}).catch(function(){try{var q=JSON.parse(localStorage.getItem('migo_orders_backup_v1')||'[]');q.push({t:Date.now(),order:pl});localStorage.setItem('migo_orders_backup_v1',JSON.stringify(q.slice(-50)))}catch(x){}})}catch(x){}return o.apply(this,arguments)}})});</script>
+<script>(function(){window.addEventListener('load',function(){var o=window.finalizeOrderWhatsApp;if(typeof o!=='function')return;window.finalizeOrderWhatsApp=function(){try{(window.dataLayer=window.dataLayer||[]).push({event:'whatsapp_click'})}catch(x){}try{var it=(typeof cart!=='undefined'&&cart?cart:[]).map(function(x){return{name:x.name,price:x.price,details:x.details||''}}),te=document.getElementById('cartTotal'),sa=document.getElementById('senderAccountInput'),se=null;try{se=JSON.parse(localStorage.getItem('migo_active_member_v2'))}catch(x){}var pl={customer_email:se&&se.email||null,payment:typeof selectedPayment!=='undefined'?selectedPayment:null,sender_account:sa?sa.value.trim():null,items:it,total_text:te?te.innerText:null,coupon:typeof appliedCoupon!=='undefined'&&appliedCoupon?appliedCoupon.code:null};fetch(SUPABASE_URL+'/rest/v1/orders',{method:'POST',keepalive:true,headers:{'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify(pl)}).then(function(r){if(!r.ok)throw 0;try{(window.dataLayer=window.dataLayer||[]).push({event:'purchase',value:it.reduce(function(a,x){return a+(typeof x.price==='number'?x.price:0)},0),currency:'EGP'})}catch(x){}}).catch(function(){try{var q=JSON.parse(localStorage.getItem('migo_orders_backup_v1')||'[]');q.push({t:Date.now(),order:pl});localStorage.setItem('migo_orders_backup_v1',JSON.stringify(q.slice(-50)))}catch(x){}})}catch(x){}return o.apply(this,arguments)}})});</script>
 </body>
 </html>
