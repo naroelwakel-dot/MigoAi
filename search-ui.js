@@ -74,25 +74,37 @@
     var url = (typeof input === "string") ? input : (input && input.url) || "";
     var p = origFetch(input, init);
     if (url.indexOf("migoai-72.naroelwakel-dot.deno.net") === -1) return p;
+    // محاولة المصدر الاحتياطي: بترجع Response جاهز أو null لو ما نفعش.
+    function tryFallback() {
+      var q;
+      try { q = new URL(url, location.href).searchParams; } catch (e) { return Promise.resolve(null); }
+      var fbUrl = SHARED + "?game=" + encodeURIComponent(q.get("game") || "") +
+        "&id=" + encodeURIComponent(q.get("id") || "") +
+        (q.get("zoneId") ? "&zoneId=" + encodeURIComponent(q.get("zoneId")) : "");
+      return origFetch(fbUrl).then(function (r) { return r.json(); }).then(function (fd) {
+        if (fd && fd.success && fd.username) {
+          return new Response(JSON.stringify({ success: true, username: fd.username }), {
+            status: 200, headers: { "content-type": "application/json" }
+          });
+        }
+        return null;
+      }).catch(function () { return null; });
+    }
     return p.then(function (res) {
       return res.clone().json().then(function (d) {
         var nm = d && (d.username || d.name || (d.data && (d.data.username || d.data.name)));
         if (d && d.success && nm) return res;
         if (url.indexOf("game=") === -1) return res;
-        var q;
-        try { q = new URL(url, location.href).searchParams; } catch (e) { return res; }
-        var fbUrl = SHARED + "?game=" + encodeURIComponent(q.get("game") || "") +
-          "&id=" + encodeURIComponent(q.get("id") || "") +
-          (q.get("zoneId") ? "&zoneId=" + encodeURIComponent(q.get("zoneId")) : "");
-        return origFetch(fbUrl).then(function (r) { return r.json(); }).then(function (fd) {
-          if (fd && fd.success && fd.username) {
-            return new Response(JSON.stringify({ success: true, username: fd.username }), {
-              status: 200, headers: { "content-type": "application/json" }
-            });
-          }
-          return res;
-        }).catch(function () { return res; });
+        return tryFallback().then(function (fb) { return fb || res; });
       }).catch(function () { return res; });
+    }, function (err) {
+      // فشل شبكة في المصدر الأساسي نفسه: جرّب الاحتياطي بدل ما الخطأ يعدّي
+      // على طول، ولو الاحتياطي فشل كمان ارجع بنفس الخطأ الأصلي.
+      if (url.indexOf("game=") === -1) throw err;
+      return tryFallback().then(function (fb) {
+        if (fb) return fb;
+        throw err;
+      });
     });
   };
 })();
