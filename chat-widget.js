@@ -181,13 +181,16 @@
     });
 
     // إرسال رسالة: بنستخدمها من زرار الإرسال ومن المايك.
-    function send(raw) {
+    function send(raw, keepDraft) {
       var t = (raw || '').trim();
       if (!t) return;
-      input.value = '';
+      // Only clear the field when the sent text came from it; sends triggered
+      // by the proof upload or the mic must not wipe a typed draft.
+      if (!keepDraft) input.value = '';
       bubble(t, 'me');
       var past = history.slice(-6);
-      history.push({ role: 'user', text: t });
+      var myEntry = { role: 'user', text: t };
+      history.push(myEntry);
       var pending = bubble('...', 'bot');
       var settled = false;
       var ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
@@ -215,7 +218,11 @@
           var reply = d && d.reply ? d.reply : 'معلش حصلت مشكلة، جرّب تاني أو كلّمنا واتساب.';
           pending.textContent = reply;
           bodyEl.scrollTop = bodyEl.scrollHeight;
-          history.push({ role: 'model', text: reply });
+          // Place the reply right after its own question: with two sends in
+          // flight, appending on arrival would interleave the shared history.
+          var ix = history.indexOf(myEntry);
+          if (ix === -1) history.push({ role: 'model', text: reply });
+          else history.splice(ix + 1, 0, { role: 'model', text: reply });
           if (d && d.handoff && d.persona) applyPersona(d.persona);
         })
         .catch(function () {
@@ -304,7 +311,7 @@
           uploadProof(dataUrl, bytes).then(function () {
             wait.textContent = 'وصلتنا صورة التحويل ✅ هنراجعها ونأكدلك على واتساب: ' + WA;
             bubbleImg(dataUrl, 'me');
-            send('(بعت صورة التحويل)');
+            send('(بعت صورة التحويل)', true);
           }).catch(function () {
             wait.textContent = 'معلش الرفع مكمّلش. ابعتلنا الصورة على واتساب: ' + WA;
           });
@@ -331,7 +338,7 @@
       rec.maxAlternatives = 1;
       rec.onresult = function (e) {
         var said = (e.results && e.results[0] && e.results[0][0] ? e.results[0][0].transcript : '').trim();
-        if (said) send(said);
+        if (said) send(said, true);
       };
       rec.onend = function () { listening = false; mic.textContent = '🎤'; };
       rec.onerror = function () { listening = false; mic.textContent = '🎤'; };
