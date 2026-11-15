@@ -80,12 +80,6 @@ const PAYMENT_METHODS_DATA = {
             </div>
         `
     },
-    paypal: {
-        title: "PayPal",
-        type: "copy",
-        value: "sahermohamed123456@gmail.com",
-        instruction: "قم بالتحويل إلى بريد PayPal المعتمد (اختر نوع الدفع للسلع والخدمات Goods & Services):"
-    },
     redotpay: {
         title: "RedotPay",
         type: "copy",
