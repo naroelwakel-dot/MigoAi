@@ -84,7 +84,7 @@ const PAYMENT_METHODS_DATA = {
         title: "PayPal",
         type: "copy",
         value: "sahermohamed123456@gmail.com",
-        instruction: "قم بالتحويل إلى بريد PayPal المعتمد (مع تفضيل خيار Friends & Family إن أمكن):"
+        instruction: "قم بالتحويل إلى بريد PayPal المعتمد (اختر نوع الدفع للسلع والخدمات Goods & Services):"
     },
     redotpay: {
         title: "RedotPay",
@@ -1179,6 +1179,15 @@ async function verifyPlayerAccount() {
     const game = currentModalItem.gameKey;
     const uid = uidEl.value.trim().replace(/^@/, '');
     const zoneId = zoneIdEl ? zoneIdEl.value.trim() : '';
+    // Race guard: capture which modal session and inputs this request
+    // belongs to. If the modal was closed/reopened for another item, or
+    // the customer edited the ID/zone while the lookup is in flight, the
+    // late result must be discarded instead of written into the new
+    // modal (a stale verified name on a different purchase = misdelivery).
+    const reqItem = currentModalItem;
+    const stillCurrent = () => currentModalItem === reqItem
+        && uidEl.value.trim().replace(/^@/, '') === uid
+        && (zoneIdEl ? zoneIdEl.value.trim() : '') === zoneId;
 
     if (!uid) return showToast('أدخل المعرف أو اسم المستخدم أولاً!', 'error');
 
@@ -1195,6 +1204,7 @@ async function verifyPlayerAccount() {
     try {
         const response = await fetch(`${DENO_API_URL}${query}`);
         const data = await response.json();
+        if (!stillCurrent()) return;
         const retrievedName = data.username || data.name || (data.data && (data.data.username || data.data.name));
         const avatarUrl = data.avatar || data.avatar_url;
 
@@ -1216,6 +1226,7 @@ async function verifyPlayerAccount() {
             }
         }
     } catch (err) {
+        if (!stillCurrent()) return;
         if (statusBox) {
             statusBox.className = "p-2.5 rounded-xl text-xs font-bold text-center border bg-amber-500/20 border-amber-500/50 text-amber-300";
             statusBox.innerText = "⚠️ تعذر الفحص اللحظي، يمكنك كتابة اسم حسابك يدوياً وإتمام طلبك مباشرة.";
@@ -1583,7 +1594,18 @@ function handleLogin(e) {
         }).catch(() => showToast('تعذّر الاتصال بالسيرفر', 'error'));
 }
 
-function handleLogout() {
+async function handleLogout() {
+    // End the real Supabase session first (local scope clears its stored
+    // tokens); only then clear the display record. A sign-out error is
+    // handled here so the local cleanup below always runs and the user
+    // is never trapped in a half-logged-out state.
+    try {
+        const c = await __sbClient();
+        const res = await c.auth.signOut({ scope: 'local' });
+        if (res && res.error) console.warn('signOut error:', res.error.message || res.error);
+    } catch (e) {
+        console.warn('signOut failed:', e);
+    }
     localStorage.removeItem(SESSION_STORAGE_KEY);
     updateNavbarAuthUI();
     showToast('تم الخروج');
