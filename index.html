@@ -892,6 +892,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
    var timer = null;
    function startRot(){
     if (timer) return;
+    // Never (re)start while the pointer is over the slider or focus is
+    // inside it: a mouseleave or focusout on its own must not resume
+    // rotation while the other is still engaged.
+    if (hero && (hero.matches(':hover') || hero.contains(document.activeElement))) return;
     if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     timer = setInterval(function(){ show(cur + 1); }, 5000);
    }
