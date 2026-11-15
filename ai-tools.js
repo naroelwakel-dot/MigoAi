@@ -12,7 +12,7 @@ const aiProducts = [
         id: 'ai_claude',
         name: 'Claude AI',
         tag: 'اشتراكات Claude الرسمية',
-        banner: 'https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/426e107c076a407fbd71e30b58253a4c.webp',
+        banner: 'images/ai/ai_claude.webp', bannerAnim: 'images/ai/ai_claude-anim.webp',
         desc: 'حساب خاص مفعل على بريدك وبدون VPN.',
         packages: [
             { id: 'ai_claude_pro', name: 'Claude AI Pro — شهر واحد — 1,200 ج.م', duration: 'شهر واحد', price: 1200 },
@@ -29,7 +29,7 @@ const aiProducts = [
         tag: 'مساعد البرمجة الذكي',
         price: 420,
         desc: 'إكمال الأكواد البرمجية وتحليل الأخطاء داخل VS Code مباشرة',
-        banner: 'https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/3b735527a5844778974045ab874df82d.webp'
+        banner: 'images/ai/ai_github_copilot.webp', bannerAnim: 'images/ai/ai_github_copilot-anim.webp'
     },
     {
         id: 'ai_cursor_pro',
@@ -37,7 +37,7 @@ const aiProducts = [
         tag: 'محرر المبرمجين الذكي',
         price: 1250,
         desc: 'أقوى IDE برمجي مدعوم بالذكاء الاصطناعي لكتابة المشاريع',
-        banner: 'https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/a3c38bca963340b3b51d4b37b1af2b94.webp'
+        banner: 'images/ai/ai_cursor_pro.webp', bannerAnim: 'images/ai/ai_cursor_pro-anim.webp'
     },
     {
         id: 'ai_chatgpt',
@@ -45,7 +45,7 @@ const aiProducts = [
         tag: 'GPT-4o الأصلي',
         price: 753,
         desc: 'حساب مفعل بكامل مميزات التحليل، التصفح وتوليد الصور DALL-E',
-        banner: 'https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/0c5495ee7e1a46dfaecb148c54a00434.webp'
+        banner: 'images/ai/ai_chatgpt.webp', bannerAnim: 'images/ai/ai_chatgpt-anim.webp'
     },
     {
         id: 'ai_perplexity_pro',
@@ -53,7 +53,7 @@ const aiProducts = [
         tag: 'محرك البحث الذكي',
         price: 739,
         desc: 'بحث علمي وتحليلي متقدم مع Claude 3.5 و GPT-4o',
-        banner: 'https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/a538c65958974b6d828bd4dbd95e1368.webp'
+        banner: 'images/ai/ai_perplexity_pro.webp', bannerAnim: 'images/ai/ai_perplexity_pro-anim.webp'
     },
     {
         id: 'ai_super_grok',
@@ -61,7 +61,7 @@ const aiProducts = [
         tag: 'إيلون ماسك الذكي',
         price: 980,
         desc: 'اشتراك رسمي في أقوى نماذج Grok غير المقيدة',
-        banner: 'https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/d81dc9d8454d4dda94f02554938eff8f.webp'
+        banner: 'images/ai/ai_super_grok.webp'
     },
 
     // الصوت، الموسيقى، والصور
@@ -69,7 +69,7 @@ const aiProducts = [
         id: 'ai_midjourney',
         name: 'Midjourney',
         tag: 'توليد الصور الاحترافي',
-        banner: 'https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/3fff22b57d544d70b9b6626c13f8de5a.webp',
+        banner: 'images/ai/ai_midjourney.webp', bannerAnim: 'images/ai/ai_midjourney-anim.webp',
         desc: 'اشتراكات Midjourney الرسمية لتوليد الصور بالذكاء الاصطناعي.',
         packages: [
             { id: 'ai_midjourney_std', name: 'Midjourney Standard — 1,850 ج.م', duration: 'Standard (Fast + Relax)', price: 1850 },
@@ -82,7 +82,7 @@ const aiProducts = [
         tag: 'إنتاج الأغاني والموسيقى',
         price: 620,
         desc: '2,500 نقطة (500 أغنية) مع حقوق الملكية التجارية الكاملة',
-        banner: 'https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/4c466132f5fd45d88c66c1964eaeae06.webp'
+        banner: 'images/ai/ai_suno_pro.webp', bannerAnim: 'images/ai/ai_suno_pro-anim.webp'
     },
     {
         id: 'ai_elevenlabs',
@@ -90,7 +90,7 @@ const aiProducts = [
         tag: 'دوبلاج وأصوات AI',
         price: 1350,
         desc: '100,000 حرف شهرياً واستنساخ الأصوات بدقة بشرية فائقة',
-        banner: 'https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/59f5459c296e452f84f89221a6710bb0.webp'
+        banner: 'images/ai/ai_elevenlabs.webp', bannerAnim: 'images/ai/ai_elevenlabs-anim.webp'
     },
     {
         id: 'ai_muse',
@@ -98,7 +98,7 @@ const aiProducts = [
         tag: 'توليد ومونتاج ذكي',
         price: 140,
         desc: 'حساب كامل مخصص للإنتاج المرئي',
-        banner: 'https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/e0bfa26052b34b9dac48ad9ddf27f9bd.webp'
+        banner: 'images/ai/ai_muse.webp'
     },
 
     // عائلة جوجل (Google Gemini)
@@ -106,7 +106,7 @@ const aiProducts = [
         id: 'gemini_pro',
         name: 'Google Gemini Pro',
         tag: 'عرض حصري ⚡',
-        banner: 'https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/3877020788eb48a5b396a132b3557613.webp',
+        banner: 'images/ai/gemini_pro.webp', bannerAnim: 'images/ai/gemini_pro-anim.webp',
         desc: 'اشتراك رسمي متكامل مع وصول دائم لأحدث النماذج المتقدمة.',
         packages: [
             { id: 'gemini_18m', name: 'Gemini AI Pro — 18 شهر — 281 ج.م', duration: '18 شهر', price: 281 },
@@ -120,7 +120,7 @@ const aiProducts = [
         id: 'capcut_pro',
         name: 'CapCut Pro + AI',
         tag: 'مونتاج وذكاء اصطناعي 🎬',
-        banner: 'https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/3639cc0b839d4d58b1ad69ad03cebee7.webp',
+        banner: 'images/ai/capcut_pro.webp', bannerAnim: 'images/ai/capcut_pro-anim.webp',
         desc: 'مونتاج فيديو احترافي، إزالة خلفيات، وفلاتر ذكية بلا حدود.',
         packages: [
             { id: 'capcut_7d', name: '7 أيام — 62 ج.م', duration: '7 أيام', price: 62 },
@@ -132,7 +132,7 @@ const aiProducts = [
         id: 'lovable_pro',
         name: 'Lovable Pro Lite',
         tag: 'تطوير ويب بالذكاء 💻',
-        banner: 'https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/60683dab26674918814fd96a6111f7e5.webp',
+        banner: 'images/ai/lovable_pro.webp', bannerAnim: 'images/ai/lovable_pro-anim.webp',
         desc: 'بناء وتطوير تطبيقات ومواقع كاملة عبر الأوامر النصية المباشرة.',
         packages: [
             { id: 'lovable_12m', name: '12 شهر (سنة) — 608 ج.م', duration: 'سنة واحدة', price: 608 }
@@ -142,7 +142,7 @@ const aiProducts = [
         id: 'framer_ai',
         name: 'Framer AI',
         tag: 'تصميم مواقع تفاعلية 🌐',
-        banner: 'https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/1b36089fafa84c2e87c17801dd8a69a5.webp',
+        banner: 'images/ai/framer_ai.webp', bannerAnim: 'images/ai/framer_ai-anim.webp',
         desc: 'تصميم ونشر مواقع ويب حديثة وسريعة الاستجابة بالذكاء الاصطناعي.',
         packages: [
             { id: 'framer_1y', name: 'سنة واحدة (Framer AI 1Y) — 439 ج.م', duration: 'سنة واحدة', price: 439 }
@@ -156,7 +156,7 @@ const aiProducts = [
         id: 'ai_api_claude',
         name: 'API Claude Tokens',
         tag: 'مفاتيح Claude للمطورين',
-        banner: 'https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/426e107c076a407fbd71e30b58253a4c.webp',
+        banner: 'images/ai/ai_api_claude.webp', bannerAnim: 'images/ai/ai_api_claude-anim.webp',
         desc: 'مفاتيح API رسمية تُسلَّم فوراً ومخصصة للبرمجة.',
         packages: [
             { id: 'ai_api_claude10', name: '10M Tokens — 75 ج.م', duration: 'يومي', price: 75 },
@@ -168,7 +168,7 @@ const aiProducts = [
         id: 'ai_api_codex',
         name: 'API CODEX Tokens',
         tag: 'مفاتيح CODEX للمطورين',
-        banner: 'https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/0c5495ee7e1a46dfaecb148c54a00434.webp',
+        banner: 'images/ai/ai_api_codex.webp', bannerAnim: 'images/ai/ai_api_codex-anim.webp',
         desc: 'مفاتيح API مخصصة لمحررات الأكواد والمطورين.',
         packages: [
             { id: 'ai_api_codex10', name: '10M Tokens — 75 ج.م', duration: 'يومي', price: 75 },
@@ -214,6 +214,18 @@ if (typeof subscriptionsData !== 'undefined' && Array.isArray(subscriptionsData)
 
   var CDN = 'https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/';
 
+  window.playBgAnim = function (el) {
+    if (!el) return;
+    var animUrl = el.getAttribute('data-anim');
+    if (!animUrl) return;
+    el.removeAttribute('data-anim');
+    el.style.backgroundImage = 'url(\'' + animUrl + '\')';
+    var badge = el.querySelector('.migo-anim-badge');
+    if (badge) badge.remove();
+  };
+
+  var ANIM_BADGE = '<span class="migo-anim-badge" style="position:absolute;inset-inline-end:8px;bottom:8px;z-index:30;width:30px;height:30px;border-radius:9999px;background:rgba(11,13,17,.72);border:1px solid #F2B53D;color:#F3CF6B;display:flex;align-items:center;justify-content:center;font-size:12px;line-height:1;pointer-events:none;backdrop-filter:blur(4px)">\u25B6</span>';
+
   function cardHtml(a) {
     var pkgs = a.packages || [{ name: a.tag || a.name, price: a.price, duration: a.tag }];
     var p0 = calculateAutoPrice(pkgs[0].price);
@@ -222,7 +234,7 @@ if (typeof subscriptionsData !== 'undefined' && Array.isArray(subscriptionsData)
       return '<option value="' + i + '" data-price="' + pkg.price + '">' + pkg.name + '</option>';
     }).join('');
     return '<div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg">' +
-      '<div class="h-28 sm:h-32 relative bg-cover bg-center" style="background-image: url(\'' + banner + '\');">' +
+      '<div class="h-28 sm:h-32 relative bg-cover bg-center" style="background-image: url(\'' + banner + '\');" ' + (a.bannerAnim ? 'data-anim="' + a.bannerAnim + '" onclick="playBgAnim(this)"' : '') + '>' + (a.bannerAnim ? ANIM_BADGE : '') +
         '<div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent p-3 flex flex-col justify-between">' +
           '<span class="text-[9px] bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 px-2.5 py-0.5 rounded-full font-bold w-fit">' + (a.badge || a.tag || 'API') + '</span>' +
           '<h3 class="font-extrabold text-sm sm:text-base text-white drop-shadow-md">' + a.name + '</h3>' +
