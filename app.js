@@ -1014,7 +1014,9 @@ function calculateSMMCost() {
     const srv = getCurrentSMMService();
     if (!srv) return 0;
     const qtyInp = document.getElementById('smmQtyInput');
-    const qty = Math.max(srv.min, parseFloat(qtyInp ? qtyInp.value : srv.min) || srv.min);
+    const qtyRawC = qtyInp ? String(qtyInp.value).trim() : '';
+    const qtyParsedC = /^\d+$/.test(qtyRawC) ? parseInt(qtyRawC, 10) : NaN;
+    const qty = Math.max(srv.min, Number.isNaN(qtyParsedC) ? srv.min : qtyParsedC);
     
     const adjustedSmmPrice = smmUnitPrice(srv.pricePer1k);
     const totalEGP = Math.round(((qty / 1000) * adjustedSmmPrice) * 100) / 100;
@@ -1028,11 +1030,12 @@ function addSMMToCart() {
     const linkInp = document.getElementById('smmLinkInput');
     const qtyInp = document.getElementById('smmQtyInput');
     const link = linkInp ? linkInp.value.trim() : '';
-    const qty = qtyInp ? parseFloat(qtyInp.value) : 0;
+    const qtyRaw = qtyInp ? String(qtyInp.value).trim() : '';
+    const qty = /^\d+$/.test(qtyRaw) ? parseInt(qtyRaw, 10) : NaN;
     const srv = getCurrentSMMService();
     if (!srv) return;
     if (!link) return showToast('أدخل الرابط أولاً', 'error');
-    if (qty < srv.min || qty > srv.max) return showToast(`الكمية يجب أن تكون بين ${srv.min} و ${srv.max}`, 'error');
+    if (!Number.isInteger(qty) || qty < srv.min || qty > srv.max) return showToast(`الكمية يجب أن تكون بين ${srv.min} و ${srv.max}`, 'error');
     
     addToCart({ 
         id: 'smm_' + srv.id, 
@@ -1048,11 +1051,12 @@ function expressCheckoutSMM() {
     const linkInp = document.getElementById('smmLinkInput');
     const qtyInp = document.getElementById('smmQtyInput');
     const link = linkInp ? linkInp.value.trim() : '';
-    const qty = qtyInp ? parseFloat(qtyInp.value) : 0;
+    const qtyRaw = qtyInp ? String(qtyInp.value).trim() : '';
+    const qty = /^\d+$/.test(qtyRaw) ? parseInt(qtyRaw, 10) : NaN;
     const srv = getCurrentSMMService();
     if (!srv) return;
     if (!link) return showToast('أدخل الرابط أولاً', 'error');
-    if (qty < srv.min || qty > srv.max) return showToast(`الكمية يجب أن تكون بين ${srv.min} و ${srv.max}`, 'error');
+    if (!Number.isInteger(qty) || qty < srv.min || qty > srv.max) return showToast(`الكمية يجب أن تكون بين ${srv.min} و ${srv.max}`, 'error');
     
     const cost = calculateSMMCost();
     const item = { 
