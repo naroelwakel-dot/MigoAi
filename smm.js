@@ -10,7 +10,7 @@ const vccData = [
     name: "بطاقة VCC دولية (فيزا افتراضية)",
     balanceUsd: "حسب الطلب",
     priceEgp: 620,
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/725a5c22417b46109c5aa8a54e93f762.webp",
+    banner: "images/smm/vcc.webp", bannerAnim: "images/smm/vcc-anim.webp",
     badge: "تفعيل فوري 💳",
     description: "بطاقة فيزا افتراضية دولية تُفعّل الاشتراكات والحملات الإعلانية والشراء من المواقع العالمية، بالجنيه المصري مع كود التحقق 3DS.",
     packages: [
@@ -29,7 +29,7 @@ const smmPlatforms = [
     id: "tiktok",
     name: "تيك توك (TikTok)",
     icon: "fab fa-tiktok",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/8487df546d17404b8189206a03d8cf81.webp",
+    banner: "images/smm/tiktok.webp", bannerAnim: "images/smm/tiktok-anim.webp",
     services: [
       {
         id: "2410",
@@ -77,7 +77,7 @@ const smmPlatforms = [
     id: "facebook",
     name: "فيسبوك (Facebook)",
     icon: "fab fa-facebook",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/e519b9e2348340d5b51cae0c2882345b.webp",
+    banner: "images/smm/facebook.webp", bannerAnim: "images/smm/facebook-anim.webp",
     services: [
       {
         id: "3101",
@@ -105,7 +105,7 @@ const smmPlatforms = [
     id: "instagram",
     name: "انستقرام (Instagram)",
     icon: "fab fa-instagram",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/4918fadac99c466faf761ddb2740c7a0.webp",
+    banner: "images/smm/instagram.webp", bannerAnim: "images/smm/instagram-anim.webp",
     services: [
       {
         id: "4101",
@@ -133,7 +133,7 @@ const smmPlatforms = [
     id: "youtube",
     name: "يوتيوب (YouTube)",
     icon: "fab fa-youtube",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/9a65ee2605ef4565a843042aa11835fa.webp",
+    banner: "images/smm/youtube.webp", bannerAnim: "images/smm/youtube-anim.webp",
     services: [
       {
         id: "5101",
@@ -161,7 +161,7 @@ const smmPlatforms = [
     id: "telegram",
     name: "تليجرام (Telegram)",
     icon: "fab fa-telegram",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/bc68344c93cc434180f1f241b56b6a60.webp",
+    banner: "images/smm/telegram.webp",
     services: [
       {
         id: "6101",
@@ -189,7 +189,7 @@ const smmPlatforms = [
     id: "twitter",
     name: "إكس / تويتر (Twitter / X)",
     icon: "fab fa-x-twitter",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/30be0b7cfe4048258b19055277e1d3c4.webp",
+    banner: "images/smm/twitter.webp",
     services: [
       {
         id: "7101",
@@ -217,7 +217,7 @@ const smmPlatforms = [
     id: "snapchat",
     name: "سناب شات (Snapchat)",
     icon: "fab fa-snapchat",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/06995d0dd75944f3821b18d73299e97e.webp",
+    banner: "images/smm/snapchat.webp", bannerAnim: "images/smm/snapchat-anim.webp",
     services: [
       {
         id: "8101",
@@ -235,7 +235,7 @@ const smmPlatforms = [
     id: "twitch",
     name: "تويتش (Twitch)",
     icon: "fab fa-twitch",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/04ca90beea9d4b21bb9b7ab509273669.webp",
+    banner: "images/smm/twitch.webp", bannerAnim: "images/smm/twitch-anim.webp",
     services: [
       {
         id: "9101",
@@ -253,7 +253,7 @@ const smmPlatforms = [
     id: "kwai",
     name: "كواي (Kwai)",
     icon: "fas fa-video",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/b7353ef3ba1a484ea0a4e33b3bf81f69.webp",
+    banner: "images/smm/kwai.webp", bannerAnim: "images/smm/kwai-anim.webp",
     services: [
       {
         id: "10101",
@@ -271,7 +271,7 @@ const smmPlatforms = [
     id: "linkedin",
     name: "لينكد إن (LinkedIn)",
     icon: "fab fa-linkedin",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/8d35775695454c98a3f13521638940a5.webp",
+    banner: "images/smm/linkedin.webp", bannerAnim: "images/smm/linkedin-anim.webp",
     services: [
       {
         id: "11101",
@@ -289,7 +289,7 @@ const smmPlatforms = [
     id: "discord",
     name: "ديسكورد (Discord)",
     icon: "fab fa-discord",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/5a2ca3a143604ec69fa1c2a0e6ee8f7b.webp",
+    banner: "images/smm/discord.webp", bannerAnim: "images/smm/discord-anim.webp",
     services: [
       {
         id: "12101",
@@ -307,7 +307,7 @@ const smmPlatforms = [
     id: "spotify_smm",
     name: "سبوتيفاي (Spotify)",
     icon: "fab fa-spotify",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/8826fb4260be49efa12745bd00d181b0.webp",
+    banner: "images/smm/spotify_smm.webp", bannerAnim: "images/smm/spotify_smm-anim.webp",
     services: [
       {
         id: "13101",
@@ -325,7 +325,7 @@ const smmPlatforms = [
     id: "soundcloud",
     name: "ساوند كلاود (SoundCloud)",
     icon: "fab fa-soundcloud",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/5ff451b5ae9c4b989cfea84a583ae538.webp",
+    banner: "images/smm/soundcloud.webp", bannerAnim: "images/smm/soundcloud-anim.webp",
     services: [
       {
         id: "14101",
@@ -343,7 +343,7 @@ const smmPlatforms = [
     id: "pinterest",
     name: "بينترست (Pinterest)",
     icon: "fab fa-pinterest",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/1d4bebb86cab461880de93e17ab58834.webp",
+    banner: "images/smm/pinterest.webp", bannerAnim: "images/smm/pinterest-anim.webp",
     services: [
       {
         id: "15101",
@@ -361,7 +361,7 @@ const smmPlatforms = [
     id: "threads",
     name: "ثريدز (Threads)",
     icon: "fas fa-at",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/11c8d91179df4d3498aefbb1cd1ef0ae.webp",
+    banner: "images/smm/threads.webp",
     services: [
       {
         id: "16101",
@@ -379,7 +379,7 @@ const smmPlatforms = [
     id: "reddit",
     name: "ريديت (Reddit)",
     icon: "fab fa-reddit",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/07563f9f07a041b19c62a65c9a815a9c.webp",
+    banner: "images/smm/reddit.webp", bannerAnim: "images/smm/reddit-anim.webp",
     services: [
       {
         id: "17101",
@@ -397,7 +397,7 @@ const smmPlatforms = [
     id: "kick",
     name: "كيك (Kick)",
     icon: "fas fa-play-circle",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/d43882fe6d814a219cdeebc4cbbb6061.webp",
+    banner: "images/smm/kick.webp", bannerAnim: "images/smm/kick-anim.webp",
     services: [
       {
         id: "18101",
@@ -415,7 +415,7 @@ const smmPlatforms = [
     id: "trovo",
     name: "تروفو (Trovo)",
     icon: "fas fa-gamepad",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/fc2613091ff6480aaaa64d29a6e52cb5.webp",
+    banner: "images/smm/trovo.webp", bannerAnim: "images/smm/trovo-anim.webp",
     services: [
       {
         id: "19101",
@@ -433,7 +433,7 @@ const smmPlatforms = [
     id: "whatsapp",
     name: "واتساب (WhatsApp)",
     icon: "fab fa-whatsapp",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/ace79d94ca724d648384c8c51698a632.webp",
+    banner: "images/smm/whatsapp.webp", bannerAnim: "images/smm/whatsapp-anim.webp",
     services: [
       { id: "3159", name: "اعضاء قناه واتساب [ اعضاء من جميع العالم ][ أعضاء حقيقيين 100% ][ سريعه ] لا توجد اعاده تعبئه", category: "أعضاء", pricePer1k: 63.72, min: 1000, max: 10000, speed: "سريع ⚡", description: "بدون ضمان ⚠️" },
       { id: "2794", name: "اعضاء قناة واتساب |🎯100% أعضاء حقيقيون |⚡السرعة +10 ألف/اليوم |🔥بداية فورية |✅30 يوم ضمان", category: "أعضاء", pricePer1k: 324.87, min: 1000, max: 500000, speed: "فوري ⚡", description: "مع ضمان ♻️" },
@@ -450,7 +450,7 @@ const smmPlatforms = [
     id: "googlemaps",
     name: "خرائط جوجل (Google Maps)",
     icon: "fas fa-map-marker-alt",
-    banner: "https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/aa21e7a1b45d4f6c8dfa9a1dd5b5a99c.gif",
+    banner: "images/smm/googlemaps.webp", bannerAnim: "images/smm/googlemaps-anim.webp",
     services: [
       { id: "2734", name: "تقييمات خرائط جوجل |🎯حسابات مصرية |📊تقييم 5 نجوم |⚡السرعة +10 /اليوم |✅بدون ضمان", category: "تقييمات", pricePer1k: 45000.0, min: 1000, max: 1000, speed: "⚡", description: "بدون ضمان ⚠️" },
       { id: "2735", name: "تقييمات خرائط جوجل |🎯حسابات مصرية |📊تقييم 5 نجوم + تعليقات مخصصة |⚡السرعة +10 /اليوم |✅بدون ضمان", category: "تعليقات", pricePer1k: 49500.0, min: 1000, max: 1000, speed: "⚡", description: "بدون ضمان ⚠️" },
