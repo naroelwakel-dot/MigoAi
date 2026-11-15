@@ -195,15 +195,6 @@ function triggerSocialProof() {
     setTimeout(triggerSocialProof, Math.floor(Math.random() * 30000) + 75000);
 }
 
-function initVisitorCounter() {
-    let count = localStorage.getItem('migo_visitors_v4');
-    if (!count) count = 1420 + Math.floor(Math.random() * 20);
-    else count = parseInt(count, 10) + 1;
-    localStorage.setItem('migo_visitors_v4', count);
-    const counterEl = document.getElementById('visitorCount');
-    if (counterEl) counterEl.innerText = Number(count).toLocaleString();
-}
-
 function loadCartFromStorage() {
     try { cart = JSON.parse(localStorage.getItem(CART_STORAGE_KEY)) || []; } catch (e) { cart = []; }
     updateCartUI();
@@ -1287,6 +1278,26 @@ function finalizeOrderWhatsApp() {
     window.location.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
 }
 
+// Arabic search normalization (BUG-001 fix): unify letter forms so colloquial
+// spellings match catalogue names (e.g. «ببجي» finds «بابجي موبايل»).
+function normalizeArabicSearch(s) {
+    return (s || '').toLowerCase()
+        .replace(/[\u064B-\u0652\u0640]/g, '')
+        .replace(/[إأآ]/g, 'ا')
+        .replace(/ة/g, 'ه')
+        .replace(/ى/g, 'ي')
+        .replace(/ؤ/g, 'و')
+        .replace(/ئ/g, 'ي')
+        .trim();
+}
+function searchMatch(name, query) {
+    var n = normalizeArabicSearch(name), q = normalizeArabicSearch(query);
+    if (!q) return false;
+    if (n.includes(q)) return true;
+    // Loose pass: drop long-vowel ا from both sides (ببجي <-> بابجي).
+    return n.replace(/ا/g, '').includes(q.replace(/ا/g, ''));
+}
+
 function handleLiveSearch(query) {
     const dropdown = document.getElementById('searchResultsDropdown');
     if (!dropdown) return;
@@ -1297,7 +1308,7 @@ function handleLiveSearch(query) {
     
     if (typeof gamesData !== 'undefined') {
         gamesData.forEach(g => {
-            if (g.name.toLowerCase().includes(query)) {
+            if (searchMatch(g.name, query)) {
                 g.packages.forEach(pkg => results.push({ name: `${g.name} (${pkg.name})`, price: calculateAutoPrice(pkg.price), type: 'game', key: g.id, pkg: pkg.name }));
             }
         });
@@ -1305,7 +1316,7 @@ function handleLiveSearch(query) {
 
     if (typeof liveCoinsData !== 'undefined') {
         liveCoinsData.forEach(app => {
-            if (app.name.toLowerCase().includes(query)) {
+            if (searchMatch(app.name, query)) {
                 app.packages.forEach(pkg => results.push({ name: `${app.name} (${pkg.name})`, price: calculateAutoPrice(pkg.price), type: 'live', key: app.id, pkg: pkg.name }));
             }
         });
@@ -1314,7 +1325,7 @@ function handleLiveSearch(query) {
     if (typeof tiktokCoinsList !== 'undefined') {
         const ttPkgs = tiktokCoinsList.packages || tiktokCoinsList;
         ttPkgs.forEach(c => {
-            if (`تيك توك كوينز tiktok ${c.coins}`.toLowerCase().includes(query)) {
+            if (searchMatch(`تيك توك كوينز tiktok ${c.coins}`, query)) {
                 results.push({ name: `تيك توك (${c.coins} عملة)`, price: calculateAutoPrice(c.price), type: 'coin_tiktok', coins: c.coins });
             }
         });
@@ -1323,7 +1334,7 @@ function handleLiveSearch(query) {
     if (typeof telegramStarsList !== 'undefined') {
         const tgPkgs = telegramStarsList.packages || telegramStarsList;
         tgPkgs.forEach(s => {
-            if (`تليجرام نجوم telegram ${s.stars}`.toLowerCase().includes(query)) {
+            if (searchMatch(`تليجرام نجوم telegram ${s.stars}`, query)) {
                 results.push({ name: `تليجرام (${s.stars} نجمة)`, price: calculateAutoPrice(s.price), type: 'coin_tg', stars: s.stars });
             }
         });
@@ -1331,7 +1342,7 @@ function handleLiveSearch(query) {
 
     if (typeof smmPlatforms !== 'undefined') {
         smmPlatforms.forEach(p => {
-            if (p.name.toLowerCase().includes(query)) {
+            if (searchMatch(p.name, query)) {
                 p.services.forEach(srv => {
                     results.push({ name: `${p.name} - ${srv.name}`, price: smmUnitPrice(srv.pricePer1k), type: 'smm', platformId: p.id });
                 });
@@ -1341,7 +1352,7 @@ function handleLiveSearch(query) {
 
     if (typeof subscriptionsData !== 'undefined') {
         subscriptionsData.forEach(sub => {
-            if (sub.name.toLowerCase().includes(query) || (sub.description && sub.description.toLowerCase().includes(query))) {
+            if (searchMatch(sub.name, query) || (sub.description && searchMatch(sub.description, query))) {
                 results.push({ name: sub.name, price: calculateAutoPrice(sub.packages[0].price), type: 'sub', id: sub.id });
             }
         });
@@ -1349,7 +1360,7 @@ function handleLiveSearch(query) {
 
     if (typeof vccData !== 'undefined') {
         vccData.forEach(v => {
-            if (v.name.toLowerCase().includes(query)) {
+            if (searchMatch(v.name, query)) {
                 results.push({ name: v.name, price: calculateAutoPrice(v.priceEgp), type: 'vcc', id: v.id });
             }
         });
@@ -1542,7 +1553,6 @@ function renderStoreSections(force) {
     var first = !__migoStoreRendered;
     __migoStoreRendered = true;
     try { updateNavbarAuthUI(); } catch (e) {}
-    if (first) { try { initVisitorCounter(); } catch (e) {} }
     try { loadCartFromStorage(); } catch (e) {}
     try { renderCoinsAndStars(); } catch (e) {}
     try { renderLiveApps(); } catch (e) {}
@@ -1567,7 +1577,7 @@ if (document.readyState === 'loading') {
 window.addEventListener('load', function() {
     // Re-render once everything (including the data modules) has loaded, so no section
     // is left empty if its data file finished after app.js ran. innerHTML replaces, so
-    // running the render functions twice is safe; the visitor counter only runs once.
+    // running the render functions twice is safe.
     renderStoreSections(true);
 
     setInterval(() => {
