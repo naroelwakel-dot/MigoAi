@@ -14,7 +14,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <link rel="preload" as="style" href="site.css?v=2026-11-01-8">
   <meta name="title" content="Migo AI Solution | شحن ألعاب بالـ ID وكوينز تيك توك وبطاقات VCC">
   <meta name="description" content="منصة متكاملة للشحن الفوري للألعاب بالـ ID، كوينز تيك توك ونجوم تليجرام، بطاقات VCC دولية، واشتراكات الذكاء الاصطناعي والسوشيال ميديا بالجنيه المصري مع تسليم فوري ودعم مباشر.">
-  <link rel="canonical" href="https://naroelwakel-dot.github.io/MigoAi/">
+  <link rel="canonical" href="https://migoai.shop/">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">
   <meta name="theme-color" content="#0b0d11">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -23,7 +23,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <meta property="og:locale" content="ar_EG">
   <meta property="og:title" content="Migo AI Solution | شحن ألعاب بالـ ID وكوينز تيك توك وبطاقات VCC">
   <meta property="og:description" content="شحن فوري بالـ ID للألعاب، كوينز تيك توك ونجوم تليجرام، بطاقات VCC دولية، واشتراكات الذكاء الاصطناعي بالجنيه المصري.">
-  <meta property="og:url" content="https://naroelwakel-dot.github.io/MigoAi/">
+  <meta property="og:url" content="https://migoai.shop/">
   <meta property="og:image" content="https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/4168a8ff4e4e482483a546ad02c8b7f3.jpg">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Migo AI Solution | شحن ألعاب بالـ ID وكوينز تيك توك وبطاقات VCC">
@@ -36,7 +36,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     "@context": "https://schema.org",
     "@type": "WebSite",
     "name": "MigoAi",
-    "url": "https://naroelwakel-dot.github.io/MigoAi/",
+    "url": "https://migoai.shop/",
     "description": "منصة رقمية متكاملة تقدم أدوات برمجية، APIs، توكنز، واشتراكات ألعاب رقمية.",
     "inLanguage": "ar"
   }
@@ -60,7 +60,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     "@context": "https://schema.org",
     "@type": "Organization",
     "name": "Migo AI Solution",
-    "url": "https://naroelwakel-dot.github.io/MigoAi/",
+    "url": "https://migoai.shop/",
     "sameAs": ["https://www.facebook.com/share/1EmHemdAPw/"],
     "areaServed": "EG",
     "currenciesAccepted": "EGP, USD",
@@ -552,6 +552,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <footer class="border-t border-white/10 mt-12 py-8 text-center text-xs text-slate-400 font-mono-code">
    <p>© 2026 Migo AI Solution. All Core Systems Operational.</p>
    <p style="margin-top:8px"><a href="blog.html" style="color:#60a5fa">الأدلة والمقالات</a> &nbsp;·&nbsp; <a href="catalog.html" style="color:#60a5fa">تصفح المتجر</a></p>
+   <p style="margin-top:6px"><a href="privacy.html" style="color:#94a3b8">سياسة الخصوصية</a> &nbsp;·&nbsp; <a href="terms.html" style="color:#94a3b8">شروط الاستخدام</a> &nbsp;·&nbsp; <a href="refund.html" style="color:#94a3b8">سياسة الاسترجاع</a> &nbsp;·&nbsp; <a href="contact.html" style="color:#94a3b8">تواصل معانا</a></p>
   </footer>
   <!-- VCC Custom Request Modal -->
   <div id="vccModal" class="fixed inset-0 bg-black/80 backdrop-blur-xl z-[90] hidden items-center justify-center p-3">
@@ -651,10 +652,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
      </div>
     </div>
     <div class="pt-3 border-t border-white/10 mt-4 text-center">
-     <div class="bg-[#0b0d11] border border-white/10 rounded-xl p-2.5 mb-2.5 text-xs flex justify-between items-center font-mono-code">
-        <span class="text-slate-400">VISITOR LOGS:</span>
-        <span id="dynamicVisitorCount" class="text-white font-bold">45,280</span>
-     </div>
      <button type="button" onclick="toggleSidebar(); openAuthModal('login');" class="w-full sky-btn py-2 text-xs cursor-pointer font-mono-code">ACCOUNT ACCESS</button>
     </div>
    </aside>
@@ -804,19 +801,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   </div>
   <!-- Operational Core Scripts -->
   <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        let visitors = localStorage.getItem("migo_visitor_count");
-        if (!visitors) {
-            visitors = 45280;
-        } else {
-            visitors = parseInt(visitors) + 1;
-        }
-        localStorage.setItem("migo_visitor_count", visitors);
-        const counterEl = document.getElementById("dynamicVisitorCount");
-        if (counterEl) {
-            counterEl.innerText = visitors.toLocaleString();
-        }
-    });
     /* Binance QR: install AFTER app.js loads, otherwise app.js's own
        selectPaymentMethod declaration overwrites this wrapper. */
     window.__installBinanceQr = function() {
