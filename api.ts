@@ -59,11 +59,23 @@ const UA =
 async function fetchWithTimeout(url: string, options: RequestInit = {}, ms = 6000): Promise<Response> {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), ms);
+  let res: Response;
   try {
-    return await fetch(url, { ...options, signal: controller.signal });
-  } finally {
+    res = await fetch(url, { ...options, signal: controller.signal });
+  } catch (e) {
     clearTimeout(timeoutId);
+    throw e;
   }
+  if (!res.body) {
+    clearTimeout(timeoutId);
+    return res;
+  }
+  // Keep the timeout armed until the body has been fully read: a body that
+  // stalls mid-download must abort too, not hang the caller forever.
+  const body = res.body.pipeThrough(
+    new TransformStream({ flush: () => clearTimeout(timeoutId) }),
+  );
+  return new Response(body, res);
 }
 
 // Returns parsed JSON, or null on any error / non-JSON / HTML response.
