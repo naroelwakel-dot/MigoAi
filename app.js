@@ -1633,6 +1633,11 @@ function toggleVcc() {
     if (vp) vp.classList.toggle('hidden');
 }
 
+function toggleRates() {
+    const rp = document.getElementById('ratesPanel');
+    if (rp) rp.classList.toggle('hidden');
+}
+
 // رسم أقسام المتجر بمجرد تشغيل app.js (بيتنفذ بعد ملفات بيانات الأقسام بسبب async=false)،
 // بدل ما نستنى window.load اللي بيتأخر لحد ما كل الصور والخطوط تخلّص تحميل.
 var __migoStoreRendered = false;

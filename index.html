@@ -376,48 +376,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <h2 class="text-lg font-bold text-white mt-1">الذكاء الاصطناعي والـ APIs</h2>
       </div>
       <div id="aiCardsContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5"></div>
-      <!-- LLM Rates Architecture Container -->
-      <div class="sky-card p-4">
-        <div class="flex items-center justify-between border-b border-white/10 pb-2 mb-3">
-          <h3 class="font-bold text-xs text-slate-300 font-mono-code uppercase">TOKEN & MODEL RATES</h3>
-          <span class="text-[10px] text-slate-400 font-mono-code">Per 1M Tokens</span>
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3 font-mono-code text-xs">
-          <div class="bg-[#12151b] p-2.5 rounded-xl border border-white/10">
-            <span class="font-bold text-white block">Claude 3.7 Sonnet</span>
-            <span class="text-[11px] text-slate-400">In: 71 ج.م | Out: 355 ج.م</span>
-          </div>
-          <div class="bg-[#12151b] p-2.5 rounded-xl border border-white/10">
-            <span class="font-bold text-white block">GPT-4o</span>
-            <span class="text-[11px] text-slate-400">In: 71 ج.م | Out: 355 ج.م</span>
-          </div>
-          <div class="bg-[#12151b] p-2.5 rounded-xl border border-white/10">
-            <span class="font-bold text-white block">Gemini 2.5 Pro</span>
-            <span class="text-[11px] text-slate-400">In: 35.5 ج.م | Out: 213 ج.م</span>
-          </div>
-          <div class="bg-[#12151b] p-2.5 rounded-xl border border-white/10">
-            <span class="font-bold text-white block">DeepSeek R1</span>
-            <span class="text-[11px] text-slate-400">In: 17.7 ج.م | Out: 53.2 ج.م</span>
-          </div>
-        </div>
-        <div class="pt-2 border-t border-white/10">
-          <span class="text-xs font-semibold text-slate-300 block mb-2 font-mono-code">API CREDIT BUNDLES:</span>
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 font-mono-code">
-            <button onclick="expressCheckout({id: 'api_10', name: 'باقة المطور (10$ API)', type: 'api', price: 620, details: 'صلاحية دائمة بدون انتهاء'})" class="p-2.5 rounded-xl bg-[#12151b] border border-white/10 hover:border-white/30 text-center transition cursor-pointer">
-              <span class="text-xs text-slate-300 block">Starter (10$)</span>
-              <span class="text-xs font-bold text-white">620 ج.م</span>
-            </button>
-            <button onclick="expressCheckout({id: 'api_30', name: 'باقة المحترفين (30$ API)', type: 'api', price: 1860, details: '+5$ رصيد إضافي مجاني'})" class="p-2.5 rounded-xl bg-[#12151b] border border-white/10 hover:border-white/30 text-center transition cursor-pointer">
-              <span class="text-xs text-slate-300 block">Pro (30$)</span>
-              <span class="text-xs font-bold text-white">1,860 ج.م</span>
-            </button>
-            <button onclick="expressCheckout({id: 'api_125', name: 'باقة الشركات (125$ API)', type: 'api', price: 7750, details: '+25$ رصيد إضافي مجاني'})" class="p-2.5 rounded-xl bg-[#12151b] border border-white/10 hover:border-white/30 text-center transition cursor-pointer">
-              <span class="text-xs text-slate-300 block">Business (125$)</span>
-              <span class="text-xs font-bold text-white">7,750 ج.م</span>
-            </button>
-          </div>
-        </div>
-      </div>
     </section>
    </div>
    
@@ -564,6 +522,59 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
    </aside>
   </div>
+  <!-- Token & Model Rates Slide-Over Panel (moved out of sec-ai 2026-11-16, per owner) -->
+  <div id="ratesPanel" class="fixed inset-0 z-50 hidden">
+   <div onclick="toggleRates()" class="fixed inset-0 bg-black/80 backdrop-blur-md"></div>
+   <aside class="fixed top-0 right-0 h-full w-[42rem] max-w-[94vw] bg-[#12151b] border-l border-white/10 z-10 p-4 overflow-y-auto shadow-2xl custom-scrollbar">
+    <div class="flex justify-between items-center pb-3 border-b border-white/10">
+     <span class="font-bold text-white text-sm">💱 أسعار التوكن وباقات الـ API</span>
+     <button type="button" onclick="toggleRates()" aria-label="إغلاق" class="w-7 h-7 rounded-lg border border-white/10 text-slate-400 hover:text-white flex items-center justify-center cursor-pointer">✕</button>
+    </div>
+    <div class="pt-4">
+<div class="sky-card p-4">
+        <div class="flex items-center justify-between border-b border-white/10 pb-2 mb-3">
+          <h3 class="font-bold text-xs text-slate-300 font-mono-code uppercase">TOKEN & MODEL RATES</h3>
+          <span class="text-[10px] text-slate-400 font-mono-code">Per 1M Tokens</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-3 font-mono-code text-xs">
+          <div class="bg-[#12151b] p-2.5 rounded-xl border border-white/10">
+            <span class="font-bold text-white block">Claude 3.7 Sonnet</span>
+            <span class="text-[11px] text-slate-400">In: 71 ج.م | Out: 355 ج.م</span>
+          </div>
+          <div class="bg-[#12151b] p-2.5 rounded-xl border border-white/10">
+            <span class="font-bold text-white block">GPT-4o</span>
+            <span class="text-[11px] text-slate-400">In: 71 ج.م | Out: 355 ج.م</span>
+          </div>
+          <div class="bg-[#12151b] p-2.5 rounded-xl border border-white/10">
+            <span class="font-bold text-white block">Gemini 2.5 Pro</span>
+            <span class="text-[11px] text-slate-400">In: 35.5 ج.م | Out: 213 ج.م</span>
+          </div>
+          <div class="bg-[#12151b] p-2.5 rounded-xl border border-white/10">
+            <span class="font-bold text-white block">DeepSeek R1</span>
+            <span class="text-[11px] text-slate-400">In: 17.7 ج.م | Out: 53.2 ج.م</span>
+          </div>
+        </div>
+        <div class="pt-2 border-t border-white/10">
+          <span class="text-xs font-semibold text-slate-300 block mb-2 font-mono-code">API CREDIT BUNDLES:</span>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 font-mono-code">
+            <button onclick="expressCheckout({id: 'api_10', name: 'باقة المطور (10$ API)', type: 'api', price: 620, details: 'صلاحية دائمة بدون انتهاء'})" class="p-2.5 rounded-xl bg-[#12151b] border border-white/10 hover:border-white/30 text-center transition cursor-pointer">
+              <span class="text-xs text-slate-300 block">Starter (10$)</span>
+              <span class="text-xs font-bold text-white">620 ج.م</span>
+            </button>
+            <button onclick="expressCheckout({id: 'api_30', name: 'باقة المحترفين (30$ API)', type: 'api', price: 1860, details: '+5$ رصيد إضافي مجاني'})" class="p-2.5 rounded-xl bg-[#12151b] border border-white/10 hover:border-white/30 text-center transition cursor-pointer">
+              <span class="text-xs text-slate-300 block">Pro (30$)</span>
+              <span class="text-xs font-bold text-white">1,860 ج.م</span>
+            </button>
+            <button onclick="expressCheckout({id: 'api_125', name: 'باقة الشركات (125$ API)', type: 'api', price: 7750, details: '+25$ رصيد إضافي مجاني'})" class="p-2.5 rounded-xl bg-[#12151b] border border-white/10 hover:border-white/30 text-center transition cursor-pointer">
+              <span class="text-xs text-slate-300 block">Business (125$)</span>
+              <span class="text-xs font-bold text-white">7,750 ج.م</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+   </aside>
+  </div>
   <!-- Trust & Value Slide-Over Panel (moved out of the homepage flow 2026-11-16; opens from the drawer) -->
   <div id="trustPanel" class="fixed inset-0 z-50 hidden">
    <div onclick="toggleTrust()" class="fixed inset-0 bg-black/80 backdrop-blur-md"></div>
@@ -662,7 +673,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <a href="#sec-productivity" onclick="toggleSidebar()" class="group w-full px-3 py-2.5 rounded-xl text-slate-200 hover:text-white hover:bg-white/5 border border-transparent hover:border-[#f2b53d]/30 transition flex items-center justify-between gap-2 cursor-pointer"><span class="flex items-center gap-2.5"><span class="w-7 h-7 shrink-0 rounded-lg flex items-center justify-center" style="background:rgba(242,181,61,.13)"><i class="fa-solid fa-pen-ruler text-[12px]" style="color:#f3cf6b"></i></span><span class="text-[13px] font-medium">أدوات وبرامج المصممين</span></span></a>
       <a href="#sec-entertainment" onclick="toggleSidebar()" class="group w-full px-3 py-2.5 rounded-xl text-slate-200 hover:text-white hover:bg-white/5 border border-transparent hover:border-[#f2b53d]/30 transition flex items-center justify-between gap-2 cursor-pointer"><span class="flex items-center gap-2.5"><span class="w-7 h-7 shrink-0 rounded-lg flex items-center justify-center" style="background:rgba(242,181,61,.13)"><i class="fa-solid fa-clapperboard text-[12px]" style="color:#f3cf6b"></i></span><span class="text-[13px] font-medium">الترفيه والبث</span></span></a>
       <a href="#sec-ai" onclick="toggleSidebar()" class="group w-full px-3 py-2.5 rounded-xl text-slate-200 hover:text-white hover:bg-white/5 border border-transparent hover:border-[#f2b53d]/30 transition flex items-center justify-between gap-2 cursor-pointer"><span class="flex items-center gap-2.5"><span class="w-7 h-7 shrink-0 rounded-lg flex items-center justify-center" style="background:rgba(242,181,61,.13)"><i class="fa-solid fa-robot text-[12px]" style="color:#f3cf6b"></i></span><span class="text-[13px] font-medium">الذكاء الاصطناعي و الـ APIs</span></span></a>
-      <a href="catalog.html" class="group w-full px-3 py-2.5 rounded-xl text-slate-200 hover:text-white hover:bg-white/5 border border-transparent hover:border-[#f2b53d]/30 transition flex items-center justify-between gap-2 cursor-pointer"><span class="flex items-center gap-2.5"><span class="w-7 h-7 shrink-0 rounded-lg flex items-center justify-center" style="background:rgba(242,181,61,.13)"><i class="fa-solid fa-tags text-[12px]" style="color:#f3cf6b"></i></span><span class="text-[13px] font-medium">كل الأسعار والمنتجات</span></span><span class="text-[10px] font-mono-code px-1.5 py-0.5 rounded-md" style="color:#f3cf6b;background:rgba(242,181,61,.12)">Catalog</span></a>
+      <a href="javascript:void(0)" onclick="toggleSidebar(); toggleRates()" class="group w-full px-3 py-2.5 rounded-xl text-slate-200 hover:text-white hover:bg-white/5 border border-transparent hover:border-[#f2b53d]/30 transition flex items-center justify-between gap-2 cursor-pointer"><span class="flex items-center gap-2.5"><span class="w-7 h-7 shrink-0 rounded-lg flex items-center justify-center" style="background:rgba(242,181,61,.13)"><i class="fa-solid fa-microchip text-[12px]" style="color:#f3cf6b"></i></span><span class="text-[13px] font-medium">أسعار التوكن وباقات الـ API</span></span></a>
+      <a href="catalog.html" class="group w-full px-3 py-2.5 rounded-xl text-slate-200 hover:text-white hover:bg-white/5 border border-transparent hover:border-[#f2b53d]/30 transition flex items-center justify-between gap-2 cursor-pointer"><span class="flex items-center gap-2.5"><span class="w-7 h-7 shrink-0 rounded-lg flex items-center justify-center" style="background:rgba(242,181,61,.13)"><i class="fa-solid fa-tags text-[12px]" style="color:#f3cf6b"></i></span><span class="text-[13px] font-medium">كل الأسعار والمنتجات</span></span></a>
      </div>
      <div class="mt-4 text-[10px] font-bold tracking-widest" style="color:#f3cf6b">عن ميجو</div>
      <div class="mt-2 space-y-1">
@@ -866,7 +878,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- Dynamic Cache Busting Module -->
   <script>
     (function() {
-      const v = 'v=2026-11-16-5';
+      const v = 'v=2026-11-16-6';
       const files = ['games.js', 'live-coins.js', 'subscriptions.js', 'smm.js', 'ai-tools.js', 'app.js', 'search-ui.js'];
       function boot() {
         files.forEach(file => {
@@ -895,7 +907,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       function loadChat() {
         if (done) return; done = true;
         var s = document.createElement('script');
-        s.src = 'chat-widget.js?v=2026-11-16-5';
+        s.src = 'chat-widget.js?v=2026-11-16-6';
         s.async = true;
         document.body.appendChild(s);
       }
