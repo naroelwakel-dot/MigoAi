@@ -196,7 +196,9 @@
     #vccCardsContainer .sky-card > div:first-child,
     #productivityContainer .sky-card > div:first-child,
     #entertainmentCardsContainer .sky-card > div:first-child,
-    #aiCardsContainer .sky-card > div:first-child {
+    #aiCardsContainer .sky-card > div:first-child,
+    #tiktokCoinsGrid .sky-card > div:first-child,
+    #telegramStarsGrid .sky-card > div:first-child {
         height: auto !important;
         aspect-ratio: 21 / 9 !important;
         background-size: cover !important;
