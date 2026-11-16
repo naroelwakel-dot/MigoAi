@@ -62,37 +62,37 @@ const PAYMENT_METHODS_DATA = {
         title: "تمارة Tamara",
         type: "bnpl",
         text: "خدمة الشراء الآن والدفع لاحقاً عبر تمارة Tamara متاحة بالتقسيط المريح.",
-        notice: "(Contact me to get link)"
+        notice: "(تواصل معنا عبر واتساب للحصول على رابط إتمام الدفع)"
     },
     valu: {
         title: "فاليو valU",
         type: "bnpl",
         text: "خدمة تقسيط المشتريات عبر فاليو valu بدون دفعة أولى أو فوائد حسب خطتك.",
-        notice: "(Contact me to get link)"
+        notice: "(تواصل معنا عبر واتساب للحصول على رابط إتمام الدفع)"
     },
     souhoola: {
         title: "سهولة",
         type: "bnpl",
         text: "خدمة التقسيط عبر شركة سهولة Souhoola لجميع الباقات والخدمات.",
-        notice: "(Contact me to get link)"
+        notice: "(تواصل معنا عبر واتساب للحصول على رابط إتمام الدفع)"
     },
     tabby: {
         title: "تابي Tabby",
         type: "bnpl",
         text: "قسم مشترياتك على 4 دفعات بدون فوائد عبر تابي Tabby.",
-        notice: "(Contact me to get link)"
+        notice: "(تواصل معنا عبر واتساب للحصول على رابط إتمام الدفع)"
     },
     aman: {
         title: "أمان Aman",
         type: "bnpl",
         text: "خطط تقسيط مرنة عبر خدمات تقسيط أمان Aman.",
-        notice: "(Contact me to get link)"
+        notice: "(تواصل معنا عبر واتساب للحصول على رابط إتمام الدفع)"
     },
     forsa: {
         title: "فرصة Forsa",
         type: "bnpl",
         text: "شراء وتقسيط فوري لكافة الاشتراكات والألعاب عبر فرصة Forsa.",
-        notice: "(Contact me to get link)"
+        notice: "(تواصل معنا عبر واتساب للحصول على رابط إتمام الدفع)"
     }
 };
 
