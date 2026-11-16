@@ -101,7 +101,15 @@ const SB_URL = "https://qjlivjzgrqyitqxcdtlk.supabase.co";
 const SB_KEY = "sb_publishable_ezC_W2lpGW88bSbjBRJFfw_reCr3vlw";
 function logCall(game: string, provider: string, ok: boolean): void {
   try {
-    const p = fetch(`${SB_URL}/rest/v1/verification_calls`, {
+    const key = Deno.env.get("LOG_WRITE_KEY") || "";
+    if (!key) {
+      // Misconfiguration must be visible in Deno Deploy logs — and must
+      // never become an empty-key RPC attempt (the database rejects
+      // empty keys anyway). The secret itself is never logged.
+      console.warn("logCall skipped: LOG_WRITE_KEY is not set");
+      return;
+    }
+    const p = fetch(`${SB_URL}/rest/v1/rpc/log_verification_call`, {
       method: "POST",
       headers: {
         "apikey": SB_KEY,
@@ -109,11 +117,29 @@ function logCall(game: string, provider: string, ok: boolean): void {
         "Content-Type": "application/json",
         "Prefer": "return=minimal",
       },
-      body: JSON.stringify({ game, provider, ok }),
-    }).catch(() => {});
+      body: JSON.stringify({
+        p_game: game,
+        p_provider: provider,
+        p_ok: ok,
+        p_key: key,
+      }),
+    }).then((r) => {
+      // Observability without secrets: surface only the HTTP status.
+      if (!r.ok) console.warn("logCall RPC failed with status", r.status);
+    }).catch((e) => {
+      // Network-level failure (DNS, connection refused/reset, timeout).
+      // BRG-0011: this used to be an empty catch — network failures
+      // vanished silently. Log ONLY the error name: never the key, the
+      // request body, or headers.
+      console.warn("logCall network error:", (e && e.name) || "unknown");
+    });
     // Deno Deploy: keep the isolate alive until the write settles.
     (globalThis as any).EdgeRuntime?.waitUntil?.(p);
-  } catch (_) {}
+  } catch (e) {
+    // logCall must never throw into the request handler; it still
+    // leaves a trace (error name only) instead of an empty catch.
+    console.warn("logCall unexpected error:", (e && (e as Error).name) || "unknown");
+  }
 }
 
 // Pull the first plausible nickname out of an unknown JSON shape.
