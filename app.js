@@ -1646,6 +1646,11 @@ function toggleSidebar() {
     if (sb) sb.classList.toggle('hidden'); 
 }
 
+function toggleReviews() {
+    const rp = document.getElementById('reviewsPanel');
+    if (rp) rp.classList.toggle('hidden');
+}
+
 // رسم أقسام المتجر بمجرد تشغيل app.js (بيتنفذ بعد ملفات بيانات الأقسام بسبب async=false)،
 // بدل ما نستنى window.load اللي بيتأخر لحد ما كل الصور والخطوط تخلّص تحميل.
 var __migoStoreRendered = false;

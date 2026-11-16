@@ -487,10 +487,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
    </section>
    <!-- Verified Reviews Logs -->
-   <section id="reviews" class="sky-surface p-5 sm:p-6 scroll-mt-24">
-    <h2 class="text-sm font-bold text-white mb-3 font-mono-code tracking-wider uppercase">آراء عملائنا</h2>
-    <div id="reviewsContainer" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3 text-xs"></div>
-   </section>
    <!-- Trust & Value Panel -->
    <div class="sky-surface p-6 sm:p-8 text-right relative overflow-hidden">
      <div class="absolute inset-0 bg-cover bg-center opacity-25" style="background-image:url('https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/4168a8ff4e4e482483a546ad02c8b7f3.jpg');"></div>
@@ -550,6 +546,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <a href="contact.html" style="color:#94a3b8;white-space:nowrap">تواصل معانا</a>
     <a href="about.html" style="color:#94a3b8;white-space:nowrap">من نحن</a>
     <a href="trust.html" style="color:#94a3b8;white-space:nowrap">الثقة والشفافية</a>
+      <button type="button" onclick="toggleSidebar(); toggleReviews();" class="w-full px-3 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-[#1f2530] transition flex items-center justify-between text-right cursor-pointer"> <span>⭐ آراء عملائنا</span> </button>
    </div>
    <p style="margin-top:18px;color:#cbd5e1;font-weight:700">فحوصات خارجية مستقلة على موقعنا — دوس على أي شارة عشان تتحقق من التقرير الرسمي بنفسك</p>
    <div style="display:flex;flex-wrap:nowrap;justify-content:center;align-items:center;gap:6px;max-width:720px;margin:10px auto 0">
@@ -630,6 +627,19 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <button type="button" id="modalSubmitBtn" class="w-full agentql-btn-primary py-2.5 rounded-xl text-xs sm:text-sm cursor-pointer"></button>
     </div>
    </div>
+  </div>
+    <!-- Customer Reviews Slide-Over Panel (moved out of the homepage flow 2026-11-16; opens from the drawer) -->
+  <div id="reviewsPanel" class="fixed inset-0 z-50 hidden">
+   <div onclick="toggleReviews()" class="fixed inset-0 bg-black/80 backdrop-blur-md"></div>
+   <aside class="fixed top-0 right-0 h-full w-[26rem] max-w-[92vw] bg-[#12151b] border-l border-white/10 z-10 p-4 overflow-y-auto shadow-2xl custom-scrollbar">
+    <div class="flex justify-between items-center pb-3 border-b border-white/10">
+     <span class="font-bold text-white text-sm">⭐ آراء عملائنا</span>
+     <button type="button" onclick="toggleReviews()" aria-label="إغلاق" class="w-7 h-7 rounded-lg border border-white/10 text-slate-400 hover:text-white flex items-center justify-center cursor-pointer">✕</button>
+    </div>
+    <section id="reviews" class="pt-4">
+     <div id="reviewsContainer" class="grid grid-cols-1 gap-3 text-xs"></div>
+    </section>
+   </aside>
   </div>
   <!-- Responsive Sliding Drawer Sidebar -->
   <div id="sidebarContainer" class="fixed inset-0 z-50 hidden">
@@ -857,7 +867,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- Dynamic Cache Busting Module -->
   <script>
     (function() {
-      const v = 'v=2026-11-16-1';
+      const v = 'v=2026-11-16-2';
       const files = ['games.js', 'live-coins.js', 'subscriptions.js', 'smm.js', 'ai-tools.js', 'app.js', 'search-ui.js'];
       function boot() {
         files.forEach(file => {
@@ -886,7 +896,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       function loadChat() {
         if (done) return; done = true;
         var s = document.createElement('script');
-        s.src = 'chat-widget.js?v=2026-11-16-1';
+        s.src = 'chat-widget.js?v=2026-11-16-2';
         s.async = true;
         document.body.appendChild(s);
       }
