@@ -3,9 +3,10 @@
  <head>
 <!-- Google Tag Manager -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+new Date().getTime(),event:'gtm.js'});var done=false;function load(){if(done)return;done=true;
+var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);}
+if(d.readyState==='complete')setTimeout(load,0);else{w.addEventListener('load',load);setTimeout(load,3500);}
 })(window,document,'script','dataLayer','GTM-P9N6CKPN');</script>
 <!-- End Google Tag Manager -->
   <meta charset="UTF-8">
@@ -77,7 +78,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"كيف يصلني الشحن؟","acceptedAnswer":{"@type":"Answer","text":"إلى معرّف اللاعب (ID) خلال 2 إلى 5 دقائق دون كلمة مرور."}},{"@type":"Question","name":"هل الاشتراكات والأدوات رسمية؟","acceptedAnswer":{"@type":"Answer","text":"نعم، تفعيل رسمي على بريدك مع ضمان سلامة التفعيل والتسليم من طرفنا."}},{"@type":"Question","name":"ما طرق الدفع المتاحة؟","acceptedAnswer":{"@type":"Answer","text":"فودافون كاش، إنستاباي، باينانس، والبطاقات البنكية."}},{"@type":"Question","name":"هل أحتاج مشاركة كلمة مروري؟","acceptedAnswer":{"@type":"Answer","text":"لا، يكفي معرّف اللاعب أو تاج الحساب فقط."}},{"@type":"Question","name":"هل الأسعار بالجنيه المصري؟","acceptedAnswer":{"@type":"Answer","text":"نعم، كل الأسعار بالجنيه المصري (EGP)."}},{"@type":"Question","name":"هل يوجد دعم فني؟","acceptedAnswer":{"@type":"Answer","text":"نعم، دعم مباشر عبر واتساب يومياً."}}]}
   </script>
   <!-- Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-TRJHFVNBF5"></script>
+  <script>(function(){var done=false;function load(){if(done)return;done=true;
+var s=document.createElement('script');s.async=true;
+s.src='https://www.googletagmanager.com/gtag/js?id=G-TRJHFVNBF5';
+document.head.appendChild(s);}
+if(document.readyState==='complete')setTimeout(load,0);
+else{window.addEventListener('load',load);setTimeout(load,3500);}})();</script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
@@ -863,7 +869,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <script>
     (function() {
       const v = 'v=2026-11-16-1';
-      const files = ['games.js', 'live-coins.js', 'subscriptions.js', 'smm.js', 'ai-tools.js', 'app.js', 'chat-widget.js', 'search-ui.js'];
+      const files = ['games.js', 'live-coins.js', 'subscriptions.js', 'smm.js', 'ai-tools.js', 'app.js', 'search-ui.js'];
       function boot() {
         files.forEach(file => {
           const s = document.createElement('script');
@@ -881,6 +887,26 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       var started = false;
       function start() { if (started) return; started = true; requestAnimationFrame(function(){ requestAnimationFrame(boot); }); }
       start();
+    })();
+  </script>
+  <script>
+    // The chat widget is not needed for first paint: fetch it only after the
+    // page has loaded and the browser is idle (4s idle-timeout fallback).
+    (function () {
+      var done = false;
+      function loadChat() {
+        if (done) return; done = true;
+        var s = document.createElement('script');
+        s.src = 'chat-widget.js?v=2026-11-16-1';
+        s.async = true;
+        document.body.appendChild(s);
+      }
+      function arm() {
+        if (window.requestIdleCallback) requestIdleCallback(loadChat, { timeout: 4000 });
+        else setTimeout(loadChat, 2500);
+      }
+      if (document.readyState === 'complete') arm();
+      else window.addEventListener('load', arm);
     })();
   </script>
  <script>
@@ -925,7 +951,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
    var hero = document.getElementById('dragonHero');
    var dhImg = hero && hero.querySelector('.dh-img');
    if (dhImg && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) { if (dhImg.getAttribute('data-static')) dhImg.src = dhImg.getAttribute('data-static'); }
-   else if (dhImg && dhImg.getAttribute('data-anim')) { var dhSwap = function () { var dhPre = new Image(); dhPre.onload = function () { dhImg.src = dhImg.getAttribute('data-anim'); }; dhPre.src = dhImg.getAttribute('data-anim'); }; var dhDefer = function () { if (window.requestIdleCallback) requestIdleCallback(dhSwap, { timeout: 2500 }); else setTimeout(dhSwap, 1800); }; if (document.readyState === 'complete') dhDefer(); else window.addEventListener('load', dhDefer); }
+   else if (dhImg && dhImg.getAttribute('data-anim')) { var dhSwap = function () { var dhPre = new Image(); dhPre.onload = function () { dhImg.src = dhImg.getAttribute('data-anim'); }; dhPre.src = dhImg.getAttribute('data-anim'); }; var dhConn = navigator.connection || {}; var dhSlow = dhConn.saveData || /2g/.test(dhConn.effectiveType || ''); var dhDefer = function () { if (dhSlow) return; if (window.requestIdleCallback) requestIdleCallback(function () { setTimeout(dhSwap, 3000); }, { timeout: 2500 }); else setTimeout(dhSwap, 4800); }; if (document.readyState === 'complete') dhDefer(); else window.addEventListener('load', dhDefer); }
    if (hero) {
     hero.addEventListener('mouseenter', stopRot);
     hero.addEventListener('mouseleave', startRot);
