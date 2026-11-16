@@ -513,10 +513,9 @@ if (typeof module !== "undefined" && module.exports) {
   window.calculateSmmCost = calculateSmmCost;
 }
 
-// == Migo AI Solution - added 2026-10-31 from supplier SMM Scorpion (smmscorpion-media.xyz) ==
-// New social-media services only. Price = supplier rate x1.5 (50% margin). Min shown 1000.
-// Each id is the supplier's own service number, kept so an order can be traced back.
-var smmScorpionServices = [
+// == Migo AI Solution — extended SMM services (added 2026-10-31) ==
+// Additional social-media services. Min shown 1000.
+var smmExtendedServices = [
   { platform: "tiktok", id: "4682", name: "متابعين تيك توك مصري و عرب حقيقي (من الاعلانات المموله| ⚡السرعة 1 الف/يوم | ✅30 يوم ضمان", category: "متابعين", pricePer1k: 365.33, min: 1000, max: 100000, speed: "⚡", description: "مع ضمان ♻️" },
   { platform: "tiktok", id: "4687", name: "متابعين تيك توك مصرين و عرب حقيقيين|⚡السرعة 200-500 /يوم | ✅30 يوم ضمان", category: "متابعين", pricePer1k: 295.2, min: 1000, max: 10000, speed: "⚡", description: "مع ضمان ♻️" },
   { platform: "tiktok", id: "4331", name: "تيك توك | متابعين مصريين وعرب حقيقيين (من الإعلانات الممولة) | ضمان 30 يومًا ♻️", category: "متابعين", pricePer1k: 408.5, min: 1000, max: 20000, speed: "⚡", description: "مع ضمان ♻️" },
@@ -544,8 +543,8 @@ var smmScorpionServices = [
   { platform: "facebook", id: "4600", name: "تعليقات مخصصه✍️ فيس بوك |🎯حسابات مصريه متقراره 💯%|الجوده حقيقيه |السرعه50الف في اليوم| ✅ضمان 30يوم", category: "تعليقات", pricePer1k: 127.5, min: 1000, max: 100000, speed: "⚡", description: "مع ضمان ♻️" },
   { platform: "facebook", id: "2118", name: "تعليقات شباب👨 مخصصه✍️ فيس بوك |🎯حسابات مصريه💯%|الجوده حقيقيه |السرعه50الف في اليوم| ✅ضمان 30يوم", category: "تعليقات", pricePer1k: 210.0, min: 1000, max: 30000, speed: "⚡", description: "مع ضمان ♻️" },
   { platform: "facebook", id: "4820", name: "إعجابات منشور فيسبوك حسابات مصري 🎯| رمز 👍❤️ |💥بدون نقص |⚡السرعة +5000 ألف/اليوم |✅ضمان مدي الحياه|بدا 0 ل3ساعات", category: "لايكات", pricePer1k: 112.5, min: 1000, max: 10000, speed: "⚡", description: "مع ضمان ♻️" },
-  { platform: "facebook", id: "2887", name: "ريأكت فيسبوك لايك [👍]مصرين +مخفي][ اعاده تعبئه 30 يوم ][مزود الخدمه]", category: "لايكات", pricePer1k: 75.0, min: 1000, max: 15000, speed: "⚡", description: "مع ضمان ♻️" },
-  { platform: "facebook", id: "2888", name: "ريأكت فيسبوك احببت [❤️]مصرين +مخفي][ اعاده تعبئه 30 يوم ][مزود الخدمه]", category: "لايكات", pricePer1k: 75.0, min: 1000, max: 15000, speed: "⚡", description: "مع ضمان ♻️" },
+  { platform: "facebook", id: "2887", name: "ريأكت فيسبوك لايك [👍]مصرين +مخفي][ اعاده تعبئه 30 يوم ]", category: "لايكات", pricePer1k: 75.0, min: 1000, max: 15000, speed: "⚡", description: "مع ضمان ♻️" },
+  { platform: "facebook", id: "2888", name: "ريأكت فيسبوك احببت [❤️]مصرين +مخفي][ اعاده تعبئه 30 يوم ]", category: "لايكات", pricePer1k: 75.0, min: 1000, max: 15000, speed: "⚡", description: "مع ضمان ♻️" },
   { platform: "facebook", id: "42", name: "مشاركات🫂 منشورت فيس بوك|بوستات فقط|🎯حسابات مصريه💯%| 👑جوده حقيقيه|✅ضمان مدي الحياه|بدون نقص نهائي", category: "مشاركات", pricePer1k: 15.0, min: 1000, max: 2147483647, speed: "⚡", description: "مع ضمان ♻️" },
   { platform: "youtube", id: "4509", name: "مشتركين يوتيوب [مستخدمين حقيقيين من المهام] [بدون انخفاض] [30-100 يوميًا] [تعويض مدى الحياة ♻️] [0-24 ساعة]", category: "مشتركين", pricePer1k: 5972.44, min: 1000, max: 100000, speed: "⚡", description: "مع ضمان ♻️" },
   { platform: "youtube", id: "4511", name: "مشتركين يوتيوب حقيقيين [مستخدمين حقيقيين من المهام] [3-10K يوميًا] [بدون انخفاض] [تعويض مدى الحياة ♻️] [وقت البدء:…", category: "مشتركين", pricePer1k: 6249.87, min: 1000, max: 100000, speed: "⚡", description: "مع ضمان ♻️" },
@@ -557,8 +556,8 @@ var smmScorpionServices = [
   { platform: "youtube", id: "4280", name: "مشاهدة وقت يوتيوب | من 15 دقيقة إلى 120 دقيقة + مدة الفيديو | أكثر من 1 ألف يوميًا | 100% بدون نقص | ضمان ♻️ 30 يوم |…", category: "مشاهدات", pricePer1k: 1325.78, min: 1000, max: 4000, speed: "فوري ⚡", description: "مع ضمان ♻️" },
   { platform: "youtube", id: "2630", name: "مشاهدات فيديوهات قصيرة يوتيوب | مصدر متنوع | +10 ألف/يوم | ضمان مدى الحياة | فوري ♻", category: "مشاهدات", pricePer1k: 63.44, min: 1000, max: 500000, speed: "فوري ⚡", description: "مع ضمان ♻️" },
   { platform: "youtube", id: "2675", name: "تعليقات يوتيوب مخصصة للفيديوهات القصيرة |✨جودة حقيقية |⚡السرعة +10 ألف/اليوم |✅ضمان مدى الحياة", category: "تعليقات", pricePer1k: 654.66, min: 1000, max: 1000000, speed: "⚡", description: "مع ضمان ♻️" },
-  { platform: "telegram", id: "2399", name: "أعضاء تيليجرام عرب [ 0% انخفاض ][ فوري ][ مزود الخدمه ][ 2000 مشترك/ يوم ] لا يوجد ضمان 🇦🇪", category: "مشتركين", pricePer1k: 293.12, min: 1000, max: 1000000, speed: "فوري ⚡", description: "بدون ضمان ⚠️" },
-  { platform: "telegram", id: "2401", name: "أعضاء تيليجرام عرب [ 0% نقص ][ فوري ][ مزود الخدمه ][ 3000 مشترك في اليوم ] ضمان 60 يوم 🇦🇪", category: "مشتركين", pricePer1k: 147.12, min: 1000, max: 100000, speed: "فوري ⚡", description: "مع ضمان ♻️" },
+  { platform: "telegram", id: "2399", name: "أعضاء تيليجرام عرب [ 0% انخفاض ][ فوري ][ 2000 مشترك/ يوم ] لا يوجد ضمان 🇦🇪", category: "مشتركين", pricePer1k: 293.12, min: 1000, max: 1000000, speed: "فوري ⚡", description: "بدون ضمان ⚠️" },
+  { platform: "telegram", id: "2401", name: "أعضاء تيليجرام عرب [ 0% نقص ][ فوري ][ 3000 مشترك في اليوم ] ضمان 60 يوم 🇦🇪", category: "مشتركين", pricePer1k: 147.12, min: 1000, max: 100000, speed: "فوري ⚡", description: "مع ضمان ♻️" },
   { platform: "telegram", id: "3730", name: "أعضاء تليجرام حقيقي | بدون انخفاض | جودة عالية | حد أقصى 1 مليون | 50 ألف/يوم | ضمان مدى الحياة | فوري ♻", category: "أعضاء", pricePer1k: 581.38, min: 1000, max: 1000000, speed: "فوري ⚡", description: "مع ضمان ♻️" },
   { platform: "telegram", id: "4416", name: "أعضاء تيليجرام [ عرب 🇦🇪 ] [ حد أقصى 100 ألف ] | جودة عالية | بدون نزول | فوري | ضمان 30 يوم ♻️ | 20 ألف/يوم", category: "أعضاء", pricePer1k: 62.72, min: 1000, max: 1000000, speed: "فوري ⚡", description: "مع ضمان ♻️" },
   { platform: "telegram", id: "4418", name: "أعضاء تيليجرام [عرب 🇦🇪] [الحد الأقصى 100 ألف] | جودة عالية | بدون نقصان | بدء فوري | ضمان 90 يومًا ♻️ | 20 ألف يوميًا", category: "أعضاء", pricePer1k: 67.55, min: 1000, max: 1000000, speed: "فوري ⚡", description: "مع ضمان ♻️" },
@@ -602,8 +601,8 @@ var smmScorpionServices = [
   { platform: "threads", id: "4092", name: "تعليقات مخصصة ثريدز|✨جودة حقيقية |🔥 حد أقصى 500 |✅30 يوم ضمان", category: "تعليقات", pricePer1k: 1418.75, min: 1000, max: 1000, speed: "⚡", description: "مع ضمان ♻️" },
 ];
 (function () {
-  const list = (typeof smmScorpionServices !== "undefined") ? smmScorpionServices : [];
-  if (typeof window !== "undefined") window.smmScorpionServices = list;
+  const list = (typeof smmExtendedServices !== "undefined") ? smmExtendedServices : [];
+  if (typeof window !== "undefined") window.smmExtendedServices = list;
   const platforms = (typeof smmPlatforms !== "undefined") ? smmPlatforms : [];
   const byId = {};
   platforms.forEach(function (p) { byId[p.id] = p; });
