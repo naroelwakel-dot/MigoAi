@@ -1,4 +1,4 @@
-# Migo AI Solution - https://naroelwakel-dot.github.io/MigoAi/
+# Migo AI Solution - https://migoai.shop/
 # Every crawler is welcome here.
 
 User-agent: *
@@ -78,4 +78,4 @@ Allow: /
 
 Content-Signal: ai-train=yes, search=yes, ai-input=yes
 
-Sitemap: https://naroelwakel-dot.github.io/MigoAi/sitemap.xml
+Sitemap: https://migoai.shop/sitemap.xml
