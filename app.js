@@ -97,15 +97,15 @@ const PAYMENT_METHODS_DATA = {
             </div>
         `
     },
-    tamara: { title: "تمارة Tamara", type: "bnpl", text: "خدمة الشراء الآن والدفع لاحقاً عبر تمارة Tamara متاحة بالتقسيط المريح.", notice: "(Contact me to get link)" },
-    valu: { title: "فاليو valU", type: "bnpl", text: "خدمة تقسيط المشتريات عبر فاليو valu بدون دفعة أولى أو فوائد حسب خطتك.", notice: "(Contact me to get link)" },
-    souhoola: { title: "سهولة", type: "bnpl", text: "خدمة التقسيط عبر شركة سهولة Souhoola لجميع الباقات والخدمات.", notice: "(Contact me to get link)" },
-    tabby: { title: "تابي Tabby", type: "bnpl", text: "قسم مشترياتك على 4 دفعات بدون فوائد عبر تابي Tabby.", notice: "(Contact me to get link)" },
-    aman: { title: "أمان Aman", type: "bnpl", text: "خطط تقسيط مرنة عبر خدمات تقسيط أمان Aman.", notice: "(Contact me to get link)" },
-    forsa: { title: "فرصة Forsa", type: "bnpl", text: "شراء وتقسيط فوري لكافة الاشتراكات والألعاب عبر فرصة Forsa.", notice: "(Contact me to get link)" }
+    tamara: { title: "تمارة Tamara", type: "bnpl", text: "خدمة الشراء الآن والدفع لاحقاً عبر تمارة Tamara متاحة بالتقسيط المريح.", notice: "(تواصل معنا عبر واتساب للحصول على رابط إتمام الدفع)" },
+    valu: { title: "فاليو valU", type: "bnpl", text: "خدمة تقسيط المشتريات عبر فاليو valu بدون دفعة أولى أو فوائد حسب خطتك.", notice: "(تواصل معنا عبر واتساب للحصول على رابط إتمام الدفع)" },
+    souhoola: { title: "سهولة", type: "bnpl", text: "خدمة التقسيط عبر شركة سهولة Souhoola لجميع الباقات والخدمات.", notice: "(تواصل معنا عبر واتساب للحصول على رابط إتمام الدفع)" },
+    tabby: { title: "تابي Tabby", type: "bnpl", text: "قسم مشترياتك على 4 دفعات بدون فوائد عبر تابي Tabby.", notice: "(تواصل معنا عبر واتساب للحصول على رابط إتمام الدفع)" },
+    aman: { title: "أمان Aman", type: "bnpl", text: "خطط تقسيط مرنة عبر خدمات تقسيط أمان Aman.", notice: "(تواصل معنا عبر واتساب للحصول على رابط إتمام الدفع)" },
+    forsa: { title: "فرصة Forsa", type: "bnpl", text: "شراء وتقسيط فوري لكافة الاشتراكات والألعاب عبر فرصة Forsa.", notice: "(تواصل معنا عبر واتساب للحصول على رابط إتمام الدفع)" }
 };
 
-// تقييمات العملاء الموثقين
+// آراء العملاء
 const verifiedReviews = [
     { name: "أحمد عبد الرحمن", service: "ChatGPT Plus", text: "التفعيل تم على إيميلي الشخصي في أقل من نص ساعة، خدمة محترمة ومستقرة.", date: "أكتوبر 2026" },
     { name: "محمد طارق", service: "ببجي 3850 UC", text: "الشدات وصلت فوراً بعد التحويل بالـ ID بس وبدون باسورد.", date: "أكتوبر 2026" },
@@ -1329,7 +1329,7 @@ function selectPaymentMethod(methodKey, displayName, btnElement) {
         } else if (methodData.type === 'copy') {
             content.innerHTML = `${methodData.instruction}<br>${copyBtn(methodData.value)}`;
         } else if (methodData.type === 'bnpl') {
-            content.innerHTML = `${methodData.text}<br><span class="text-sky-300 block mt-1 font-bold">${methodData.notice || '(Contact me to get link)'}</span>`;
+            content.innerHTML = `${methodData.text}<br><span class="text-sky-300 block mt-1 font-bold">${methodData.notice || '(تواصل معنا عبر واتساب للحصول على رابط إتمام الدفع)'}</span>`;
         } else {
             content.innerHTML = methodData.html;
         }
@@ -1508,7 +1508,7 @@ function renderReviews() {
                 <p class="text-[11px] text-gray-300 mb-2">"${r.text}"</p>
             </div>
             <div class="pt-1.5 border-t border-slate-700 flex items-center justify-between text-[9px] text-gray-400">
-                <span class="text-amber-400">✓ ${r.service}</span>
+                <span class="text-amber-400">${r.service}</span>
                 <span>${r.date}</span>
             </div>
         </div>
