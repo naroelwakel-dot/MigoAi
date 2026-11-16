@@ -161,7 +161,7 @@ const smmPlatforms = [
     id: "telegram",
     name: "تليجرام (Telegram)",
     icon: "fab fa-telegram",
-    banner: "images/smm/telegram.webp",
+    banner: "images/smm/telegram.webp", bannerAnim: "images/smm/telegram-anim.webp",
     services: [
       {
         id: "6101",
@@ -189,7 +189,7 @@ const smmPlatforms = [
     id: "twitter",
     name: "إكس / تويتر (Twitter / X)",
     icon: "fab fa-x-twitter",
-    banner: "images/smm/twitter.webp",
+    banner: "images/smm/twitter.webp", bannerAnim: "images/smm/twitter-anim.webp",
     services: [
       {
         id: "7101",
@@ -361,7 +361,7 @@ const smmPlatforms = [
     id: "threads",
     name: "ثريدز (Threads)",
     icon: "fas fa-at",
-    banner: "images/smm/threads.webp",
+    banner: "images/smm/threads.webp", bannerAnim: "images/smm/threads-anim.webp",
     services: [
       {
         id: "16101",
