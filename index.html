@@ -90,7 +90,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <link rel="preconnect" href="https://cdn-public.eesel.ai">
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
   <!-- Preload the above the -->
-  <link rel="preload" as="image" href="https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/18b249edef654147b5e5193c58378344.png" fetchpriority="high">
+  <link rel="preload" as="image" href="images/hero/dragon-alt1-anim.webp" fetchpriority="high">
   <link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.gstatic.com/s/tajawal/v12/Iura6YBj_oCad4k1nzSBC45I.woff2">
   <link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.gstatic.com/s/tajawal/v12/Iurf6YBj_oCad4k1l4qkHrRpiYlJ.woff2">
   <link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.gstatic.com/s/tajawal/v12/Iurf6YBj_oCad4k1l5anHrRpiYlJ.woff2">
@@ -104,23 +104,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   /* Dragon hero (home) */
   .dragon-hero{position:relative;overflow:hidden;aspect-ratio:16 / 9;display:flex;align-items:center;justify-content:center}
   .dragon-hero .dh-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center;transform-origin:center}
-  @keyframes migoHeroZoom{from{transform:scale(1.04) translate(0,0)}to{transform:scale(1.08) translate(-.5%,-.4%)}}
-  .dragon-hero .dh-fire{position:absolute;left:47%;top:34%;width:44%;height:24%;transform-origin:0% 50%;transform:rotate(26deg);mix-blend-mode:screen;opacity:.9;pointer-events:none;overflow:hidden;-webkit-mask-image:linear-gradient(to right,transparent 0,#000 14%,#000 80%,transparent 100%);mask-image:linear-gradient(to right,transparent 0,#000 14%,#000 80%,transparent 100%);animation:migoHeroFlicker 1.6s ease-in-out infinite alternate}
-  .dragon-hero .dh-fire::before{content:"";position:absolute;left:0;top:0;width:200%;height:100%;background-image:url("https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/3fe95f13ad894a9db2ea1a55224483af.webp");background-repeat:repeat-x;background-size:50% 100%;animation:migoHeroFireFlow 3.2s linear infinite;will-change:transform}
-  @keyframes migoHeroFireFlow{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-  @keyframes migoHeroFlicker{from{opacity:.7}to{opacity:1}}
-  .dragon-hero .dh-mouth{position:absolute;left:42%;top:35%;width:17%;height:22%;pointer-events:none;mix-blend-mode:screen;background:radial-gradient(closest-side,rgba(255,170,60,.75),rgba(255,110,20,.28) 55%,rgba(0,0,0,0) 78%);animation:migoHeroMouth 2.1s ease-in-out infinite alternate}
-  @keyframes migoHeroMouth{from{opacity:.5;transform:scale(.96)}to{opacity:1;transform:scale(1.06)}}
   .dragon-hero .dh-veil{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(11,13,17,.45),rgba(11,13,17,.82))}
   .dragon-hero .dh-content{position:absolute;left:0;right:0;top:0;bottom:0;z-index:10;display:flex;flex-direction:column;justify-content:center}
   .dragon-hero .dh-textveil{position:absolute;inset:0;pointer-events:none;background:radial-gradient(55% 65% at 50% 50%,rgba(11,13,17,.66),rgba(11,13,17,0) 74%)}
   .dragon-hero .dh-slides{position:relative;min-height:175px;width:100%;max-width:36rem;margin-inline:auto}
   .dragon-hero .dh-slide{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;opacity:0;transition:opacity .7s ease;pointer-events:none}
   .dragon-hero .dh-slide.is-active{opacity:1;pointer-events:auto}
-  @media (prefers-reduced-motion: reduce){.dragon-hero .dh-img,.dragon-hero .dh-fire,.dragon-hero .dh-fire::before,.dragon-hero .dh-mouth{animation:none!important}}
+  @media (prefers-reduced-motion: reduce){.dragon-hero .dh-img{animation:none!important}}
   /* Taller hero on phones so the slide copy (badge + title + description + price + button) is never clipped */
   @media (max-width:640px){
    .dragon-hero{aspect-ratio:auto;min-height:440px}
+   .dragon-hero .dh-img{object-position:55% 50%}
    .dragon-hero .dh-slides{min-height:340px}
    .dragon-hero .dh-slide{padding-inline:18px}
   }
@@ -245,9 +239,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
    </div>
       <!-- Dragon Hero fixed dragon -->
    <div id="dragonHero" class="dragon-hero w-full max-w-6xl mx-auto rounded-2xl mb-4 border border-white/10 bg-[#12151b]" dir="rtl">
-    <img class="dh-img" src="https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/18b249edef654147b5e5193c58378344.png" alt="شحن الألعاب والخدمات الرقمية بسرعة النار" loading="eager" fetchpriority="high" decoding="async">
-    <div class="dh-mouth"></div>
-    <div class="dh-fire"></div>
+    <img class="dh-img" src="images/hero/dragon-alt1-anim.webp" data-static="images/hero/dragon-alt1-poster.webp" alt="شحن الألعاب والخدمات الرقمية بسرعة النار" loading="eager" fetchpriority="high" decoding="async">
     <div class="dh-veil"></div>
     <div class="dh-content">
      <div class="dh-textveil"></div>
@@ -901,6 +893,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
    }
    function stopRot(){ if (timer) { clearInterval(timer); timer = null; } }
    var hero = document.getElementById('dragonHero');
+   var dhImg = hero && hero.querySelector('.dh-img');
+   if (dhImg && dhImg.getAttribute('data-static') && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) { dhImg.src = dhImg.getAttribute('data-static'); }
    if (hero) {
     hero.addEventListener('mouseenter', stopRot);
     hero.addEventListener('mouseleave', startRot);
