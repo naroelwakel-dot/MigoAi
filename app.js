@@ -1054,7 +1054,7 @@ function addSMMToCart() {
     if (!Number.isInteger(qty) || qty < srv.min || qty > srv.max) return showToast(`الكمية يجب أن تكون بين ${srv.min} و ${srv.max}`, 'error');
     
     addToCart({ 
-        id: 'smm_' + srv.id, 
+        id: 'smm_' + srv.id, smmQty: qty, 
         name: `${currentSMMPlatform.name} - ${srv.name}`, 
         type: 'smm', 
         price: calculateSMMCost(), 
@@ -1076,7 +1076,7 @@ function expressCheckoutSMM() {
     
     const cost = calculateSMMCost();
     const item = { 
-        id: 'smm_' + srv.id, 
+        id: 'smm_' + srv.id, smmQty: qty, 
         name: `${currentSMMPlatform.name} - ${srv.name}`, 
         type: 'smm', 
         price: cost, 
