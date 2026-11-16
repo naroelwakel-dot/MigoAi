@@ -861,7 +861,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- Dynamic Cache Busting Module -->
   <script>
     (function() {
-      const v = 'v=2026-11-15-2';
+      const v = 'v=2026-11-16-1';
       const files = ['games.js', 'live-coins.js', 'subscriptions.js', 'smm.js', 'ai-tools.js', 'app.js', 'chat-widget.js', 'search-ui.js'];
       function boot() {
         files.forEach(file => {
@@ -995,6 +995,469 @@ document.body.appendChild(w);var i=document.getElementById('migoRecPw');i.focus(
 document.getElementById('migoRecCancel').onclick=function(){w.remove()};
 document.getElementById('migoRecOk').onclick=function(){var p=i.value;if(!p||p.length<6)return showToast('قصيرة','error');window.__sbClient().then(function(k){return k.auth.updateUser({password:p})}).then(function(r){if(r&&r.error){showToast(r.error.message,'error')}else{w.remove();showToast('تم تغيير كلمة السر')}}).catch(function(){showToast('تعذّر الاتصال','error')})}}
 rec()})();</script>
-<script>(function(){window.addEventListener('load',function(){var o=window.finalizeOrderWhatsApp;if(typeof o!=='function')return;window.finalizeOrderWhatsApp=function(){try{(window.dataLayer=window.dataLayer||[]).push({event:'whatsapp_click'})}catch(x){}try{var it=(typeof cart!=='undefined'&&cart?cart:[]).map(function(x){return{name:x.name,price:x.price,details:x.details||''}}),te=document.getElementById('cartTotal'),sa=document.getElementById('senderAccountInput'),se=null;try{se=JSON.parse(localStorage.getItem('migo_active_member_v2'))}catch(x){}var pl={customer_email:se&&se.email||null,payment:typeof selectedPayment!=='undefined'?selectedPayment:null,sender_account:sa?sa.value.trim():null,items:it,total_text:te?te.innerText:null,coupon:typeof appliedCoupon!=='undefined'&&appliedCoupon?appliedCoupon.code:null};fetch(SUPABASE_URL+'/rest/v1/orders',{method:'POST',keepalive:true,headers:{'apikey':SUPABASE_ANON_KEY,'Authorization':'Bearer '+SUPABASE_ANON_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify(pl)}).then(function(r){if(!r.ok)throw 0;try{(window.dataLayer=window.dataLayer||[]).push({event:'order_placed',value:(function(){var t=parseFloat(String(pl.total_text||'').replace(/[^0-9.]/g,''));if(isNaN(t))t=it.reduce(function(a,x){return a+(typeof x.price==='number'?x.price:0)},0);return t})(),currency:'EGP'})}catch(x){}}).catch(function(){try{var q=JSON.parse(localStorage.getItem('migo_orders_backup_v1')||'[]');q.push({t:Date.now(),order:pl});localStorage.setItem('migo_orders_backup_v1',JSON.stringify(q.slice(-50)))}catch(x){}})}catch(x){}return o.apply(this,arguments)}})});</script>
+<script>(function(){
+// ===== BEGIN RECORDER MODULE — extracted verbatim by tests/BRG-0018/frontend-harness =====
+var PENDING_KEY = 'migo_pending_order_v1';
+var KEY_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+var FP_RE = /^[0-9a-f]{64}$/;
+
+// Idempotency keys come ONLY from a cryptographic source (BRG-0013,
+// R-03): crypto.randomUUID() where available, otherwise a v4 UUID
+// built from crypto.getRandomValues(). Math.random() is never used.
+// If neither API exists this THROWS — the caller aborts the send.
+function newIdempotencyKey() {
+  if (crypto.randomUUID) return crypto.randomUUID();
+  if (!crypto.getRandomValues) {
+    throw new Error('no cryptographic randomness available for the idempotency key');
+  }
+  var b = crypto.getRandomValues(new Uint8Array(16));
+  b[6] = (b[6] & 0x0f) | 0x40;   // version 4
+  b[8] = (b[8] & 0x3f) | 0x80;   // variant 10xx
+  var h = Array.from(b).map(function (x) {
+    return x.toString(16).padStart(2, '0');
+  }).join('');
+  return h.slice(0, 8) + '-' + h.slice(8, 12) + '-' + h.slice(12, 16) +
+         '-' + h.slice(16, 20) + '-' + h.slice(20);
+}
+
+// FE-01: storage reads are THREE-state. A read that throws, or content
+// that does not parse, is 'error' — NEVER silently treated as 'empty'.
+// Callers abort on 'error'.
+function readPending() {
+  var raw;
+  try { raw = localStorage.getItem(PENDING_KEY); }
+  catch (x) { return { state: 'error', reason: 'read' }; }
+  if (raw === null || raw === undefined) return { state: 'empty' };
+  var value;
+  try { value = JSON.parse(raw); }
+  catch (x) { return { state: 'error', reason: 'corrupt' }; }
+  return { state: 'ok', value: value };
+}
+
+// Persist, then READ BACK and require the record in the slot is OURS.
+function writePendingVerified(attempt) {
+  try { localStorage.setItem(PENDING_KEY, JSON.stringify(attempt)); }
+  catch (x) { return false; }
+  var r = readPending();
+  return r.state === 'ok' && !!r.value && r.value.key === attempt.key;
+}
+
+// Compare-and-clear with VERIFIED deletion (BRG-0018): a handler
+// may remove ONLY its own attempt's record — never a newer attempt
+// stored by another tab or checkout — and success is reported ONLY
+// after a re-read proves OUR record is gone. If the slot then holds
+// a DIFFERENT (newer) attempt, ours was deleted and the newer one
+// was not touched: that is success for this key. A removal that
+// throws, a record that survives, or a slot that cannot be re-read
+// all report failure — deletion is never assumed.
+function clearPending(key) {
+  var r = readPending();
+  if (r.state !== 'ok' || !r.value || r.value.key !== key) return false;
+  try { localStorage.removeItem(PENDING_KEY); }
+  catch (x) { return false; }
+  var back = readPending();
+  if (back.state === 'error') return false;
+  if (back.state === 'ok' && back.value && back.value.key === key) {
+    return false;   // our record is still there — deletion failed
+  }
+  return true;
+}
+
+// FE-05 (BRG-0016): cross-tab mutual exclusion for the whole
+// prepare -> send -> confirm critical section, via the Web Locks API
+// (atomic per-origin locking). If the API is unavailable this THROWS
+// and the send aborts — there is no racy fallback.
+async function withCheckoutLock(fn) {
+  if (typeof navigator === 'undefined' || !navigator.locks ||
+      typeof navigator.locks.request !== 'function') {
+    throw new Error('Web Locks API unavailable — send aborted');
+  }
+  return navigator.locks.request('migo_checkout_v1',
+    { mode: 'exclusive' }, fn);
+}
+
+function cmpItems(a, b) {
+  return a.sku < b.sku ? -1 : a.sku > b.sku ? 1 : a.qty - b.qty;
+}
+function itemsEqual(a, b) {
+  if (!Array.isArray(a) || !Array.isArray(b) || a.length !== b.length) return false;
+  var sa = a.slice().sort(cmpItems), sb = b.slice().sort(cmpItems);
+  for (var i = 0; i < sa.length; i++) {
+    if (sa[i].sku !== sb[i].sku || sa[i].qty !== sb[i].qty) return false;
+  }
+  return true;
+}
+
+// Canonical fingerprint of one checkout attempt, including the AUTH
+// CONTEXT (FE-02): uid is the signed-in user's id or 'guest'.
+async function checkoutFingerprint(items, ctx, uid) {
+  var canon = JSON.stringify({
+    items: items.slice().sort(cmpItems),
+    payment: ctx.payment, sender: ctx.sender_account,
+    email: ctx.customer_email || '', coupon: ctx.coupon || '',
+    uid: uid || 'guest'
+  });
+  var buf = await crypto.subtle.digest('SHA-256',
+    new TextEncoder().encode(canon));
+  return Array.from(new Uint8Array(buf)).map(function (b) {
+    return b.toString(16).padStart(2, '0');
+  }).join('');
+}
+
+function isValidItem(it) {
+  return !!it && typeof it.sku === 'string' && it.sku.length > 0 &&
+    Number.isInteger(it.qty) && it.qty >= 1 && it.qty <= 100000000;
+}
+
+// FE-03 (v6): a stored attempt validates ONLY if shape, content, and
+// fingerprint form one consistent chain with THIS checkout:
+//  (shape)  v4 key; 64-hex fingerprint; uid; structurally valid items;
+//           payment/sender present; snapshot cart present; state is
+//           'pending' or 'sent', and 'sent' carries a valid order_ref
+//           (BRG-0017 — unknown states are inconsistent records).
+//  (i)      payload EQUALS this checkout — items deep-equal, payment /
+//           sender / email / coupon equal to the current context.
+//  (ii)     the fingerprint is re-derivable from the STORED payload
+//           itself under the stored uid.
+//  (iii)    the snapshot agrees with the payload — aggregating the
+//           snapshot cart yields exactly the payload items, and the
+//           snapshot context equals the payload fields.
+// Any failure returns false; the caller aborts. Nothing is repaired,
+// replaced, or guessed at.
+async function validateAttempt(p, fp, uid, items, ctx) {
+  if (!p || typeof p !== 'object') return false;
+  if (typeof p.key !== 'string' || !KEY_RE.test(p.key)) return false;
+  if (typeof p.fingerprint !== 'string' || !FP_RE.test(p.fingerprint)) return false;
+  if (p.fingerprint !== fp) return false;
+  if (p.uid !== (uid || 'guest')) return false;
+  // BRG-0017: the state machine is closed — exactly 'pending' or
+  // 'sent'; a 'sent' record must carry a valid order_ref. Anything
+  // else (unknown value, missing state, sent without a reference) is
+  // an inconsistent record and fails validation.
+  if (p.state !== 'pending' && p.state !== 'sent') return false;
+  if (p.state === 'sent' && (typeof p.order_ref !== 'string' ||
+      p.order_ref.length === 0 || p.order_ref.length > 64)) return false;
+  if (!p.payload || !Array.isArray(p.payload.p_items) ||
+      p.payload.p_items.length === 0) return false;
+  for (var i = 0; i < p.payload.p_items.length; i++) {
+    if (!isValidItem(p.payload.p_items[i])) return false;
+  }
+  if (typeof p.payload.p_payment !== 'string' || !p.payload.p_payment) return false;
+  if (typeof p.payload.p_sender_account !== 'string' || !p.payload.p_sender_account) return false;
+  if (!p.snapshot || !Array.isArray(p.snapshot.cart)) return false;
+  if (!itemsEqual(p.payload.p_items, items)) return false;
+  if (p.payload.p_payment !== ctx.payment) return false;
+  if (p.payload.p_sender_account !== ctx.sender_account) return false;
+  if ((p.payload.p_customer_email || '') !== (ctx.customer_email || '')) return false;
+  if ((p.payload.p_coupon || null) !== (ctx.coupon || null)) return false;
+  var rederived = await checkoutFingerprint(p.payload.p_items, {
+    payment: p.payload.p_payment,
+    sender_account: p.payload.p_sender_account,
+    customer_email: p.payload.p_customer_email,
+    coupon: p.payload.p_coupon
+  }, p.uid);
+  if (rederived !== p.fingerprint) return false;
+  var agg;
+  try { agg = buildItems(p.snapshot.cart); } catch (x) { return false; }
+  if (agg.blocked || !itemsEqual(agg.items, p.payload.p_items)) return false;
+  if (p.snapshot.payment !== p.payload.p_payment) return false;
+  if (p.snapshot.sender_account !== p.payload.p_sender_account) return false;
+  if ((p.snapshot.customer_email || '') !== (p.payload.p_customer_email || '')) return false;
+  if ((p.snapshot.coupon || null) !== (p.payload.p_coupon || null)) return false;
+  return true;
+}
+
+// Prepare (or reuse) the persisted attempt for THIS checkout.
+// THROWS — aborting the send with a visible error — on: storage read
+// error (FE-01), a stored LIVE attempt that does not fully validate
+// for this checkout/identity (FE-02/FE-03: it is NOT overwritten), or
+// a persist that cannot be verified. A stored attempt whose own
+// content chain is broken aborts even if it claims state 'sent'.
+// `extra` fields (e.g. supersedes) are merged BEFORE the single
+// verified persist.
+async function checkoutAttempt(items, ctx, snapshot, uid, extra) {
+  var fp = await checkoutFingerprint(items, ctx, uid);
+  var r = readPending();
+  if (r.state === 'error') {
+    throw new Error('pending order unreadable (' + r.reason + ') — send aborted');
+  }
+  if (r.state === 'ok') {
+    var stored = r.value;
+    var selfCtx = stored && stored.payload ? {
+      payment: stored.payload.p_payment,
+      sender_account: stored.payload.p_sender_account,
+      customer_email: stored.payload.p_customer_email,
+      coupon: stored.payload.p_coupon
+    } : null;
+    var selfOk = !!selfCtx && await validateAttempt(stored,
+      stored.fingerprint, stored.uid, stored.payload.p_items, selfCtx);
+    if (!selfOk) {
+      throw new Error('stored checkout attempt is inconsistent — send aborted');
+    }
+    if (stored.state === 'sent') {
+      if (stored.fingerprint === fp) return stored;   // tombstone: already recorded
+      // A different checkout may replace a TERMINAL (sent) record —
+      // its order is confirmed server-side; nothing live is lost.
+    } else {
+      if (await validateAttempt(stored, fp, uid, items, ctx)) return stored;
+      throw new Error('a stored checkout attempt does not match this checkout — send aborted');
+    }
+  }
+  var attempt = {
+    key: newIdempotencyKey(),
+    fingerprint: fp, uid: uid || 'guest', t: Date.now(),
+    state: 'pending',
+    snapshot: snapshot,
+    payload: { p_items: items, p_payment: ctx.payment,
+               p_sender_account: ctx.sender_account,
+               p_coupon: ctx.coupon, p_customer_email: ctx.customer_email }
+  };
+  if (extra && typeof extra === 'object') {
+    for (var k in extra) attempt[k] = extra[k];
+  }
+  if (!writePendingVerified(attempt)) {
+    throw new Error('pending order could not be persisted — send aborted');
+  }
+  return attempt;
+}
+
+// Terminal transition, called on confirmed RPC success INSIDE the
+// checkout lock: pending -> sent, keeping the record as the
+// double-submit tombstone (see the FE-05 note above). Only the
+// owning key can transition its own record, and only FROM 'pending'.
+// BRG-0017: success is reported only after a POST-WRITE RE-READ
+// verifies all three facts — our key, state === 'sent', and
+// order_ref === the value just written — not the key alone. A false
+// return leaves the attempt 'pending' under the same key, so the
+// caller's retry replays idempotently on the server (same key) and
+// recovers the original order instead of creating a duplicate.
+function markSent(key, orderRef) {
+  if (typeof orderRef !== 'string' || orderRef.length === 0 ||
+      orderRef.length > 64) return false;
+  var r = readPending();
+  if (r.state === 'ok' && r.value && r.value.key === key &&
+      r.value.state === 'pending') {
+    var updated = Object.assign({}, r.value,
+      { state: 'sent', order_ref: orderRef });
+    if (!writePendingVerified(updated)) return false;
+    var back = readPending();
+    return back.state === 'ok' && !!back.value &&
+      back.value.key === key && back.value.state === 'sent' &&
+      back.value.order_ref === orderRef;
+  }
+  return false;
+}
+
+// §2b aggregation, shared with reprocessing: fixed-price entries count
+// 1 per entry per planId (§2e proof). The PRESENCE of an smmQty
+// property marks an SMM entry (§2a capture); its value must be an
+// integer in 1..100,000,000 — an invalid SMM quantity is a DATA ERROR
+// and the whole build THROWS (BRG-0016): bad data never becomes a
+// valid order for a different quantity. blocked=true if ANY entry
+// lacks a planId. entries/mappedEntries give per-entry conservation.
+function buildItems(cart) {
+  var counts = {}, blocked = false, entries = 0, mappedEntries = 0;
+  (cart || []).forEach(function (x) {
+    entries++;
+    if (!x || !x.planId) { blocked = true; return; }
+    var q = 1;
+    if (Object.prototype.hasOwnProperty.call(x, 'smmQty')) {
+      if (!Number.isInteger(x.smmQty) ||
+          x.smmQty < 1 || x.smmQty > 100000000) {
+        throw new Error('invalid smmQty on a cart entry — build refused');
+      }
+      q = x.smmQty;
+    }
+    counts[x.planId] = (counts[x.planId] || 0) + q;
+    if (counts[x.planId] > 100000000) {
+      // Aggregated bound (BRG-0018): no planId may exceed the widest
+      // server quantity bound once its entries are summed.
+      throw new Error('aggregated qty for one plan exceeds the maximum — build refused');
+    }
+    mappedEntries++;
+  });
+  return {
+    items: Object.keys(counts).sort().map(function (k) {
+      return { sku: k, qty: counts[k] };
+    }),
+    blocked: blocked, entries: entries, mappedEntries: mappedEntries
+  };
+}
+
+// FE-04: the blocked-cart reprocessing MECHANISM. Deliberate
+// invocation only — NEVER automatic. Rebuilds items ONLY from the
+// stored snapshot; refuses unless EVERY snapshot entry maps; the new
+// attempt is created COMPLETE (supersedes included) and persisted
+// exactly once, by checkoutAttempt (BRG-0016).
+async function reprocessBlocked(entry, uid) {
+  if (!entry || entry.kind !== 'blocked_unmapped' ||
+      !entry.snapshot || !Array.isArray(entry.snapshot.cart)) {
+    throw new Error('not a blocked_unmapped entry');
+  }
+  var built = buildItems(entry.snapshot.cart);
+  if (built.blocked || built.mappedEntries !== built.entries) {
+    throw new Error('cart still has unmapped items — reprocessing refused');
+  }
+  var ctx = { payment: entry.snapshot.payment,
+              sender_account: entry.snapshot.sender_account,
+              customer_email: entry.snapshot.customer_email,
+              coupon: entry.snapshot.coupon };
+  return checkoutAttempt(built.items, ctx, entry.snapshot, uid,
+    { supersedes: (entry.attempt && entry.attempt.key) || null });
+}
+// ===== END RECORDER MODULE =====
+
+// ===== D3 GLUE (BRG-0018 §2a/§2b wiring on this page) =====
+// Capture (§2a), adapted to the production catalog as provisioned by
+// P-1: a fixed-price entry's catalog SKU is its exact cart display
+// name; an SMM entry's SKU is its 'smm_<serviceId>' cart id, and its
+// chosen quantity rides on the entry as smmQty (captured in app.js).
+// An SMM entry WITHOUT a valid smmQty gets NO planId, so buildItems
+// blocks it (queued with the full snapshot) instead of mispricing it
+// as quantity 1.
+function normalizeEntry(x) {
+  var e = {};
+  if (x && typeof x === 'object') { for (var k in x) e[k] = x[k]; }
+  var isSmm = !!(x && (x.type === 'smm' ||
+    (typeof x.id === 'string' && x.id.indexOf('smm_') === 0)));
+  if (isSmm) {
+    if (Number.isInteger(x.smmQty)) e.planId = x.id;
+  } else if (x && typeof x.name === 'string' && x.name) {
+    e.planId = x.name;
+  }
+  return e;
+}
+
+var BACKUP_KEY = 'migo_orders_backup_v1';
+function queueBackup(entry) {
+  try {
+    var q = JSON.parse(localStorage.getItem(BACKUP_KEY) || '[]');
+    q.push(entry);
+    localStorage.setItem(BACKUP_KEY, JSON.stringify(q.slice(-50)));
+  } catch (x) {}
+}
+
+// The signed-in user's id + access token, when a Supabase session
+// exists; guests resolve to {uid: null, token: null}. The server
+// never trusts the uid — it recomputes identity from the JWT.
+function getSessionInfo() {
+  return new Promise(function (resolve) {
+    try {
+      if (typeof __sbClient !== 'function') return resolve({ uid: null, token: null });
+      __sbClient().then(function (c) { return c.auth.getSession(); })
+        .then(function (res) {
+          var s = res && res.data && res.data.session;
+          resolve({ uid: s && s.user ? s.user.id : null,
+                    token: s ? s.access_token : null });
+        })
+        .catch(function () { resolve({ uid: null, token: null }); });
+    } catch (x) { resolve({ uid: null, token: null }); }
+  });
+}
+
+// BUG-07 carryover (published 2026-11-15): on confirmed recording,
+// push order_placed with the NET displayed total — never 'purchase'.
+function pushOrderPlaced(snapshot) {
+  try {
+    var t = parseFloat(String(snapshot.total_text || '').replace(/[^0-9.]/g, ''));
+    if (isNaN(t)) t = (snapshot.cart || []).reduce(function (a, x) {
+      return a + (typeof x.price === 'number' ? x.price : 0);
+    }, 0);
+    (window.dataLayer = window.dataLayer || []).push(
+      { event: 'order_placed', value: t, currency: 'EGP' });
+  } catch (x) {}
+}
+
+async function recordOrder(snapshot) {
+  var built;
+  try { built = buildItems(snapshot.cart); }
+  catch (err) {
+    console.error('[Migo] order not recorded (invalid cart data)', err);
+    return;
+  }
+  if (built.blocked) {
+    queueBackup({ t: Date.now(), kind: 'blocked_unmapped',
+      attempt: { key: newIdempotencyKey(), fingerprint: null },
+      snapshot: snapshot });
+    console.error('[Migo] order not recorded: cart has an unmapped item');
+    return;
+  }
+  var sess = await getSessionInfo();
+  var ctx = { payment: snapshot.payment,
+              sender_account: snapshot.sender_account,
+              customer_email: snapshot.customer_email,
+              coupon: snapshot.coupon };
+  try {
+    await withCheckoutLock(async function () {
+      var attempt = await checkoutAttempt(built.items, ctx, snapshot, sess.uid);
+      if (attempt.state === 'sent') {
+        console.info('[Migo] order already recorded:', attempt.order_ref);
+        return;
+      }
+      var pl = { p_items: attempt.payload.p_items,
+                 p_payment: snapshot.payment,
+                 p_sender_account: snapshot.sender_account,
+                 p_coupon: snapshot.coupon,
+                 p_customer_email: snapshot.customer_email,
+                 p_idempotency_key: attempt.key };
+      var data;
+      try {
+        var r = await fetch(SUPABASE_URL + '/rest/v1/rpc/create_order', {
+          method: 'POST', keepalive: true,
+          headers: { 'apikey': SUPABASE_ANON_KEY,
+                     'Authorization': 'Bearer ' + (sess.token || SUPABASE_ANON_KEY),
+                     'Content-Type': 'application/json' },
+          body: JSON.stringify(pl)
+        });
+        if (!r.ok) throw new Error('create_order HTTP ' + r.status);
+        data = await r.json();
+      } catch (sendErr) {
+        queueBackup({ t: Date.now(), kind: 'rpc_failure',
+                      attempt: attempt, snapshot: snapshot });
+        console.error('[Migo] order recording failed; queued for replay', sendErr);
+        return;
+      }
+      var ref = data && data.order_ref;
+      if (ref && markSent(attempt.key, ref)) pushOrderPlaced(snapshot);
+      else console.error('[Migo] order recorded but local confirmation failed; a retry replays idempotently', ref);
+    });
+  } catch (err) {
+    // Storage/identity/lock aborts: nothing was sent; the pending
+    // attempt (when one exists) stays stored for a deliberate retry.
+    console.error('[Migo] order recording aborted', err);
+  }
+}
+
+// Hook: same position and trigger as the legacy recorder (it wraps
+// finalizeOrderWhatsApp), with the CR-04 retry so the wrap lands even
+// when this script runs before app.js defines the function.
+function __wrapRecorder(n) {
+  var o = window.finalizeOrderWhatsApp;
+  if (typeof o !== 'function') {
+    if (n < 20) setTimeout(function () { __wrapRecorder(n + 1); }, 250);
+    return;
+  }
+  window.finalizeOrderWhatsApp = function () {
+    try { (window.dataLayer = window.dataLayer || []).push({ event: 'whatsapp_click' }); } catch (x) {}
+    try {
+      var sa = document.getElementById('senderAccountInput'),
+          te = document.getElementById('cartTotal'), se = null;
+      try { se = JSON.parse(localStorage.getItem('migo_active_member_v2')); } catch (x) {}
+      var snapshot = {
+        cart: (typeof cart !== 'undefined' && cart ? cart : []).map(normalizeEntry),
+        payment: (typeof selectedPayment !== 'undefined' ? selectedPayment : null),
+        sender_account: sa ? sa.value.trim() : null,
+        customer_email: se && se.email || null,
+        coupon: (typeof appliedCoupon !== 'undefined' && appliedCoupon) ? appliedCoupon.code : null,
+        total_text: te ? te.innerText : null
+      };
+      recordOrder(snapshot);
+    } catch (x) { console.error('[Migo] recorder error', x); }
+    return o.apply(this, arguments);
+  };
+}
+if (document.readyState === 'complete') __wrapRecorder(0);
+else window.addEventListener('load', function () { __wrapRecorder(0); });
+})();</script>
 </body>
 </html>
