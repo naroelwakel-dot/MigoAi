@@ -335,16 +335,21 @@ function renderCoinsAndStars() {
             const ttPkgs = tiktokCoinsList.packages || tiktokCoinsList;
             const defaultFinalPrice = calculateAutoPrice(ttPkgs[0].price);
             ttContainer.innerHTML = `
-                <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg relative" style="min-height: 180px;" onclick="if(event.target.closest('button')) return; var i=this.querySelector('img[data-anim]'); if(i) playCardAnim(i);">
-                    <img src="${ttBanner}"${ttAnim ? ` data-anim="${ttAnim}"` : ''} alt="" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover object-center opacity-40">
-                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent"></div>
-                    <div class="relative z-10 p-4 flex flex-col justify-between h-full gap-3">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-pink-400 bg-pink-500/20 px-2.5 py-0.5 rounded-full border border-pink-500/40">عملات تيك توك</span>
-                            <span id="tt_price_display" class="text-xs font-extrabold text-amber-400 font-mono">${defaultFinalPrice.toLocaleString()} ج.م</span>
+                <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg">
+                    <div class="h-28 sm:h-32 relative overflow-hidden bg-[#12151b]" onclick="var i=this.querySelector('img[data-anim]'); if(i) playCardAnim(i);">
+                        <img src="${ttBanner}"${ttAnim ? ` data-anim="${ttAnim}"` : ''} alt="" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover object-center">${ttAnim ? '<span class="migo-anim-badge" style="position:absolute;inset-inline-end:8px;bottom:8px;z-index:30;width:30px;height:30px;border-radius:9999px;background:rgba(11,13,17,.72);border:1px solid #F2B53D;color:#F3CF6B;display:flex;align-items:center;justify-content:center;font-size:12px;line-height:1;pointer-events:none;backdrop-filter:blur(4px)">▶</span>' : ''}
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent p-3 flex flex-col justify-between">
+                            <div class="flex justify-between items-start">
+                                <span class="text-xs font-bold text-pink-400 bg-pink-500/20 px-2.5 py-0.5 rounded-full border border-pink-500/40 backdrop-blur-md">عملات تيك توك</span>
+                            </div>
                         </div>
+                    </div>
+                    <div class="p-3 space-y-3 flex-1 bg-slate-900/60 flex flex-col justify-between">
                         <div>
-                            <label class="block text-[11px] font-bold text-gray-200 mb-1">اختر الباقة:</label>
+                            <div class="flex justify-between items-center mb-1.5">
+                                <label class="text-[11px] font-bold text-gray-300">اختر الباقة:</label>
+                                <span id="tt_price_display" class="text-xs font-extrabold text-amber-400 font-mono">${defaultFinalPrice.toLocaleString()} ج.م</span>
+                            </div>
                             <div class="coin-picker" id="tt_package_select" data-selected="0">
                                 <button type="button" class="coin-picker-btn" onclick="toggleCoinPicker('tt')" aria-haspopup="listbox"><span id="tt_picker_label">${ttPkgs[0].coins.toLocaleString()} عملة (${defaultFinalPrice.toLocaleString()} ج.م)</span><span class="coin-picker-caret">▾</span></button>
                                 <div class="coin-picker-list hidden" role="listbox">
@@ -369,16 +374,21 @@ function renderCoinsAndStars() {
             const tgPkgs = telegramStarsList.packages || telegramStarsList;
             const defaultFinalPrice = calculateAutoPrice(tgPkgs[0].price);
             tgContainer.innerHTML = `
-                <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg relative" style="min-height: 180px;" onclick="if(event.target.closest('button')) return; var i=this.querySelector('img[data-anim]'); if(i) playCardAnim(i);">
-                    <img src="${tgBanner}"${tgAnim ? ` data-anim="${tgAnim}"` : ''} alt="" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover object-center opacity-40">
-                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent"></div>
-                    <div class="relative z-10 p-4 flex flex-col justify-between h-full gap-3">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-sky-400 bg-sky-500/20 px-2.5 py-0.5 rounded-full border border-sky-500/40">نجوم تليجرام</span>
-                            <span id="tg_price_display" class="text-xs font-extrabold text-amber-400 font-mono">${defaultFinalPrice.toLocaleString()} ج.م</span>
+                <div class="sky-card border rounded-2xl overflow-hidden flex flex-col justify-between shadow-lg">
+                    <div class="h-28 sm:h-32 relative overflow-hidden bg-[#12151b]" onclick="var i=this.querySelector('img[data-anim]'); if(i) playCardAnim(i);">
+                        <img src="${tgBanner}"${tgAnim ? ` data-anim="${tgAnim}"` : ''} alt="" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover object-center">${tgAnim ? '<span class="migo-anim-badge" style="position:absolute;inset-inline-end:8px;bottom:8px;z-index:30;width:30px;height:30px;border-radius:9999px;background:rgba(11,13,17,.72);border:1px solid #F2B53D;color:#F3CF6B;display:flex;align-items:center;justify-content:center;font-size:12px;line-height:1;pointer-events:none;backdrop-filter:blur(4px)">▶</span>' : ''}
+                        <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent p-3 flex flex-col justify-between">
+                            <div class="flex justify-between items-start">
+                                <span class="text-xs font-bold text-sky-400 bg-sky-500/20 px-2.5 py-0.5 rounded-full border border-sky-500/40 backdrop-blur-md">نجوم تليجرام</span>
+                            </div>
                         </div>
+                    </div>
+                    <div class="p-3 space-y-3 flex-1 bg-slate-900/60 flex flex-col justify-between">
                         <div>
-                            <label class="block text-[11px] font-bold text-gray-200 mb-1">اختر الباقة:</label>
+                            <div class="flex justify-between items-center mb-1.5">
+                                <label class="text-[11px] font-bold text-gray-300">اختر الباقة:</label>
+                                <span id="tg_price_display" class="text-xs font-extrabold text-amber-400 font-mono">${defaultFinalPrice.toLocaleString()} ج.م</span>
+                            </div>
                             <div class="coin-picker" id="tg_package_select" data-selected="0">
                                 <button type="button" class="coin-picker-btn" onclick="toggleCoinPicker('tg')" aria-haspopup="listbox"><span id="tg_picker_label">${tgPkgs[0].stars.toLocaleString()} نجمة (${defaultFinalPrice.toLocaleString()} ج.م)</span><span class="coin-picker-caret">▾</span></button>
                                 <div class="coin-picker-list hidden" role="listbox">
