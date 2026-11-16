@@ -924,7 +924,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
    var hero = document.getElementById('dragonHero');
    var dhImg = hero && hero.querySelector('.dh-img');
    if (dhImg && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) { if (dhImg.getAttribute('data-static')) dhImg.src = dhImg.getAttribute('data-static'); }
-   else if (dhImg && dhImg.getAttribute('data-anim')) { var dhPre = new Image(); dhPre.onload = function () { dhImg.src = dhImg.getAttribute('data-anim'); }; dhPre.src = dhImg.getAttribute('data-anim'); }
+   else if (dhImg && dhImg.getAttribute('data-anim')) { var dhSwap = function () { var dhPre = new Image(); dhPre.onload = function () { dhImg.src = dhImg.getAttribute('data-anim'); }; dhPre.src = dhImg.getAttribute('data-anim'); }; var dhDefer = function () { if (window.requestIdleCallback) requestIdleCallback(dhSwap, { timeout: 2500 }); else setTimeout(dhSwap, 1800); }; if (document.readyState === 'complete') dhDefer(); else window.addEventListener('load', dhDefer); }
    if (hero) {
     hero.addEventListener('mouseenter', stopRot);
     hero.addEventListener('mouseleave', startRot);
