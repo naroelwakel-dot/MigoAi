@@ -61,7 +61,7 @@ const aiProducts = [
         tag: 'إيلون ماسك الذكي',
         price: 980,
         desc: 'اشتراك رسمي في أقوى نماذج Grok غير المقيدة',
-        banner: 'images/ai/ai_super_grok.webp'
+        banner: 'images/ai/ai_super_grok.webp', bannerAnim: 'images/ai/ai_super_grok-anim.webp'
     },
 
     // الصوت، الموسيقى، والصور
@@ -98,7 +98,7 @@ const aiProducts = [
         tag: 'توليد ومونتاج ذكي',
         price: 140,
         desc: 'حساب كامل مخصص للإنتاج المرئي',
-        banner: 'images/ai/ai_muse.webp'
+        banner: 'images/ai/ai_muse.webp', bannerAnim: 'images/ai/ai_muse-anim.webp'
     },
 
     // عائلة جوجل (Google Gemini)
