@@ -75,6 +75,18 @@ User-agent: PetalBot
 Allow: /
 User-agent: TavilyBot
 Allow: /
+User-agent: Meta-ExternalFetcher
+Allow: /
+User-agent: Claude-Web
+Allow: /
+User-agent: VelenPublicWebCrawler
+Allow: /
+User-agent: FriendlyCrawler
+Allow: /
+User-agent: ICC-Crawler
+Allow: /
+User-agent: Twitterbot
+Allow: /
 
 Content-Signal: ai-train=yes, search=yes, ai-input=yes
 
