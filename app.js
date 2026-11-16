@@ -115,22 +115,6 @@ const verifiedReviews = [
     { name: "يوسف إبراهيم", service: "Google Gemini Pro", text: "شغال بأعلى كفاءة وبدون VPN، وفر لي الكثير في مشاريع البرمجة والعمل.", date: "أكتوبر 2026" }
 ];
 
-const egyptianNames = ["أحمد م.", "محمد س.", "كريم ع.", "يوسف ط.", "عمر ح.", "سارة م.", "محمود خ.", "زياد ف.", "مصطفى ن.", "نور د."];
-const purchaseTemplates = [
-    { act: "طلب Google Gemini Pro (18 شهر)", icon: '✨' },
-    { act: "شحن 3850 UC ببجي موبايل", icon: '🎮' },
-    { act: "شحن 7000 كوينز بوبو لايف", icon: '🔴' },
-    { act: "طلب بطاقة افتراضية VCC (25$)", icon: '💳' },
-    { act: "تفعيل اشتراك ChatGPT Plus", icon: '🤖' },
-    { act: "تفعيل Adobe Creative Cloud (شهر)", icon: '🎨' },
-    { act: "شحن 583 جوهرة فري فاير", icon: '💎' },
-    { act: "تفعيل اشتراك Canva Pro", icon: '🖌️' },
-    { act: "شحن 848 ماسة بيجو لايف", icon: '🔴' },
-    { act: "تفعيل اشتراك شاهد VIP", icon: '📺' },
-    { act: "شحن 1400 كوينز تيك توك", icon: '🪙' },
-    { act: "شحن 500 نجمة تليجرام", icon: '⭐' }
-];
-
 function calculateAutoPrice(basePrice) {
     if (!basePrice || isNaN(basePrice)) return 0;
     return Math.round(Number(basePrice));
@@ -171,23 +155,6 @@ function goToSlide(index) {
     updateSlider(); 
 }
 
-function triggerSocialProof() {
-    const popup = document.getElementById('socialProofPopup');
-    if (!popup) return;
-    const tpl = purchaseTemplates[Math.floor(Math.random() * purchaseTemplates.length)];
-    const name = egyptianNames[Math.floor(Math.random() * egyptianNames.length)];
-    const userEl = document.getElementById('proofUser');
-    const actEl = document.getElementById('proofAction');
-    const timeEl = document.getElementById('proofTime');
-    const iconEl = document.getElementById('proofIcon');
-    if (userEl) userEl.innerText = name;
-    if (actEl) actEl.innerText = tpl.act;
-    if (timeEl) timeEl.innerText = `منذ ${Math.floor(Math.random() * 45) + 5} ثانية`;
-    if (iconEl) iconEl.innerText = tpl.icon;
-    popup.classList.remove('translate-y-24', 'opacity-0');
-    setTimeout(() => popup.classList.add('translate-y-24', 'opacity-0'), 4500);
-    setTimeout(triggerSocialProof, Math.floor(Math.random() * 30000) + 75000);
-}
 
 function loadCartFromStorage() {
     try { cart = JSON.parse(localStorage.getItem(CART_STORAGE_KEY)) || []; } catch (e) { cart = []; }
@@ -1695,7 +1662,6 @@ window.addEventListener('load', function() {
         currentSlide = (currentSlide + 1) % 3;
         updateSlider();
     }, 5000);
-    setTimeout(triggerSocialProof, 3500);
 
     document.addEventListener('click', (e) => {
         if (!e.target.closest('#liveSearchInput') && !e.target.closest('#searchResultsDropdown')) {
