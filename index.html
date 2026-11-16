@@ -90,7 +90,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <link rel="preconnect" href="https://cdn-public.eesel.ai">
   <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
   <!-- Preload the above the -->
-  <link rel="preload" as="image" href="images/hero/dragon-alt1-anim.webp" fetchpriority="high">
+  <link rel="preload" as="image" href="images/hero/dragon-alt1-poster.webp" fetchpriority="high">
   <link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.gstatic.com/s/tajawal/v12/Iura6YBj_oCad4k1nzSBC45I.woff2">
   <link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.gstatic.com/s/tajawal/v12/Iurf6YBj_oCad4k1l4qkHrRpiYlJ.woff2">
   <link rel="preload" as="font" type="font/woff2" crossorigin href="https://fonts.gstatic.com/s/tajawal/v12/Iurf6YBj_oCad4k1l5anHrRpiYlJ.woff2">
@@ -239,7 +239,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
    </div>
       <!-- Dragon Hero fixed dragon -->
    <div id="dragonHero" class="dragon-hero w-full max-w-6xl mx-auto rounded-2xl mb-4 border border-white/10 bg-[#12151b]" dir="rtl">
-    <img class="dh-img" src="images/hero/dragon-alt1-anim.webp" data-static="images/hero/dragon-alt1-poster.webp" alt="شحن الألعاب والخدمات الرقمية بسرعة النار" loading="eager" fetchpriority="high" decoding="async">
+    <img class="dh-img" src="images/hero/dragon-alt1-poster.webp" data-anim="images/hero/dragon-alt1-anim.webp" data-static="images/hero/dragon-alt1-poster.webp" alt="شحن الألعاب والخدمات الرقمية بسرعة النار" loading="eager" fetchpriority="high" decoding="async">
     <div class="dh-veil"></div>
     <div class="dh-content">
      <div class="dh-textveil"></div>
@@ -894,7 +894,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
    function stopRot(){ if (timer) { clearInterval(timer); timer = null; } }
    var hero = document.getElementById('dragonHero');
    var dhImg = hero && hero.querySelector('.dh-img');
-   if (dhImg && dhImg.getAttribute('data-static') && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) { dhImg.src = dhImg.getAttribute('data-static'); }
+   if (dhImg && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) { if (dhImg.getAttribute('data-static')) dhImg.src = dhImg.getAttribute('data-static'); }
+   else if (dhImg && dhImg.getAttribute('data-anim')) { var dhPre = new Image(); dhPre.onload = function () { dhImg.src = dhImg.getAttribute('data-anim'); }; dhPre.src = dhImg.getAttribute('data-anim'); }
    if (hero) {
     hero.addEventListener('mouseenter', stopRot);
     hero.addEventListener('mouseleave', startRot);
