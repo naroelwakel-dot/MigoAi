@@ -1651,6 +1651,11 @@ function toggleReviews() {
     if (rp) rp.classList.toggle('hidden');
 }
 
+function toggleTrust() {
+    const tp = document.getElementById('trustPanel');
+    if (tp) tp.classList.toggle('hidden');
+}
+
 // رسم أقسام المتجر بمجرد تشغيل app.js (بيتنفذ بعد ملفات بيانات الأقسام بسبب async=false)،
 // بدل ما نستنى window.load اللي بيتأخر لحد ما كل الصور والخطوط تخلّص تحميل.
 var __migoStoreRendered = false;
