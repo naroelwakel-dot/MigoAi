@@ -183,7 +183,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
    <p class="text-xs sm:text-sm text-slate-400 leading-relaxed mb-4 max-w-2xl mx-auto px-4">كوينز تيك توك ونجوم تليجرام، بطاقات VCC دولية، واشتراكات الذكاء الاصطناعي والسوشيال ميديا بالجنيه المصري مع تسليم فوري ودعم مباشر.</p>
    <!-- Section Hub a simple -->
    <div class="sec-grid mb-5" dir="rtl">
-    <a href="#sec-coins" class="sky-card p-3 flex flex-col items-center text-center gap-1">
+    <a href="javascript:void(0)" onclick="toggleCoins()" class="sky-card p-3 flex flex-col items-center text-center gap-1">
      <span class="sec-ic" aria-hidden="true"><svg viewBox="0 0 24 24" class="sec-ico"><circle cx="9.5" cy="14.5" r="5"/><path d="M9.5 11.8v5.4"/><path d="M17.5 3l.9 2.1 2.1.9-2.1.9-.9 2.1-.9-2.1L14.5 6l2.1-.9z"/></svg></span>
      <span class="text-xs font-bold text-white">عملات ونجوم</span>
      <span class="text-[10px] text-slate-400">تبدأ من 95 ج.م</span>
@@ -193,7 +193,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
      <span class="text-xs font-bold text-white">تطبيقات اللايف</span>
      <span class="text-[10px] text-slate-400">BIGO، Chamet، Yalla</span>
     </a>
-    <a href="#sec-vcc" class="sky-card p-3 flex flex-col items-center text-center gap-1">
+    <a href="javascript:void(0)" onclick="toggleVcc()" class="sky-card p-3 flex flex-col items-center text-center gap-1">
      <span class="sec-ic" aria-hidden="true"><svg viewBox="0 0 24 24" class="sec-ico"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 9.75h19M6 15h4"/></svg></span>
      <span class="text-xs font-bold text-white">بطاقات VCC</span>
      <span class="text-[10px] text-slate-400">تبدأ من 620 ج.م</span>
@@ -236,14 +236,14 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
        <h2 class="text-xl sm:text-2xl font-bold text-white mb-2 tracking-tight drop-shadow">شحن كوينز تيك توك الرسمية</h2>
        <p class="text-xs text-slate-300 mb-3 leading-relaxed">تسليم فوري ومباشر إلى حسابك بالاسم الرسمي لدعم البثوث والمشاريع بأمان تام.</p>
        <div class="text-sm font-bold text-white mb-3 font-mono-code">تبدأ من 95 ج.م</div>
-       <a href="#sec-coins" class="agentql-btn-primary py-2 px-6 rounded-xl text-xs inline-block">اشحن الآن ⚡</a>
+       <a href="javascript:void(0)" onclick="toggleCoins()" class="agentql-btn-primary py-2 px-6 rounded-xl text-xs inline-block">اشحن الآن ⚡</a>
       </div>
       <div class="dh-slide px-5 text-center">
        <span class="inline-block pill-badge mb-3 font-mono-code">GLOBAL PAYMENTS</span>
        <h2 class="text-xl sm:text-2xl font-bold text-white mb-2 tracking-tight drop-shadow">البطاقات الافتراضية الدولية (VCC)</h2>
        <p class="text-xs text-slate-300 mb-3 leading-relaxed">تفعيل الاشتراكات الدولية، الحملات الإعلانية، والشراء من المواقع العالمية بالجنيه المصري.</p>
        <div class="text-sm font-bold text-white mb-3 font-mono-code">تبدأ من 620 ج.م</div>
-       <a href="#sec-vcc" class="agentql-btn-primary py-2 px-6 rounded-xl text-xs inline-block">طلب بطاقة 💳</a>
+       <a href="javascript:void(0)" onclick="toggleVcc()" class="agentql-btn-primary py-2 px-6 rounded-xl text-xs inline-block">طلب بطاقة 💳</a>
       </div>
       <div class="dh-slide px-5 text-center">
        <span class="inline-block pill-badge mb-3 font-mono-code">OFFICIAL MIDASBUY</span>
@@ -264,19 +264,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- Complete Store Modules & -->
   <main class="max-w-6xl mx-auto px-4 py-4 space-y-8">
    <!-- Section 1: Coins & Telegram -->
-   <section id="sec-coins" class="sky-surface p-5 sm:p-6 scroll-mt-24">
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-5 border-b border-white/10 pb-3">
-      <div>
-        <span class="pill-badge font-mono-code">INSTANT CREDITS</span>
-        <h2 class="text-lg font-bold text-white mt-1">عملات تيك توك ونجوم تليجرام</h2>
-      </div>
-      <span class="text-xs text-slate-400 font-mono-code">Verified via Username & ID</span>
-    </div>
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-      <div id="tiktokCoinsGrid"></div>
-      <div id="telegramStarsGrid"></div>
-    </div>
-   </section>
    <!-- Section 2: Live Apps -->
    <section id="sec-live" class="sky-surface p-5 sm:p-6 scroll-mt-24">
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-5 border-b border-white/10 pb-3">
@@ -289,16 +276,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <div id="liveAppsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
    </section>
    <!-- Section 3: VCC Cards Engine -->
-   <section id="sec-vcc" class="sky-surface p-5 sm:p-6 scroll-mt-24">
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-5 border-b border-white/10 pb-3">
-      <div>
-        <span class="pill-badge font-mono-code">VIRTUAL CARDS</span>
-        <h2 class="text-lg font-bold text-white mt-1">البطاقات الافتراضية الدولية (VCC)</h2>
-      </div>
-      <span class="text-xs text-slate-400 font-mono-code">Instant Delivery via WhatsApp & Email</span>
-    </div>
-    <div id="vccCardsContainer" class="grid grid-cols-1 gap-3 max-w-xl mx-auto"></div>
-   </section>
    <!-- Section 4: Game Top-up (16 T -->
    <section id="sec-games" class="sky-surface p-5 sm:p-6 scroll-mt-24">
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-5 border-b border-white/10 pb-3">
@@ -541,7 +518,53 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
    </div>
   </div>
-      <!-- Trust & Value Slide-Over Panel (moved out of the homepage flow 2026-11-16; opens from the drawer) -->
+      <!-- Coins & VCC Slide-Over Panels (moved out of the homepage flow 2026-11-16; open from the drawer) -->
+  <div id="coinsPanel" class="fixed inset-0 z-50 hidden">
+   <div onclick="toggleCoins()" class="fixed inset-0 bg-black/80 backdrop-blur-md"></div>
+   <aside class="fixed top-0 right-0 h-full w-[42rem] max-w-[94vw] bg-[#12151b] border-l border-white/10 z-10 p-4 overflow-y-auto shadow-2xl custom-scrollbar">
+    <div class="flex justify-between items-center pb-3 border-b border-white/10">
+     <span class="font-bold text-white text-sm">🪙 عملات تيك توك ونجوم تليجرام</span>
+     <button type="button" onclick="toggleCoins()" aria-label="إغلاق" class="w-7 h-7 rounded-lg border border-white/10 text-slate-400 hover:text-white flex items-center justify-center cursor-pointer">✕</button>
+    </div>
+    <div class="pt-4">
+   <section id="sec-coins" class="sky-surface p-5 sm:p-6 scroll-mt-24">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-5 border-b border-white/10 pb-3">
+      <div>
+        <span class="pill-badge font-mono-code">INSTANT CREDITS</span>
+        <h2 class="text-lg font-bold text-white mt-1">عملات تيك توك ونجوم تليجرام</h2>
+      </div>
+      <span class="text-xs text-slate-400 font-mono-code">Verified via Username & ID</span>
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div id="tiktokCoinsGrid"></div>
+      <div id="telegramStarsGrid"></div>
+    </div>
+   </section>
+    </div>
+   </aside>
+  </div>
+  <div id="vccPanel" class="fixed inset-0 z-50 hidden">
+   <div onclick="toggleVcc()" class="fixed inset-0 bg-black/80 backdrop-blur-md"></div>
+   <aside class="fixed top-0 right-0 h-full w-[42rem] max-w-[94vw] bg-[#12151b] border-l border-white/10 z-10 p-4 overflow-y-auto shadow-2xl custom-scrollbar">
+    <div class="flex justify-between items-center pb-3 border-b border-white/10">
+     <span class="font-bold text-white text-sm">💳 بطاقات الدفع الدولي (VCC)</span>
+     <button type="button" onclick="toggleVcc()" aria-label="إغلاق" class="w-7 h-7 rounded-lg border border-white/10 text-slate-400 hover:text-white flex items-center justify-center cursor-pointer">✕</button>
+    </div>
+    <div class="pt-4">
+   <section id="sec-vcc" class="sky-surface p-5 sm:p-6 scroll-mt-24">
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-5 border-b border-white/10 pb-3">
+      <div>
+        <span class="pill-badge font-mono-code">VIRTUAL CARDS</span>
+        <h2 class="text-lg font-bold text-white mt-1">البطاقات الافتراضية الدولية (VCC)</h2>
+      </div>
+      <span class="text-xs text-slate-400 font-mono-code">Instant Delivery via WhatsApp & Email</span>
+    </div>
+    <div id="vccCardsContainer" class="grid grid-cols-1 gap-3 max-w-xl mx-auto"></div>
+   </section>
+    </div>
+   </aside>
+  </div>
+  <!-- Trust & Value Slide-Over Panel (moved out of the homepage flow 2026-11-16; opens from the drawer) -->
   <div id="trustPanel" class="fixed inset-0 z-50 hidden">
    <div onclick="toggleTrust()" class="fixed inset-0 bg-black/80 backdrop-blur-md"></div>
    <aside class="fixed top-0 right-0 h-full w-[42rem] max-w-[94vw] bg-[#12151b] border-l border-white/10 z-10 p-4 overflow-y-auto shadow-2xl custom-scrollbar">
@@ -563,7 +586,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
            <span>ابدأ شحن ألعابك</span>
            <i class="fa-solid fa-gamepad"></i>
          </a>
-         <a href="#sec-vcc" onclick="toggleTrust()" class="sky-btn px-5 py-2.5 text-xs inline-flex items-center gap-2">
+         <a href="javascript:void(0)" onclick="toggleTrust(); toggleVcc()" class="sky-btn px-5 py-2.5 text-xs inline-flex items-center gap-2">
            <span>طلب بطاقة VCC دولية</span>
            <i class="fa-regular fa-credit-card"></i>
          </a>
@@ -627,9 +650,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <button type="button" onclick="toggleSidebar()" aria-label="إغلاق" class="w-7 h-7 rounded-lg border border-white/10 text-slate-400 hover:text-white flex items-center justify-center cursor-pointer">✕</button>
      </div>
      <div class="mt-3 space-y-1 text-xs">
-      <a href="#sec-coins" onclick="toggleSidebar()" class="w-full px-3 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-[#1f2530] transition flex items-center justify-between"> <span>عملات تيك توك وتليجرام</span> </a>
+      <a href="javascript:void(0)" onclick="toggleSidebar(); toggleCoins()" class="w-full px-3 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-[#1f2530] transition flex items-center justify-between"> <span>عملات تيك توك وتليجرام</span> </a>
       <a href="#sec-live" onclick="toggleSidebar()" class="w-full px-3 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-[#1f2530] transition flex items-center justify-between"> <span>برامج البث والدردشة (Live)</span> </a>
-      <a href="#sec-vcc" onclick="toggleSidebar()" class="w-full px-3 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-[#1f2530] transition flex items-center justify-between"> <span>بطاقات الدفع الدولي (VCC)</span> </a>
+      <a href="javascript:void(0)" onclick="toggleSidebar(); toggleVcc()" class="w-full px-3 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-[#1f2530] transition flex items-center justify-between"> <span>بطاقات الدفع الدولي (VCC)</span> </a>
       <a href="#sec-games" onclick="toggleSidebar()" class="w-full px-3 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-[#1f2530] transition flex items-center justify-between"> <span>شحن الألعاب بالـ ID</span> <span class="text-[10px] text-slate-400 font-mono-code">16 Games</span></a>
       <a href="#sec-social" onclick="toggleSidebar()" class="w-full px-3 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-[#1f2530] transition flex items-center justify-between"> <span>خدمات السوشيال ميديا</span> <span class="text-[10px] text-slate-400 font-mono-code">20 Nodes</span></a>
       <a href="#sec-productivity" onclick="toggleSidebar()" class="w-full px-3 py-2 rounded-xl text-slate-300 hover:text-white hover:bg-[#1f2530] transition flex items-center justify-between"> <span>أدوات وبرامج المصممين</span> </a>
@@ -842,7 +865,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- Dynamic Cache Busting Module -->
   <script>
     (function() {
-      const v = 'v=2026-11-16-4';
+      const v = 'v=2026-11-16-5';
       const files = ['games.js', 'live-coins.js', 'subscriptions.js', 'smm.js', 'ai-tools.js', 'app.js', 'search-ui.js'];
       function boot() {
         files.forEach(file => {
@@ -871,7 +894,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       function loadChat() {
         if (done) return; done = true;
         var s = document.createElement('script');
-        s.src = 'chat-widget.js?v=2026-11-16-4';
+        s.src = 'chat-widget.js?v=2026-11-16-5';
         s.async = true;
         document.body.appendChild(s);
       }

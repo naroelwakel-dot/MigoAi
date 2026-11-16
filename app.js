@@ -1623,6 +1623,16 @@ function toggleTrust() {
     if (tp) tp.classList.toggle('hidden');
 }
 
+function toggleCoins() {
+    const cp = document.getElementById('coinsPanel');
+    if (cp) cp.classList.toggle('hidden');
+}
+
+function toggleVcc() {
+    const vp = document.getElementById('vccPanel');
+    if (vp) vp.classList.toggle('hidden');
+}
+
 // رسم أقسام المتجر بمجرد تشغيل app.js (بيتنفذ بعد ملفات بيانات الأقسام بسبب async=false)،
 // بدل ما نستنى window.load اللي بيتأخر لحد ما كل الصور والخطوط تخلّص تحميل.
 var __migoStoreRendered = false;
