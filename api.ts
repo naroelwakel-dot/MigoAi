@@ -142,6 +142,56 @@ function logCall(game: string, provider: string, ok: boolean): void {
   }
 }
 
+// ----------------------------------------------------------------------------
+// Central error log (public.error_log via the key-gated log_error RPC —
+// migration 006, same LOG_WRITE_KEY as logCall). The verify chain's outer
+// catch used to swallow every unexpected error silently; now it leaves a
+// permanent, reviewable row. Never awaited, never throws, no effect on the
+// response path. Only the error name + a scrubbed, capped message are sent:
+// never the write key, request bodies, or headers.
+// ----------------------------------------------------------------------------
+function logError(source: string, message: string, error?: unknown, context?: Record<string, unknown>): void {
+  try {
+    const key = Deno.env.get("LOG_WRITE_KEY") || "";
+    if (!key) {
+      console.warn("logError skipped: LOG_WRITE_KEY is not set");
+      return;
+    }
+    const err = error as Error | undefined;
+    let errorText: string | null = null;
+    if (error != null) {
+      errorText = String((err && err.message) || error)
+        .split(key).join("***")
+        .split(SB_KEY).join("***")
+        .slice(0, 500);
+    }
+    const p = fetch(`${SB_URL}/rest/v1/rpc/log_error`, {
+      method: "POST",
+      headers: {
+        "apikey": SB_KEY,
+        "Authorization": `Bearer ${SB_KEY}`,
+        "Content-Type": "application/json",
+        "Prefer": "return=minimal",
+      },
+      body: JSON.stringify({
+        p_source: String(source || "").slice(0, 64),
+        p_message: String(message || "").slice(0, 300),
+        p_error_type: err?.name ? String(err.name).slice(0, 128) : null,
+        p_error_text: errorText,
+        p_context: context || {},
+        p_key: key,
+      }),
+    }).then((r) => {
+      if (!r.ok) console.warn("logError RPC failed with status", r.status);
+    }).catch((e) => {
+      console.warn("logError network error:", (e && e.name) || "unknown");
+    });
+    (globalThis as any).EdgeRuntime?.waitUntil?.(p);
+  } catch (e) {
+    console.warn("logError unexpected error:", (e && (e as Error).name) || "unknown");
+  }
+}
+
 // Pull the first plausible nickname out of an unknown JSON shape.
 function extractPlayerName(data: any): string {
   if (!data) return "";
@@ -935,7 +985,15 @@ Deno.serve(async (req: Request) => {
 
   const url = new URL(req.url);
   if (req.method === "POST" && url.pathname.replace(/\/+$/, "").endsWith("/chat")) {
-    return await handleChat(req);
+    try {
+      return await handleChat(req);
+    } catch (e) {
+      logError("api.chat", "unhandled chat error", e);
+      return new Response(
+        JSON.stringify({ ok: false, error: "exception" }),
+        { status: 200, headers: corsHeaders(req) },
+      );
+    }
   }
   let game = (url.searchParams.get("game") || "").toLowerCase().trim();
   const id = (url.searchParams.get("id") || "").trim();
@@ -1035,7 +1093,11 @@ Deno.serve(async (req: Request) => {
       }),
       { status: 200, headers: corsHeaders(req) },
     );
-  } catch (_) {
+  } catch (e) {
+    // Last-resort net for the whole verify chain: the customer still gets
+    // the graceful manual-name fallback, but the error now lands in the
+    // central error log instead of vanishing (migration 006).
+    logError("api.verify", "unhandled verify error", e, { game });
     return new Response(
       JSON.stringify({
         success: false,
