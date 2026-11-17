@@ -413,26 +413,33 @@ async function rapidApiLookup(slugs: string[], id: string): Promise<{ name: stri
 }
 
 // ----------------------------------------------------------------------------
-// Free best-effort: Codashop public "check ID" (no key). GATED: only runs when
-// force=cosh is passed, so it never affects normal traffic until verified.
+// Free best-effort LAST-RESORT fallback: Codashop public "check ID" (no key).
+// Runs as the final step of the routes for the games below (and via the
+// admin-only force=cosh probe). Payload format is the current Struts-style
+// contract, verified live 2026-11-17 (the old flat type/id/pricePointId
+// format now returns errorCode 202 for everything). Price points are
+// Indonesia-shop ones, so non-ID-region accounts answer errorCode 24
+// (region blocked) and the chain ends with the graceful fallback — no
+// regression, and ID-region accounts still resolve during provider outages.
 // ----------------------------------------------------------------------------
-type CodaCfg = { type: string; svc?: string; ppid?: string; zone?: boolean; shop: string };
+type CodaCfg = { type: string; ppid: string; price: string; zone?: boolean; shop: string };
 const CODA_CFG: Record<string, CodaCfg> = {
-  freefire: { type: "FREEFIRE", ppid: "270288", shop: "id_ID" },
-  mlbb: { type: "MOBILE_LEGENDS", ppid: "5199", zone: true, shop: "id_ID" },
-  genshin: { type: "GENSHIN_IMPACT", ppid: "338498", zone: true, shop: "id_ID" },
-  valorant: { type: "VALORANT", ppid: "950525", shop: "id_ID" },
-  codm: { type: "CALL_OF_DUTY", ppid: "270251", shop: "id_ID" },
+  freefire: { type: "FREEFIRE", ppid: "270288", price: "200000.0000", shop: "id_ID" },
+  mlbb: { type: "MOBILE_LEGENDS", ppid: "5199", price: "68543.0000", zone: true, shop: "id_ID" },
+  genshin: { type: "GENSHIN_IMPACT", ppid: "272113", price: "29700.0000", zone: true, shop: "id_ID" },
+  valorant: { type: "VALORANT", ppid: "950525", price: "75000.0000", shop: "id_ID" },
+  codm: { type: "CALL_OF_DUTY", ppid: "270251", price: "20000.0000", shop: "id_ID" },
 };
 
 async function codashopLookup(cfg: CodaCfg, id: string, zoneId: string): Promise<{ name: string; info: string }> {
   const body = new URLSearchParams();
-  body.set("type", cfg.type);
-  body.set("id", id);
-  if (cfg.svc) body.set("service", cfg.svc);
-  if (cfg.ppid) body.set("pricePointId", cfg.ppid);
+  body.set("voucherPricePoint.id", cfg.ppid);
+  body.set("voucherPricePoint.price", cfg.price);
+  body.set("voucherPricePoint.variablePrice", "0");
+  body.set("user.userId", id);
+  if (cfg.zone && zoneId) body.set("user.zoneId", zoneId);
+  body.set("voucherTypeName", cfg.type);
   body.set("shopLang", cfg.shop);
-  if (cfg.zone && zoneId) body.set("zoneId", zoneId);
   const d = await getJson("https://order-sg.codashop.com/initPayment.action", {
     method: "POST",
     headers: {
@@ -447,7 +454,7 @@ async function codashopLookup(cfg: CodaCfg, id: string, zoneId: string): Promise
   const cf = d?.confirmationFields;
   const raw = cf?.username || (Array.isArray(cf?.roles) && cf.roles[0] && (cf.roles[0].role || cf.roles[0].roleName)) || "";
   const name = typeof raw === "string" ? raw.trim() : "";
-  return { name, info: `cosh:${cfg.type}:code=${d?.errorCode ?? d?.error ?? (d ? "json" : "nil")}:${name ? "ok" : "none"}` };
+  return { name, info: `cosh:${cfg.type}:code=${d?.errorCode ?? d?.RESULT_CODE ?? d?.error ?? (d ? "json" : "nil")}:${name ? "ok" : "none"}` };
 }
 
 // ----------------------------------------------------------------------------
@@ -475,6 +482,7 @@ const ROUTES: Record<string, Step[]> = {
     { p: "isan", path: "ff" },
     { p: "vol", slug: "free-fire-global" },
     { p: "nef", slug: "free-fire" },
+    { p: "cosh", slug: "freefire" },
   ],
   clashofclans: [{ p: "vol", slug: "clash-of-clans" }],
   brawlstars: [{ p: "vol", slug: "brawl-stars" }],
@@ -485,18 +493,21 @@ const ROUTES: Record<string, Step[]> = {
     { p: "isan", path: "ml", zone: true },
     { p: "vol", slug: "mobile-legends", zone: true },
     { p: "nef", slug: "mobile-legends", zone: true },
+    { p: "cosh", slug: "mlbb" },
   ],
   codm: [
     { p: "isan", path: "codm" },
     { p: "vol", slug: "call-of-duty-mobile-indonesia" },
     { p: "vol", slug: "codm-us" },
     { p: "nef", slug: "cod-mobile" },
+    { p: "cosh", slug: "codm" },
   ],
   valorant: [
     { p: "isan", path: "valo" },
     { p: "vol", slug: "valorant-indonesia" },
     { p: "vol", slug: "valorant-singapore" },
     { p: "nef", slug: "valorant" },
+    { p: "cosh", slug: "valorant" },
   ],
   wildrift: [{ p: "vol", slug: "league-of-legends-wild-rift" }],
   arenabreakout: [
@@ -559,8 +570,10 @@ function runStep(step: Step, id: string, zoneId: string): Promise<{ name: string
       return lookupGenshin(id).then((n) => ({ name: n, info: `enka:${n ? "ok" : "none"}` }));
     case "osirion":
       return lookupFortnite(id);
-    case "cosh":
-      return codashopLookup({ type: (step.slug || ""), svc: step.svc, ppid: step.ppid, zone: step.zone, shop: step.shop || "id_ID" }, id, zoneId);
+    case "cosh": {
+      const cfg = CODA_CFG[step.slug || ""];
+      return cfg ? codashopLookup(cfg, id, zoneId) : Promise.resolve({ name: "", info: "cosh:no-config" });
+    }
     default:
       return Promise.resolve({ name: "", info: "unknown-step" });
   }
@@ -972,6 +985,7 @@ Deno.serve(async (req: Request) => {
         for (const step of [
           { p: "isan", path: "gi" } as Step,
           { p: "vol", slug: "genshin-impact-global" } as Step,
+          { p: "cosh", slug: "genshin" } as Step,
         ]) {
           const r = await runStep(step, id, zoneId);
           trace.push(r.info);
