@@ -1566,8 +1566,8 @@ function switchAuthTab(mode) {
 }
 
 // --- Customer accounts over Supabase (database + email confirmation link) ---
-const SUPABASE_URL = 'https://qjlivjzgrqyitqxcdtlk.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_ezC_W2lpGW88bSbjBRJFfw_reCr3vlw';
+const SUPABASE_URL = 'https://lbbzsfwfgesizufatwwc.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxiYnpzZndmZ2VzaXp1ZmF0d3djIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ0MDIxNzMsImV4cCI6MjEwOTk3ODE3M30.JWC2MLDJ5cevKs2ZvxbyxUXN2taPtXpzyBo_xNbS5WM';
 let __sb = null, __pending = null;
 function __sbClient() {
     if (__sb) return Promise.resolve(__sb);
