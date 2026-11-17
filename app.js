@@ -106,14 +106,10 @@ const PAYMENT_METHODS_DATA = {
 };
 
 // آراء العملاء
-const verifiedReviews = [
-    { name: "أحمد عبد الرحمن", service: "ChatGPT Plus", text: "التفعيل تم على إيميلي الشخصي في أقل من نص ساعة، خدمة محترمة ومستقرة.", date: "أكتوبر 2026" },
-    { name: "محمد طارق", service: "ببجي 3850 UC", text: "الشدات وصلت فوراً بعد التحويل بالـ ID بس وبدون باسورد.", date: "أكتوبر 2026" },
-    { name: "محمود إبراهيم", service: "بطاقة VCC (50$)", text: "استلمت بيانات الكارت واشتغلت في إعلانات الفيسبوك بدون أي رفض.", date: "أكتوبر 2026" },
-    { name: "سارة م.", service: "Canva Pro Admin", text: "الحساب شغال بصلاحيات الأدمن كاملة وممتاز لفريقي في التصميم.", date: "أكتوبر 2026" },
-    { name: "خالد وائل", service: "بيجو لايف (848 ماسة)", text: "الماسات نزلت في حسابي فوراً بعد الفحص بالـ ID، متجر ثقة.", date: "أكتوبر 2026" },
-    { name: "يوسف إبراهيم", service: "Google Gemini Pro", text: "شغال بأعلى كفاءة وبدون VPN، وفر لي الكثير في مشاريع البرمجة والعمل.", date: "أكتوبر 2026" }
-];
+// Verified reviews come ONLY from the reviews registry (public.get_reviews):
+// a review exists there only when it was submitted against a real order
+// (order_ref + sender match) and approved by the owner. No static list —
+// when the registry is empty the panel says so honestly.
 
 function calculateAutoPrice(basePrice) {
     if (!basePrice || isNaN(basePrice)) return 0;
@@ -1462,24 +1458,88 @@ function onGlobalSearchClick(encodedItem) {
     }
 }
 
+function __escHtml(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+}
+
 function renderReviews() {
     const container = document.getElementById('reviewsContainer');
     if (!container) return;
-    container.innerHTML = verifiedReviews.map(r => `
+    container.innerHTML = '<p class="text-gray-400 text-[11px]">جارٍ تحميل الآراء الموثقة…</p>';
+    __sbClient().then(function (c) { return c.rpc('get_reviews', { p_limit: 12 }); }).then(function (res) {
+        const rows = (res && res.data) || [];
+        if (!rows.length) {
+            container.innerHTML = '<p class="text-gray-400 text-[11px] leading-relaxed">لسه مفيش آراء موثقة منشورة. الآراء هنا بتتنشر بس لما صاحب طلب حقيقي يقيّمه بنفسه وإحنا نراجعه — كن أول واحد من النموذج اللي تحت.</p>';
+            return;
+        }
+        const months = ['يناير', 'فبراير', 'مارس', 'أبريل', 'مايو', 'يونيو', 'يوليو', 'أغسطس', 'سبتمبر', 'أكتوبر', 'نوفمبر', 'ديسمبر'];
+        container.innerHTML = rows.map(function (r) {
+            const d = new Date(r.date);
+            const when = isNaN(d) ? '' : (months[d.getMonth()] + ' ' + d.getFullYear());
+            const rating = Math.max(1, Math.min(5, Number(r.rating) || 5));
+            const stars = '★★★★★'.slice(0, rating) + '☆☆☆☆☆'.slice(0, 5 - rating);
+            return `
         <div class="sky-card border p-3 rounded-2xl flex flex-col justify-between">
             <div>
                 <div class="flex items-center justify-between mb-1.5">
-                    <span class="font-bold text-xs text-white">${r.name}</span>
-                    <span class="text-amber-400 text-[10px]">★★★★★</span>
+                    <span class="font-bold text-xs text-white">${__escHtml(r.name)}</span>
+                    <span class="text-amber-400 text-[10px]">${stars}</span>
                 </div>
-                <p class="text-[11px] text-gray-300 mb-2">"${r.text}"</p>
+                <p class="text-[11px] text-gray-300 mb-2">"${__escHtml(r.text)}"</p>
             </div>
             <div class="pt-1.5 border-t border-slate-700 flex items-center justify-between text-[9px] text-gray-400">
-                <span class="text-amber-400">${r.service}</span>
-                <span>${r.date}</span>
+                <span class="text-amber-400">${__escHtml(r.service || '')}</span>
+                <span>${when}</span>
             </div>
-        </div>
-    `).join('');
+            <div class="text-[9px] text-emerald-400 mt-1">✓ عملية شراء موثقة برقم الطلب</div>
+        </div>`;
+        }).join('');
+    }).catch(function () {
+        container.innerHTML = '<p class="text-gray-400 text-[11px]">تعذّر تحميل الآراء دلوقتي، جرب بعد شوية.</p>';
+    });
+}
+
+function submitVerifiedReview() {
+    const msg = document.getElementById('rvMsg');
+    const ref = (document.getElementById('rvRef') || {}).value || '';
+    const sender = (document.getElementById('rvSender') || {}).value || '';
+    const name = (document.getElementById('rvName') || {}).value || '';
+    const rating = Number((document.getElementById('rvRating') || {}).value || 0);
+    const body = (document.getElementById('rvBody') || {}).value || '';
+    function say(text, ok) {
+        if (!msg) return;
+        msg.textContent = text;
+        msg.style.color = ok ? '#4ade80' : '#f87171';
+    }
+    if (!ref.trim() || !sender.trim()) { say('اكتب رقم الطلب وحساب المُرسل اللي دفعت منه الأول.'); return; }
+    if (name.trim().length < 2) { say('اكتب اسمك اللي هيظهر مع الرأي.'); return; }
+    if (!rating) { say('اختار التقييم بالنجوم.'); return; }
+    if (body.trim().length < 3) { say('اكتب رأيك في سطر على الأقل.'); return; }
+    say('جارٍ إرسال رأيك…', true);
+    __sbClient().then(function (c) {
+        return c.rpc('submit_review', { p_ref: ref.trim(), p_sender: sender.trim(), p_name: name.trim(), p_rating: rating, p_body: body.trim() });
+    }).then(function (res) {
+        const r = (res && res.data) || {};
+        if (r.ok) {
+            say('استلمنا رأيك، شكراً ليك 🙏 هيظهر هنا بعد ما نراجعه ونتأكد من الطلب.', true);
+            ['rvRef', 'rvSender', 'rvName', 'rvBody'].forEach(function (id) {
+                const el = document.getElementById(id);
+                if (el) el.value = '';
+            });
+            return;
+        }
+        const errors = {
+            not_found: 'ملقيناش طلب بالبيانات دي. اتأكد من رقم الطلب وحساب المُرسل زي وقت الشراء بالظبط.',
+            duplicate: 'الطلب ده اتقيّم قبل كده — كل طلب ليه تقييم واحد بس.',
+            cancelled: 'الطلب ده ملغي، فمش بيقبل تقييم.',
+            rating: 'اختار تقييم من نجمة لخمس نجوم.',
+            name: 'الاسم قصير أو طويل زيادة.',
+            body: 'نص الرأي قصير أو طويل زيادة.'
+        };
+        say(errors[r.error] || 'حصلت مشكلة في الإرسال، جرب تاني.');
+    }).catch(function () { say('حصلت مشكلة في الاتصال، جرب تاني بعد شوية.'); });
 }
 
 

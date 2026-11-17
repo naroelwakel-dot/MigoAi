@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الفاتورة الرقمية — متجر ميجو (Migo AI Solution)</title>
+<meta name="description" content="اعرض وحمّل الفاتورة الرقمية لأي طلب من متجر ميجو برقم الطلب وحساب المُرسل اللي دفعت منه.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="canonical" href="https://migoai.shop/invoice.html">
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','GTM-P9N6CKPN');</script>
+<!-- End Google Tag Manager -->
+<style>
+*{box-sizing:border-box}body{margin:0;background:#0b0d11;color:#e2e8f0;font-family:'Segoe UI',Tahoma,Arial,sans-serif;line-height:1.9}
+a{color:#60a5fa;text-decoration:none}a:hover{text-decoration:underline}
+.wrap{max-width:760px;margin:0 auto;padding:24px 18px 60px}
+header.top{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid #1f2530;margin-bottom:24px}
+.logo{font-size:22px;font-weight:800;color:#fff}
+h1{font-size:28px;color:#fff;margin:8px 0 6px}
+.lede{font-size:16px;color:#cbd5e1;margin:4px 0 14px}
+.card{background:#12151b;border:1px solid #1f2530;border-radius:14px;padding:20px;margin:16px 0}
+label{display:block;font-size:14px;color:#cbd5e1;margin:10px 0 4px}
+input{width:100%;background:#0b0d11;border:1px solid #2a3040;border-radius:10px;color:#fff;padding:10px 12px;font-size:15px}
+input:focus{outline:none;border-color:#f2b53d}
+button.go{width:100%;margin-top:16px;background:linear-gradient(135deg,#f2b53d,#d99a1f);color:#12151b;border:0;border-radius:10px;padding:12px;font-size:16px;font-weight:800;cursor:pointer}
+button.print{background:#1f2530;color:#f3cf6b;border:1px solid #f2b53d;border-radius:10px;padding:8px 18px;font-size:14px;font-weight:700;cursor:pointer;margin-top:14px}
+.msg{font-size:14px;margin-top:12px;min-height:24px}
+.err{color:#f87171}.ok{color:#4ade80}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px}
+th,td{border-bottom:1px solid #1f2530;padding:8px 6px;text-align:right}
+th{color:#f3cf6b;font-size:13px}
+.total{font-size:19px;font-weight:800;color:#fff}
+.stamp{display:inline-block;border:2px solid #4ade80;color:#4ade80;border-radius:8px;padding:1px 14px;font-weight:800;transform:rotate(-4deg)}
+.stamp.cancelled{border-color:#f87171;color:#f87171}
+.meta{font-size:13px;color:#94a3b8}
+@media print{body{background:#fff;color:#111}.card{border-color:#ccc;background:#fff}header.top,.lookup,.noprint{display:none!important}h1,.total{color:#111}th{color:#92600a}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+  <div class="logo">Migo AI Solution</div>
+  <a href="index.html">← رجوع للمتجر</a>
+</header>
+
+<h1>🧾 الفاتورة الرقمية</h1>
+<p class="lede">كل طلب عندنا ليه فاتورة رقمية مسجلة في نظام المتجر. عشان تعرض فاتورتك اكتب رقم الطلب وحساب المُرسل اللي دفعت منه (نفس البيانات اللي استخدمتها وقت الشراء).</p>
+
+<div class="card lookup">
+  <label for="invRef">رقم الطلب</label>
+  <input id="invRef" type="text" placeholder="مثال: MG-100001" autocomplete="off">
+  <label for="invSender">حساب المُرسل (الرقم أو الاسم اللي حوّلت منه)</label>
+  <input id="invSender" type="text" placeholder="مثال: 0100xxxxxxx" autocomplete="off">
+  <button class="go" type="button" onclick="loadInvoice()">عرض الفاتورة</button>
+  <p id="invMsg" class="msg"></p>
+</div>
+
+<div id="invResult"></div>
+
+<p class="meta noprint">واجهتك مشكلة في طلبك؟ كلمنا من <a href="contact.html">صفحة التواصل</a> برقم الطلب وهنساعدك.</p>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://qjlivjzgrqyitqxcdtlk.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_ezC_W2lpGW88bSbjBRJFfw_reCr3vlw';
+let __sb = null;
+function sbClient() {
+  if (__sb) return Promise.resolve(__sb);
+  return import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm').then(function (m) {
+    __sb = m.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    return __sb;
+  });
+}
+function esc(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+  });
+}
+function fmtDate(iso) {
+  const d = new Date(iso);
+  if (isNaN(d)) return '';
+  try { return d.toLocaleString('ar-EG', { dateStyle: 'full', timeStyle: 'short' }); }
+  catch (e) { return d.toISOString().slice(0, 16).replace('T', ' '); }
+}
+function loadInvoice() {
+  const ref = document.getElementById('invRef').value.trim();
+  const sender = document.getElementById('invSender').value.trim();
+  const msg = document.getElementById('invMsg');
+  const out = document.getElementById('invResult');
+  out.innerHTML = '';
+  if (!ref || !sender) {
+    msg.className = 'msg err';
+    msg.textContent = 'اكتب رقم الطلب وحساب المُرسل الأول.';
+    return;
+  }
+  msg.className = 'msg';
+  msg.textContent = 'جارٍ البحث عن الفاتورة…';
+  sbClient().then(function (c) {
+    return c.rpc('get_invoice', { p_ref: ref, p_sender: sender });
+  }).then(function (res) {
+    const inv = res && res.data;
+    if (!inv || !inv.found) {
+      msg.className = 'msg err';
+      msg.textContent = 'ملقيناش طلب بالبيانات دي. اتأكد من رقم الطلب وحساب المُرسل زي ما كتبتهم وقت الشراء بالظبط.';
+      return;
+    }
+    msg.className = 'msg ok';
+    msg.textContent = '';
+    const cancelled = inv.status === 'cancelled';
+    const rows = (inv.items || []).map(function (it) {
+      const qty = Number(it.qty || 1);
+      const unit = it.unit_price != null ? Number(it.unit_price) : Number(it.price || 0);
+      const line = it.unit_price != null ? unit * qty : Number(it.price || 0);
+      return '<tr><td>' + esc(it.name) + '</td><td>' + qty + '</td><td>' + unit + ' ج.م</td><td>' + line + ' ج.م</td></tr>';
+    }).join('');
+    out.innerHTML =
+      '<div class="card">' +
+        '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap">' +
+          '<div><div style="font-size:20px;font-weight:800;color:#fff">Migo AI Solution</div>' +
+          '<div class="meta">فاتورة رقمية — متجر الخدمات الرقمية</div></div>' +
+          '<span class="stamp' + (cancelled ? ' cancelled' : '') + '">' + (cancelled ? 'طلب ملغي' : 'مسجل ✓') + '</span>' +
+        '</div>' +
+        '<table>' +
+          '<tr><th>رقم الطلب</th><td>' + esc(inv.order_ref) + '</td></tr>' +
+          '<tr><th>التاريخ</th><td>' + esc(fmtDate(inv.created_at)) + '</td></tr>' +
+          '<tr><th>طريقة الدفع</th><td>' + esc(inv.payment) + '</td></tr>' +
+          (inv.coupon ? '<tr><th>كوبون الخصم</th><td>' + esc(inv.coupon) + '</td></tr>' : '') +
+        '</table>' +
+        '<table><tr><th>المنتج</th><th>الكمية</th><th>سعر الوحدة</th><th>الإجمالي</th></tr>' + rows + '</table>' +
+        '<p class="total">إجمالي الطلب: ' + esc(inv.server_total) + ' ج.م</p>' +
+        '<p class="meta">الفاتورة دي مولّدة من سجل الطلب نفسه في نظام المتجر، والإجمالي هو المبلغ المحسوب من السيرفر وقت الشراء.</p>' +
+        '<button class="print noprint" type="button" onclick="window.print()">🖨️ طباعة / حفظ PDF</button>' +
+      '</div>';
+  }).catch(function () {
+    msg.className = 'msg err';
+    msg.textContent = 'حصلت مشكلة في الاتصال، جرب تاني بعد شوية.';
+  });
+}
+</script>
+</body>
+</html>
