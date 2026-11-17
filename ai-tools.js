@@ -396,5 +396,15 @@ if (typeof subscriptionsData !== 'undefined' && Array.isArray(subscriptionsData)
       }
     })();
   }
-  window.addEventListener('load', function () { setTimeout(start, 250); });
+  // Start reliably: 'load' alone can stay pending for a long time when a
+  // subresource hangs, which silently skipped the split. tick() already
+  // retries until its data exists, so queue start from several triggers.
+  var startQueued = false;
+  function queueStart() { if (startQueued) return; startQueued = true; setTimeout(start, 250); }
+  if (document.readyState === 'complete') queueStart();
+  else {
+    window.addEventListener('load', queueStart);
+    document.addEventListener('DOMContentLoaded', function () { setTimeout(queueStart, 1500); });
+    setTimeout(queueStart, 3000);
+  }
 })();
