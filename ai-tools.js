@@ -351,7 +351,7 @@ if (typeof subscriptionsData !== 'undefined' && Array.isArray(subscriptionsData)
           '<span class="text-xs font-bold text-white">API Token</span>' +
           '<span class="text-[10px] text-slate-400">مفاتيح ورصيد المطورين</span>');
       } else if (a.getAttribute('onclick') && a.getAttribute('onclick').indexOf('toggleSidebar') !== -1) {
-        cloneLink(a, '#sec-apitoken', '<span>مفاتيح API والرصيد</span>');
+        cloneLink(a, '#sec-apitoken', '<span class="flex items-center gap-2.5"><span class="w-6 h-6 shrink-0 rounded-lg flex items-center justify-center" style="background:rgba(242,181,61,.13)"><i class="fa-solid fa-key text-[12px]" style="color:#f3cf6b"></i></span><span class="text-[13px] font-medium">مفاتيح API والرصيد</span></span>');
       } else {
         cloneLink(a, '#sec-apitoken', 'API Token');
       }
@@ -362,7 +362,7 @@ if (typeof subscriptionsData !== 'undefined' && Array.isArray(subscriptionsData)
       var l = aiLinks[k];
       if (l.className && l.className.indexOf('sky-card') !== -1) continue;
       if (l.getAttribute('onclick') && l.getAttribute('onclick').indexOf('toggleSidebar') !== -1) {
-        if (l.textContent.indexOf('APIs') !== -1) l.innerHTML = '<span>الذكاء الاصطناعي</span>';
+        if (l.textContent.indexOf('APIs') !== -1) l.innerHTML = '<span class="flex items-center gap-2.5"><span class="w-6 h-6 shrink-0 rounded-lg flex items-center justify-center" style="background:rgba(242,181,61,.13)"><i class="fa-solid fa-robot text-[12px]" style="color:#f3cf6b"></i></span><span class="text-[13px] font-medium">الذكاء الاصطناعي</span></span>';
       } else if (l.textContent.indexOf('AI & APIs') !== -1) {
         l.textContent = 'الذكاء الاصطناعي';
       }
