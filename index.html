@@ -395,6 +395,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <a href="contact.html" style="color:#94a3b8;white-space:nowrap">تواصل معانا</a>
     <a href="about.html" style="color:#94a3b8;white-space:nowrap">من نحن</a>
     <a href="trust.html" style="color:#94a3b8;white-space:nowrap">الثقة والشفافية</a>
+    <a href="invoice.html" style="color:#94a3b8;white-space:nowrap">الفاتورة الرقمية</a>
    </div>
    <p style="margin-top:18px;color:#cbd5e1;font-weight:700">فحوصات خارجية مستقلة على موقعنا — دوس على أي شارة عشان تتحقق من التقرير الرسمي بنفسك</p>
    <div style="display:flex;flex-wrap:nowrap;justify-content:center;align-items:center;gap:6px;max-width:720px;margin:10px auto 0">
@@ -645,6 +646,27 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     </div>
     <section id="reviews" class="pt-4">
      <div id="reviewsContainer" class="grid grid-cols-1 gap-3 text-xs"></div>
+     <div class="mt-5 pt-4 border-t border-white/10">
+      <div class="font-bold text-white text-xs mb-1">✍️ قيّم طلبك</div>
+      <p class="text-[10px] text-gray-400 leading-relaxed mb-2">التقييم بيتربط بطلب حقيقي وبيظهر هنا بعد ما نراجعه. اكتب رقم الطلب وحساب المُرسل اللي دفعت منه — بيانات التحقق دي مش بتتنشر.</p>
+      <div class="grid grid-cols-1 gap-2">
+       <input id="rvRef" type="text" placeholder="رقم الطلب (مثال: MG-100001)" class="w-full bg-white/5 border border-white/10 rounded-lg px-2.5 py-2 text-xs text-white placeholder:text-gray-500">
+       <input id="rvSender" type="text" placeholder="حساب المُرسل اللي دفعت منه" class="w-full bg-white/5 border border-white/10 rounded-lg px-2.5 py-2 text-xs text-white placeholder:text-gray-500">
+       <input id="rvName" type="text" placeholder="اسمك اللي هيظهر مع الرأي" class="w-full bg-white/5 border border-white/10 rounded-lg px-2.5 py-2 text-xs text-white placeholder:text-gray-500">
+       <select id="rvRating" class="w-full bg-white/5 border border-white/10 rounded-lg px-2.5 py-2 text-xs text-white">
+        <option value="0">اختر التقييم…</option>
+        <option value="5">★★★★★ ممتاز</option>
+        <option value="4">★★★★☆ كويس جداً</option>
+        <option value="3">★★★☆☆ مقبول</option>
+        <option value="2">★★☆☆☆ ضعيف</option>
+        <option value="1">★☆☆☆☆ سيئ</option>
+       </select>
+       <textarea id="rvBody" rows="3" placeholder="اكتب رأيك في الخدمة…" class="w-full bg-white/5 border border-white/10 rounded-lg px-2.5 py-2 text-xs text-white placeholder:text-gray-500"></textarea>
+       <button type="button" onclick="submitVerifiedReview()" class="w-full py-2 rounded-lg text-xs font-bold text-[#12151b] cursor-pointer" style="background:linear-gradient(135deg,#f2b53d,#d99a1f)">إرسال التقييم</button>
+       <p id="rvMsg" class="text-[10px] leading-relaxed"></p>
+      </div>
+      <a href="invoice.html" class="inline-block mt-3 text-[11px] text-amber-300 hover:text-amber-200">🧾 عاوز فاتورة طلبك؟ افتح الفاتورة الرقمية</a>
+     </div>
     </section>
    </aside>
   </div>
@@ -878,7 +900,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- Dynamic Cache Busting Module -->
   <script>
     (function() {
-      const v = 'v=2026-11-16-6';
+      const v = 'v=2026-11-17-1';
       const files = ['games.js', 'live-coins.js', 'subscriptions.js', 'smm.js', 'ai-tools.js', 'app.js', 'search-ui.js'];
       function boot() {
         files.forEach(file => {
