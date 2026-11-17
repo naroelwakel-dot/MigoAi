@@ -15,8 +15,8 @@ const aiProducts = [
         banner: 'images/ai/ai_claude.webp', bannerAnim: 'images/ai/ai_claude-anim.webp',
         desc: 'حساب خاص مفعل على بريدك وبدون VPN.',
         packages: [
-            { id: 'ai_claude_pro', name: 'Claude AI Pro — شهر واحد — 1,200 ج.م', duration: 'شهر واحد', price: 1200 },
-            { id: 'ai_claude_max5', name: 'Claude Max 5x — 4,340 ج.م', duration: '5 أضعاف Pro', price: 4340 },
+            { id: 'ai_claude_pro', name: 'Claude AI Pro — شهر واحد — 1,955 ج.م', duration: 'شهر واحد', price: 1955 },
+            { id: 'ai_claude_max5', name: 'Claude Max 5x — 5,775 ج.م', duration: '5 أضعاف Pro', price: 5775 },
             { id: 'ai_claude_max20', name: 'Claude Max 20x — 9,200 ج.م', duration: 'الاستخدام الأقصى 20x', price: 9200 },
             { id: 'ai_claude_team', name: 'Claude Team Workspace — 2,900 ج.م', duration: 'فريق عمل حتى 5 أعضاء', price: 2900 }
         ]
@@ -80,7 +80,7 @@ const aiProducts = [
         id: 'ai_suno_pro',
         name: 'Suno AI Pro (شهر)',
         tag: 'إنتاج الأغاني والموسيقى',
-        price: 620,
+        price: 825,
         desc: '2,500 نقطة (500 أغنية) مع حقوق الملكية التجارية الكاملة',
         banner: 'images/ai/ai_suno_pro.webp', bannerAnim: 'images/ai/ai_suno_pro-anim.webp'
     },
@@ -135,7 +135,7 @@ const aiProducts = [
         banner: 'images/ai/lovable_pro.webp', bannerAnim: 'images/ai/lovable_pro-anim.webp',
         desc: 'بناء وتطوير تطبيقات ومواقع كاملة عبر الأوامر النصية المباشرة.',
         packages: [
-            { id: 'lovable_12m', name: '12 شهر (سنة) — 608 ج.م', duration: 'سنة واحدة', price: 608 }
+            { id: 'lovable_12m', name: '12 شهر (سنة) — 732 ج.م', duration: 'سنة واحدة', price: 732 }
         ]
     },
     {
@@ -160,7 +160,7 @@ const aiProducts = [
         desc: 'مفاتيح API رسمية تُسلَّم فوراً ومخصصة للبرمجة.',
         packages: [
             { id: 'ai_api_claude10', name: '10M Tokens — 75 ج.م', duration: 'يومي', price: 75 },
-            { id: 'ai_api_claude50', name: '50M Tokens — 210 ج.م', duration: 'يومان', price: 210 },
+            { id: 'ai_api_claude50', name: '50M Tokens — 285 ج.م', duration: 'يومان', price: 285 },
             { id: 'ai_api_claude_100', name: '30D رصيد $100 — 150 ج.م', duration: '30 يوماً', price: 150 }
         ]
     },
