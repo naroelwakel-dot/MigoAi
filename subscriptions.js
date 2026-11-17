@@ -43,7 +43,7 @@ const subscriptionsData = [
     banner: "images/subs/figma_pro.webp", bannerAnim: "images/subs/figma_pro-anim.webp",
     description: "خطة سنتين مع رصيد لتصميم المواقع والتطبيقات.",
     packages: [
-      { id: "figma_2y", name: "Figma Pro Edu 2yrs — 314 ج.م", duration: "سنتان", price: 314 }
+      { id: "figma_2y", name: "Figma Pro Edu 2yrs — 330 ج.م", duration: "سنتان", price: 330 }
     ]
   },
   {
@@ -73,7 +73,7 @@ const subscriptionsData = [
     banner: "images/subs/notion_plus.webp", bannerAnim: "images/subs/notion_plus-anim.webp",
     description: "إدارة المهام والملاحظات وقواعد البيانات باحترافية تامة.",
     packages: [
-      { id: "notion_1y", name: "Notion Plus 12M — 124 ج.م", duration: "سنة واحدة", price: 124 },
+      { id: "notion_1y", name: "Notion Plus 12M — 231 ج.م", duration: "سنة واحدة", price: 231 },
       { id: "notion_biz_coupon_3m", name: "Notion Business Coupon — 3 شهور — 68 ج.م", duration: "3 شهور", price: 68 }
     ]
   },
@@ -122,7 +122,7 @@ const subscriptionsData = [
     banner: "images/subs/duolingo_super.webp", bannerAnim: "images/subs/duolingo_super-anim.webp",
     description: "تعلم اللغات بدون إعلانات وبقلوب غير محدودة ومراجعة الأخطاء.",
     packages: [
-      { id: "duolingo_12m", name: "12 شهر — 100 ج.م", duration: "12 شهر", price: 100 }
+      { id: "duolingo_12m", name: "12 شهر — 123 ج.م", duration: "12 شهر", price: 123 }
     ]
   },
   {
@@ -146,7 +146,7 @@ const subscriptionsData = [
     banner: "images/subs/gmail_accounts.webp", bannerAnim: "images/subs/gmail_accounts-anim.webp",
     description: "حساب جاهز وموثق بالكامل للتسليم الفوري والاستخدام المباشر.",
     packages: [
-      { id: "gmail_1acc", name: "Gmails Accounts — 50 ج.م", duration: "حساب دائم", price: 50 }
+      { id: "gmail_1acc", name: "Gmails Accounts — 62 ج.م", duration: "حساب دائم", price: 62 }
     ]
   },
   {
@@ -223,7 +223,7 @@ const subscriptionsData = [
     description: "استماع وتحميل بلا اتصال بالإنترنت وتخطي لا محدود للمسارات.",
     packages: [
       { id: "spotify_1m", name: "Spotify premium 1M — 94 ج.م", duration: "شهر واحد", price: 94 },
-      { id: "spotify_3m_link", name: "3 أشهر (رابط) — 56 ج.م", duration: "3 أشهر (رابط)", price: 56 },
+      { id: "spotify_3m_link", name: "3 أشهر (رابط) — 82.5 ج.م", duration: "3 أشهر (رابط)", price: 82.5 },
       { id: "spotify_1m_acc", name: "شهر واحد (حساب) — 125 ج.م", duration: "شهر واحد (حساب)", price: 125 }
     ]
   },
@@ -262,7 +262,7 @@ const subscriptionsData = [
     banner: "images/subs/nordvpn.webp", bannerAnim: "images/subs/nordvpn-anim.webp",
     description: "اشتراك NordVPN لكود تفعيل ثلاث شهور.",
     packages: [
-      { id: "nordvpn_coupon_3m", name: "NordVPN Coupon — 3 شهور — 154 ج.م", duration: "3 شهور (Coupon)", price: 154 },
+      { id: "nordvpn_coupon_3m", name: "NordVPN Coupon — 3 شهور — 159 ج.م", duration: "3 شهور (Coupon)", price: 159 },
       { id: "nordvpn_basic_3m", name: "NordVPN Basic — 3 شهور — 250 ج.م", duration: "3 شهور (Basic)", price: 250 }
     ]
   },
@@ -275,7 +275,7 @@ const subscriptionsData = [
     banner: "images/subs/coursera_premium.webp", bannerAnim: "images/subs/coursera_premium-anim.webp",
     description: "اشتراك Coursera Premium للوصول لكل الكورسات والشهادات.",
     packages: [
-      { id: "coursera_12m", name: "Coursera Premium — 12 شهر — 250 ج.م", duration: "12 شهر", price: 250 }
+      { id: "coursera_12m", name: "Coursera Premium — 12 شهر — 302 ج.م", duration: "12 شهر", price: 302 }
     ]
   }
 ];
