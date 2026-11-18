@@ -262,8 +262,8 @@ const subscriptionsData = [
     banner: "images/subs/nordvpn.webp", bannerAnim: "images/subs/nordvpn-anim.webp",
     description: "اشتراك NordVPN لكود تفعيل ثلاث شهور.",
     packages: [
-      { id: "nordvpn_coupon_3m", name: "NordVPN Coupon — 3 شهور — 159 ج.م", duration: "3 شهور (Coupon)", price: 159 },
-      { id: "nordvpn_basic_3m", name: "NordVPN Basic — 3 شهور — 250 ج.م", duration: "3 شهور (Basic)", price: 250 }
+      { id: "nordvpn_coupon_3m", name: "NordVPN Coupon — 3 شهور — 289 ج.م", duration: "3 شهور (Coupon)", price: 289 },
+      { id: "nordvpn_basic_3m", name: "NordVPN Basic — 3 شهور — 289 ج.م", duration: "3 شهور (Basic)", price: 289 }
     ]
   },
   {
