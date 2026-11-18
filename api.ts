@@ -997,6 +997,48 @@ async function handleChat(req: Request): Promise<Response> {
   return new Response(JSON.stringify({ ok: true, reply: String(text).trim() }), { status: 200, headers: corsHeaders(req) });
 }
 
+// E-003 (Package 8) — backend route for storefront client errors:
+// POST /client-error writes through logError() into the production
+// error_log with source "storefront.client". Fire-and-forget by design.
+const clientErrorBuckets = new Map<string, { windowStart: number; count: number }>();
+
+async function handleClientError(req: Request): Promise<Response> {
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+  const now = Date.now();
+  const bucket = clientErrorBuckets.get(ip);
+  if (bucket && now - bucket.windowStart < 60_000 && bucket.count >= 20) {
+    return new Response(null, { status: 204 });
+  }
+  if (!bucket || now - bucket.windowStart >= 60_000) {
+    clientErrorBuckets.set(ip, { windowStart: now, count: 1 });
+  } else {
+    bucket.count += 1;
+  }
+
+  let body: Record<string, unknown> = {};
+  try {
+    body = await req.json();
+  } catch {
+    return new Response(null, { status: 204 });
+  }
+  const cap = (v: unknown, n: number) =>
+    typeof v === "string" ? v.slice(0, n) : "";
+  const message = cap(body.message, 300);
+  if (!message) return new Response(null, { status: 204 });
+
+  const context =
+    body.context && typeof body.context === "object"
+      ? (body.context as Record<string, unknown>)
+      : {};
+  logError(
+    "storefront.client",
+    message,
+    { name: cap(body.error_type, 128) || "Error", message: cap(body.error_text, 500) },
+    { page: cap(context.page, 200), ua: cap(context.ua, 120), via: "client-error-route" },
+  );
+  return new Response(null, { status: 204 });
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 204, headers: corsHeaders(req) });
@@ -1010,6 +1052,9 @@ Deno.serve(async (req: Request) => {
   }
 
   const url = new URL(req.url);
+  if (req.method === "POST" && url.pathname.replace(/\/+$/, "").endsWith("/client-error")) {
+    return handleClientError(req);
+  }
   if (req.method === "POST" && url.pathname.replace(/\/+$/, "").endsWith("/chat")) {
     try {
       return await handleChat(req);
