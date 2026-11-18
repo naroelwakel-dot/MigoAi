@@ -296,6 +296,9 @@ export class StoreExecutor {
         quantity: ex.quantity,
         reference: ex.reference,
         cost_usd: liveCost,
+        // إيميل العميل من طلب المتجر نفسه: مصدر حقول إدخال المورد
+        // (Wasmou) — غيابه مع منتج بيحتاج إدخال = رفض نهائي قبل الإرسال.
+        customer_email: order.customer_email ?? null,
       });
       return await this.applyOutcome(ex, outcome, order);
     } catch (e) {

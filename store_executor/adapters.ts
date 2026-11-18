@@ -22,6 +22,7 @@ import {
   type PurchaseOutcome,
   type SnapshotResult,
   type SupplierAdapter,
+  type SupplierInputField,
 } from "./types.ts";
 import { deliveryFromRaw, extractDeliveryItems, sanitizeRaw } from "./sanitize.ts";
 
@@ -198,6 +199,7 @@ abstract class BaseAdapter implements SupplierAdapter {
     quantity: number;
     reference: string;
     cost_usd: number;
+    customer_email?: string | null;
   }): Promise<PurchaseOutcome>;
   abstract getPurchaseStatus(externalRef: string): Promise<PurchaseOutcome>;
 }
@@ -426,6 +428,43 @@ export class TunVNAdapter extends BaseAdapter {
 }
 
 // ================================================================= Wasmou
+const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+
+/**
+ * تنقية إعلانات حقول إدخال Wasmou الخام للشكل الموحّد — مرآة
+ * providers/inputs.py عند البوت: المفتاح من `key` أو `name`، و«مطلوب»
+ * من العلم الصريح أو نص القواعد، وإعلان من غير أي إشارة قواعد
+ * بيتعامل كمطلوب (الاتجاه الآمن).
+ */
+export function normalizeInputFields(raw: unknown): SupplierInputField[] {
+  if (!Array.isArray(raw)) return [];
+  const out: SupplierInputField[] = [];
+  const seen = new Set<string>();
+  for (const item of raw) {
+    const r = asRecord(item);
+    const key = String(r["key"] ?? r["name"] ?? "").trim();
+    if (!key || key.length > 60 || seen.has(key)) continue;
+    seen.add(key);
+    const rules = String(r["rules"] ?? "").trim().toLowerCase();
+    let required: boolean;
+    if (r["required"] !== undefined && r["required"] !== null) {
+      required = Boolean(r["required"]) || rules.includes("required");
+    } else if (rules) {
+      required = rules.includes("required");
+    } else {
+      required = true;
+    }
+    out.push({
+      key,
+      type: String(r["type"] ?? "text").trim().toLowerCase() || "text",
+      label: String(r["label"] ?? r["title"] ?? key).trim().slice(0, 120),
+      required,
+    });
+    if (out.length >= 10) break;
+  }
+  return out;
+}
+
 /**
  * مرآة adapters/wasmou.py: شراء ذرّي موثّق (فشل العملية = مفيش خصم)،
  * وتسليم بس على حالة نهائية أو مفتاح فعلي (has_key).
@@ -478,6 +517,8 @@ export class WasmouAdapter extends BaseAdapter {
           cost_usd: num(vr["price"]),
           stock: null,
           available: vr["is_available"] === true,
+          input_fields: normalizeInputFields(vr["input_fields"]),
+          requires_input: r["requires_input"] === true,
         };
       }
       if (String(r["id"] ?? "").trim() === listingRef) {
@@ -489,8 +530,22 @@ export class WasmouAdapter extends BaseAdapter {
     }
     throw new AmbiguousOutcome("المنتج مش موجود في كتالوج المورد دلوقتي");
   }
-  /** تحقق قبل الشراء من الكتالوج الحي: غياب/عدم توفر = رفض نهائي قبل أي إرسال. */
-  private async verifyBeforePurchase(listingRef: string): Promise<void> {
+  /**
+   * تحقق قبل الشراء من الكتالوج الحي: غياب/عدم توفر = رفض نهائي قبل
+   * أي إرسال. بيرجّع قيم الإدخال المحلولة ({مفتاح الحقل: القيمة})
+   * لجسم الشراء — مرآة `_resolve_inputs` عند البوت:
+   * - مفيش حقول معلنة والمنتج مش بيعلن احتياج إدخال: {} (الجسم
+   *   بيبقى {quantity} بالحرف زي ما كان).
+   * - منتج بيحتاج إدخال من غير حقول مفهومة: رفض نهائي — الشراء
+   *   الأعمى ممنوع (فشل مقفول).
+   * - حقول معلنة: حقول الـ email بتتحل من إيميل العميل المسجل على
+   *   طلب المتجر نفسه؛ قيمة مطلوبة ناقصة/غلط أو حقل مطلوب من نوع
+   *   مش عارفين مصدره = رفض نهائي قبل أي POST.
+   */
+  private async verifyBeforePurchase(
+    listingRef: string,
+    customerEmail?: string | null,
+  ): Promise<Record<string, string>> {
     let snap: SnapshotResult;
     try {
       snap = await this.getSnapshot(listingRef);
@@ -501,19 +556,53 @@ export class WasmouAdapter extends BaseAdapter {
     if (snap.available === false) {
       throw new DefiniteRejection("المنتج مش متاح عند المورد دلوقتي", true);
     }
+    const fields = snap.input_fields ?? [];
+    if (fields.length === 0) {
+      if (snap.requires_input) {
+        throw new DefiniteRejection(
+          "المنتج بيحتاج بيانات إدخال من العميل، فشراؤه التلقائي مش ممكن", true);
+      }
+      return {};
+    }
+    const out: Record<string, string> = {};
+    for (const field of fields) {
+      const value = field.type === "email"
+        ? String(customerEmail ?? "").trim()
+        : "";
+      if (!value) {
+        if (field.required) {
+          throw new DefiniteRejection(
+            "بيانات الإدخال المطلوبة للشراء ناقصة: قيمة الحقل مش متاحة على الطلب",
+            true);
+        }
+        continue;
+      }
+      if (field.type === "email" && !EMAIL_RE.test(value)) {
+        throw new DefiniteRejection(
+          "بيانات الإدخال المطلوبة للشراء مش سليمة: إيميل العميل على الطلب مش بصيغة صحيحة",
+          true);
+      }
+      out[field.key] = value;
+    }
+    return out;
   }
   override async submitPurchase(input: {
     listingRef: string;
     quantity: number;
     reference: string;
     cost_usd: number;
+    customer_email?: string | null;
   }): Promise<PurchaseOutcome> {
     if (input.quantity < 1 || input.quantity > 50) {
       throw new DefiniteRejection("كمية الطلب برّه حد المورد الموثّق (1–50)", true);
     }
-    await this.verifyBeforePurchase(input.listingRef);
+    const resolvedInputs = await this.verifyBeforePurchase(
+      input.listingRef, input.customer_email);
     const path = "/api/products/purchase/" + encodeURIComponent(input.listingRef);
-    const result = await this.call("POST", path, { quantity: input.quantity });
+    // جسم الشراء الموثّق: quantity + حقول إدخال المنتج بمفاتيحها
+    // المعلنة لو لازمة. منتج من غير إدخال: الجسم {quantity} بالحرف.
+    const result = await this.call("POST", path,
+      { quantity: input.quantity, ...resolvedInputs });
     if (result.error || result.status == null || result.status >= 300) {
       throw classifySubmitFailure(result, "إرسال طلب الشراء فشل");
     }

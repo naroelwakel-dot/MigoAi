@@ -156,11 +156,23 @@ export interface BalanceResult {
   currency: string;
 }
 
+/** إعلان حقل إدخال عميل على variant عند المورد — الشكل الموحّد (مرآة providers/inputs.py عند البوت). */
+export interface SupplierInputField {
+  key: string;
+  type: string;
+  label: string;
+  required: boolean;
+}
+
 export interface SnapshotResult {
   cost_usd: number | null;
   stock: number | null;
   /** توفر ثنائي (Wasmou) — null لو المورد بيقدّم عددًا رقميًا بدلًا منه. */
   available: boolean | null;
+  /** حقول إدخال العميل المعلنة على الـ variant (Wasmou) — غيابها = مفيش إدخال مطلوب. */
+  input_fields?: SupplierInputField[];
+  /** المنتج بيعلن احتياج إدخال حتى لو حقوله مش مفهومة — فشل مقفول عند الشراء. */
+  requires_input?: boolean;
 }
 
 // ------------------------------------------------------------- النقل HTTP
@@ -189,6 +201,13 @@ export interface SupplierAdapter {
     quantity: number;
     reference: string;
     cost_usd: number;
+    /**
+     * إيميل العميل كما هو مسجل على طلب المتجر نفسه (customer_email) —
+     * مصدر قيم حقول الإدخال من نوع email عند الموردين اللي بيحتاجوها
+     * (Wasmou). غيابه/عدم سلامته مع منتج بيحتاج إدخال = رفض نهائي قبل
+     * أي إرسال (فشل مقفول). المحوّلات اللي مش بتحتاج إدخال بتتجاهله.
+     */
+    customer_email?: string | null;
   }): Promise<PurchaseOutcome>;
   getPurchaseStatus(externalRef: string): Promise<PurchaseOutcome>;
 }
