@@ -1,4 +1,5 @@
 // Migo AI Solution - Deno service (verification + /chat). Rebuild marker: chat-live-7
+// env refresh 2026-11-18: LOG_WRITE_KEY rotated (owner set the new value in Deno; DB hash updated to match) — redeploy so the running isolate picks up the new env snapshot.
 // build marker 2026-10-31T07:10Z: add a fire-and-forget usage counter (one row per provider attempt
 // in Supabase public.verification_calls) so we can measure real per-source usage (free vs Volsever).
 // Also: free sources (isan/jollymax) are tried before the metered Volsever route for the games they
