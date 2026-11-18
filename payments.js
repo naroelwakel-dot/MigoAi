@@ -30,16 +30,9 @@ const PAYMENT_METHODS_DATA = {
     },
     binance: {
         title: "باينانس باي (Binance Pay)",
-        type: "html",
-        html: `
-            <div class="space-y-2 text-right">
-                <p class="text-xs text-gray-300">الدفع عبر باينانس باي (Binance Pay) متاح بالعملات الرقمية (USDT).</p>
-                <div class="p-3 bg-slate-950 border border-amber-500/30 rounded-xl text-center">
-                    <img src="binance-qr.png.jpg" alt="Binance Pay QR" class="w-36 h-36 mx-auto rounded-lg border border-amber-400 p-1 bg-white mb-2 shadow-lg">
-                    <p class="text-xs text-amber-300 font-extrabold">امسح رمز الـ QR من البطاقة أو اطلب الـ Pay ID عبر واتساب للمتابعة.</p>
-                </div>
-            </div>
-        `
+        type: "copy",
+        value: "855602846",
+        instruction: "قم بالتحويل الداخلي عبر Binance Pay إلى الـ Pay ID التالي:"
     },
     redotpay: {
         title: "RedotPay",
