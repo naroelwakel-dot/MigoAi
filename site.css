@@ -39,7 +39,20 @@
         letter-spacing: -0.015em;
     }
 
-    .font-mono-code { font-family: 'JetBrains Mono', monospace; }
+    /* [gemini-fix-2] Arabic fallback for mono-styled text: 'JetBrains Mono'
+       has NO Arabic glyphs, so Arabic strings carrying .font-mono-code
+       (hero prices like «تبدأ من 95 ج.م», checkout/total labels) fell back
+       to whatever Arabic font the OS happened to provide — and rendered
+       as tofu boxes (⬜) on systems with none. Tajawal is already loaded
+       on every page (it is the body font); font fallback is per-character,
+       so Latin letters and digits keep rendering in JetBrains Mono while
+       Arabic glyphs now resolve to Tajawal instead of a missing system
+       font. The companion .font-mono rule applies the same fallback to
+       Tailwind's mono stack (used by the cart drawer totals in app.js);
+       site.css loads after tailwind.css, and the stack order is unchanged
+       for Latin, so only Arabic glyph resolution changes. */
+    .font-mono-code { font-family: 'JetBrains Mono', 'Tajawal', monospace, sans-serif; }
+    .font-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", 'Tajawal', monospace, sans-serif; }
     .font-en-sans { font-family: 'Plus Jakarta Sans', sans-serif; }
 
     .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
