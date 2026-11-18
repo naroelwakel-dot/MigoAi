@@ -92,6 +92,27 @@ Deno.test("instapay ar: إيداع بنكي برقم مرجعي", () => {
   ok(r.matchable, "matchable");
 });
 
+Deno.test("mashreq ipn: تحويل لحظي وارد بمرجع سداسي (صيغة المالك الحقيقية)", () => {
+  const r = parseSms(
+    "instapay",
+    "لقد استقبلت تحويل لحظي على 4446 بمبلغ 357.15 جم عبر IPN من InstaPay top-up يوم 2026-04-01 الساعة 23:19 رقم المعاملة 68d913e5 للمساعدة www.mashreq.com/mashreqipn",
+  );
+  eq(r.direction, "received", "direction");
+  eq(r.amount_egp, 357.15, "amount");
+  eq(r.transfer_ref, "68d913e5", "hex ref");
+  eq(r.sender_account, null, "no sender account in bank format");
+  ok(r.matchable, "matchable");
+});
+
+Deno.test("mashreq ipn: صادر «قمت بتحويل» مش قابل للمطابقة", () => {
+  const r = parseSms(
+    "instapay",
+    "قمت بتحويل لحظي من حسابك بمبلغ 328.58 جم عبر IPN يوم 2026-04-01 الساعة 23:20 رقم المعاملة 12ab34cd",
+  );
+  eq(r.direction, "sent", "direction");
+  ok(!r.matchable, "not matchable");
+});
+
 Deno.test("sent: صادر مش قابل للمطابقة حتى لو فيه مبلغ ومرجع", () => {
   const r = parseSms("VodafoneCash", FIXTURE_VODAFONE_SENT);
   eq(r.direction, "sent", "direction");

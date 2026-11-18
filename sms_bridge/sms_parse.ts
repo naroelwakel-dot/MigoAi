@@ -132,7 +132,7 @@ const MONEY_PREFIX_RE = /(?:EGP|ج\.م\.?|جنيه(?:ًا|ا)?)\s*:?\s*([0-9]{1,
 const AMOUNT_WORD_RE = /(?:مبلغ|بقيمة|قيمة)\s*:?\s*([0-9]{1,3}(?:,[0-9]{3})*(?:\.[0-9]{1,2})?|[0-9]+(?:\.[0-9]{1,2})?)/;
 
 // علامات الاتجاه — الوارد لازم يبقى صريح؛ الصادر الصريح بيتلغي.
-const RECEIVED_MARKERS = /(?:استلام|استلمت|تم\s*(?:إضافة|اضافة|إيداع|ايداع)|وصل(?:ك|ت)?|تحويل وارد|أُضيف|اضيف إلى حسابك|received|credited|deposit(?:ed)?)/i;
+const RECEIVED_MARKERS = /(?:استلام|استلمت|استقبلت|تم\s*(?:إضافة|اضافة|إيداع|ايداع)|وصل(?:ك|ت)?|تحويل وارد|أُضيف|اضيف إلى حسابك|received|credited|deposit(?:ed)?)/i;
 const SENT_MARKERS = /(?:تم تحويل مبلغ.*(?:إلى|الى|لرقم)|قمت بتحويل|تم إرسال|you (?:have )?sent|payment (?:of|sent))/i;
 
 function detectDirection(body: string): "received" | "sent" | "unknown" {
@@ -141,9 +141,16 @@ function detectDirection(body: string): "received" | "sent" | "unknown" {
   return "unknown";
 }
 
+// مراجع سداسية (hex) بعد وسم صريح — صيغة بنك المشرق لمعاملات IPN
+// (مثال: «رقم المعاملة 68d913e5»). لازم حرف ورقم على الأقل عشان
+// منلقطش كلمات عادية، والوسم الصريح شرط.
+const HEX_REF_RE = /(?:رقم المعاملة|رقم العملية|transaction(?:\s*(?:id|no))?|reference(?:\s*(?:no|number|id))?|ref\.?(?:\s*(?:no|id))?)\s*[:：#]?\s*([0-9a-fA-F]{6,16})/i;
+
 function extractRef(body: string): string | null {
   const m = body.match(REF_RE);
   if (m) return m[1].replace(/[\s-]/g, "");
+  const hx = body.match(HEX_REF_RE);
+  if (hx && /[0-9]/.test(hx[1]) && /[a-fA-F]/.test(hx[1])) return hx[1];
   // احتياطي: أطول سلسلة أرقام (8+) مش رقم موبايل — مرشّح مرجع.
   const runs = body.match(/\d{8,}/g) || [];
   for (const run of runs) {
