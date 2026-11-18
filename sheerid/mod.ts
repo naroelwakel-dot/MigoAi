@@ -14,9 +14,13 @@
  *   POST /sheerid/sweep    (ترويسة x-migo-admin — نفس حماية /exec/)
  *     → المسح الدوري: تحديث الجاري + ضمان التسليم + فتح عمليات جديدة.
  *
- * غياب SHEERID_API_KEY = الميزة مقفولة fail-closed: الحالة بترجع
+ * مصدر التنفيذ: جسر البوت افتراضيًا — توكن الجسر بيتقرا من جدول
+ * backend_config (أو من SHEERID_BRIDGE_TOKEN في البيئة كتجاوز)،
+ * والبوت بينفّذ بمفتاح المورد اللي عنده. ولو اتضبط SHEERID_API_KEY
+ * في بيئة Deno بيشتغل الوضع المباشر القديم كتجاوز بأولوية أعلى.
+ * غياب أي مصدر تنفيذ = الميزة مقفولة fail-closed: الحالة بترجع
  * «disabled» بصياغة المسار اليدوي، والإرسال بيترفض بنفس الصياغة،
- * والمسح بيعدّي من غير أي نداء للمورد.
+ * والمسح بيعدّي من غير أي نداء خارجي.
  */
 
 export * from "./config.ts";
@@ -28,9 +32,18 @@ export * from "./service.ts";
 import {
   apiKey as envApiKey,
   baseUrl as envBaseUrl,
+  BRIDGE_CONFIG_TABLE,
+  BRIDGE_TOKEN_KEY,
+  bridgeBaseUrl,
+  bridgeTokenFromEnv,
+  SITE_CALLBACK_URL,
   webhookUrl as envWebhookUrl,
 } from "./config.ts";
-import { SheerIDClient, SheerIDError } from "./client.ts";
+import {
+  fetchTransport,
+  SheerIDClient,
+  SheerIDError,
+} from "./client.ts";
 import type { Transport } from "./client.ts";
 import {
   PostgrestSheeridRepository,
@@ -136,16 +149,53 @@ export interface SheeridWiring {
 }
 
 /**
- * بيبني الخدمة من البيئة + عناوين القاعدة. مفتاح الخدمة
- * (SUPABASE_SERVICE_ROLE_KEY) غايب = التركيب بيرفع — زي المنفّذ،
- * والراوتر بيبنيه كسولًا جوّه try عشان غيابه ما يكسرش أي مسار تاني.
+ * بيقرا توكن الجسر من جدول backend_config عبر PostgREST بمفتاح
+ * الخدمة — نفس نمط وصول repo.ts بالظبط. فشل آمن تمامًا: أي خطأ أو
+ * غياب للصف أو لمفتاح الخدمة بيرجّع "" (الميزة مقفولة fail-closed)،
+ * وعمره ما بيرفع. القيمة ما بتتطبعش ولا بتتلجّش في أي مكان.
  */
-export function buildSheeridFromEnv(opts: {
+export async function fetchBridgeToken(opts: {
+  sbUrl: string;
+  keyOf: () => string;
+  transport?: Transport;
+}): Promise<string> {
+  const key = (opts.keyOf() || "").trim();
+  if (!key || !opts.sbUrl) return "";
+  const http: Transport = opts.transport || fetchTransport;
+  try {
+    const res = await http({
+      url: `${opts.sbUrl.replace(/\/+$/, "")}/rest/v1/${BRIDGE_CONFIG_TABLE}` +
+        `?key=eq.${encodeURIComponent(BRIDGE_TOKEN_KEY)}&select=value`,
+      method: "GET",
+      headers: {
+        "apikey": key,
+        "Authorization": `Bearer ${key}`,
+        "Accept": "application/json",
+      },
+    });
+    if (res.status < 200 || res.status >= 300 || !res.text) return "";
+    const rows: unknown = JSON.parse(res.text);
+    if (!Array.isArray(rows) || !rows.length) return "";
+    const row = rows[0] as Record<string, unknown>;
+    return String(row["value"] || "").trim();
+  } catch {
+    return "";
+  }
+}
+
+interface BuildOpts {
   env: (n: string) => string | undefined;
   sbUrl: string;
   logError: LogError;
   transport?: Transport;
-}): SheeridWiring {
+}
+
+/** التركيب المشترك: بيبني الخدمة حوالين عميل جاهز (مباشر أو جسر). */
+function buildSheeridWiring(
+  opts: BuildOpts,
+  client: SheerIDClient,
+  webhookUrl: string,
+): SheeridWiring {
   const env = opts.env;
   const keyOf = () => env("SUPABASE_SERVICE_ROLE_KEY") || "";
   const storeDb = new PostgrestStoreDb({
@@ -158,11 +208,6 @@ export function buildSheeridFromEnv(opts: {
     new PostgrestRefundClient({ baseUrl: opts.sbUrl, keyOf }),
   );
   const repo = new PostgrestSheeridRepository({ baseUrl: opts.sbUrl, keyOf });
-  const client = new SheerIDClient({
-    apiKey: envApiKey(env),
-    baseUrl: envBaseUrl(env),
-    transport: opts.transport,
-  });
   const log = (m: string, e?: unknown) =>
     opts.logError("sheerid.service", m, e);
   const service = new SheeridService({
@@ -173,7 +218,7 @@ export function buildSheeridFromEnv(opts: {
     alertAdmin: (text) =>
       opts.logError("sheerid.admin_alert", text, undefined, {}),
     log,
-    webhookUrl: envWebhookUrl(env),
+    webhookUrl,
     paidStatuses: [
       env("STORE_EXEC_TRIGGER_STATUS") || "payment_confirmed",
       "payment_confirmed",
@@ -181,6 +226,57 @@ export function buildSheeridFromEnv(opts: {
     ],
   });
   return { service, orders };
+}
+
+/**
+ * بيبني الخدمة من البيئة + عناوين القاعدة. مفتاح الخدمة
+ * (SUPABASE_SERVICE_ROLE_KEY) غايب = التركيب بيرفع — زي المنفّذ،
+ * والراوتر بيبنيه كسولًا جوّه try عشان غيابه ما يكسرش أي مسار تاني.
+ *
+ * النسخة المتزامنة دي هي الوضع المباشر القديم (SHEERID_API_KEY من
+ * بيئة Deno) — الراوتر بيستخدم النسخة غير المتزامنة اللي تحت عشان
+ * تقدر تحلّ توكن الجسر من القاعدة.
+ */
+export function buildSheeridFromEnv(opts: BuildOpts): SheeridWiring {
+  const env = opts.env;
+  const client = new SheerIDClient({
+    apiKey: envApiKey(env),
+    baseUrl: envBaseUrl(env),
+    transport: opts.transport,
+  });
+  return buildSheeridWiring(opts, client, envWebhookUrl(env));
+}
+
+/**
+ * التركيب اللي الراوتر بيستخدمه فعليًا — بيحلّ مصدر التنفيذ بالترتيب:
+ * 1. ‏SHEERID_API_KEY في البيئة → الوضع المباشر القديم من غير أي تغيير.
+ * 2. ‏SHEERID_BRIDGE_TOKEN في البيئة → وضع الجسر بالتوكن ده مباشرة.
+ * 3. جدول backend_config → وضع الجسر بالتوكن المحفوظ (الحالة العادية).
+ * مفيش مصدر = عميل من غير توكن = الميزة مقفولة fail-closed زي ما هي.
+ * في وضع الجسر، رابط الإشعار الافتراضي هو رابط الموقع نفسه
+ * (SITE_CALLBACK_URL) إلا لو اتضبط SHEERID_WEBHOOK_URL صراحة.
+ */
+export async function buildSheeridFromEnvAsync(
+  opts: BuildOpts,
+): Promise<SheeridWiring> {
+  const env = opts.env;
+  if (envApiKey(env)) return buildSheeridFromEnv(opts);
+  let token = bridgeTokenFromEnv(env);
+  if (!token) {
+    token = await fetchBridgeToken({
+      sbUrl: opts.sbUrl,
+      keyOf: () => env("SUPABASE_SERVICE_ROLE_KEY") || "",
+      transport: opts.transport,
+    });
+  }
+  const client = new SheerIDClient({
+    apiKey: "",
+    baseUrl: bridgeBaseUrl(env),
+    bridgeToken: token,
+    transport: opts.transport,
+  });
+  const webhook = envWebhookUrl(env) || SITE_CALLBACK_URL;
+  return buildSheeridWiring(opts, client, webhook);
 }
 
 // ------------------------------------------------------------ المعالج

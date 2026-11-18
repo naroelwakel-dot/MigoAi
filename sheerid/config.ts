@@ -6,15 +6,38 @@
  * بيظهر في أي لوج أو رد. من غير مفتاح، الميزة كلها مقفولة (fail-closed)
  * والمنتج بيبان للعميل بمسار يدوي معلن — زي البوت بالظبط.
  *
- * ⚠️ مفتاح الموقع منفصل عن مفتاح البوت: متغير البيئة هنا هو
- * SHEERID_API_KEY في بيئة Deno (بيضبطه المالك من موبايله) — ممنوع
- * إعادة استخدام أي مفتاح محفوظ في مكان تاني.
+ * ⚠️ الموقع ما بيحملش أي نسخة من مفتاح المورد: التنفيذ بيتم عبر
+ * «جسر» البوت (POST /api/sheerid-bridge على نطاق البوت) — البوت بينفّذ
+ * بمفتاحه اللي في بيئته أصلًا، والموقع بيبعت توكن الجسر بس. توكن الجسر
+ * قيمة سرّية لازم الخادم يبعتها، فبيتقرا من جدول backend_config
+ * (service-role فقط) — مش من backend_secrets اللي بيخزّن بصمات أحادية
+ * الاتجاه لمفاتيح التحقق الواردة. غياب التوكن = نفس الإقفال
+ * fail-closed بالظبط. ولو اتضبط SHEERID_API_KEY في بيئة Deno بيشتغل
+ * الوضع المباشر القديم كتجاوز (override) بأولوية أعلى من الجسر.
  */
 
 // ------------------------------------------------------------------ البيئة
 export const ENV_API_KEY = "SHEERID_API_KEY";
 export const ENV_WEBHOOK_URL = "SHEERID_WEBHOOK_URL";
 export const ENV_BASE_URL = "SHEERID_BASE_URL";
+// تجاوزات اختيارية للجسر من البيئة (الأصل من جدول backend_config):
+export const ENV_BRIDGE_TOKEN = "SHEERID_BRIDGE_TOKEN";
+export const ENV_BRIDGE_BASE_URL = "SHEERID_BRIDGE_URL";
+
+// ------------------------------------------------------------------ الجسر
+// جسر SheerID عند البوت: نقطة داخلية واحدة (POST) بأفعال في الجسم
+// (balance / verify / status) وبترد بنفس مظروف المورد {ok, data} —
+// فعميل الموقع بيتعامل مع الجسر زي المورد بالظبط، والفرق في النقل بس.
+export const BRIDGE_BASE_URL = "https://pixel-farm-6ww1-omega.vercel.app";
+export const BRIDGE_PATH = "/api/sheerid-bridge";
+// توكن الجسر في جدول إعدادات قابل للقراءة من الخادم نفسه (migration 019):
+export const BRIDGE_CONFIG_TABLE = "backend_config";
+export const BRIDGE_TOKEN_KEY = "sheerid_bridge_token";
+// رابط إشعار الموقع نفسه: في وضع الجسر بيتبعت للمورد مع طلب التحقق
+// افتراضيًا (إلا لو اتضبط SHEERID_WEBHOOK_URL) عشان اكتمال التحقق
+// يصحّي مسار /sheerid/callback عندنا زي تصميم البوت بالظبط.
+export const SITE_CALLBACK_URL =
+  "https://migoai-72.naroelwakel-dot.deno.net/sheerid/callback";
 
 // عنوان خدمة التحقق (نفس عنوان واجهة المورد العامة اللي البوت بيستخدمها).
 export const BASE_URL = "https://bunnytoolsbot.tech";
@@ -88,4 +111,17 @@ export function webhookUrl(env: (n: string) => string | undefined): string {
 
 export function baseUrl(env: (n: string) => string | undefined): string {
   return ((env(ENV_BASE_URL) || "").trim() || BASE_URL).replace(/\/+$/, "");
+}
+
+export function bridgeBaseUrl(
+  env: (n: string) => string | undefined,
+): string {
+  return ((env(ENV_BRIDGE_BASE_URL) || "").trim() || BRIDGE_BASE_URL)
+    .replace(/\/+$/, "");
+}
+
+export function bridgeTokenFromEnv(
+  env: (n: string) => string | undefined,
+): string {
+  return (env(ENV_BRIDGE_TOKEN) || "").trim();
 }

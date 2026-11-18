@@ -8,10 +8,17 @@
  *   `ok` حقيقي أو فيه حالة HTTP فاشلة بيترفع كـ `SheerIDError`.
  * - النقل قابل للحقن عشان الاختبارات والتدريبات تشتغل على وهمي بس،
  *   من غير أي شبكة ومن غير ما تلمس الخدمة الحقيقية أبدًا.
+ *
+ * وضع الجسر (bridgeToken مضبوط): نفس العمليات ونفس المظروف، لكن
+ * التنفيذ بيتم عبر نقطة البوت الداخلية /api/sheerid-bridge — POST
+ * واحد بجسم {"action": ...} وترويسة `x-bridge-token` — والبوت بينفّذ
+ * بمفتاح المورد اللي عنده. الموقع في الوضع ده ما يعرفش مفتاح المورد
+ * أصلًا، وسلوك الأخطاء والإقفال مطابق للوضع المباشر حرفيًا.
  */
 
 import {
   baseUrl as configBaseUrl,
+  BRIDGE_PATH,
   PATH_BALANCE,
   PATH_STATUS,
   PATH_VERIFY,
@@ -57,6 +64,7 @@ export const fetchTransport: Transport = async (req) => {
 
 export class SheerIDClient {
   private key: string;
+  private bridgeToken: string;
   private base: string;
   private transport: Transport;
 
@@ -64,8 +72,12 @@ export class SheerIDClient {
     apiKey: string;
     baseUrl?: string;
     transport?: Transport;
+    /** توكن جسر البوت — وجوده بيبدّل النقل لوضع الجسر (الأولوية له
+     * على النداءات، والمفتاح المباشر بيبقى هو الاحتياطي النظري). */
+    bridgeToken?: string;
   }) {
     this.key = (opts.apiKey || "").trim();
+    this.bridgeToken = (opts.bridgeToken || "").trim();
     this.base = (opts.baseUrl || configBaseUrl(() => undefined)).replace(
       /\/+$/,
       "",
@@ -74,7 +86,12 @@ export class SheerIDClient {
   }
 
   get hasKey(): boolean {
-    return !!this.key;
+    return !!(this.key || this.bridgeToken);
+  }
+
+  /** وضع الجسر شغّال؟ (التوكن موجود — التنفيذ عند البوت مش المورد). */
+  get viaBridge(): boolean {
+    return !!this.bridgeToken;
   }
 
   private async call(
@@ -82,7 +99,7 @@ export class SheerIDClient {
     path: string,
     body?: Record<string, unknown>,
   ): Promise<Record<string, unknown>> {
-    if (!this.hasKey) throw new SheerIDError("مفتاح خدمة التحقق مش مضبوط");
+    if (!this.key) throw new SheerIDError("مفتاح خدمة التحقق مش مضبوط");
     const headers: Record<string, string> = {
       "X-API-Key": this.key,
       "Accept": "application/json",
@@ -92,14 +109,40 @@ export class SheerIDClient {
       payload = JSON.stringify(body);
       headers["Content-Type"] = "application/json";
     }
+    return this.execute({
+      url: this.base + path,
+      method,
+      headers,
+      body: payload,
+    });
+  }
+
+  /** نداء جسر واحد: POST للأفعال على نقطة البوت الداخلية. */
+  private async bridgeCall(
+    body: Record<string, unknown>,
+  ): Promise<Record<string, unknown>> {
+    if (!this.bridgeToken) {
+      throw new SheerIDError("مفتاح خدمة التحقق مش مضبوط");
+    }
+    return this.execute({
+      url: this.base + BRIDGE_PATH,
+      method: "POST",
+      headers: {
+        "x-bridge-token": this.bridgeToken,
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+  }
+
+  /** النقل + فك المظروف — مشترك بين الوضع المباشر ووضع الجسر. */
+  private async execute(
+    req: TransportRequest,
+  ): Promise<Record<string, unknown>> {
     let res: TransportResponse;
     try {
-      res = await this.transport({
-        url: this.base + path,
-        method,
-        headers,
-        body: payload,
-      });
+      res = await this.transport(req);
     } catch (e) {
       if (e instanceof SheerIDError) throw e;
       throw new SheerIDError("تعذّر الاتصال بخدمة التحقق");
@@ -133,6 +176,7 @@ export class SheerIDClient {
 
   /** رصيد محفظة الخدمة عند المورد وحالة توفّرها. */
   balance(): Promise<Record<string, unknown>> {
+    if (this.viaBridge) return this.bridgeCall({ action: "balance" });
     return this.call("GET", PATH_BALANCE);
   }
 
@@ -144,11 +188,18 @@ export class SheerIDClient {
     const body: Record<string, unknown> = { url: String(url || "") };
     const hook = (webhook || "").trim();
     if (hook) body["webhook_url"] = hook;
+    if (this.viaBridge) return this.bridgeCall({ action: "verify", ...body });
     return this.call("POST", PATH_VERIFY, body);
   }
 
   /** حالة عملية تحقق عند المورد (processing/completed/refunded...). */
   status(jobId: string): Promise<Record<string, unknown>> {
+    if (this.viaBridge) {
+      return this.bridgeCall({
+        action: "status",
+        job_id: String(jobId || ""),
+      });
+    }
     const path = PATH_STATUS.replace(
       "%s",
       encodeURIComponent(String(jobId || "")),
