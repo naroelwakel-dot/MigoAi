@@ -1,3 +1,4 @@
+// redeploy trigger 2026-11-18e: force Deno promotion of merges #5/#6/#7 (price floors + sheerid web flow + bridge client)
 // env refresh 2026-11-18d: DRAYIK_API_KEY added + Gmail joined the auto-buy allowlist
 // env refresh 2026-11-18c: Package 6 Deno steps complete (10/10) - executor armed for outlook-hotmail-accounts
 // env refresh 2026-11-18b: SUPABASE_SERVICE_ROLE_KEY set by owner (Package 6 step 1)
