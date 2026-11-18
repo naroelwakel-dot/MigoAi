@@ -65,6 +65,18 @@ export const OFFICIAL_SMS_SENDERS: readonly string[] = [
   "VodafoneCash",
   "Vodafone Cash",
   "Vodafone",
+  // حزمة 14 (2026-11-18، أمر المالك: كل المحافظ): الهويات اللي
+  // بتظهر فعليًا على الخطوط المصرية — فودافون كاش بتظهر VF-Cash،
+  // واتصالات كاش بقى اسمها e& money. «Etisalat» العارية برّه
+  // القائمة قصدًا (هوية الشركة العامة: تسويق وخدمات، مش المحفظة).
+  // التقليص النهائي للهويات الظاهرة فعليًا بيتم وقت المعايرة.
+  "VF-Cash",
+  "et money",
+  "e& money",
+  "EtisalatCash",
+  "Etisalat Cash",
+  "InstaPay",
+  "Telda",
 ];
 
 /**

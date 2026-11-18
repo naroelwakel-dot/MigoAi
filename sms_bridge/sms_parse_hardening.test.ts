@@ -23,6 +23,14 @@ Deno.test("classifyOrigin: الهويات الرسمية المعروفة", () =
   eq(classifyOrigin("Vodafone Cash"), "official", "with space");
   eq(classifyOrigin("Vodafone"), "official", "bare brand");
   eq(classifyOrigin("  VodafoneCash  "), "official", "trimmed");
+  // حزمة 14: محافظ المالك كلها مسجلة رسميًا (أمر 2026-11-18).
+  eq(classifyOrigin("VF-Cash"), "official", "VF-Cash (Vodafone Egypt real id)");
+  eq(classifyOrigin("et money"), "official", "et money (Etisalat Cash)");
+  eq(classifyOrigin("e& money"), "official", "e& money (Etisalat Cash)");
+  eq(classifyOrigin("EtisalatCash"), "official", "EtisalatCash");
+  eq(classifyOrigin("Etisalat Cash"), "official", "Etisalat Cash");
+  eq(classifyOrigin("InstaPay"), "official", "InstaPay");
+  eq(classifyOrigin("Telda"), "official", "Telda");
   ok(OFFICIAL_SMS_SENDERS.length >= 1, "official list non-empty");
 });
 
@@ -36,9 +44,9 @@ Deno.test("classifyOrigin: أشكال قريبة ومجهولة = unknown", () =
   // هوية مزوّرة قريبة الشكل من الرسمية — مش مطابقة تامة فمش رسمية.
   eq(classifyOrigin("VodafoneCashEG"), "unknown", "suffixed lookalike");
   eq(classifyOrigin("Vodafone-Cash"), "unknown", "hyphenated lookalike");
-  eq(classifyOrigin("VF-Cash"), "unknown", "short id");
+  eq(classifyOrigin("VF-Pay"), "unknown", "unregistered short id");
   eq(classifyOrigin(""), "unknown", "empty");
-  eq(classifyOrigin("Etisalat"), "unknown", "other brand until registered");
+  eq(classifyOrigin("Etisalat"), "unknown", "bare carrier brand stays unregistered");
 });
 
 Deno.test("parseSms: origin بيتحمل في الناتج على القناتين", () => {
