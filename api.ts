@@ -1,3 +1,4 @@
+// env refresh 2026-11-18c: Package 6 Deno steps complete (10/10) - executor armed for outlook-hotmail-accounts
 // env refresh 2026-11-18b: SUPABASE_SERVICE_ROLE_KEY set by owner (Package 6 step 1)
 // Migo AI Solution - Deno service (verification + /chat). Rebuild marker: chat-live-7
 // env refresh 2026-11-18: LOG_WRITE_KEY rotated (owner set the new value in Deno; DB hash updated to match) — redeploy so the running isolate picks up the new env snapshot.
