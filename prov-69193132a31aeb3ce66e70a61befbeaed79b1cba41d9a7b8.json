@@ -1,6 +1,6 @@
 {
   "feed": "migo-provenance",
-  "generated_at": "2026-11-18T07:11:24Z",
+  "generated_at": "2026-11-18T08:11:56Z",
   "records": [
     {
       "cost_usd": 1.49,
@@ -25,6 +25,14 @@
       "store_price_egp": 63.0,
       "store_sku": "Google Gemini Pro (12 شهر (FW))",
       "supplier_key": "bunny"
+    },
+    {
+      "cost_usd": 0.75,
+      "listing_ref": "fresh_gmail_accoun_e780",
+      "product_key": "gmail-accounts",
+      "store_price_egp": 62.0,
+      "store_sku": "حسابات Gmail جاهزة (حساب دائم)",
+      "supplier_key": "drayik"
     },
     {
       "cost_usd": 4.65,
