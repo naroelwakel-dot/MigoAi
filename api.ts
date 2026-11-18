@@ -13,6 +13,101 @@
 // and the storefront lets the customer continue.
 // ==============================================================================
 
+// ---------------------------------------------------------------------------
+// الحزمة 6 — منفّذ الشراء التلقائي للموقع (إطلاق تدريجي، افتراضيًا مقفول).
+// نفس سجل المصدر ونفس فحوصات محرك البوت، بمرآة TypeScript مختبَرة.
+// التفعيل بمتغيرات البيئة بس: STORE_AUTO_BUY_ENABLED=1 + قائمة منتجات.
+// الأسرار من البيئة بس (أسماءها في OWNER-GATE.md) — ممنوع أي قيمة هنا.
+// ---------------------------------------------------------------------------
+import {
+  createExecutor,
+  createNotifyCustomer,
+  DrayikAdapter,
+  FeedAvailabilitySource,
+  FetchTransport,
+  flagsFromEnv,
+  GenericHttpAdapter,
+  handleExecRequest,
+  JsonRegistrySource,
+  notifyConfigFromEnv,
+  PostgrestRefundClient,
+  PostgrestStoreDb,
+  refundOrderHook,
+  TunVNAdapter,
+  urlLoader,
+  WasmouAdapter,
+  type StoreExecutor,
+} from "./store_executor/mod.ts";
+
+let _executor: StoreExecutor | null = null;
+function getExecutor(): StoreExecutor {
+  if (_executor) return _executor;
+  const env = (n: string) => Deno.env.get(n) || "";
+  const transport = new FetchTransport(15000);
+  const adapters = new Map();
+  // Bunny: المحوّل العام بنفس تهيئة صف المورد في قاعدة البوت (الأجزاء
+  // غير السرية في BUNNY_ADAPTER_CONFIG كـ JSON، والسر في BUNNY_API_KEY).
+  try {
+    const bunnyCfg = JSON.parse(env("BUNNY_ADAPTER_CONFIG") || "null");
+    if (bunnyCfg) {
+      adapters.set("bunny", new GenericHttpAdapter(
+        transport, () => env("BUNNY_API_KEY"), bunnyCfg, "bunny"));
+    }
+  } catch (e) { logError("store_exec.init", "bunny adapter config invalid", e); }
+  if (env("DRAYIK_API_KEY")) {
+    adapters.set("drayik", new DrayikAdapter(transport, () => env("DRAYIK_API_KEY")));
+  }
+  if (env("TUNVN_API_KEY")) {
+    adapters.set("tunvn", new TunVNAdapter(transport, () => env("TUNVN_API_KEY")));
+  }
+  if (env("WASMU_API_KEY")) {
+    adapters.set("wasmou", new WasmouAdapter(transport, () => env("WASMU_API_KEY")));
+  }
+  const storeDb = new PostgrestStoreDb({
+    baseUrl: SB_URL,
+    // مفتاح خدمة من البيئة بس — SB_KEY الحالية publishable وما تكفيش
+    // لكتابة التنفيذات؛ غياب المفتاح = المنفّذ مش هيتركب أصلًا.
+    keyOf: () => env("SUPABASE_SERVICE_ROLE_KEY"),
+    triggerStatus: env("STORE_EXEC_TRIGGER_STATUS") || "paid",
+  });
+  _executor = createExecutor({
+    store: storeDb,
+    registry: new JsonRegistrySource(
+      urlLoader(env("PROVENANCE_FEED_URL") || "https://migoai.shop/provenance.json")),
+    availability: new FeedAvailabilitySource(
+      urlLoader(env("AVAILABILITY_FEED_URL") || "https://migoai.shop/availability.json")),
+    adapters,
+    flags: flagsFromEnv((n) => Deno.env.get(n)),
+    logError,
+    // إشعار العميل (قرار المالك 2026-11-18: واتساب/إيميل): خدمة
+    // notify.ts — إيميل Brevo من orders@migoai.shop لإيميل العميل
+    // المسجل على الطلب (غياب BREVO_API_KEY أو غياب إيميل على الطلب =
+    // تخطّي نضيف وسطح الفاتورة/الحالة هو التأكيد زي v1)، وواتساب
+    // Cloud API ورا WHATSAPP_NOTIFY_ENABLED (مقفول افتراضيًا لحد ما
+    // المنصة تتهيأ). فشل أي قناة بيتسجّل ومش بيكسر تنفيذًا أبدًا.
+    notifyCustomer: createNotifyCustomer({
+      store: storeDb,
+      config: notifyConfigFromEnv((n) => Deno.env.get(n)),
+      http: transport,
+      logError,
+    }),
+    alertAdmin: async (message, context) => {
+      logError("store_exec.admin_alert", message, undefined, context);
+    },
+    // الاسترداد (قرار المالك 2026-11-18: تلقائي كامل): خطاف refund.ts
+    // بينده RPC ‏refund_order (هجرة 008) — الفشل النهائي بيتحول
+    // refunded مؤكد في القاعدة + صف التزام استرداد دقيق في
+    // store_refunds بينفّذ المالك التحويل النقدي الراجع منه بخطوة
+    // واحدة (دفع المتجر تحويل يدوي — مفيش بوابة ومفيش نداء بوابة).
+    refundOrder: refundOrderHook(storeDb, new PostgrestRefundClient({
+      baseUrl: SB_URL,
+      keyOf: () => env("SUPABASE_SERVICE_ROLE_KEY"),
+    })),
+    now: () => new Date(),
+  });
+  return _executor;
+}
+
 // متجر Migo: نسمح بطلبات المتصفح من أصل موقعنا بس (مش "*") عشان مانخليش أي موقع
 // تاني يستدعي الـ API من متصفح الزوار. الموقعان (MigoAi و MigoStore) على نفس الأصل.
 // ملاحظة: الـ CORS بيتحكم في متصفحات الزوار فقط؛ النداءات من السيرفر (البوت) مش متأثرة.
@@ -1053,6 +1148,19 @@ Deno.serve(async (req: Request) => {
   }
 
   const url = new URL(req.url);
+
+  // الحزمة 6: مسارات التنفيذ (محمية بـ isAdmin) — قبل /chat والتحقق.
+  // الكنس بيتنادى من مجدول خارجي كل 20 ثانية (نمط sheerid-sweep) بنفس
+  // ترويسة الأدمن؛ والتنفيذ الفوري بيتنادى بعد تأكيد دفع أي طلب.
+  if (url.pathname.replace(/\/+$/, "").includes("/exec/")) {
+    try {
+      const execRes = await handleExecRequest(req, getExecutor(), isAdmin);
+      if (execRes) return execRes;
+    } catch (e) {
+      logError("store_exec.route", "unhandled exec route error", e);
+    }
+  }
+
   if (req.method === "POST" && url.pathname.replace(/\/+$/, "").endsWith("/client-error")) {
     return handleClientError(req);
   }
