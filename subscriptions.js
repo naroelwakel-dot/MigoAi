@@ -60,7 +60,6 @@ const subscriptionsData = [
       { id: "canva_1m_pers", name: "شهر واحد (حساب شخصي خاص) — 119 ج.م", duration: "شهر شخصي", price: 119 },
       { id: "canva_admin", name: "حساب Canva Admin — 313 ج.م", duration: "حساب Admin", price: 313 },
       { id: "canva_pro_inv_1y", name: "سنة كاملة (دعوة رسمية Invitation) — 439 ج.م", duration: "سنة (Invitation Full)", price: 439 },
-      { id: "canva_edu_inv_1y", name: "سنة (دعوة Canva Education) — 4 ج.م", duration: "سنة (Education)", price: 4 },
       { id: "canva_edu_admin_500", name: "حساب Edu Admin (500 دعوة) — 313 ج.م", duration: "Edu Admin (500 دعوة)", price: 313 }
     ]
   },
