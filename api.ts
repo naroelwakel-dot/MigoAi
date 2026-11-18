@@ -253,6 +253,31 @@ async function resolveTikTokUser(username: string): Promise<{ name: string; avat
 // ----------------------------------------------------------------------------
 // Real source: Telegram public profile (scrape)
 // ----------------------------------------------------------------------------
+// [gemini-fix-1] BEGIN telegram template guard
+// t.me serves a generic preview page for usernames that do NOT exist:
+// og:title is the fixed template "Telegram: Contact @<username>" — the
+// requested handle echoed back — and og:image is Telegram's default
+// placeholder "https://telegram.org/img/t_logo_2x.png". A real account
+// returns its own display name (e.g. "Pavel Durov") and, when a photo is
+// set, a CDN photo URL instead (verified live 2026-11-17 against a
+// nonexistent handle and @durov). Treating the template as a found
+// account made the ID check report nonexistent Telegram usernames as
+// "verified", so it is rejected here and the caller falls back to the
+// honest success:false manual-name path.
+const TELEGRAM_DEFAULT_AVATAR = "https://telegram.org/img/t_logo_2x.png";
+function isTelegramGenericTemplate(name: string, avatar: string, clean: string): boolean {
+  const n = name.trim();
+  const handle = clean.toLowerCase();
+  // The fixed t.me template, with the requested handle echoed into it.
+  if (/^telegram:\s*contact\s+@/i.test(n)) return true;
+  if (n.toLowerCase() === `telegram: contact @${handle}`) return true;
+  // The "name" is nothing but the requested handle echoed back.
+  if (n === clean || n === `@${clean}`) return true;
+  // Default placeholder avatar + a name that is only the echoed handle.
+  if (avatar === TELEGRAM_DEFAULT_AVATAR && n.replace(/^@/, "").toLowerCase() === handle) return true;
+  return false;
+}
+
 async function resolveTelegramUser(username: string): Promise<{ name: string; avatar: string }> {
   const clean = username.replace(/^@/, "").trim();
   try {
@@ -265,11 +290,12 @@ async function resolveTelegramUser(username: string): Promise<{ name: string; av
       const ogImage = html.match(/<meta property="og:image" content="([^"]+)"/i);
       if (ogTitle && ogTitle[1]) name = ogTitle[1].trim();
       if (ogImage && ogImage[1]) avatar = ogImage[1].replace(/&amp;/g, "&");
-      if (name) return { name, avatar };
+      if (name && !isTelegramGenericTemplate(name, avatar, clean)) return { name, avatar };
     }
   } catch (_) {}
   return { name: "", avatar: "" };
 }
+// [gemini-fix-1] END telegram template guard
 
 // ----------------------------------------------------------------------------
 // Real source: Roblox official user API
