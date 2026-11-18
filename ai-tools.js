@@ -59,7 +59,10 @@ const aiProducts = [
         id: 'ai_super_grok',
         name: 'Super Grok (xAI)',
         tag: 'إيلون ماسك الذكي',
-        price: 980,
+        packages: [
+            { id: 'ai_super_grok_main', name: 'Super Grok — 980 ج.م', duration: 'إيلون ماسك الذكي', price: 980 },
+            { id: 'ai_super_grok_plus', name: 'Grok Plus — شهر واحد — 349 ج.م', duration: 'Grok Plus — شهر واحد', price: 349 }
+        ],
         desc: 'اشتراك رسمي في أقوى نماذج Grok غير المقيدة',
         banner: 'images/ai/ai_super_grok.webp', bannerAnim: 'images/ai/ai_super_grok-anim.webp'
     },
