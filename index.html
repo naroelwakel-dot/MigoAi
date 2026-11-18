@@ -725,7 +725,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
      <div class="w-9 h-9 rounded-xl flex items-center justify-center mx-auto mb-2" style="background:linear-gradient(135deg,#f3cf6b,#b8860b)"><svg viewBox="0 0 32 32" class="w-5 h-5" aria-hidden="true"><path d="M6 24V9l10 9 10-9v15" fill="none" stroke="#ffffff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="25.5" cy="7.5" r="2.6" fill="#ffffff"/></svg></div>
      <h3 class="text-base font-bold text-white font-en-sans">Customer Portal</h3>
     </div>
-    <div class="grid grid-cols-2 gap-1 bg-[#1f2530] p-1 rounded-xl mb-4 border border-white/10 font-mono-code text-xs">
+    <div id="authTabs" class="grid grid-cols-2 gap-1 bg-[#1f2530] p-1 rounded-xl mb-4 border border-white/10 font-mono-code text-xs">
      <button type="button" id="tabLoginBtn" onclick="switchAuthTab('login')" class="py-1.5 font-bold rounded-lg transition sky-active-tab cursor-pointer">Sign In</button>
      <button type="button" id="tabRegisterBtn" onclick="switchAuthTab('register')" class="py-1.5 font-medium rounded-lg transition text-slate-400 cursor-pointer">Register</button>
     </div>
@@ -742,6 +742,65 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
      <div><label class="block text-xs font-medium text-slate-400 mb-1" for="regPassword">الرقم السري:</label><input type="password" id="regPassword" required minlength="6" class="w-full bg-[#1f2530] border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-mono-code outline-none"></div>
      <button type="submit" class="w-full agentql-btn-primary py-2.5 rounded-xl text-xs cursor-pointer font-en-sans">Create Account</button>
     </form>
+    <!-- Customer Wallet (Package 9): shown instead of the auth forms
+         when a real Supabase session exists. Data loads via
+         refreshWalletUI()/loadWalletData() in app.js. -->
+    <div id="walletPanel" class="hidden space-y-3">
+     <div class="bg-[#1f2530] border border-amber-400/30 rounded-xl p-3.5 text-center">
+      <p class="text-[11px] text-slate-400 mb-0.5">رصيد محفظتك</p>
+      <p id="walletBalanceText" class="text-lg font-extrabold text-amber-300 font-mono-code">—</p>
+      <p id="walletPendingText" class="hidden text-[10px] text-sky-300 mt-1"></p>
+     </div>
+     <!-- Auto top-up (Package 10): Binance / Bybit USDT deposits
+          confirmed from signed exchange data — credited automatically,
+          no admin step. Intent + instructions via app.js
+          (createWalletAutoIntent / loadWalletAutoIntents). -->
+     <div class="bg-[#1f2530] border border-emerald-400/30 rounded-xl p-3.5 space-y-2">
+      <p class="text-xs font-bold text-white">شحن تلقائي — Binance / Bybit ⚡</p>
+      <p class="text-[10px] text-slate-400 leading-relaxed">حوّل USDT من حسابك على نفس المنصة بالمبلغ الدقيق اللي هيظهر لك — الرصيد بيزيد تلقائيًا أول ما الإيداع يتأكد، من غير مراجعة يدوية.</p>
+      <div><label class="block text-[11px] font-medium text-slate-400 mb-1" for="walletAutoRail">المنصة:</label><select id="walletAutoRail" class="w-full bg-[#12151b] border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-white/30"><option value="binance">Binance</option><option value="bybit">Bybit</option></select></div>
+      <div><label class="block text-[11px] font-medium text-slate-400 mb-1" for="walletAutoAmount">مبلغ الشحن (ج.م):</label><input type="number" id="walletAutoAmount" min="1" step="0.01" placeholder="مثال: 500" class="w-full bg-[#12151b] border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-mono-code outline-none focus:border-white/30"></div>
+      <button type="button" onclick="createWalletAutoIntent()" class="w-full agentql-btn-primary py-2.5 rounded-xl text-xs cursor-pointer">إنشاء تعليمات الشحن</button>
+      <div id="walletAutoInstructions" class="hidden space-y-2 bg-[#12151b] border border-white/10 rounded-xl p-3">
+       <p class="text-[11px] text-slate-300 leading-relaxed">حوّل المبلغ ده <b>بالظبط</b> — أي اختلاف في الكسور بيمنع الشحن التلقائي:</p>
+       <div class="flex items-center justify-between gap-2"><span id="walletAutoUsdt" class="font-mono-code text-base font-extrabold text-emerald-300">—</span><button type="button" onclick="copyWalletAutoText('walletAutoUsdt')" class="text-[10px] text-sky-300 border border-white/10 rounded-lg px-2 py-1 cursor-pointer shrink-0">نسخ</button></div>
+       <p class="text-[11px] text-slate-400">إلى العنوان/المعرّف:</p>
+       <div class="flex items-center justify-between gap-2"><span id="walletAutoAddress" class="font-mono-code text-[11px] text-white break-all">—</span><button type="button" onclick="copyWalletAutoText('walletAutoAddress')" class="text-[10px] text-sky-300 border border-white/10 rounded-lg px-2 py-1 cursor-pointer shrink-0">نسخ</button></div>
+       <p class="text-[10px] text-slate-400 leading-relaxed">التحويل الداخلي بين حسابات نفس المنصة (Binance ← Binance أو Bybit ← Bybit) بيوصل كامل وبدون رسوم شبكة — وهو الأفضل. لو حوّلت من محفظة خارجية، اتأكد إن اللي هيوصل بعد رسوم الشبكة يساوي المبلغ الدقيق بالظبط.</p>
+       <p class="text-[11px] text-amber-300">الوقت المتبقي: <span id="walletAutoCountdown" class="font-mono-code">—</span></p>
+      </div>
+      <div id="walletAutoIntents" class="space-y-1.5 text-[11px] text-slate-300"></div>
+     </div>
+     <div class="bg-[#1f2530] border border-white/10 rounded-xl p-3.5 space-y-2">
+      <p class="text-xs font-bold text-white">شحن يدوي بالتحويل</p>
+      <p class="text-[10px] text-slate-400 leading-relaxed">حوّل المبلغ بأي وسيلة دفع عادية الأول، وبعدين سجّل التحويل هنا برقم التليفون اللي حوّلت منه والمبلغ — ورقم العملية أو صورة الإيصال لو متوفرين بيسرّعوا التأكيد.</p>
+      <div><label class="block text-[11px] font-medium text-slate-400 mb-1" for="walletTopupAmount">مبلغ الشحن (ج.م):</label><input type="number" id="walletTopupAmount" min="1" step="0.01" placeholder="مثال: 500" class="w-full bg-[#12151b] border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-mono-code outline-none focus:border-white/30"></div>
+      <div><label class="block text-[11px] font-medium text-slate-400 mb-1" for="walletTopupMethod">وسيلة التحويل:</label><select id="walletTopupMethod" class="w-full bg-[#12151b] border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-white/30"></select></div>
+      <div><label class="block text-[11px] font-medium text-slate-400 mb-1" for="walletTopupSender">رقم التليفون اللي حوّلت منه:</label><input type="text" id="walletTopupSender" placeholder="مثال: 010xxxxxxxx" class="w-full bg-[#12151b] border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-mono-code outline-none focus:border-white/30"></div>
+      <div><label class="block text-[11px] font-medium text-slate-400 mb-1" for="walletTopupRef">رقم العملية (اختياري — بيسرّع التأكيد):</label><input type="text" id="walletTopupRef" placeholder="مثال: 123456789012" class="w-full bg-[#12151b] border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-mono-code outline-none focus:border-white/30"><p class="text-[10px] text-slate-500 mt-1 leading-relaxed">هتلاقي الرقم ده في إيصال التحويل جوه تطبيق المحفظة أو البنك بتاعك — لو كتبته التأكيد بيبقى أسرع، وبيمنع تسجيل نفس التحويل مرتين.</p></div>
+      <div><label class="block text-[11px] font-medium text-slate-400 mb-1" for="walletTopupProof">صورة الإيصال (اختياري):</label><input type="file" id="walletTopupProof" accept="image/*" class="w-full bg-[#12151b] border border-white/10 rounded-xl px-3 py-2 text-xs text-slate-300 outline-none focus:border-white/30"></div>
+      <button type="button" id="walletTopupSubmitBtn" onclick="submitWalletTopup()" class="w-full agentql-btn-primary py-2.5 rounded-xl text-xs cursor-pointer">تسجيل طلب الشحن</button>
+     </div>
+     <!-- Claim-by-ref (Package 12): Binance / Bybit deposit
+          confirmed by its operation/transaction number alone.
+          The claim is an assertion — the exchange record itself
+          (via the deposit watcher + RPCs of migration 014) is
+          the only proof that moves money. -->
+     <div class="bg-[#1f2530] border border-white/10 rounded-xl p-3.5 space-y-2">
+      <p class="text-xs font-bold text-white">تأكيد إيداع Binance / Bybit برقم العملية</p>
+      <p class="text-[10px] text-slate-400 leading-relaxed">حوّلت USDT من حسابك على Binance أو Bybit؟ الصق رقم العملية / Transaction ID من تطبيق المنصة وهنأكد الإيداع من سجل المنصة نفسه — الرصيد بيظهر تلقائيًا أول ما الإيداع يثبت.</p>
+      <div><label class="block text-[11px] font-medium text-slate-400 mb-1" for="walletClaimRail">المنصة:</label><select id="walletClaimRail" class="w-full bg-[#12151b] border border-white/10 rounded-xl px-3 py-2 text-xs text-white outline-none focus:border-white/30"><option value="binance">Binance</option><option value="bybit">Bybit</option></select></div>
+      <div><label class="block text-[11px] font-medium text-slate-400 mb-1" for="walletClaimRef">رقم العملية / Transaction ID:</label><input type="text" id="walletClaimRef" placeholder="الصق الرقم من تطبيق المنصة" class="w-full bg-[#12151b] border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-mono-code outline-none focus:border-white/30"></div>
+      <button type="button" id="walletClaimSubmitBtn" onclick="submitWalletClaim()" class="w-full agentql-btn-primary py-2.5 rounded-xl text-xs cursor-pointer">أكّد الإيداع</button>
+      <p id="walletClaimStatus" class="hidden text-[11px] leading-relaxed"></p>
+      <div id="walletClaimsList" class="space-y-1.5 text-[11px] text-slate-300"></div>
+     </div>
+     <div class="space-y-1.5">
+      <p class="text-xs font-bold text-white">حركات المحفظة</p>
+      <div id="walletHistoryList" class="space-y-1.5 text-[11px] text-slate-300 max-h-44 overflow-y-auto custom-scrollbar"></div>
+     </div>
+     <button type="button" onclick="handleLogout()" class="w-full text-center text-[11px] text-slate-400 hover:text-red-400 cursor-pointer">تسجيل الخروج</button>
+    </div>
    </div>
   </div>
   <!-- Shopping Cart Console Modal -->
@@ -811,6 +870,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
      <button type="button" onclick="document.getElementById('installmentsBox').classList.toggle('hidden')" class="sky-card p-2.5 rounded-xl flex flex-col items-center justify-center gap-1.5 cursor-pointer">
       <span class="w-11 h-11 rounded-xl flex items-center justify-center shadow" style="background:linear-gradient(135deg,#f3cf6b,#b8860b)"><i class="fa-solid fa-layer-group text-white text-lg"></i></span>
       <span class="text-[10px] font-medium text-white">التقسيط BNPL</span>
+     </button>
+     <button type="button" id="walletPayBtn" onclick="selectPaymentMethod('wallet', '💰 محفظة الموقع', this)" class="pay-method-btn sky-card p-2.5 rounded-xl flex-col items-center justify-center gap-1.5 cursor-pointer hidden">
+      <span class="w-11 h-11 rounded-xl flex items-center justify-center text-xl shadow" style="background:linear-gradient(135deg,#f3cf6b,#b8860b)">💰</span>
+      <span class="text-[10px] font-medium text-white">محفظة الموقع</span>
      </button>
     </div>
     <!-- Installments BNPL) grouped window -->
@@ -1409,6 +1472,7 @@ async function recordOrder(snapshot) {
     return;
   }
   var sess = await getSessionInfo();
+  var sentRef = null;
   var ctx = { payment: snapshot.payment,
               sender_account: snapshot.sender_account,
               customer_email: snapshot.customer_email,
@@ -1418,6 +1482,7 @@ async function recordOrder(snapshot) {
       var attempt = await checkoutAttempt(built.items, ctx, snapshot, sess.uid);
       if (attempt.state === 'sent') {
         console.info('[Migo] order already recorded:', attempt.order_ref);
+        sentRef = attempt.order_ref;
         return;
       }
       var pl = { p_items: attempt.payload.p_items,
@@ -1446,12 +1511,73 @@ async function recordOrder(snapshot) {
       var ref = data && data.order_ref;
       if (ref && markSent(attempt.key, ref)) pushOrderPlaced(snapshot);
       else console.error('[Migo] order recorded but local confirmation failed; a retry replays idempotently', ref);
+      sentRef = ref || null;
     });
   } catch (err) {
     // Storage/identity/lock aborts: nothing was sent; the pending
     // attempt (when one exists) stays stored for a deliberate retry.
     console.error('[Migo] order recording aborted', err);
   }
+  return sentRef;
+}
+
+
+// الحزمة 9: إتمام طلب مدفوع من المحفظة. الطلب بيتنشأ بـ create_order
+// القائمة (وسيلة «💰 محفظة الموقع»)، وبعدين wallet_pay_order بيخصم
+// الرصيد وبيأكد الدفع ذرّيًا على السيرفر. مفيش تحويل واتساب هنا —
+// الدفع بيتم جوّه الموقع. رصيد مش كافي = الطلب بيضل 'new' وبيتعرض
+// للعميل إكماله بوسيلة تحويل عادية.
+async function walletFinalize(snapshot) {
+  if (!snapshot.sender_account) snapshot.sender_account = snapshot.customer_email;
+  if (!snapshot.customer_email || !snapshot.sender_account) {
+    showToast('سجّل دخولك الأول عشان تدفع من المحفظة', 'error');
+    return;
+  }
+  var ref = await recordOrder(snapshot);
+  if (!ref) {
+    showToast('تعذّر تسجيل الطلب — حاول مرة تانية', 'error');
+    return;
+  }
+  var sess = await getSessionInfo();
+  var data = null, status = 0;
+  try {
+    var r = await fetch(SUPABASE_URL + '/rest/v1/rpc/wallet_pay_order', {
+      method: 'POST',
+      headers: { 'apikey': SUPABASE_ANON_KEY,
+                 'Authorization': 'Bearer ' + (sess.token || SUPABASE_ANON_KEY),
+                 'Content-Type': 'application/json' },
+      body: JSON.stringify({ p_order_ref: ref })
+    });
+    status = r.status;
+    data = await r.json().catch(function () { return null; });
+  } catch (e) {
+    console.error('[Migo] wallet pay request failed', e);
+  }
+  if (status === 200 && data && (data.paid || data.already_paid)) {
+    try { localStorage.setItem('migo_last_order_v1', JSON.stringify({ t: Date.now(), orderId: ref, cart: snapshot.cart, coupon: snapshot.coupon })); } catch (e) {}
+    try {
+      cart = [];
+      appliedCoupon = null;
+      saveCartToStorage();
+      closeCheckoutModal();
+    } catch (e) {}
+    showToast('تم الدفع من محفظتك ✅ طلبك ' + ref + ' مؤكد ومدفوع');
+    if (typeof refreshWalletUI === 'function') refreshWalletUI();
+    return;
+  }
+  var msg = (data && (data.message || data.details || '')) || '';
+  if (String(msg).indexOf('insufficient wallet balance') !== -1) {
+    showToast('رصيد محفظتك لا يكفي لإتمام هذا الطلب', 'error');
+    var box = document.getElementById('checkoutDetailsBox');
+    var content = document.getElementById('checkoutPayContent');
+    if (box && content) {
+      box.classList.remove('hidden');
+      content.innerHTML = '<p class="text-white font-bold mb-1">رصيد المحفظة لا يكفي لهذا الطلب.</p>'
+        + '<p class="text-[11px] text-slate-300 leading-relaxed">طلبك محفوظ برقم <b class="font-mono-code">' + ref + '</b> ولسه غير مدفوع. تقدر تكمله دلوقتي باختيار وسيلة تحويل عادية من وسائل الدفع اللي فوق، أو تشحن محفظتك الأول من نافذة حسابك.</p>';
+    }
+    return;
+  }
+  showToast('طلبك اتسجل برقم ' + ref + ' لكن الدفع من المحفظة متعذّر دلوقتي — تواصل معانا لإتمامه', 'error');
 }
 
 // Hook: same position and trigger as the legacy recorder (it wraps
@@ -1464,12 +1590,12 @@ function __wrapRecorder(n) {
     return;
   }
   window.finalizeOrderWhatsApp = function () {
-    try { (window.dataLayer = window.dataLayer || []).push({ event: 'whatsapp_click' }); } catch (x) {}
+    var snapshot = null;
     try {
       var sa = document.getElementById('senderAccountInput'),
           te = document.getElementById('cartTotal'), se = null;
       try { se = JSON.parse(localStorage.getItem('migo_active_member_v2')); } catch (x) {}
-      var snapshot = {
+      snapshot = {
         cart: (typeof cart !== 'undefined' && cart ? cart : []).map(normalizeEntry),
         payment: (typeof selectedPayment !== 'undefined' ? selectedPayment : null),
         sender_account: sa ? sa.value.trim() : null,
@@ -1477,13 +1603,60 @@ function __wrapRecorder(n) {
         coupon: (typeof appliedCoupon !== 'undefined' && appliedCoupon) ? appliedCoupon.code : null,
         total_text: te ? te.innerText : null
       };
-      recordOrder(snapshot);
     } catch (x) { console.error('[Migo] recorder error', x); }
+    // الحزمة 9: طلبات المحفظة بتخلص جوّه الموقع (تسجيل + خصم + تأكيد)
+    // ومش بتروح واتساب — بنرجع بدري قبل المسار القديم.
+    if (snapshot && snapshot.payment === '💰 محفظة الموقع') {
+      walletFinalize(snapshot);
+      return;
+    }
+    try { (window.dataLayer = window.dataLayer || []).push({ event: 'whatsapp_click' }); } catch (x) {}
+    try { if (snapshot) recordOrder(snapshot); } catch (x) { console.error('[Migo] recorder error', x); }
     return o.apply(this, arguments);
   };
 }
 if (document.readyState === 'complete') __wrapRecorder(0);
 else window.addEventListener('load', function () { __wrapRecorder(0); });
 })();</script>
+
+  <script>
+    /* Wallet pay details: same install pattern as Binance QR above.
+       On 'wallet': wallet-specific details, sender field pre-filled
+       with the account email (wallet orders carry it as
+       sender_account) and locked; on any other method: restore. */
+    window.__installWalletPay = function() {
+        if (window.__walletPayInstalled) return;
+        const base = window.selectPaymentMethod;
+        window.selectPaymentMethod = function(type, title, el) {
+        if (typeof base === 'function') {
+            base(type, title, el);
+        }
+        const sender = document.getElementById('senderAccountInput');
+        const confBtn = document.getElementById('confirmPaymentBtn');
+        if (type === 'wallet') {
+            const box = document.getElementById('checkoutDetailsBox');
+            const content = document.getElementById('checkoutPayContent');
+            const titleEl = document.getElementById('checkoutPayTitle');
+            let email = '';
+            try { const se = JSON.parse(localStorage.getItem('migo_active_member_v2')); if (se && se.email) email = se.email; } catch (e) {}
+            if (box && content && titleEl) {
+                box.classList.remove('hidden');
+                titleEl.innerText = title;
+                content.innerHTML = '<p class="mb-1 text-white font-bold">الدفع الفوري من رصيد محفظتك — من غير تحويل ولا انتظار تأكيد.</p>'
+                    + '<p id="walletCheckoutBalance" class="text-[11px] text-amber-300 font-mono-code"></p>'
+                    + '<p class="text-[11px] text-slate-400 leading-relaxed">هيتخصم مبلغ الطلب من رصيدك وهيتأكد الدفع فورًا. لو الرصيد مش كافي، الطلب هيتحفظ وتقدر تكمله بتحويل عادي.</p>';
+            }
+            if (sender) { sender.value = email; sender.readOnly = true; sender.dataset.walletAutofill = '1'; }
+            if (confBtn) confBtn.innerText = 'CONFIRM & PAY FROM WALLET 💰';
+            if (typeof refreshWalletUI === 'function') refreshWalletUI();
+        } else {
+            if (sender && sender.dataset.walletAutofill) { sender.value = ''; sender.readOnly = false; delete sender.dataset.walletAutofill; }
+            if (confBtn) confBtn.innerText = 'CONFIRM & SEND INVOICE VIA WHATSAPP 💬';
+        }
+        };
+        window.__walletPayInstalled = true;
+    };
+    window.addEventListener('load', function() { if (window.__installWalletPay) window.__installWalletPay(); });
+  </script>
 </body>
 </html>

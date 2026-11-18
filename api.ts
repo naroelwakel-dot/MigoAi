@@ -14,6 +14,33 @@
 // (NEFERBYTE_API_KEY) -> free fallbacks (isan / JollyMax / official). If a game
 // has no reachable source, we return an honest, non-alarming "type it manually"
 // and the storefront lets the customer continue.
+
+// ---------------------------------------------------------------------------
+// الحزمة 11 — جسر رسائل إيداع المحفظة (SMS Bridge).
+// تطبيق على موبايل المالك بيبعت رسائل «استلام فلوس» (فودافون كاش…)
+// لـ POST /wallet/sms بهيدر x-migo-sms-key (SMS_BRIDGE_KEY في البيئة —
+// اعتماد ضيّق للموبايل بس، مش ADMIN_TOKEN). الخلفية بتحلّل الرسالة
+// وبتنادي wallet_ingest_sms بمفتاح الخدمة: المطابقة مع طلبات شحن
+// المحفظة والشحن التلقائي بيحصلوا في القاعدة (هجرة 013).
+// غياب أي سر من الاتنين = المسار مقفول (503) — مفيش إدخال مجهول.
+// ---------------------------------------------------------------------------
+import { handleSmsRequest, PostgrestSmsClient, type SmsDeps } from "./sms_bridge/mod.ts";
+
+let _smsDeps: SmsDeps | null = null;
+function getSmsDeps(): SmsDeps {
+  if (_smsDeps) return _smsDeps;
+  const env = (n: string) => Deno.env.get(n) || "";
+  _smsDeps = {
+    client: new PostgrestSmsClient({
+      baseUrl: SB_URL,
+      keyOf: () => env("SUPABASE_SERVICE_ROLE_KEY"),
+    }),
+    bridgeKeyOf: () => env("SMS_BRIDGE_KEY"),
+    logError,
+  };
+  return _smsDeps;
+}
+
 // ==============================================================================
 
 // ---------------------------------------------------------------------------
@@ -1138,6 +1165,161 @@ async function handleClientError(req: Request): Promise<Response> {
   return new Response(null, { status: 204 });
 }
 
+
+// ---------------------------------------------------------------------------
+// الحزمة 10 — تأكيد إيداع محفظة العميل التلقائي (Binance / Bybit).
+// المراقب (deposit_watcher.py على الـ VM) بيقرأ إيداعات USDT الناجحة
+// من APIs المنصتين الرسمية بمفاتيح قراءة-فقط، وبيبعت كل إيداع هنا؛
+// الـ RPC (هجرة 011) هي اللي بتقرر: مطابقة مبلغ فريد لنية مفتوحة =
+// شحن فوري بمبلغ الجنيه المتفق عليه، وغير كده = استثناء متسجل.
+// الأسرار من البيئة بس — ممنوع أي قيمة هنا.
+// ---------------------------------------------------------------------------
+async function walletRpc(
+  name: string,
+  args: Record<string, unknown>,
+): Promise<{ status: number; data: unknown }> {
+  const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
+  if (!key) throw new Error("SUPABASE_SERVICE_ROLE_KEY is not set");
+  const r = await fetch(`${SB_URL}/rest/v1/rpc/${name}`, {
+    method: "POST",
+    headers: {
+      "apikey": key,
+      "Authorization": `Bearer ${key}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(args),
+  });
+  const data = await r.json().catch(() => null);
+  return { status: r.status, data };
+}
+
+/** معالج مسارات المحفظة — بيتركب في Deno.serve جنب فرع /exec/. */
+export async function handleWalletRequest(
+  req: Request,
+): Promise<Response | null> {
+  const url = new URL(req.url);
+  const path = url.pathname.replace(/\/+$/, "");
+  const isCredit = path.endsWith("/wallet/auto-credit");
+  const isExpire = path.endsWith("/wallet/expire-intents");
+  const isPendingClaims = path.endsWith("/wallet/pending-claims");
+  const isResolveClaim = path.endsWith("/wallet/resolve-claim");
+  if (!isCredit && !isExpire && !isPendingClaims && !isResolveClaim) {
+    return null;
+  }
+  const json = (body: unknown, status = 200) =>
+    new Response(JSON.stringify(body), {
+      status,
+      headers: { "Content-Type": "application/json" },
+    });
+  if (req.method !== "POST") return json({ ok: false, error: "method" }, 405);
+  if (!isAdmin(req)) {
+    return json({ ok: false, error: "unauthorized" }, 401);
+  }
+  try {
+    if (isExpire) {
+      const { status, data } = await walletRpc("wallet_expire_intents", {});
+      if (status >= 300) {
+        logError("wallet.expire", "expire intents RPC failed", undefined, {
+          status,
+        });
+        return json({ ok: false, error: "rpc_failed" }, 502);
+      }
+      return json({ ok: true, expired: data });
+    }
+    if (isPendingClaims) {
+      const { status, data } = await walletRpc("wallet_pending_claims", {
+        p_limit: 50,
+      });
+      if (status >= 300) {
+        logError("wallet.claims", "pending claims RPC failed", undefined, {
+          status,
+        });
+        return json({ ok: false, error: "rpc_failed" }, 502);
+      }
+      return json({ ok: true, claims: data });
+    }
+    if (isResolveClaim) {
+      const cbody = (await req.json().catch(() => ({}))) as {
+        claim_id?: unknown;
+        amount_usdt?: unknown;
+        tx_hash?: unknown;
+        asset?: unknown;
+        reject_reason?: unknown;
+      };
+      const claimId = String(cbody.claim_id || "").trim();
+      // المبلغ كنص دايمًا (قاعدة الحزمة 10) — والرفض الموثّق
+      // ممكن ييجي من غير مبلغ أصلًا.
+      const camount = typeof cbody.amount_usdt === "number"
+        ? String(cbody.amount_usdt)
+        : String(cbody.amount_usdt || "").trim();
+      const rejectReason = cbody.reject_reason
+        ? String(cbody.reject_reason).trim()
+        : "";
+      if (
+        !claimId ||
+        (!rejectReason && !/^\d+(\.\d+)?$/.test(camount))
+      ) {
+        return json({ ok: false, error: "invalid_body" }, 400);
+      }
+      const { status, data } = await walletRpc("wallet_resolve_claim", {
+        p_claim_id: claimId,
+        p_amount_usdt: camount === "" ? null : camount,
+        p_tx_id: cbody.tx_hash ? String(cbody.tx_hash) : null,
+        p_asset: cbody.asset ? String(cbody.asset) : null,
+        p_reject_reason: rejectReason === "" ? null : rejectReason,
+      });
+      if (status >= 300) {
+        logError("wallet.resolve_claim", "resolve claim RPC failed",
+          undefined, { status, claim_id: claimId });
+        return json({ ok: false, error: "rpc_failed" }, 502);
+      }
+      // نتيجة الـ RPC حرفيًا (credited / rejected / status …).
+      return json(data);
+    }
+    const body = (await req.json().catch(() => ({}))) as {
+      rail?: unknown;
+      exchange_ref?: unknown;
+      asset?: unknown;
+      amount_usdt?: unknown;
+      tx_hash?: unknown;
+    };
+    const rail = String(body.rail || "");
+    const exchangeRef = String(body.exchange_ref || "").trim();
+    const asset = String(body.asset || "");
+    // المبلغ كنص دايمًا (شوف ترويسة الباتش): بنقبل رقم JSON كمان
+    // وبنحوّله بأقصر تمثيل عشري — بس المرجع هو النص.
+    const amount = typeof body.amount_usdt === "number"
+      ? String(body.amount_usdt)
+      : String(body.amount_usdt || "").trim();
+    if (
+      !(rail === "binance" || rail === "bybit") || !exchangeRef ||
+      !/^\d+(\.\d+)?$/.test(amount)
+    ) {
+      return json({ ok: false, error: "invalid_body" }, 400);
+    }
+    const { status, data } = await walletRpc("wallet_auto_credit_deposit", {
+      p_rail: rail,
+      p_exchange_ref: exchangeRef,
+      p_asset: asset,
+      p_amount_usdt: amount,
+      p_tx_hash: body.tx_hash ? String(body.tx_hash) : null,
+    });
+    if (status >= 300) {
+      logError("wallet.auto_credit", "auto credit RPC failed", undefined, {
+        status,
+        rail,
+        exchange_ref: exchangeRef,
+      });
+      return json({ ok: false, error: "rpc_failed" }, 502);
+    }
+    // نتيجة الـ RPC حرفيًا (credited / already / reason …).
+    return json(data);
+  } catch (e) {
+    logError("wallet.auto_credit", "unhandled wallet route error", e);
+    return json({ ok: false, error: (e as Error)?.name || "exception" }, 500);
+  }
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 204, headers: corsHeaders(req) });
@@ -1164,6 +1346,21 @@ Deno.serve(async (req: Request) => {
     }
   }
 
+
+  // الحزمة 10: مسارات تأكيد إيداع المحفظة (محمية بـ isAdmin) —
+  // المرسل الوحيد هو مراقب الإيداعات على الـ VM بترويسة الأدمن.
+  if (url.pathname.replace(/\/+$/, "").includes("/wallet/")) {
+    try {
+      const walletRes = await handleWalletRequest(req);
+      if (walletRes) return walletRes;
+    } catch (e) {
+      logError("wallet.route", "unhandled wallet route error", e);
+    }
+  }
+  if (req.method === "POST" && url.pathname.replace(/\/+$/, "").endsWith("/wallet/sms")) {
+    const smsRes = await handleSmsRequest(req, getSmsDeps());
+    if (smsRes) return smsRes;
+  }
   if (req.method === "POST" && url.pathname.replace(/\/+$/, "").endsWith("/client-error")) {
     return handleClientError(req);
   }

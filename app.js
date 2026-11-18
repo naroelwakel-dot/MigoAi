@@ -1328,6 +1328,7 @@ function expressCheckout(item) {
 
 function proceedToCheckout() {
     if (cart.length === 0) return showToast('السلة فارغة، اختر خدمات أولاً', 'error');
+    try { refreshWalletUI(); } catch (e) {}
     const totTxt = document.getElementById('cartTotal');
     const chkTot = document.getElementById('checkoutTotalText');
     if (chkTot && totTxt) chkTot.innerText = totTxt.innerText;
@@ -1628,6 +1629,8 @@ function openAuthModal(mode) {
     const modal = document.getElementById('authModal');
     if (modal) { modal.classList.remove('hidden'); modal.classList.add('flex'); }
     switchAuthTab(mode || 'login');
+    // الحزمة 9: لو فيه جلسة، بطاقة المحفظة بتاخد مكان النماذج.
+    try { refreshWalletUI(); } catch (e) {}
 }
 
 function closeAuthModal() {
@@ -1660,6 +1663,7 @@ function __sbClient() {
 function __authDone(name, email) {
     try { localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify({ name: name, email: email })); } catch (e) {}
     updateNavbarAuthUI();
+    try { refreshWalletUI(); } catch (e) {}
     closeAuthModal();
 }
 function __awaitConfirm(email) {
@@ -1730,7 +1734,388 @@ async function handleLogout() {
     }
     localStorage.removeItem(SESSION_STORAGE_KEY);
     updateNavbarAuthUI();
+    try { refreshWalletUI(); } catch (e) {}
     showToast('تم الخروج');
+}
+
+
+// --- محفظة العميل (الحزمة 9): رصيد لكل عميل مسجّل، شحن باعتماد
+// الأدمن، ودفع فوري للطلبات من الرصيد. كل حركة الفلوس على السيرفر
+// (RPCs في هجرة 009) — الواجهة بتعرض وتبعت طلبات بس.
+const WALLET_PAYMENT_LABEL = '💰 محفظة الموقع';
+// وسائل تحويل الشحن: نفس تسميات payment_methods اللي create_order
+// بيتحقق منها، من غير المحفظة نفسها ومن غير BNPL (الشحن تحويل فعلي).
+const WALLET_TOPUP_METHODS = [
+    '📱 فودافون كاش', '🟢 اتصالات كاش', '⚡ إنستاباي (InstaPay)',
+    '🟣 تيلدا (Telda)', '🟡 باينانس باي (Binance Pay)',
+    '🔴 ريدوت باي (RedotPay)', '💳 فيزا وماستركارد (Cards)'
+];
+let __walletState = { loggedIn: false, email: '', balance: null, pending: 0 };
+
+function __walletFmt(n) {
+    const v = Number(n);
+    return isNaN(v) ? '—' : v.toLocaleString('en-US', { maximumFractionDigits: 2 }) + ' ج.م';
+}
+
+// بيظهر/يخفي بطاقة المحفظة في نافذة الحساب وزر الدفع بالمحفظة في
+// نافذة الدفع حسب وجود جلسة Supabase حقيقية (مش مجرد سجل العرض).
+async function refreshWalletUI() {
+    const panel = document.getElementById('walletPanel');
+    const payBtn = document.getElementById('walletPayBtn');
+    let session = null;
+    try {
+        const c = await __sbClient();
+        const res = await c.auth.getSession();
+        session = res && res.data && res.data.session;
+    } catch (e) { session = null; }
+    __walletState.loggedIn = !!session;
+    __walletState.email = session && session.user ? (session.user.email || '') : '';
+    if (payBtn) { payBtn.classList.toggle('hidden', !session); payBtn.classList.toggle('flex', !!session); }
+    if (!panel) { updateWalletCheckoutHint(); return; }
+    const tabs = document.getElementById('authTabs');
+    if (!session) {
+        // النماذج والتبويبات مسؤولية switchAuthTab — هنا بنخفي البطاقة بس.
+        panel.classList.add('hidden');
+        if (tabs) tabs.classList.remove('hidden');
+        updateWalletCheckoutHint();
+        return;
+    }
+    if (tabs) tabs.classList.add('hidden');
+    ['loginForm', 'registerForm'].forEach(function (id) {
+        const f = document.getElementById(id);
+        if (f) f.classList.add('hidden');
+    });
+    panel.classList.remove('hidden');
+    loadWalletData();
+    try { loadWalletAutoIntents(); } catch (e) {}
+    try { loadWalletClaims(); } catch (e) {}
+}
+
+async function loadWalletData() {
+    const balEl = document.getElementById('walletBalanceText');
+    const pendEl = document.getElementById('walletPendingText');
+    const sel = document.getElementById('walletTopupMethod');
+    if (sel && !sel.dataset.filled) {
+        sel.dataset.filled = '1';
+        sel.innerHTML = WALLET_TOPUP_METHODS.map(function (m) {
+            return '<option value="' + m + '">' + m + '</option>';
+        }).join('');
+    }
+    try {
+        const c = await __sbClient();
+        const b = await c.rpc('wallet_my_balance');
+        if (b.error) throw b.error;
+        const d = b.data || {};
+        __walletState.balance = Number(d.balance_egp || 0);
+        __walletState.pending = Number(d.pending_topups || 0);
+        if (balEl) balEl.innerText = __walletFmt(__walletState.balance);
+        if (pendEl) {
+            pendEl.innerText = __walletState.pending > 0
+                ? ('عندك ' + __walletState.pending + ' طلب شحن بانتظار الاعتماد')
+                : '';
+            pendEl.classList.toggle('hidden', __walletState.pending === 0);
+        }
+        const h = await c.rpc('wallet_my_history', { p_limit: 30 });
+        if (!h.error) renderWalletHistory(h.data || {});
+    } catch (e) {
+        if (balEl) balEl.innerText = 'تعذّر تحميل الرصيد';
+    }
+    updateWalletCheckoutHint();
+}
+
+// نص الرصيد جوّه تفاصيل الدفع لما وسيلة المحفظة تكون مختارة.
+function updateWalletCheckoutHint() {
+    const el = document.getElementById('walletCheckoutBalance');
+    if (el) el.innerText = __walletState.loggedIn
+        ? ('رصيدك الحالي: ' + __walletFmt(__walletState.balance == null ? 0 : __walletState.balance))
+        : '';
+}
+
+function renderWalletHistory(data) {
+    const box = document.getElementById('walletHistoryList');
+    if (!box) return;
+    const kindAr = { topup: 'شحن', debit: 'دفع طلب', refund: 'استرداد', adjust: 'تسوية' };
+    const stAr = { pending: 'بانتظار الاعتماد ⏳', credited: 'تم الشحن ✅', rejected: 'مرفوض ❌' };
+    let html = '';
+    (data.topups || []).forEach(function (t) {
+        html += '<div class="flex justify-between items-center bg-[#12151b] border border-white/10 rounded-lg px-2.5 py-1.5">'
+            + '<span>طلب شحن — ' + (stAr[t.status] || t.status) + '</span>'
+            + '<span class="font-mono-code text-amber-300">' + __walletFmt(t.amount_egp) + '</span></div>';
+    });
+    (data.transactions || []).forEach(function (t) {
+        const amt = Number(t.amount_egp || 0);
+        html += '<div class="flex justify-between items-center bg-[#12151b] border border-white/10 rounded-lg px-2.5 py-1.5">'
+            + '<span>' + (kindAr[t.kind] || t.kind) + (t.order_ref ? ' — طلب ' + t.order_ref : '') + '</span>'
+            + '<span class="font-mono-code ' + (amt >= 0 ? 'text-emerald-300' : 'text-red-300') + '">'
+            + (amt >= 0 ? '+' : '') + __walletFmt(amt) + '</span></div>';
+    });
+    box.innerHTML = html || '<p class="text-slate-500 text-center py-2">لا توجد حركات بعد</p>';
+}
+
+// تصغير صورة الإيصال قبل الرفع — نفس منطق ويدجت الشات الحي
+// (chat-widget.js: shrink/uploadProof): أقصى عرض 1600 بكسل وJPEG
+// بجودة 0.82، عشان الرفع يبقى سريع وخفيف على العميل.
+function __walletProofBlob(file) {
+    return new Promise(function (resolve) {
+        if (!window.FileReader || !document.createElement('canvas').getContext) return resolve(null);
+        const fr = new FileReader();
+        fr.onload = function () {
+            const im = new Image();
+            im.onload = function () {
+                const MAX = 1600;
+                let w = im.width, h = im.height;
+                if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
+                const cv = document.createElement('canvas');
+                cv.width = w; cv.height = h;
+                cv.getContext('2d').drawImage(im, 0, 0, w, h);
+                if (cv.toBlob) cv.toBlob(function (b) { resolve(b); }, 'image/jpeg', 0.82);
+                else resolve(null);
+            };
+            im.onerror = function () { resolve(null); };
+            im.src = String(fr.result);
+        };
+        fr.onerror = function () { resolve(null); };
+        fr.readAsDataURL(file);
+    });
+}
+
+// تسجيل شحن يدوي (الحزمة 9ب، مخفّف في الحزمة 12): رقم التليفون
+// والمبلغ هما الإلزاميان بس — رقم العملية وصورة الإيصال اختياريان
+// وبيسرّعوا التأكيد. لما الصورة تتوفر بتترفع على نفس بَكِت
+// إثباتات الدفع الخاص (payment-proofs) تحت مجلد العميل نفسه
+// wallet-topups/<uid>/...، والسيرفر بيتحقق من البادئة دي ومن
+// فرادة رقم العملية لما يتوفر في wallet_request_topup (هجرة 014).
+async function submitWalletTopup() {
+    const amtEl = document.getElementById('walletTopupAmount');
+    const mEl = document.getElementById('walletTopupMethod');
+    const sEl = document.getElementById('walletTopupSender');
+    const rEl = document.getElementById('walletTopupRef');
+    const fEl = document.getElementById('walletTopupProof');
+    const btn = document.getElementById('walletTopupSubmitBtn');
+    const amount = parseFloat(amtEl ? amtEl.value : '');
+    const method = mEl ? mEl.value : '';
+    const sender = sEl ? sEl.value.trim() : '';
+    // رقم العملية وصورة الإيصال اختياريان (الحزمة 12): اللي
+    // بيتبعت فاضي بيتحوّل null في الخادم — والطلب بيتنشأ برقم
+    // التليفون والمبلغ بس، والباقي بيسرّع التأكيد لما يتوفر.
+    const tref = rEl ? rEl.value.trim() : '';
+    const file = fEl && fEl.files && fEl.files[0];
+    if (!amount || amount <= 0) return showToast('اكتب مبلغ الشحن', 'error');
+    if (!method) return showToast('اختر وسيلة التحويل', 'error');
+    if (!sender) return showToast('اكتب رقم التليفون اللي حوّلت منه', 'error');
+    if (tref && tref.length < 4) return showToast('رقم العملية قصير — اكتبه كامل زي ما هو في الإيصال، أو سيبه فاضي', 'error');
+    if (file && file.size > 5242880) return showToast('الصورة كبيرة (أكتر من 5 ميجا) — جرّب صورة أصغر', 'error');
+    if (btn) btn.disabled = true;
+    try {
+        const c = await __sbClient();
+        let path = null;
+        if (file) {
+            const ses = await c.auth.getSession();
+            const user = ses && ses.data && ses.data.session && ses.data.session.user;
+            if (!user) throw new Error('انتهت الجلسة — سجّل دخولك تاني');
+            let blob = await __walletProofBlob(file);
+            if (!blob) blob = file;
+            const ext = (blob.type === 'image/png') ? '.png' : '.jpg';
+            path = 'wallet-topups/' + user.id + '/' + Date.now() + '-' + Math.random().toString(36).slice(2, 8) + ext;
+            const up = await c.storage.from('payment-proofs').upload(path, blob, { contentType: blob.type || 'image/jpeg', upsert: false });
+            if (up.error) throw up.error;
+        }
+        const r = await c.rpc('wallet_request_topup', {
+            p_amount: amount, p_payment_method: method, p_sender_account: sender,
+            p_transfer_ref: tref || null, p_proof_path: path
+        });
+        if (r.error) throw r.error;
+        showToast('طلبك اتسجل. التأكيد بيتم تلقائيًا أول ما التحويل يوصلنا، أو اكتب رقم العملية لو حابب تسرّعه.');
+        if (amtEl) amtEl.value = '';
+        if (sEl) sEl.value = '';
+        if (rEl) rEl.value = '';
+        if (fEl) fEl.value = '';
+        loadWalletData();
+    } catch (e) {
+        const msg = (e && e.message) || '';
+        if (msg.indexOf('transfer_ref already used') !== -1) {
+            showToast('رقم العملية ده متسجّل قبل كده — راجع الرقم، ولو شايف إنه تحويل مختلف كلّمنا', 'error');
+        } else if (msg.indexOf('invalid proof path') !== -1) {
+            showToast('مشكلة في صورة الإيصال — حاول ترفعها تاني', 'error');
+        } else {
+            showToast('تعذّر تسجيل طلب الشحن: ' + msg, 'error');
+        }
+    } finally {
+        if (btn) btn.disabled = false;
+    }
+}
+
+// --- تأكيد إيداع Binance/Bybit برقم العملية (الحزمة 12):
+// العميل بيلزق رقم العملية من تطبيق المنصة بس، والخادم بيتحقق
+// منه ضد سجل المنصة نفسه (RPCs هجرة 014 + مراقب الإيداعات) —
+// الواجهة بتعرض الحالة بس، ومفيش أي منطق فلوس هنا.
+function __walletClaimStatusAr(res) {
+    const st = (res && res.status) || '';
+    if (st === 'credited') return { ok: true, text: 'اتشحن رصيدك بـ ' + __walletFmt(res.amount_egp || 0) + ' ✅' };
+    if (st === 'pending') return { ok: true, text: 'لقينا طلبك، بنتحقق من المنصة وهيظهر الرصيد تلقائيًا خلال دقايق' };
+    if (st === 'already_claimed') return { ok: false, text: 'رقم العملية ده متسجّل عندنا قبل كده — لو الإيداع بتاعك ولسه ما اتشحنش، كلّمنا' };
+    if (st === 'already_credited') return { ok: false, text: 'الإيداع ده اتشحن قبل كده خلاص' };
+    if (st === 'invalid_asset') return { ok: false, text: 'الإيداع ده مش USDT — الشحن التلقائي لعملة USDT بس، كلّمنا لو محتاج مساعدة' };
+    if (st === 'rate_not_set') return { ok: true, text: 'لقينا طلبك، بنتحقق من المنصة وهيظهر الرصيد تلقائيًا خلال دقايق' };
+    if (st === 'invalid_ref') return { ok: false, text: 'رقم العملية قصير — انسخه كامل زي ما هو في تطبيق المنصة' };
+    if (st === 'invalid_rail') return { ok: false, text: 'اختر المنصة الصح (Binance أو Bybit)' };
+    return { ok: false, text: 'حصلت مشكلة في تأكيد الإيداع — حاول تاني أو كلّمنا' };
+}
+
+async function submitWalletClaim() {
+    const railEl = document.getElementById('walletClaimRail');
+    const refEl = document.getElementById('walletClaimRef');
+    const btn = document.getElementById('walletClaimSubmitBtn');
+    const statusEl = document.getElementById('walletClaimStatus');
+    const rail = railEl ? railEl.value : 'binance';
+    const ref = refEl ? refEl.value.trim() : '';
+    if (ref.length < 6) return showToast('الصق رقم العملية / Transaction ID من تطبيق المنصة', 'error');
+    if (btn) btn.disabled = true;
+    try {
+        const c = await __sbClient();
+        const r = await c.rpc('wallet_claim_deposit', { p_rail: rail, p_exchange_ref: ref });
+        if (r.error) throw r.error;
+        const out = __walletClaimStatusAr(r.data || {});
+        if (statusEl) {
+            statusEl.innerText = out.text;
+            statusEl.className = 'text-[11px] leading-relaxed ' + (out.ok ? 'text-emerald-300' : 'text-red-300');
+        }
+        showToast(out.text, out.ok ? undefined : 'error');
+        if (out.ok && refEl) refEl.value = '';
+        loadWalletClaims();
+        loadWalletData();
+    } catch (e) {
+        showToast('تعذّر تأكيد الإيداع: ' + ((e && e.message) || ''), 'error');
+    } finally {
+        if (btn) btn.disabled = false;
+    }
+}
+
+async function loadWalletClaims() {
+    const box = document.getElementById('walletClaimsList');
+    if (!box) return;
+    try {
+        const c = await __sbClient();
+        const r = await c.rpc('wallet_my_claims');
+        if (r.error) throw r.error;
+        const rows = Array.isArray(r.data) ? r.data : [];
+        const stAr = {
+            pending: 'بنتحقق من المنصة ⏳', credited: 'تم الشحن ✅',
+            rejected: 'مرفوضة ❌'
+        };
+        let html = '';
+        rows.slice(0, 5).forEach(function (t) {
+            const railName = t.rail === 'bybit' ? 'Bybit' : 'Binance';
+            const refShort = String(t.exchange_ref || '');
+            html += '<div class="flex justify-between items-center bg-[#12151b] border border-white/10 rounded-lg px-2.5 py-1.5">'
+                + '<span>' + railName + ' — ' + (stAr[t.status] || t.status) + '</span>'
+                + '<span class="font-mono-code text-slate-400">' + (refShort.length > 14 ? refShort.slice(0, 14) + '…' : refShort) + '</span></div>';
+        });
+        box.innerHTML = html;
+    } catch (e) { /* المطالبات طبقة إضافية — فشلها ما يكسرش المحفظة */ }
+}
+
+
+// --- شحن تلقائي Binance/Bybit (الحزمة 10): نية بمبلغ USDT فريد،
+// والإيداع المؤكد من بيانات المنصة الرسمية بيحرّك الرصيد على
+// السيرفر (RPCs هجرة 011 + مراقب الإيداعات) — الواجهة بتنشئ
+// النية وبتعرض التعليمات والحالة بس، ومفيش أي منطق فلوس هنا.
+let __walletAutoTimer = null;
+
+function __walletRailAr(rail) { return rail === 'bybit' ? 'Bybit' : 'Binance'; }
+
+async function createWalletAutoIntent() {
+    const railEl = document.getElementById('walletAutoRail');
+    const amtEl = document.getElementById('walletAutoAmount');
+    const rail = railEl ? railEl.value : 'binance';
+    const amount = parseFloat(amtEl ? amtEl.value : '');
+    if (!amount || amount <= 0) return showToast('اكتب مبلغ الشحن', 'error');
+    try {
+        const c = await __sbClient();
+        const r = await c.rpc('wallet_create_topup_intent', {
+            p_rail: rail, p_amount_egp: amount
+        });
+        if (r.error) throw r.error;
+        showToast('اتعملت تعليمات الشحن ✅ حوّل المبلغ الدقيق قبل انتهاء الوقت');
+        renderWalletAutoInstructions(r.data || {});
+        loadWalletAutoIntents();
+    } catch (e) {
+        const msg = (e && e.message) || '';
+        if (msg.indexOf('not configured') >= 0) {
+            showToast('الشحن التلقائي غير مفعّل حاليًا — استخدم الشحن اليدوي بالتحويل', 'error');
+        } else if (msg.indexOf('too small') >= 0) {
+            showToast('المبلغ صغير على الشحن التلقائي — كبّره أو استخدم الشحن اليدوي', 'error');
+        } else {
+            showToast('تعذّر إنشاء تعليمات الشحن: ' + msg, 'error');
+        }
+    }
+}
+
+function renderWalletAutoInstructions(intent) {
+    const box = document.getElementById('walletAutoInstructions');
+    if (!box || !intent || !intent.unique_amount) return;
+    const usdtEl = document.getElementById('walletAutoUsdt');
+    const addrEl = document.getElementById('walletAutoAddress');
+    if (usdtEl) usdtEl.innerText = Number(intent.unique_amount).toFixed(3) + ' USDT';
+    if (addrEl) addrEl.innerText = intent.deposit_address || '—';
+    box.classList.remove('hidden');
+    startWalletAutoCountdown(intent.expires_at);
+}
+
+function startWalletAutoCountdown(expiresAt) {
+    const el = document.getElementById('walletAutoCountdown');
+    if (!el || !expiresAt) return;
+    if (__walletAutoTimer) clearInterval(__walletAutoTimer);
+    const target = new Date(expiresAt).getTime();
+    const tick = function () {
+        const left = Math.max(0, Math.floor((target - Date.now()) / 1000));
+        const m = Math.floor(left / 60), s = left % 60;
+        el.innerText = m + ':' + (s < 10 ? '0' : '') + s;
+        if (left <= 0) {
+            clearInterval(__walletAutoTimer);
+            __walletAutoTimer = null;
+            el.innerText = 'انتهت — اعمل تعليمات جديدة';
+            loadWalletAutoIntents();
+        }
+    };
+    tick();
+    __walletAutoTimer = setInterval(tick, 1000);
+}
+
+function copyWalletAutoText(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const text = (el.innerText || '').replace(/\s*USDT\s*$/, '').trim();
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function () {
+            showToast('اتنسخ ✅');
+        }, function () {});
+    }
+}
+
+async function loadWalletAutoIntents() {
+    const box = document.getElementById('walletAutoIntents');
+    if (!box) return;
+    try {
+        const c = await __sbClient();
+        const r = await c.rpc('wallet_my_intents');
+        if (r.error) throw r.error;
+        const rows = Array.isArray(r.data) ? r.data : [];
+        const stAr = {
+            open: 'بانتظار الإيداع ⏳', credited: 'تم الشحن ✅',
+            expired: 'انتهت ⌛', cancelled: 'ملغاة'
+        };
+        let html = '';
+        rows.slice(0, 5).forEach(function (t) {
+            html += '<div class="flex justify-between items-center bg-[#12151b] border border-white/10 rounded-lg px-2.5 py-1.5">'
+                + '<span>' + __walletRailAr(t.rail) + ' — ' + (stAr[t.status] || t.status) + '</span>'
+                + '<span class="font-mono-code text-emerald-300">' + Number(t.unique_amount || 0).toFixed(3) + ' USDT</span></div>';
+        });
+        box.innerHTML = html;
+        // أحدث نية مفتوحة: تعليماتها بتفضل ظاهرة بعد إعادة التحميل.
+        const open = rows.filter(function (t) { return t.status === 'open'; })[0];
+        if (open) renderWalletAutoInstructions(open);
+    } catch (e) { /* الشحن التلقائي طبقة إضافية — فشله ما يكسرش المحفظة */ }
 }
 
 function updateNavbarAuthUI() {

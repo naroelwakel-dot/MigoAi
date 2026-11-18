@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>طلبات شحن المحفظة — قائمة الاعتماد | Migo Ai</title>
+<!--
+  صفحة أدمن الحزمة 9ب: قائمة اعتماد شحنات المحفظة اليدوية.
+  بتفتح جنب تطبيق محفظة الأدمن: كل طلب معلّق معروض بالمبلغ والوسيلة
+  والمُرسل ورقم العملية وصورة الإيصال، واعتماد/رفض بلمسة واحدة عبر
+  RPCs هجرة 009/012 (wallet_admin_pending_topups /
+  wallet_admin_credit_topup / wallet_admin_reject_topup).
+  الدخول بجلسة Supabase عادية + بوابة is_store_admin على السيرفر —
+  الصفحة نفسها مش بتحمل أي صلاحية، والـ RPCs هي اللي بتحرس.
+  ملف واحد مكتمل ذاتيًا: نفس Bootstrap عميل Supabase بتاع المتجر
+  (__sbClient من app.js)، وألوان الهوية (داكن + ذهبي).
+-->
+<style>
+  :root{
+    --bg:#0B0D11; --bg2:#12151B; --card:#1F2530; --gold:#F2B53D; --gold2:#F3CF6B;
+    --text:#E2E8F0; --muted:#94A3B8; --line:rgba(255,255,255,.09);
+    --green:#34D399; --red:#F87171; --amber:#FBBF24; --sky:#7DD3FC;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);
+    font-family:"Segoe UI",Tahoma,Arial,sans-serif;font-size:14px}
+  .wrap{max-width:860px;margin:0 auto;padding:18px 14px 40px}
+  header{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;
+    border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:14px}
+  h1{font-size:17px;margin:0;color:#fff}
+  h1 .gold{color:var(--gold)}
+  .sub{color:var(--muted);font-size:12px;margin-top:3px}
+  .btn{background:var(--card);border:1px solid var(--line);color:var(--text);
+    border-radius:10px;padding:8px 14px;font-size:13px;cursor:pointer}
+  .btn:hover{border-color:rgba(255,255,255,.3)}
+  .btn:disabled{opacity:.45;cursor:wait}
+  .btn-gold{background:var(--gold);border-color:var(--gold);color:#1A1206;font-weight:700}
+  .btn-gold:hover{background:var(--gold2)}
+  .btn-credit{background:#14532D;border-color:#166534;color:#BBF7D0;font-weight:700}
+  .btn-credit:hover{background:#166534}
+  .btn-reject{background:transparent;border-color:rgba(248,113,113,.5);color:var(--red)}
+  .btn-reject:hover{background:rgba(248,113,113,.12)}
+  .counter{background:var(--bg2);border:1px solid var(--line);border-radius:10px;
+    padding:7px 12px;font-size:12.5px;color:var(--muted)}
+  .counter b{color:var(--gold2);font-size:14px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:14px;margin-bottom:12px;display:flex;gap:14px;align-items:flex-start}
+  .card.done{opacity:.55}
+  .amount{font-size:24px;font-weight:800;color:var(--gold);white-space:nowrap;line-height:1.1}
+  .amount small{display:block;font-size:11px;color:var(--muted);font-weight:400;margin-top:2px}
+  .meta{flex:1;min-width:0;font-size:13px;line-height:1.9}
+  .meta .rowlbl{color:var(--muted);font-size:11.5px}
+  .mono{font-family:Consolas,"Courier New",monospace;direction:ltr;unicode-bidi:embed}
+  .badge{display:inline-block;border-radius:999px;padding:1px 9px;font-size:11px;font-weight:700;vertical-align:middle}
+  .badge-known{background:rgba(52,211,153,.15);color:var(--green);border:1px solid rgba(52,211,153,.4)}
+  .badge-new{background:rgba(251,191,36,.13);color:var(--amber);border:1px solid rgba(251,191,36,.4)}
+  .hint-ok{color:var(--green);font-weight:600}
+  .hint-warn{color:var(--amber);font-weight:600}
+  .proof{width:92px;flex:none;text-align:center}
+  .proof img{width:92px;height:92px;object-fit:cover;border-radius:10px;border:1px solid var(--line);cursor:zoom-in;background:var(--bg2)}
+  .proof .noproof{width:92px;height:92px;border-radius:10px;border:1px dashed var(--line);
+    color:var(--muted);font-size:10.5px;display:flex;align-items:center;justify-content:center;padding:6px;background:var(--bg2)}
+  .actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+  .state-tag{font-size:12px;font-weight:700}
+  .state-credited{color:var(--green)} .state-rejected{color:var(--red)}
+  .empty{background:var(--bg2);border:1px dashed var(--line);border-radius:14px;
+    padding:34px;text-align:center;color:var(--muted);font-size:15px}
+  .denied{background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.4);
+    border-radius:14px;padding:26px;text-align:center;color:#FECACA}
+  .loginbox{background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:22px;max-width:420px;margin:40px auto}
+  .loginbox label{display:block;font-size:12px;color:var(--muted);margin:10px 0 4px}
+  .loginbox input{width:100%;background:var(--bg2);border:1px solid var(--line);border-radius:10px;
+    padding:9px 11px;color:#fff;font-size:13px;outline:none}
+  .loginbox input:focus{border-color:rgba(255,255,255,.35)}
+  .loginbox button{width:100%;margin-top:16px}
+  .err{color:var(--red);font-size:12.5px;min-height:18px;margin-top:8px}
+  .hidden{display:none!important}
+  #toast{position:fixed;bottom:18px;right:50%;transform:translateX(50%);background:#000;
+    border:1px solid var(--gold);color:var(--gold2);border-radius:10px;padding:9px 16px;
+    font-size:13px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:50}
+  #toast.show{opacity:1}
+  @media (max-width:560px){ .card{flex-direction:column} .proof img,.proof .noproof{width:100%;height:150px} .proof{width:100%} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>طلبات شحن المحفظة <span class="gold">— قائمة الاعتماد</span></h1>
+      <div class="sub" id="whoami">…</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <span class="counter">تم اعتماد <b id="sessionCredited">0</b> في هذه الجلسة<span id="sessionRejectedWrap" class="hidden"> · رفض <b id="sessionRejected" style="color:var(--red)">0</b></span></span>
+      <button class="btn" id="refreshBtn" type="button">تحديث ↻</button>
+      <button class="btn hidden" id="logoutBtn" type="button">خروج</button>
+    </div>
+  </header>
+
+  <!-- تسجيل الدخول (بيظهر بس لو مفيش جلسة) -->
+  <div id="loginBox" class="loginbox hidden">
+    <p style="margin:0;font-weight:700">دخول الأدمن</p>
+    <p class="sub">سجّل بنفس حساب الأدمن بتاع المتجر.</p>
+    <form id="loginForm">
+      <label for="loginEmail">البريد الإلكتروني</label>
+      <input type="email" id="loginEmail" required autocomplete="username">
+      <label for="loginPassword">الرقم السري</label>
+      <input type="password" id="loginPassword" required autocomplete="current-password">
+      <div class="err" id="loginErr"></div>
+      <button class="btn btn-gold" type="submit">دخول</button>
+    </form>
+  </div>
+
+  <!-- رفض الوصول: جلسة موجودة بس مش أدمن -->
+  <div id="deniedBox" class="denied hidden">
+    <p style="font-size:16px;font-weight:700;margin:0 0 6px">⛔ الحساب ده مش أدمن</p>
+    <p style="margin:0;font-size:13px">القائمة دي بتفتح لحسابات الأدمن بس. سجّل خروج وادخل بحساب الأدمن.</p>
+  </div>
+
+  <div id="queueBox">
+    <div id="list"></div>
+    <div id="emptyBox" class="empty hidden">لا توجد طلبات معلّقة 🎉</div>
+    <div id="loadingBox" class="empty">بنحمّل الطلبات المعلّقة…</div>
+  </div>
+</div>
+<div id="toast"></div>
+
+<script>
+// نفس Bootstrap عميل Supabase بتاع المتجر (app.js: __sbClient) —
+// نفس الرابط والمفتاح العام ونفس مكتبة supabase-js@2.
+const SUPABASE_URL = 'https://qjlivjzgrqyitqxcdtlk.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_ezC_W2lpGW88bSbjBRJFfw_reCr3vlw';
+let __sb = null;
+function __sbClient() {
+    if (__sb) return Promise.resolve(__sb);
+    return import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm').then(function (m) {
+        __sb = m.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        return __sb;
+    });
+}
+
+let sessionCredited = 0, sessionRejected = 0;
+const $ = function (id) { return document.getElementById(id); };
+
+function toast(msg) {
+    const t = $('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(function () { t.classList.remove('show'); }, 2600);
+}
+function fmt(n) {
+    const v = Number(n);
+    return isNaN(v) ? '—' : v.toLocaleString('en-US', { maximumFractionDigits: 2 });
+}
+function fmtTime(iso) {
+    try {
+        const d = new Date(iso);
+        return d.toLocaleDateString('ar-EG') + ' — ' + d.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+    } catch (e) { return iso || ''; }
+}
+function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (ch) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch];
+    });
+}
+
+async function boot() {
+    const c = await __sbClient();
+    const res = await c.auth.getSession();
+    const session = res && res.data && res.data.session;
+    if (!session) {
+        $('whoami').textContent = 'مش مسجّل دخول';
+        $('loginBox').classList.remove('hidden');
+        $('loadingBox').classList.add('hidden');
+        return;
+    }
+    $('whoami').textContent = 'مسجّل كـ ' + (session.user.email || '');
+    $('logoutBtn').classList.remove('hidden');
+    // بوابة الأدمن على السيرفر (is_store_admin) — الصفحة بتسأل بس.
+    const gate = await c.rpc('is_store_admin');
+    if (gate.error || gate.data !== true) {
+        $('deniedBox').classList.remove('hidden');
+        $('loadingBox').classList.add('hidden');
+        return;
+    }
+    loadQueue();
+}
+
+async function loadQueue() {
+    $('loadingBox').classList.remove('hidden');
+    $('emptyBox').classList.add('hidden');
+    try {
+        const c = await __sbClient();
+        const r = await c.rpc('wallet_admin_pending_topups', { p_limit: 100 });
+        if (r.error) throw r.error;
+        renderQueue(Array.isArray(r.data) ? r.data : []);
+    } catch (e) {
+        $('list').innerHTML = '';
+        $('emptyBox').textContent = 'تعذّر تحميل القائمة: ' + ((e && e.message) || '');
+        $('emptyBox').classList.remove('hidden');
+    } finally {
+        $('loadingBox').classList.add('hidden');
+    }
+}
+
+function renderQueue(rows) {
+    const list = $('list');
+    list.innerHTML = '';
+    $('emptyBox').classList.toggle('hidden', rows.length > 0);
+    if (!rows.length) $('emptyBox').textContent = 'لا توجد طلبات معلّقة 🎉';
+    rows.forEach(function (t) { list.appendChild(buildCard(t)); });
+    // روابط الإيصال المؤقتة بتتحمل بعد الرسم (بَكِت خاص).
+    rows.forEach(function (t) {
+        if (!t.proof_path) return;
+        __sbClient().then(function (c) {
+            return c.storage.from('payment-proofs').createSignedUrl(t.proof_path, 600);
+        }).then(function (r) {
+            const url = r && r.data && r.data.signedUrl;
+            if (!url) return;
+            const img = document.querySelector('img[data-proof="' + t.id + '"]');
+            if (img) { img.src = url; img.parentElement.href = url; }
+        }).catch(function () {});
+    });
+}
+
+function buildCard(t) {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.id = 'topup-' + t.id;
+    const badge = t.sender_seen_before
+        ? '<span class="badge badge-known">رقم معروف ✓ — شحن ' + Number(t.customer_topups_credited || 0) + ' مرة قبل كده</span>'
+        : '<span class="badge badge-new">رقم جديد — أول مرة من الرقم ده</span>';
+    const hint = (t.sms_hint && t.sms_hint.found && t.sms_hint.hint_ar)
+        ? '<div><span class="rowlbl">تلميح الرسائل:</span> <span class="' + (t.sms_hint.corroborated ? 'hint-ok' : 'hint-warn') + '">' + esc(t.sms_hint.hint_ar) + '</span></div>'
+        : '';
+    const proof = t.proof_path
+        ? '<a href="#" target="_blank" rel="noopener"><img data-proof="' + t.id + '" alt="صورة الإيصال"></a>'
+        : '<div class="noproof">طلب قديم — من غير إيصال</div>';
+    card.innerHTML =
+        '<div class="amount">' + fmt(t.amount_egp) + ' ج.م<small>' + esc(t.payment_method || '') + '</small></div>'
+        + '<div class="meta">'
+        + '<div><span class="rowlbl">المُرسل:</span> <span class="mono">' + esc(t.sender_account || '') + '</span> ' + badge + '</div>'
+        + '<div><span class="rowlbl">رقم العملية:</span> <span class="mono">' + esc(t.transfer_ref || '—') + '</span></div>'
+        + '<div><span class="rowlbl">العميل:</span> ' + esc(t.customer_email || '—') + '</div>'
+        + '<div><span class="rowlbl">وقت الطلب:</span> ' + esc(fmtTime(t.created_at)) + '</div>'
+        + hint
+        + '<div class="actions">'
+        + '<button class="btn btn-credit" type="button">اعتماد وشحن ✅</button>'
+        + '<button class="btn btn-reject" type="button">رفض</button>'
+        + '<span class="state-tag"></span>'
+        + '</div></div>'
+        + '<div class="proof">' + proof + '</div>';
+    const creditBtn = card.querySelector('.btn-credit');
+    const rejectBtn = card.querySelector('.btn-reject');
+    creditBtn.addEventListener('click', function () { creditTopup(t, card, creditBtn, rejectBtn); });
+    rejectBtn.addEventListener('click', function () { rejectTopup(t, card, creditBtn, rejectBtn); });
+    return card;
+}
+
+function finishCard(card, kind) {
+    card.classList.add('done');
+    const tag = card.querySelector('.state-tag');
+    if (tag) {
+        tag.textContent = kind === 'credited' ? 'تم الشحن ✅' : 'تم الرفض';
+        tag.className = 'state-tag ' + (kind === 'credited' ? 'state-credited' : 'state-rejected');
+    }
+    card.querySelectorAll('.actions .btn').forEach(function (b) { b.remove(); });
+    checkEmptyAfterDone();
+}
+function checkEmptyAfterDone() {
+    const remaining = document.querySelectorAll('#list .card:not(.done)').length;
+    if (remaining === 0) {
+        $('emptyBox').textContent = 'لا توجد طلبات معلّقة 🎉';
+        $('emptyBox').classList.remove('hidden');
+    }
+}
+
+async function creditTopup(t, card, creditBtn, rejectBtn) {
+    creditBtn.disabled = true; rejectBtn.disabled = true;
+    try {
+        const c = await __sbClient();
+        const r = await c.rpc('wallet_admin_credit_topup', { p_topup_id: t.id });
+        if (r.error) throw r.error;
+        if (r.data && r.data.already) {
+            toast('الطلب ده محسوم قبل كده (' + (r.data.status || '') + ')');
+            finishCard(card, r.data.status === 'credited' ? 'credited' : 'rejected');
+            return;
+        }
+        sessionCredited++;
+        $('sessionCredited').textContent = sessionCredited;
+        toast('اتشحن ' + fmt(t.amount_egp) + ' ج.م لمحفظة العميل ✅');
+        finishCard(card, 'credited');
+    } catch (e) {
+        toast('فشل الاعتماد: ' + ((e && e.message) || ''));
+        creditBtn.disabled = false; rejectBtn.disabled = false;
+    }
+}
+
+async function rejectTopup(t, card, creditBtn, rejectBtn) {
+    const note = window.prompt('سبب الرفض (اختياري — بيظهر في قرار الطلب):', '');
+    if (note === null) return; // إلغاء
+    creditBtn.disabled = true; rejectBtn.disabled = true;
+    try {
+        const c = await __sbClient();
+        const r = await c.rpc('wallet_admin_reject_topup', { p_topup_id: t.id, p_note: note || null });
+        if (r.error) throw r.error;
+        if (r.data && r.data.already) {
+            toast('الطلب ده محسوم قبل كده (' + (r.data.status || '') + ')');
+            finishCard(card, r.data.status === 'credited' ? 'credited' : 'rejected');
+            return;
+        }
+        sessionRejected++;
+        $('sessionRejected').textContent = sessionRejected;
+        $('sessionRejectedWrap').classList.remove('hidden');
+        toast('تم رفض الطلب');
+        finishCard(card, 'rejected');
+    } catch (e) {
+        toast('فشل الرفض: ' + ((e && e.message) || ''));
+        creditBtn.disabled = false; rejectBtn.disabled = false;
+    }
+}
+
+$('refreshBtn').addEventListener('click', loadQueue);
+$('logoutBtn').addEventListener('click', async function () {
+    try { const c = await __sbClient(); await c.auth.signOut({ scope: 'local' }); } catch (e) {}
+    location.reload();
+});
+$('loginForm').addEventListener('submit', async function (ev) {
+    ev.preventDefault();
+    $('loginErr').textContent = '';
+    try {
+        const c = await __sbClient();
+        const r = await c.auth.signInWithPassword({
+            email: $('loginEmail').value.trim(),
+            password: $('loginPassword').value
+        });
+        if (r.error) throw r.error;
+        $('loginBox').classList.add('hidden');
+        boot();
+    } catch (e) {
+        $('loginErr').textContent = 'تعذّر الدخول: ' + ((e && e.message) || '');
+    }
+});
+
+boot();
+</script>
+</body>
+</html>

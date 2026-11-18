@@ -1,0 +1,322 @@
+/**
+ * محلّل رسائل إيداع المحفظة (الحزمة 11) — دوال نقية، قابلة للاختبار.
+ *
+ * بيحوّل نص رسالة SMS واردة على موبايل المالك (تأكيد استلام فودافون
+ * كاش / إنستاباي / بنك) لحقول منظمة: مبلغ + حساب مُرسل + رقم عملية
+ * + اتجاه (وارد/صادر). نقطة /wallet/sms بتنادي parseSms وتمرر
+ * الناتج لـ RPC ‏wallet_ingest_sms — المطابقة والشحن في القاعدة.
+ *
+ * ⚠️ صياغة الرسائل الحية: القوالب دي مكتوبة على الأشكال الشائعة
+ * الموثقة لرسائل فودافون كاش في مصر (عربي + إنجليزي) وأشكال
+ * إنستاباي/البنوك العامة. الصياغة الحرفية اللي بتوصل على خط المالك
+ * لازم تتأكد من رسالة حقيقية وقت التفعيل وتتظبط التعابير عليها
+ * (شوف NOTES.md + العينات في sms_parse.test.ts). أي رسالة مش
+ * بتطابق قالب وارد بتطلع direction/amount فاضي → الحدث بيتسجل
+ * 'ignored' في القاعدة ومش بيحرّك فلوس أبدًا — الفشل هنا صوته
+ * عالي (عدّادات unmatched/ignored عند الأدمن) مش صامت.
+ *
+ * الحزمة 13 — تصنيف الأصل (classifyOrigin): التحليل بيطلع كمان
+ * «أصل» هوية المُرسل: official (هوية أبجدية رسمية معروفة) /
+ * numeric (رقم عادي) / unknown. الأصل بيتحفظ في parsed وبيوصل
+ * لبوابة الشحن في القاعدة (هجرة 015): حدث SMS أصله مش official
+ * مستحيل يفتح شحنًا تلقائيًا مهما طابق — لأن أي حد يقدر يبعت
+ * رسالة مفبركة من رقم عادي. التصنيف فلتر ضروري مش دليل كفاية:
+ * الهويات الأبجدية نفسها قابلة للتزوير عبر بوابات مشبوهة، وعشان
+ * كده البوابة بتطلب قناة مزدوجة أو تاريخ مُرسل موثوق فوقه.
+ */
+
+/** ناتج التحليل — بيتبعت للقاعدة كـ parsed وبيتستخرج منه الحقول. */
+export interface SmsParseResult {
+  /** القالب اللي طلّع المبلغ (أو 'none'). */
+  template: "vodafone_ar" | "vodafone_en" | "instapay_generic" | "generic" | "none";
+  /** اتجاه الحركة كما فهمه المحلّل من صياغة الرسالة. */
+  direction: "received" | "sent" | "unknown";
+  /** المبلغ بالجنيه (رقم عشري دقيق لحد قرشين) أو null. */
+  amount_egp: number | null;
+  /** حساب المُرسل (رقم موبايل مصري غالبًا) أو null. */
+  sender_account: string | null;
+  /** رقم العملية/المرجع كما ظهر في الرسالة أو null. */
+  transfer_ref: string | null;
+  /** قابل للمطابقة: وارد + مبلغ موجود. الباقي بيتسجل للتدقيق بس. */
+  matchable: boolean;
+  /**
+   * تصنيف أصل هوية المُرسل (الحزمة 13): official / numeric /
+   * unknown — من classifyOrigin. بوابة القاعدة بتقرأه من parsed.
+   */
+  origin: SmsOrigin;
+}
+
+// ---------------------------------------------------------------------
+// تصنيف أصل المُرسل (الحزمة 13)
+// ---------------------------------------------------------------------
+
+/** أصل هوية المُرسل كما يظهر على موبايل المالك. */
+export type SmsOrigin = "official" | "numeric" | "unknown";
+
+/**
+ * الهويات الأبجدية الرسمية المعروفة لرسائل فودافون كاش في مصر.
+ * ⚠️ تُتحقق وقت التفعيل من رسائل حقيقية على خط المالك، والقائمة
+ * بتتقلّص للهوية/الهويات اللي بتظهر فعليًا بس — أي هوية زيادة هنا
+ * هي سطح هجوم زيادة (بوابات التزوير بتبعت بأسماء قريبة الشكل).
+ * ملحوظة: رسائل التسويق ممكن تيجي من نفس الهويات — المحلّل بيفرّق
+ * بالاتجاه/القالب، والتصنيف هنا للهوية بس مش لطبيعة الرسالة.
+ */
+export const OFFICIAL_SMS_SENDERS: readonly string[] = [
+  "VodafoneCash",
+  "Vodafone Cash",
+  "Vodafone",
+];
+
+/**
+ * بيصنّف هوية المُرسل:
+ *   • 'official' — مطابقة تامة (من غير حساسية لحالة الأحرف) لأي
+ *     هوية في OFFICIAL_SMS_SENDERS.
+ *   • 'numeric' — رقم هاتف عادي (اختياريًا بـ + وكود دولة): دي
+ *     قناة المهاجم المفبرِك — أصلها مش بيفتح شحنًا أبدًا.
+ *   • 'unknown' — أي حاجة تانية (هوية أبجدية مش معروفة، قصيرة،
+ *     فاضية): برّه الثقة لحد ما تتسجل رسميًا وقت التفعيل.
+ */
+export function classifyOrigin(senderId: string): SmsOrigin {
+  const sid = String(senderId || "").trim();
+  if (!sid) return "unknown";
+  const lower = sid.toLowerCase();
+  if (OFFICIAL_SMS_SENDERS.some((s) => s.toLowerCase() === lower)) {
+    return "official";
+  }
+  if (/^\+?\d[\d\s-]{5,}$/.test(sid)) return "numeric";
+  return "unknown";
+}
+
+// ---------------------------------------------------------------------
+// تطبيع: أرقام عربية مشرقية (٠١٢٣) و«٫» فاصلة عشرية و«٬» فاصل آلاف —
+// رسائل مصرية كتير بتوصل بيهم، وكل التعابير تحت بتشتغل على اللاتيني.
+// ---------------------------------------------------------------------
+const AR_DIGITS = "٠١٢٣٤٥٦٧٨٩";
+export function normalizeDigits(text: string): string {
+  let out = "";
+  for (const ch of text) {
+    const idx = AR_DIGITS.indexOf(ch);
+    if (idx >= 0) { out += String(idx); continue; }
+    if (ch === "٫") { out += "."; continue; }   // فاصلة عشرية عربية
+    if (ch === "٬") { out += ","; continue; }   // فاصل آلاف عربي
+    out += ch;
+  }
+  return out;
+}
+
+/** «1,250.50» → 1250.5 — بيرجع null لو مش رقم نضيف. */
+function toAmount(raw: string | undefined | null): number | null {
+  if (!raw) return null;
+  const cleaned = raw.replace(/,/g, "").trim();
+  if (!/^\d+(\.\d{1,2})?$/.test(cleaned)) return null;
+  const n = Number(cleaned);
+  return Number.isFinite(n) && n > 0 ? n : null;
+}
+
+const MOBILE_RE = /\b(01[0125]\d{8})\b/;                 // موبايل مصري
+const REF_RE = /(?:رقم العملية|رقم المرجع|المرجع|رقم التحويلة|رقم المعاملة|transaction id|transaction no|reference(?:\s*(?:no|number|id))?|ref\.?(?:\s*(?:no|id))?)\s*[:：#]?\s*([0-9][0-9\- ]{5,}[0-9])/i;
+const MONEY_RE = /([0-9]{1,3}(?:,[0-9]{3})*(?:\.[0-9]{1,2})?|[0-9]+(?:\.[0-9]{1,2})?)\s*(?:جنيه(?:ًا|ا)?|ج\.م\.?|EGP|LE\b)/i;
+const MONEY_PREFIX_RE = /(?:EGP|ج\.م\.?|جنيه(?:ًا|ا)?)\s*:?\s*([0-9]{1,3}(?:,[0-9]{3})*(?:\.[0-9]{1,2})?|[0-9]+(?:\.[0-9]{1,2})?)/i;
+const AMOUNT_WORD_RE = /(?:مبلغ|بقيمة|قيمة)\s*:?\s*([0-9]{1,3}(?:,[0-9]{3})*(?:\.[0-9]{1,2})?|[0-9]+(?:\.[0-9]{1,2})?)/;
+
+// علامات الاتجاه — الوارد لازم يبقى صريح؛ الصادر الصريح بيتلغي.
+const RECEIVED_MARKERS = /(?:استلام|استلمت|تم\s*(?:إضافة|اضافة|إيداع|ايداع)|وصل(?:ك|ت)?|تحويل وارد|أُضيف|اضيف إلى حسابك|received|credited|deposit(?:ed)?)/i;
+const SENT_MARKERS = /(?:تم تحويل مبلغ.*(?:إلى|الى|لرقم)|قمت بتحويل|تم إرسال|you (?:have )?sent|payment (?:of|sent))/i;
+
+function detectDirection(body: string): "received" | "sent" | "unknown" {
+  if (RECEIVED_MARKERS.test(body)) return "received";
+  if (SENT_MARKERS.test(body)) return "sent";
+  return "unknown";
+}
+
+function extractRef(body: string): string | null {
+  const m = body.match(REF_RE);
+  if (m) return m[1].replace(/[\s-]/g, "");
+  // احتياطي: أطول سلسلة أرقام (8+) مش رقم موبايل — مرشّح مرجع.
+  const runs = body.match(/\d{8,}/g) || [];
+  for (const run of runs) {
+    if (!/^01[0125]\d{8}$/.test(run)) return run;
+  }
+  return null;
+}
+
+function extractSender(body: string): string | null {
+  // «من رقم X» / «من X» / «from X» — السياق أولًا، وبعدين أي موبايل.
+  const ctx = body.match(/(?:من(?:\s+رقم)?|from)\s*:?\s*(01[0125]\d{8})/i);
+  if (ctx) return ctx[1];
+  const any = body.match(MOBILE_RE);
+  return any ? any[1] : null;
+}
+
+function extractAmount(body: string): number | null {
+  const byWord = body.match(AMOUNT_WORD_RE);
+  if (byWord) {
+    const v = toAmount(byWord[1]);
+    if (v != null) return v;
+  }
+  // أرقام «الرصيد» لازم تتبعد: أي مرشّح من جملة رصيد بيتخطى للي بعده.
+  const isBalanceCtx = (idx: number) =>
+    /(?:رصيد|balance)/i.test(body.slice(Math.max(0, idx - 30), idx));
+  for (const re of [MONEY_RE, MONEY_PREFIX_RE]) {
+    const flags = re.flags.includes("g") ? re.flags : re.flags + "g";
+    for (const m of body.matchAll(new RegExp(re.source, flags))) {
+      if (isBalanceCtx(m.index ?? 0)) continue;
+      const v = toAmount(m[1]);
+      if (v != null) return v;
+    }
+  }
+  return null;
+}
+
+// ---------------------------------------------------------------------
+// القوالب
+// ---------------------------------------------------------------------
+
+/**
+ * فودافون كاش — عربي. الشكل الشائع:
+ * «تم استلام مبلغ 500.00 جنيه من رقم 01000000000 … رقم العملية 123456789012»
+ */
+function parseVodafoneAr(body: string): Partial<SmsParseResult> | null {
+  if (!/(?:استلام|استلمت)/.test(body)) return null;
+  const amount = extractAmount(body);
+  if (amount == null) return null;
+  return {
+    template: "vodafone_ar",
+    amount_egp: amount,
+    sender_account: extractSender(body),
+    transfer_ref: extractRef(body),
+  };
+}
+
+/** فودافون كاش — إنجليزي: «You have received EGP 500.00 from 01… Transaction ID: …» */
+function parseVodafoneEn(body: string): Partial<SmsParseResult> | null {
+  if (!/received/i.test(body)) return null;
+  const amount = extractAmount(body);
+  if (amount == null) return null;
+  return {
+    template: "vodafone_en",
+    amount_egp: amount,
+    sender_account: extractSender(body),
+    transfer_ref: extractRef(body),
+  };
+}
+
+/**
+ * إنستاباي/بنك — عام: إشعار إيداع/تحويل وارد فيه مبلغ ورقم مرجعي.
+ * تغطية إنستاباي الفعلية معتمدة على سلوك بنك المالك في الرسائل
+ * (بنوك كتير بتبعت «تم إيداع مبلغ … رقم مرجعي …»).
+ */
+function parseInstapayGeneric(body: string): Partial<SmsParseResult> | null {
+  if (!RECEIVED_MARKERS.test(body)) return null;
+  const amount = extractAmount(body);
+  if (amount == null) return null;
+  return {
+    template: "instapay_generic",
+    amount_egp: amount,
+    sender_account: extractSender(body),
+    transfer_ref: extractRef(body),
+  };
+}
+
+/** احتياطي عام: مبلغ لابس عملة + أي مرجع طويل — من غير ادعاء قالب. */
+function parseGeneric(body: string): Partial<SmsParseResult> | null {
+  const amount = extractAmount(body);
+  if (amount == null) return null;
+  return {
+    template: "generic",
+    amount_egp: amount,
+    sender_account: extractSender(body),
+    transfer_ref: extractRef(body),
+  };
+}
+
+// ---------------------------------------------------------------------
+// الدالة الرئيسية
+// ---------------------------------------------------------------------
+
+/**
+ * بيحلّل رسالة واحدة. اختيار القالب: بهوية المُرسل أولًا (فودافون
+ * من مرسل فودافون، إلخ) وبعدين بالترتيب العام. الاتجاه بيتحسب من
+ * الصياغة نفسها — وقالب «وارد» مش بيشتغل على رسالة صادر حتى لو
+ * مرسلها فودافون (حركة صادرة من محفظة المالك مش إيداع عميل).
+ */
+export function parseSms(senderId: string, rawBody: string): SmsParseResult {
+  const body = normalizeDigits(String(rawBody || ""));
+  const direction = detectDirection(body);
+  const origin = classifyOrigin(senderId);
+  const sid = String(senderId || "").toLowerCase();
+
+  const attempts: Array<() => Partial<SmsParseResult> | null> = [];
+  if (sid.includes("vodafone") || sid.includes("vf-")) {
+    attempts.push(() => parseVodafoneAr(body), () => parseVodafoneEn(body));
+  }
+  if (sid.includes("instapay") || sid.includes("bank") || sid.includes("بنك")) {
+    attempts.push(() => parseInstapayGeneric(body));
+  }
+  attempts.push(
+    () => parseVodafoneAr(body),
+    () => parseVodafoneEn(body),
+    () => parseInstapayGeneric(body),
+    () => parseGeneric(body),
+  );
+
+  let hit: Partial<SmsParseResult> | null = null;
+  for (const attempt of attempts) {
+    hit = attempt();
+    if (hit && hit.amount_egp != null) break;
+    hit = null;
+  }
+
+  if (!hit) {
+    return {
+      template: "none",
+      direction,
+      amount_egp: null,
+      sender_account: extractSender(body),
+      transfer_ref: extractRef(body),
+      matchable: false,
+      origin,
+    };
+  }
+
+  const amount = hit.amount_egp ?? null;
+  return {
+    template: hit.template || "generic",
+    direction,
+    amount_egp: amount,
+    sender_account: hit.sender_account ?? extractSender(body),
+    transfer_ref: hit.transfer_ref ?? extractRef(body),
+    // الصادر/المجهول مش قابل للمطابقة حتى لو فيه مبلغ: فلوس طالعة
+    // من محفظة المالك مش إيداع داخل لها.
+    matchable: direction === "received" && amount != null,
+    origin,
+  };
+}
+
+/**
+ * مفتاح منع التكرار (بيتحسب على الخادم — والموبايل بيحسب نظيره
+ * المحلي لإدارة طابوره هو؛ شوف NOTES عن الطبقتين):
+ *   • فيه مرجع: بصمة (sender_id + transfer_ref)
+ *   • مفيش: بصمة (sender_id + المبلغ + دقيقة الوصول + بصمة النص)
+ */
+export async function computeDedupeKey(input: {
+  sender_id: string;
+  body: string;
+  received_at_iso: string;
+  amount_egp: number | null;
+  transfer_ref: string | null;
+}): Promise<string> {
+  const enc = new TextEncoder();
+  const digest = async (s: string) => {
+    const buf = await crypto.subtle.digest("SHA-256", enc.encode(s));
+    return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
+  };
+  if (input.transfer_ref) {
+    return "ref:" + (await digest(input.sender_id + "|" + input.transfer_ref));
+  }
+  const minute = (input.received_at_iso || "").slice(0, 16); // لحد الدقيقة
+  const bodyHash = await digest(input.body);
+  return "auto:" + (await digest(
+    input.sender_id + "|" + (input.amount_egp ?? "") + "|" + minute + "|" + bodyHash,
+  ));
+}
