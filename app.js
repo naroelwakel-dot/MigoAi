@@ -175,6 +175,70 @@ function removeFromCart(cartId) {
     showToast('تم حذف العنصر من السلة');
 }
 
+// [gemini-fix-4] Quantity controls for the cart drawer.
+// Display model ONLY — the cart array keeps its existing shape: a
+// regular item's quantity is stored as repeated entries, exactly as a
+// second addToCart() of the same product has always stored it. That
+// keeps the checkout mapping correct with zero changes: buildItems
+// (index.html) counts 1 per regular entry and aggregates duplicates by
+// planId (= the entry's display name), and calculateCartTotal() sums
+// entry prices, so clones price correctly end to end.
+// Identical regular entries (same name + unit price + details) render
+// as ONE line with −/+ controls; SMM entries are never merged and get
+// no +/− (their quantity is the service amount in smmQty, chosen at add
+// time and shown inside details).
+var cartLineGroups = [];
+
+function isSMMCartItem(item) {
+    return !!item && (item.type === 'smm' ||
+        (typeof item.id === 'string' && item.id.indexOf('smm_') === 0) ||
+        Object.prototype.hasOwnProperty.call(item, 'smmQty'));
+}
+
+function buildCartLineGroups() {
+    const groups = [];
+    const byKey = {};
+    cart.forEach((item, idx) => {
+        if (isSMMCartItem(item)) {
+            groups.push({ smm: true, indexes: [idx], item: item });
+            return;
+        }
+        const key = String(item && item.name || '') + '' + String(Number(item && item.price)) + '' + String(item && item.details || '');
+        if (byKey[key]) {
+            byKey[key].indexes.push(idx);
+        } else {
+            const g = { smm: false, indexes: [idx], item: item };
+            byKey[key] = g;
+            groups.push(g);
+        }
+    });
+    return groups;
+}
+
+function changeCartQty(groupIdx, delta) {
+    const g = cartLineGroups[groupIdx];
+    if (!g || g.smm) return;
+    if (delta > 0) {
+        const src = cart[g.indexes[0]];
+        if (!src) return;
+        cart.push({ ...src, cartId: Date.now() + Math.random() });
+    } else {
+        if (!g.indexes.length) return;
+        cart.splice(g.indexes[g.indexes.length - 1], 1);
+    }
+    saveCartToStorage();
+}
+
+function removeCartLine(groupIdx) {
+    const g = cartLineGroups[groupIdx];
+    if (!g) return;
+    const drop = {};
+    g.indexes.forEach(i => { drop[i] = true; });
+    cart = cart.filter((_, i) => !drop[i]);
+    saveCartToStorage();
+    showToast('تم حذف العنصر من السلة');
+}
+
 function openCartModal() {
     const m = document.getElementById('cartModal');
     if (!m) return;
@@ -218,7 +282,11 @@ function updateCartUI() {
             try { var snap0 = JSON.parse(localStorage.getItem('migo_last_order_v1') || 'null'); hasSnap = !!(snap0 && Array.isArray(snap0.cart) && snap0.cart.length); } catch (e) {}
             container.innerHTML = '<div class="text-center text-gray-400 py-6 text-xs">سلة المشتريات فارغة</div>' + (hasSnap ? '<button onclick="restoreLastOrder()" class="block mx-auto mb-4 text-[11px] font-bold text-amber-400 border border-amber-500/40 rounded-lg px-3 py-1.5 cursor-pointer">استعادة آخر طلب</button>' : '');
         } else {
-            container.innerHTML = cart.map(item => `
+            cartLineGroups = buildCartLineGroups();
+            container.innerHTML = cartLineGroups.map((g, gi) => {
+                const item = g.item;
+                if (g.smm) {
+                    return `
                 <div class="bg-slate-950 border border-slate-700 rounded-xl p-2.5 flex justify-between items-center gap-2">
                     <div class="flex-1 min-w-0">
                         <h3 class="text-xs font-bold text-white truncate">${escapeHtml(item.name)}</h3>
@@ -228,8 +296,27 @@ function updateCartUI() {
                         <div class="text-xs font-black text-amber-400 font-mono">${Number(item.price).toLocaleString()} ج.م</div>
                         <button onclick="removeFromCart(${item.cartId})" class="text-[10px] text-red-400 hover:text-red-300 cursor-pointer">حذف</button>
                     </div>
-                </div>
-            `).join('');
+                </div>`;
+                }
+                const qty = g.indexes.length;
+                const lineTotal = Number(item.price) * qty;
+                return `
+                <div class="bg-slate-950 border border-slate-700 rounded-xl p-2.5 flex justify-between items-center gap-2">
+                    <div class="flex-1 min-w-0">
+                        <h3 class="text-xs font-bold text-white truncate">${escapeHtml(item.name)}</h3>
+                        <div class="text-[10px] text-sky-400 truncate">${escapeHtml(item.details || '')}</div>
+                        <div class="flex items-center gap-1.5 mt-1.5" dir="ltr">
+                            <button type="button" onclick="changeCartQty(${gi}, -1)" aria-label="إنقاص الكمية" class="w-6 h-6 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-600 text-white text-sm font-bold leading-none cursor-pointer">−</button>
+                            <span class="text-xs font-bold text-white min-w-6 text-center">${qty}</span>
+                            <button type="button" onclick="changeCartQty(${gi}, 1)" aria-label="زيادة الكمية" class="w-6 h-6 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-600 text-white text-sm font-bold leading-none cursor-pointer">+</button>
+                        </div>
+                    </div>
+                    <div class="text-left shrink-0">
+                        <div class="text-xs font-black text-amber-400 font-mono">${lineTotal.toLocaleString()} ج.م</div>
+                        <button onclick="removeCartLine(${gi})" class="text-[10px] text-red-400 hover:text-red-300 cursor-pointer">حذف</button>
+                    </div>
+                </div>`;
+            }).join('');
         }
     }
     calculateCartTotal();
