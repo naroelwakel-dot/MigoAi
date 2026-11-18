@@ -25,6 +25,11 @@
 // غياب أي سر من الاتنين = المسار مقفول (503) — مفيش إدخال مجهول.
 // ---------------------------------------------------------------------------
 import { handleSmsRequest, PostgrestSmsClient, type SmsDeps } from "./sms_bridge/mod.ts";
+import {
+  handlePriceFloorRequest,
+  PostgrestPriceFloorClient,
+  type PriceFloorDeps,
+} from "./price_floors/mod.ts";
 
 let _smsDeps: SmsDeps | null = null;
 function getSmsDeps(): SmsDeps {
@@ -39,6 +44,31 @@ function getSmsDeps(): SmsDeps {
     logError,
   };
   return _smsDeps;
+}
+
+// ---------------------------------------------------------------------------
+// منفّذ حدّ الأسعار الأدنى للمتجر (Price-Floor Applier) — نقطة إدارية
+// POST /catalog/apply-price-floors بيندهها مجدول خارجي (نفس نمط
+// /exec/sweep ومسارات المحفظة): بترفع سعر كتالوج المتجر لأرضية سجل
+// المصدر (ceil(cost × 82.5)) لو نزل تحتها، ومش بتخفّض أبدًا. مصدر
+// الخريطة والتكلفة هو نفس تغذية المصدر اللي المنفّذ بيقراها
+// (PROVENANCE_FEED_URL)، والكتابة الوحيدة عبر RPC ‏apply_price_floor
+// (هجرة 017) بمفتاح الخدمة. التفاصيل في price_floors/mod.ts.
+// ---------------------------------------------------------------------------
+let _priceFloorDeps: PriceFloorDeps | null = null;
+function getPriceFloorDeps(): PriceFloorDeps {
+  if (_priceFloorDeps) return _priceFloorDeps;
+  const env = (n: string) => Deno.env.get(n) || "";
+  _priceFloorDeps = {
+    registry: new JsonRegistrySource(
+      urlLoader(env("PROVENANCE_FEED_URL") || "https://migoai.shop/provenance.json")),
+    client: new PostgrestPriceFloorClient({
+      baseUrl: SB_URL,
+      keyOf: () => env("SUPABASE_SERVICE_ROLE_KEY"),
+    }),
+    logError,
+  };
+  return _priceFloorDeps;
 }
 
 // ==============================================================================
@@ -1355,6 +1385,16 @@ Deno.serve(async (req: Request) => {
       if (walletRes) return walletRes;
     } catch (e) {
       logError("wallet.route", "unhandled wallet route error", e);
+    }
+  }
+  // منفّذ حدّ الأسعار الأدنى (محمي بـ isAdmin جوه المعالج) —
+  // بيتنادى من مجدول خارجي بنفس ترويسة الأدمن زي باقي المسارات.
+  if (url.pathname.replace(/\/+$/, "").includes("/catalog/")) {
+    try {
+      const pfRes = await handlePriceFloorRequest(req, getPriceFloorDeps(), isAdmin);
+      if (pfRes) return pfRes;
+    } catch (e) {
+      logError("price_floors.route", "unhandled price-floor route error", e);
     }
   }
   if (req.method === "POST" && url.pathname.replace(/\/+$/, "").endsWith("/wallet/sms")) {
