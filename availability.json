@@ -1,0 +1,391 @@
+{
+  "feed": "migo-availability",
+  "generated_at": "2026-11-18T06:52:00Z",
+  "items": [
+    {
+      "checked_at": null,
+      "orderable": false,
+      "reason": "no_active_source",
+      "sku": "adobe-creative-cloud",
+      "stock_count": null,
+      "stock_state": "unknown"
+    },
+    {
+      "checked_at": "2026-11-18 06:49:53+00",
+      "orderable": false,
+      "reason": "stock_unreadable",
+      "sku": "apple-music-5m",
+      "stock_count": null,
+      "stock_state": "unreadable"
+    },
+    {
+      "checked_at": "2026-11-18 06:49:55+00",
+      "orderable": false,
+      "reason": "stock_unreadable",
+      "sku": "bunny-bot-lines-rest",
+      "stock_count": null,
+      "stock_state": "unreadable"
+    },
+    {
+      "checked_at": "2026-11-18 06:49:57+00",
+      "orderable": false,
+      "reason": "stock_unreadable",
+      "sku": "canva-edu-admin-500",
+      "stock_count": null,
+      "stock_state": "unreadable"
+    },
+    {
+      "checked_at": null,
+      "orderable": false,
+      "reason": "no_active_source",
+      "sku": "canva-pro-1y",
+      "stock_count": null,
+      "stock_state": "unknown"
+    },
+    {
+      "checked_at": "2026-11-18 06:49:59+00",
+      "orderable": false,
+      "reason": "stock_unreadable",
+      "sku": "capcut-pro",
+      "stock_count": null,
+      "stock_state": "unreadable"
+    },
+    {
+      "checked_at": "2026-11-18 06:50:01+00",
+      "orderable": false,
+      "reason": "stock_unreadable",
+      "sku": "chatgpt-plus-1m",
+      "stock_count": null,
+      "stock_state": "unreadable"
+    },
+    {
+      "checked_at": null,
+      "orderable": false,
+      "reason": "no_active_source",
+      "sku": "claude-api-credit",
+      "stock_count": null,
+      "stock_state": "unknown"
+    },
+    {
+      "checked_at": "2026-11-18 06:50:03+00",
+      "orderable": false,
+      "reason": "out_of_stock",
+      "sku": "claude-api-tokens",
+      "stock_count": 0,
+      "stock_state": "out_of_stock"
+    },
+    {
+      "checked_at": null,
+      "orderable": false,
+      "reason": "no_active_source",
+      "sku": "claude-max-20x",
+      "stock_count": null,
+      "stock_state": "unknown"
+    },
+    {
+      "checked_at": null,
+      "orderable": false,
+      "reason": "no_active_source",
+      "sku": "claude-max-5x",
+      "stock_count": null,
+      "stock_state": "unknown"
+    },
+    {
+      "checked_at": null,
+      "orderable": false,
+      "reason": "no_active_source",
+      "sku": "claude-pro-1m",
+      "stock_count": null,
+      "stock_state": "unknown"
+    },
+    {
+      "checked_at": null,
+      "orderable": false,
+      "reason": "no_active_source",
+      "sku": "claude-team-5",
+      "stock_count": null,
+      "stock_state": "unknown"
+    },
+    {
+      "checked_at": null,
+      "orderable": false,
+      "reason": "no_active_source",
+      "sku": "coins-20",
+      "stock_count": null,
+      "stock_state": "unknown"
+    },
+    {
+      "checked_at": "2026-11-18 06:50:06+00",
+      "orderable": false,
+      "reason": "stock_unreadable",
+      "sku": "coursera-premium-12m",
+      "stock_count": null,
+      "stock_state": "unreadable"
+    },
+    {
+      "checked_at": null,
+      "orderable": false,
+      "reason": "no_active_source",
+      "sku": "cursor-ai-pro",
+      "stock_count": null,
+      "stock_state": "unknown"
+    },
+    {
+      "checked_at": "2026-11-18 06:50:08+00",
+      "orderable": false,
+      "reason": "stock_unreadable",
+      "sku": "duolingo-super-12m",
+      "stock_count": null,
+      "stock_state": "unreadable"
+    },
+    {
+      "checked_at": "2026-11-18 06:50:10+00",
+      "orderable": false,
+      "reason": "stock_unreadable",
+      "sku": "elevenlabs-creator",
+      "stock_count": null,
+      "stock_state": "unreadable"
+    },
+    {
+      "checked_at": "2026-11-18 06:50:11+00",
+      "orderable": false,
+      "reason": "stock_unreadable",
+      "sku": "figma-pro-edu-2y",
+      "stock_count": null,
+      "stock_state": "unreadable"
+    },
+    {
+      "checked_at": null,
+      "orderable": false,
+      "reason": "no_active_source",
+      "sku": "framer-ai-1y",
+      "stock_count": null,
+      "stock_state": "unknown"
+    },
+    {
+      "checked_at": null,
+      "orderable": false,
+      "reason": "stock_unknown",
+      "sku": "games-topup-76",
+      "stock_count": null,
+      "stock_state": "unknown"
+    },
+    {
+      "checked_at": "2026-11-18 06:50:14+00",
+      "orderable": false,
+      "reason": "out_of_stock",
+      "sku": "gemini-pro-12m",
+      "stock_count": 0,
+      "stock_state": "out_of_stock"
+    },
+    {
+      "checked_at": "2026-11-18 06:50:16+00",
+      "orderable": false,
+      "reason": "stock_unreadable",
+      "sku": "gemini-pro-18m",
+      "stock_count": null,
+      "stock_state": "unreadable"
+    },
+    {
+      "checked_at": "2026-11-18 06:50:18+00",
+      "orderable": false,
+      "reason": "stock_unreadable",
+      "sku": "github-copilot-1m",
+      "stock_count": null,
+      "stock_state": "unreadable"
+    },
+    {
+      "checked_at": null,
+      "orderable": false,
+      "reason": "stock_unknown",
+      "sku": "gmail-accounts",
+      "stock_count": null,
+      "stock_state": "unknown"
+    },
+    {
+      "checked_at": null,
+      "orderable": false,
+      "reason": "stock_unknown",
+      "sku": "google-student",
+      "stock_count": null,
+      "stock_state": "unknown"
+    },
+    {
+      "checked_at": null,
+      "orderable": false,
+      "reason": "stock_unknown",
+      "sku": "grok-plus-1m",
+      "stock_count": null,
+      "stock_state": "unknown"
+    },
+    {
+      "checked_at": null,
+      "orderable": false,
+      "reason": "stock_unknown",
+      "sku": "ilovepdf-premium-1y",
+      "stock_count": null,
+      "stock_state": "unknown"
+    },
+    {
+      "checked_at": null,
+      "orderable": false,
+      "reason": "stock_unknown",
+      "sku": "linkedin-career-3m",
+      "stock_count": null,
+      "stock_state": "unknown"
+    },
+    {
+      "checked_at": null,
+      "orderable": false,
+      "reason": "no_active_source",
+      "sku": "live-streaming-topup-26",
+      "stock_count": null,
+      "stock_state": "unknown"
+    },
+    {
+      "checked_at": null,
+      "orderable": false,
+      "reason": "no_active_source",
+      "sku": "lovable-pro-lite-1y",
+      "stock_count": null,
+      "stock_state": "unknown"
+    },
+    {
+      "checked_at": null,
+      "orderable": false,
+      "reason": "no_active_source",
+      "sku": "midjourney",
+      "stock_count": null,
+      "stock_state": "unknown"
+    },
+    {
+      "checked_at": null,
+      "orderable": false,
+      "reason": "no_active_source",
+      "sku": "miro-lifetime-panel",
+      "stock_count": null,
+      "stock_state": "unknown"
+    },
+    {
+      "checked_at": null,
+      "orderable": false,
+      "reason": "no_active_source",
+      "sku": "muse-ai-tokens",
+      "stock_count": null,
+      "stock_state": "unknown"
+    },
+    {
+      "checked_at": null,
+      "orderable": false,
+      "reason": "no_active_source",
+      "sku": "netflix-premium-full",
+      "stock_count": null,
+      "stock_state": "unknown"
+    },
+    {
+      "checked_at": null,
+      "orderable": false,
+      "reason": "stock_unknown",
+      "sku": "nordvpn-3m",
+      "stock_count": null,
+      "stock_state": "unknown"
+    },
+    {
+      "checked_at": null,
+      "orderable": false,
+      "reason": "stock_unknown",
+      "sku": "notion-plus-1y",
+      "stock_count": null,
+      "stock_state": "unknown"
+    },
+    {
+      "checked_at": null,
+      "orderable": false,
+      "reason": "stock_unknown",
+      "sku": "office-365-1y",
+      "stock_count": null,
+      "stock_state": "unknown"
+    },
+    {
+      "checked_at": null,
+      "orderable": false,
+      "reason": "stock_unknown",
+      "sku": "outlook-hotmail-accounts",
+      "stock_count": null,
+      "stock_state": "unknown"
+    },
+    {
+      "checked_at": null,
+      "orderable": false,
+      "reason": "no_active_source",
+      "sku": "perplexity-pro",
+      "stock_count": null,
+      "stock_state": "unknown"
+    },
+    {
+      "checked_at": null,
+      "orderable": false,
+      "reason": "stock_unknown",
+      "sku": "prime-video-6m",
+      "stock_count": null,
+      "stock_state": "unknown"
+    },
+    {
+      "checked_at": null,
+      "orderable": false,
+      "reason": "no_active_source",
+      "sku": "shahid-vip",
+      "stock_count": null,
+      "stock_state": "unknown"
+    },
+    {
+      "checked_at": null,
+      "orderable": false,
+      "reason": "stock_unknown",
+      "sku": "smm-services-123",
+      "stock_count": null,
+      "stock_state": "unknown"
+    },
+    {
+      "checked_at": null,
+      "orderable": false,
+      "reason": "stock_unknown",
+      "sku": "spotify-premium",
+      "stock_count": null,
+      "stock_state": "unknown"
+    },
+    {
+      "checked_at": null,
+      "orderable": false,
+      "reason": "no_active_source",
+      "sku": "suno-ai-pro",
+      "stock_count": null,
+      "stock_state": "unknown"
+    },
+    {
+      "checked_at": null,
+      "orderable": false,
+      "reason": "stock_unknown",
+      "sku": "super-grok",
+      "stock_count": null,
+      "stock_state": "unknown"
+    },
+    {
+      "checked_at": null,
+      "orderable": false,
+      "reason": "no_active_source",
+      "sku": "vcc-misc-5",
+      "stock_count": null,
+      "stock_state": "unknown"
+    },
+    {
+      "checked_at": null,
+      "orderable": false,
+      "reason": "no_active_source",
+      "sku": "youtube-premium",
+      "stock_count": null,
+      "stock_state": "unknown"
+    }
+  ],
+  "version": 1
+}
