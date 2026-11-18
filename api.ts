@@ -69,6 +69,38 @@ import {
   type StoreExecutor,
 } from "./store_executor/mod.ts";
 
+// ---------------------------------------------------------------------------
+// تحقق SheerID على الموقع (منتج Google Student) — نفس أتمتة البوت
+// بنفس العقد والتسويات: حالة/إرسال للعميل من صفحة الفاتورة بإثبات
+// ملكية الطلب، إشعار مورد، ومسح دوري بترويسة الأدمن. التفعيل بمفتاح
+// SHEERID_API_KEY في بيئة Deno بس (بيضبطه المالك) — غيابه = الميزة
+// مقفولة fail-closed والطلبات بتتكمّل يدويًا بصياغة معلنة.
+// ---------------------------------------------------------------------------
+import {
+  buildSheeridFromEnv,
+  handleSheeridRequest,
+  type SheeridHandlerDeps,
+} from "./sheerid/mod.ts";
+
+let _sheeridDeps: SheeridHandlerDeps | null = null;
+function getSheeridDeps(): SheeridHandlerDeps {
+  if (_sheeridDeps) return _sheeridDeps;
+  const wiring = buildSheeridFromEnv({
+    env: (n: string) => Deno.env.get(n) || "",
+    sbUrl: SB_URL,
+    logError,
+  });
+  _sheeridDeps = {
+    service: wiring.service,
+    orders: wiring.orders,
+    isAuthorized: isAdmin,
+    headersOf: (req: Request) => corsHeaders(req),
+    logError,
+  };
+  return _sheeridDeps;
+}
+
+
 let _executor: StoreExecutor | null = null;
 function getExecutor(): StoreExecutor {
   if (_executor) return _executor;
@@ -1360,6 +1392,17 @@ Deno.serve(async (req: Request) => {
   if (req.method === "POST" && url.pathname.replace(/\/+$/, "").endsWith("/wallet/sms")) {
     const smsRes = await handleSmsRequest(req, getSmsDeps());
     if (smsRes) return smsRes;
+  }
+
+  // تحقق SheerID: حالة/إرسال العميل + إشعار المورد + المسح الدوري
+  // (الأخير بترويسة الأدمن زي /exec/ بالظبط، وبيتنادى من مجدول خارجي).
+  if (url.pathname.replace(/\/+$/, "").includes("/sheerid/")) {
+    try {
+      const sheeridRes = await handleSheeridRequest(req, getSheeridDeps());
+      if (sheeridRes) return sheeridRes;
+    } catch (e) {
+      logError("sheerid.route", "unhandled sheerid route error", e);
+    }
   }
   if (req.method === "POST" && url.pathname.replace(/\/+$/, "").endsWith("/client-error")) {
     return handleClientError(req);

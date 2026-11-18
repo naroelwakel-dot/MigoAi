@@ -57,6 +57,8 @@ th{color:#f3cf6b;font-size:13px}
 
 <div id="invResult"></div>
 
+<div id="sheeridPanel"></div>
+
 <p class="meta noprint">واجهتك مشكلة في طلبك؟ كلمنا من <a href="contact.html">صفحة التواصل</a> برقم الطلب وهنساعدك.</p>
 </div>
 
@@ -131,10 +133,87 @@ function loadInvoice() {
         '<p class="meta">الفاتورة دي مولّدة من سجل الطلب نفسه في نظام المتجر، والإجمالي هو المبلغ المحسوب من السيرفر وقت الشراء.</p>' +
         '<button class="print noprint" type="button" onclick="window.print()">🖨️ طباعة / حفظ PDF</button>' +
       '</div>';
+    // منتج تحقق الطلاب (Google Student): لو الطلب فيه المنتج ده،
+    // بنعرض لوحة التحقق الآلي تحت الفاتورة (نفس مسار البوت).
+    var hasStudent = (inv.items || []).some(function (it) { return it.name === SHEERID_STUDENT_NAME; });
+    if (hasStudent && !cancelled) initSheerid(ref, sender);
   }).catch(function () {
     msg.className = 'msg err';
     msg.textContent = 'حصلت مشكلة في الاتصال، جرب تاني بعد شوية.';
   });
+}
+</script>
+
+<script>
+// ===== لوحة تحقق الطلاب (Google Student) =====
+// بتكلم خلفية الموقع بس (Deno) برقم الطلب وحساب المُرسل — نفس إثبات
+// ملكية الفاتورة — وكل النصوص اللي بتتعرض جاية من الخلفية نفسها.
+const SHEERID_API = 'https://migoai-72.naroelwakel-dot.deno.net';
+const SHEERID_STUDENT_NAME = 'Google Student (سنة كاملة)';
+let __shPoll = null;
+
+function sheeridPost(path, ref, sender, extra) {
+  const body = Object.assign({ order_ref: ref, sender_account: sender }, extra || {});
+  return fetch(SHEERID_API + path, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  }).then(function (r) { return r.json(); });
+}
+
+function sheeridRender(ref, sender, data) {
+  const panel = document.getElementById('sheeridPanel');
+  if (!panel) return;
+  if (__shPoll) { clearInterval(__shPoll); __shPoll = null; }
+  if (!data || !data.found || !data.has_student) { panel.innerHTML = ''; return; }
+  const msg = '<p style="white-space:pre-line;margin:6px 0">' + esc(data.message || '') + '</p>';
+  let inner = '<div class="card"><h2 style="font-size:20px;color:#fff;margin:4px 0 8px">🎓 تحقق الطلاب — Google Student</h2>' + msg;
+  if (data.state === 'awaiting_link' || data.state === 'manual_fallback') {
+    // المسار اليدوي ما بيقفلش الباب: العميل يقدر يعيد إرسال رابطه
+    // والأتمتة بتحاول تاني (نفس سلوك البوت بالظبط).
+    inner += '<label for="shUrl">رابط التحقق</label>' +
+      '<input id="shUrl" type="url" dir="ltr" placeholder="https://services.sheerid.com/verify/..." autocomplete="off">' +
+      '<button class="go" type="button" id="shSubmit">ابدأ التحقق</button>' +
+      '<p id="shMsg" class="msg"></p>';
+  } else if (data.state === 'processing') {
+    inner += '<p class="meta">الصفحة دي هتتحدّث لوحدها أول ما النتيجة تجهز…</p>';
+    __shPoll = setInterval(function () {
+      sheeridPost('/sheerid/status', ref, sender).then(function (d) {
+        if (d && d.state !== 'processing') sheeridRender(ref, sender, d);
+      }).catch(function () {});
+    }, 15000);
+  } else if (data.state === 'completed' && data.activation_url) {
+    inner += '<p><a href="' + esc(data.activation_url) + '" target="_blank" rel="noopener">' + esc(data.activation_url) + '</a></p>';
+  }
+  inner += '</div>';
+  panel.innerHTML = inner;
+  const btn = document.getElementById('shSubmit');
+  if (btn) btn.addEventListener('click', function () { sheeridSubmit(ref, sender); });
+}
+
+function sheeridSubmit(ref, sender) {
+  const input = document.getElementById('shUrl');
+  const msg = document.getElementById('shMsg');
+  const btn = document.getElementById('shSubmit');
+  const url = input ? input.value.trim() : '';
+  if (!url) {
+    if (msg) { msg.className = 'msg err'; msg.textContent = 'الصق رابط التحقق الأول.'; }
+    return;
+  }
+  if (btn) { btn.disabled = true; btn.textContent = 'جارٍ بدء التحقق…'; }
+  if (msg) { msg.className = 'msg'; msg.textContent = 'وصلنا الرابط ✅ بدأنا التحقق حالًا — سيب الصفحة دي مفتوحة وصفحة التحقق مفتوحة.'; }
+  sheeridPost('/sheerid/submit', ref, sender, { url: url }).then(function (d) {
+    sheeridRender(ref, sender, d);
+  }).catch(function () {
+    if (msg) { msg.className = 'msg err'; msg.textContent = 'حصلت مشكلة في الاتصال، جرب تاني بعد شوية.'; }
+    if (btn) { btn.disabled = false; btn.textContent = 'ابدأ التحقق'; }
+  });
+}
+
+function initSheerid(ref, sender) {
+  sheeridPost('/sheerid/status', ref, sender).then(function (d) {
+    sheeridRender(ref, sender, d);
+  }).catch(function () {});
 }
 </script>
 </body>
