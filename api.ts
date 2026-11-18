@@ -102,32 +102,40 @@ import {
 // ---------------------------------------------------------------------------
 // تحقق SheerID على الموقع (منتج Google Student) — نفس أتمتة البوت
 // بنفس العقد والتسويات: حالة/إرسال للعميل من صفحة الفاتورة بإثبات
-// ملكية الطلب، إشعار مورد، ومسح دوري بترويسة الأدمن. التفعيل بمفتاح
-// SHEERID_API_KEY في بيئة Deno بس (بيضبطه المالك) — غيابه = الميزة
-// مقفولة fail-closed والطلبات بتتكمّل يدويًا بصياغة معلنة.
+// ملكية الطلب، إشعار مورد، ومسح دوري بترويسة الأدمن. التنفيذ عبر
+// جسر البوت (توكن الجسر من جدول backend_config — البوت بينفّذ بمفتاح
+// المورد اللي عنده)، وSHEERID_API_KEY في بيئة Deno تجاوز مباشر اختياري.
+// غياب أي مصدر تنفيذ = الميزة مقفولة fail-closed والطلبات بتتكمّل
+// يدويًا بصياغة معلنة.
 // ---------------------------------------------------------------------------
 import {
-  buildSheeridFromEnv,
+  buildSheeridFromEnvAsync,
   handleSheeridRequest,
   type SheeridHandlerDeps,
 } from "./sheerid/mod.ts";
 
 let _sheeridDeps: SheeridHandlerDeps | null = null;
-function getSheeridDeps(): SheeridHandlerDeps {
+let _sheeridDepsPromise: Promise<SheeridHandlerDeps> | null = null;
+async function getSheeridDeps(): Promise<SheeridHandlerDeps> {
   if (_sheeridDeps) return _sheeridDeps;
-  const wiring = buildSheeridFromEnv({
-    env: (n: string) => Deno.env.get(n) || "",
-    sbUrl: SB_URL,
-    logError,
-  });
-  _sheeridDeps = {
-    service: wiring.service,
-    orders: wiring.orders,
-    isAuthorized: isAdmin,
-    headersOf: (req: Request) => corsHeaders(req),
-    logError,
-  };
-  return _sheeridDeps;
+  if (!_sheeridDepsPromise) {
+    _sheeridDepsPromise = (async () => {
+      const wiring = await buildSheeridFromEnvAsync({
+        env: (n: string) => Deno.env.get(n) || "",
+        sbUrl: SB_URL,
+        logError,
+      });
+      _sheeridDeps = {
+        service: wiring.service,
+        orders: wiring.orders,
+        isAuthorized: isAdmin,
+        headersOf: (req: Request) => corsHeaders(req),
+        logError,
+      };
+      return _sheeridDeps;
+    })();
+  }
+  return _sheeridDepsPromise;
 }
 
 
@@ -1438,7 +1446,7 @@ Deno.serve(async (req: Request) => {
   // (الأخير بترويسة الأدمن زي /exec/ بالظبط، وبيتنادى من مجدول خارجي).
   if (url.pathname.replace(/\/+$/, "").includes("/sheerid/")) {
     try {
-      const sheeridRes = await handleSheeridRequest(req, getSheeridDeps());
+      const sheeridRes = await handleSheeridRequest(req, await getSheeridDeps());
       if (sheeridRes) return sheeridRes;
     } catch (e) {
       logError("sheerid.route", "unhandled sheerid route error", e);

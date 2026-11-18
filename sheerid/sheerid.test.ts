@@ -22,7 +22,12 @@ import {
   validateVerifyUrl,
   type EmailOutcome,
 } from "./service.ts";
-import { handleSheeridRequest } from "./mod.ts";
+import {
+  buildSheeridFromEnvAsync,
+  fetchBridgeToken,
+  handleSheeridRequest,
+} from "./mod.ts";
+import { BRIDGE_BASE_URL, BRIDGE_PATH } from "./config.ts";
 import { MemoryStoreDb } from "../store_executor/store_db.ts";
 import type { StoreOrder } from "../store_executor/types.ts";
 
@@ -582,4 +587,212 @@ Deno.test("unpaid order: awaiting_payment state and no job created", async () =>
   const s = await h.service.stateForOrder(order);
   eq(s?.state, "awaiting_payment", "awaiting payment");
   eq(await h.repo.findForOrder("MG-200001"), null, "no job for unpaid order");
+});
+
+// ---------------------------------------------------------------------
+// 19) وضع الجسر: العميل بينادي نقطة البوت الداخلية بالأفعال والتوكن
+// ---------------------------------------------------------------------
+class FakeBridge {
+  calls: TransportRequest[] = [];
+  rejectAction = "";
+  unauthorized = false;
+
+  transport: Transport = (req) => {
+    this.calls.push(req);
+    if (this.unauthorized) {
+      return Promise.resolve({
+        status: 401,
+        text: JSON.stringify({ ok: false, error: "unauthorized" }),
+      });
+    }
+    const body = JSON.parse(req.body || "{}") as Record<string, unknown>;
+    if (body["action"] === this.rejectAction) {
+      return Promise.resolve({
+        status: 200,
+        text: JSON.stringify({ ok: false, message: "bridge refusal" }),
+      });
+    }
+    const dataByAction: Record<string, Record<string, unknown>> = {
+      balance: { service_available: true, possible_verifications: 9 },
+      verify: { job_id: "JOB-TEST-9", status: "processing", charged_usd: 1.99 },
+      status: {
+        status: "completed",
+        activation_url: "https://example.com/activate/9",
+      },
+    };
+    return Promise.resolve({
+      status: 200,
+      text: JSON.stringify({ ok: true, data: dataByAction[String(body["action"])] || {} }),
+    });
+  };
+}
+
+Deno.test("bridge client: actions + token header + envelope, no provider key", async () => {
+  const fake = new FakeBridge();
+  const client = new SheerIDClient({
+    apiKey: "",
+    baseUrl: BRIDGE_BASE_URL,
+    bridgeToken: "tok-bridge-1",
+    transport: fake.transport,
+  });
+  ok(client.hasKey, "bridge token counts as configured");
+  ok(client.viaBridge, "bridge mode on");
+
+  const bal = await client.balance();
+  eq(bal["possible_verifications"], 9, "balance data via bridge");
+  const ver = await client.verify(VALID_URL, "https://hook.example/cb");
+  eq(ver["job_id"], "JOB-TEST-9", "verify data via bridge");
+  const st = await client.status("JOB-TEST-9");
+  eq(st["status"], "completed", "status data via bridge");
+
+  eq(fake.calls.length, 3, "three bridge calls");
+  for (const call of fake.calls) {
+    eq(call.url, BRIDGE_BASE_URL + BRIDGE_PATH, "bridge endpoint url");
+    eq(call.method, "POST", "bridge method");
+    eq(call.headers["x-bridge-token"], "tok-bridge-1", "bridge token header");
+    ok(!("X-API-Key" in call.headers), "no provider key header via bridge");
+  }
+  eq(JSON.parse(fake.calls[0].body!), { action: "balance" }, "balance body");
+  eq(
+    JSON.parse(fake.calls[1].body!),
+    { action: "verify", url: VALID_URL, webhook_url: "https://hook.example/cb" },
+    "verify body",
+  );
+  eq(
+    JSON.parse(fake.calls[2].body!),
+    { action: "status", job_id: "JOB-TEST-9" },
+    "status body",
+  );
+});
+
+Deno.test("bridge client: rejection envelope and 401 both raise SheerIDError", async () => {
+  const fake = new FakeBridge();
+  fake.rejectAction = "verify";
+  const client = new SheerIDClient({
+    apiKey: "",
+    baseUrl: BRIDGE_BASE_URL,
+    bridgeToken: "tok-bridge-1",
+    transport: fake.transport,
+  });
+  let threw = false;
+  try {
+    await client.verify(VALID_URL);
+  } catch (e) {
+    threw = e instanceof SheerIDError;
+  }
+  ok(threw, "ok:false envelope raises SheerIDError");
+
+  fake.unauthorized = true;
+  threw = false;
+  try {
+    await client.balance();
+  } catch (e) {
+    threw = e instanceof SheerIDError;
+  }
+  ok(threw, "bridge 401 raises SheerIDError");
+});
+
+Deno.test("bridge client: no token and no key → disabled, zero transport calls", async () => {
+  let calls = 0;
+  const exploding: Transport = () => {
+    calls++;
+    return Promise.resolve({ status: 500, text: "{}" });
+  };
+  const client = new SheerIDClient({
+    apiKey: "",
+    baseUrl: BRIDGE_BASE_URL,
+    bridgeToken: "",
+    transport: exploding,
+  });
+  ok(!client.hasKey, "unconfigured without token");
+  let threw = false;
+  try {
+    await client.balance();
+  } catch (e) {
+    threw = e instanceof SheerIDError;
+  }
+  ok(threw, "balance refuses when unconfigured");
+  eq(calls, 0, "zero transport calls when unconfigured");
+});
+
+// ---------------------------------------------------------------------
+// 20) توصيل الجسر: التوكن من backend_config، والغياب = مقفول
+// ---------------------------------------------------------------------
+function envOf(map: Record<string, string>) {
+  return (n: string) => map[n];
+}
+
+Deno.test("bridge wiring: token row in backend_config enables the service", async () => {
+  const seen: string[] = [];
+  const transport: Transport = (req) => {
+    seen.push(req.url);
+    if (req.url.includes("/rest/v1/backend_config")) {
+      eq(req.headers["Authorization"], "Bearer svc-test", "service role auth");
+      return Promise.resolve({
+        status: 200,
+        text: JSON.stringify([{ value: "tok-from-db" }]),
+      });
+    }
+    return Promise.resolve({ status: 404, text: "{}" });
+  };
+  const wiring = await buildSheeridFromEnvAsync({
+    env: envOf({ SUPABASE_SERVICE_ROLE_KEY: "svc-test" }),
+    sbUrl: "https://db.invalid",
+    logError: () => {},
+    transport,
+  });
+  ok(wiring.service.enabled(), "enabled with token from backend_config");
+  eq(seen.length, 1, "exactly one config read at build");
+});
+
+Deno.test("bridge wiring: missing token row keeps the service disabled", async () => {
+  const transport: Transport = (req) => {
+    if (req.url.includes("/rest/v1/backend_config")) {
+      return Promise.resolve({ status: 200, text: "[]" });
+    }
+    return Promise.resolve({ status: 404, text: "{}" });
+  };
+  const wiring = await buildSheeridFromEnvAsync({
+    env: envOf({ SUPABASE_SERVICE_ROLE_KEY: "svc-test" }),
+    sbUrl: "https://db.invalid",
+    logError: () => {},
+    transport,
+  });
+  ok(!wiring.service.enabled(), "disabled without token row (fail-closed)");
+});
+
+Deno.test("bridge wiring: SHEERID_API_KEY env override stays direct, no config read", async () => {
+  let calls = 0;
+  const transport: Transport = () => {
+    calls++;
+    return Promise.resolve({ status: 500, text: "{}" });
+  };
+  const wiring = await buildSheeridFromEnvAsync({
+    env: envOf({
+      SHEERID_API_KEY: "direct-key",
+      SUPABASE_SERVICE_ROLE_KEY: "svc-test",
+    }),
+    sbUrl: "https://db.invalid",
+    logError: () => {},
+    transport,
+  });
+  ok(wiring.service.enabled(), "enabled with direct env key");
+  eq(calls, 0, "no backend_config read in direct mode");
+});
+
+Deno.test("fetchBridgeToken: read failure is fail-safe empty", async () => {
+  const down: Transport = () =>
+    Promise.resolve({ status: 500, text: "boom" });
+  const token = await fetchBridgeToken({
+    sbUrl: "https://db.invalid",
+    keyOf: () => "svc-test",
+    transport: down,
+  });
+  eq(token, "", "empty token on read failure");
+  const noKey = await fetchBridgeToken({
+    sbUrl: "https://db.invalid",
+    keyOf: () => "",
+    transport: down,
+  });
+  eq(noKey, "", "empty token without service key");
 });
