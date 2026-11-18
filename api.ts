@@ -1053,6 +1053,12 @@ Deno.serve(async (req: Request) => {
   }
 
   const url = new URL(req.url);
+  if (req.method === "GET" && url.pathname.replace(/\/+$/, "").endsWith("/__build")) {
+    return new Response(JSON.stringify({ build: "e003-2026-11-18-b" }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
   if (req.method === "POST" && url.pathname.replace(/\/+$/, "").endsWith("/client-error")) {
     return handleClientError(req);
   }
