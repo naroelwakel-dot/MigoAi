@@ -117,6 +117,19 @@ const aiProducts = [
             { id: 'gemini_ai_plus_3m', name: 'Google AI Plus — 3 شهور (FW) — 41 ج.م', duration: '3 شهور (FW)', price: 41 }
         ]
     },
+    // اشتراك الطلاب (Google Student): منتج تحقق — السعر ثابت بقرار
+    // المالك (280 ج) واسم السلة «Google Student (سنة كاملة)» هو مفتاح
+    // الكتالوج ومسار التحقق الآلي على صفحة الفاتورة بعد الدفع.
+    {
+        id: 'google_student',
+        name: 'Google Student',
+        tag: 'اشتراك الطلاب الرسمي 🎓',
+        banner: 'images/ai/gemini_pro.webp', bannerAnim: 'images/ai/gemini_pro-anim.webp',
+        desc: 'خطة الطلاب الرسمية: Google AI Pro لمدة سنة كاملة. بعد الدفع هتكمل خطوة تحقق الطالب من صفحة فاتورتك (لينك التحقق الرسمي)، والتفعيل بيتم تلقائيًا أول ما التحقق ينجح.',
+        packages: [
+            { id: 'google_student_1y', name: 'Google AI Pro — سنة كاملة (تحقق طلاب) — 280 ج.م', duration: 'سنة كاملة', price: 280 }
+        ]
+    },
 
     // المونتاج وبناء المواقع بالذكاء الاصطناعي
     {
