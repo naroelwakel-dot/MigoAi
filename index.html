@@ -858,37 +858,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
    </div>
   </div>
   <!-- Operational Core Scripts -->
-  <script>
-    /* Binance QR: install AFTER app.js loads, otherwise app.js's own
-       selectPaymentMethod declaration overwrites this wrapper. */
-    window.__installBinanceQr = function() {
-        if (window.__binanceQrInstalled) return;
-        const base = window.selectPaymentMethod;
-        window.selectPaymentMethod = function(type, title, el) {
-        if (typeof base === 'function') {
-            base(type, title, el);
-        }
-        if (type === 'binance') {
-            const box = document.getElementById('checkoutDetailsBox');
-            const content = document.getElementById('checkoutPayContent');
-            const titleEl = document.getElementById('checkoutPayTitle');
-            if(box && content && titleEl) {
-                box.classList.remove('hidden');
-                titleEl.innerText = title;
-                content.innerHTML = `
-                    <p class="mb-2 text-white font-bold font-mono-code">امسح رمز الـ QR للدفع عبر باينانس باي (USDT):</p>
-                    <div class="bg-white p-2.5 inline-block rounded-xl mx-auto mb-2 shadow-2xl">
-                        <img src="binance-qr.png.jpg" alt="Binance Pay QR Code - Migo AI Solution" class="w-36 h-36 mx-auto rounded-lg" loading="lazy">
-                    </div>
-                    <p class="text-[11px] text-slate-400 font-mono-code">بعد إتمام التحويل أرسل صورة الإيصال عبر واتساب لتأكيد الشحن فوريًا.</p>
-                `;
-            }
-        }
-        };
-        window.__binanceQrInstalled = true;
-    };
-    window.addEventListener('load', function() { window.__installBinanceQr(); });
-  </script>
   <!-- Debounce for the header -->
   <script>
     function handleSearchInput(v){
@@ -908,9 +877,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           const s = document.createElement('script');
           s.src = file + '?' + v;
           s.async = false; // execute in the order listed above (data modules first, app.js last)
-          if (file === 'app.js') {
-            s.onload = function() { if (window.__installBinanceQr) window.__installBinanceQr(); };
-          }
           document.body.appendChild(s);
         });
       }
