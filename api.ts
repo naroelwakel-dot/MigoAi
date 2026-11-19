@@ -56,18 +56,29 @@ function getSmsDeps(): SmsDeps {
 // المصدر (ceil(cost × 82.5)) لو نزل تحتها، ومش بتخفّض أبدًا. مصدر
 // الخريطة والتكلفة هو تغذية المصدر المقروءة من السيرفر نفسه —
 // المعالج ما بيقراش جسم الطلب أصلًا فمفيش تكلفة من المستدعي بتعدّي
-// (تقوية اللجنة، الحزمة التانية). عنوان التغذية بيتحل بـ
+// (تقوية اللجنة، الحزمة التانية). مصدر التغذية مركّب: جدول
+// provenance_feed في قاعدة المتجر أولًا (هجرة 021 — الملف الثابت
+// المنشور كان في مستودع عام فخريطة الموردين والتكاليف كانت مكشوفة،
+// F-01/D-05)، والرابط المنشور احتياطي انتقال بس: عنوانه بيتحل بـ
 // resolvePriceFloorFeedUrl (‏PRICE_FLOOR_FEED_URL ثم
-// PROVENANCE_FEED_URL ثم المنشور الافتراضي)، والكتابة الوحيدة عبر
-// RPC ‏apply_price_floor (هجرة 017) بمفتاح الخدمة. التفاصيل في
-// price_floors/mod.ts.
+// PROVENANCE_FEED_URL ثم المنشور الافتراضي) وبيشتغل بس لو الجدول
+// فاضي/غايب/لقطته قديمة — فالمستهلك عمره ما يشوف تغذية فاضية في نص
+// التحويل. إسقاط الاحتياطي والرابط خطوة لاحقة بعد إثبات مسار القاعدة
+// حيًا. والكتابة الوحيدة عبر RPC ‏apply_price_floor (هجرة 017)
+// بمفتاح الخدمة. التفاصيل في price_floors/mod.ts.
 // ---------------------------------------------------------------------------
 let _priceFloorDeps: PriceFloorDeps | null = null;
 function getPriceFloorDeps(): PriceFloorDeps {
   if (_priceFloorDeps) return _priceFloorDeps;
   const env = (n: string) => Deno.env.get(n) || "";
   _priceFloorDeps = {
-    registry: new JsonRegistrySource(urlLoader(resolvePriceFloorFeedUrl(env))),
+    registry: new FallbackRegistrySource(
+      new JsonRegistrySource(dbFeedLoader({
+        baseUrl: SB_URL,
+        keyOf: () => env("SUPABASE_SERVICE_ROLE_KEY"),
+      })),
+      new JsonRegistrySource(urlLoader(resolvePriceFloorFeedUrl(env))),
+    ),
     client: new PostgrestPriceFloorClient({
       baseUrl: SB_URL,
       keyOf: () => env("SUPABASE_SERVICE_ROLE_KEY"),
@@ -88,8 +99,10 @@ function getPriceFloorDeps(): PriceFloorDeps {
 import {
   createExecutor,
   createNotifyCustomer,
+  dbFeedLoader,
   DrayikAdapter,
   FeedAvailabilitySource,
+  FallbackRegistrySource,
   FetchTransport,
   flagsFromEnv,
   GenericHttpAdapter,
@@ -187,8 +200,16 @@ function getExecutor(): StoreExecutor {
   });
   _executor = createExecutor({
     store: storeDb,
-    registry: new JsonRegistrySource(
-      urlLoader(env("PROVENANCE_FEED_URL") || "https://migoai.shop/provenance.json")),
+    // سجل المصدر: جدول provenance_feed أولًا (هجرة 021) والرابط
+    // المنشور احتياطي انتقال بس — نفس تركيب منفّذ الأسعار فوق.
+    registry: new FallbackRegistrySource(
+      new JsonRegistrySource(dbFeedLoader({
+        baseUrl: SB_URL,
+        keyOf: () => env("SUPABASE_SERVICE_ROLE_KEY"),
+      })),
+      new JsonRegistrySource(
+        urlLoader(env("PROVENANCE_FEED_URL") || "https://migoai.shop/provenance.json")),
+    ),
     availability: new FeedAvailabilitySource(
       urlLoader(env("AVAILABILITY_FEED_URL") || "https://migoai.shop/availability.json")),
     adapters,
@@ -436,21 +457,13 @@ function extractPlayerName(data: any): string {
   return "";
 }
 
-// أسماء العرض راجعة من منصات خارجية (نيكنيم TikTok/Telegram) وبتتعرض في
-// واجهة المتجر — بنشيل منها محارف الـ markup عند حدّ الكاشط نفسه، فمفيش
-// اسم مصمم يقدر يشيل <>&"' لأي مستهلك بعد كده (دفاع على طبقتين مع
-// الـ escaping في الواجهة).
-function cleanDisplayName(name: string): string {
-  return String(name || "").replace(/[<>&"']/g, "").trim();
-}
-
 // ----------------------------------------------------------------------------
 // Real source: TikTok profile (scrape)
 // ----------------------------------------------------------------------------
 async function resolveTikTokUser(username: string): Promise<{ name: string; avatar: string }> {
   const clean = username.replace(/^@/, "").trim().toLowerCase();
   try {
-    const res = await fetchWithTimeout(`https://www.tiktok.com/@${encodeURIComponent(clean)}`, {
+    const res = await fetchWithTimeout(`https://www.tiktok.com/@${clean}`, {
       headers: { "User-Agent": UA, "Accept": "text/html", "Accept-Language": "en-US,en;q=0.9" },
     }, 5000);
     if (res.ok) {
@@ -465,7 +478,7 @@ async function resolveTikTokUser(username: string): Promise<{ name: string; avat
           if (userObj) {
             nickname = userObj.nickname || userObj.uniqueId || clean;
             avatar = userObj.avatarLarger || userObj.avatarMedium || userObj.avatarThumb || "";
-            return { name: cleanDisplayName(nickname), avatar };
+            return { name: nickname, avatar };
           }
         } catch (_) {}
       }
@@ -473,7 +486,7 @@ async function resolveTikTokUser(username: string): Promise<{ name: string; avat
       const ogImage = html.match(/<meta property="og:image" content="([^"]+)"/i);
       if (ogTitle && ogTitle[1]) nickname = ogTitle[1].replace(/\s*\(@[^)]+\).*$/, "").replace(/\| TikTok$/, "").trim();
       if (ogImage && ogImage[1]) avatar = ogImage[1].replace(/&amp;/g, "&");
-      if (nickname) return { name: cleanDisplayName(nickname), avatar };
+      if (nickname) return { name: nickname, avatar };
     }
   } catch (_) {}
   return { name: "", avatar: "" };
@@ -510,7 +523,7 @@ function isTelegramGenericTemplate(name: string, avatar: string, clean: string):
 async function resolveTelegramUser(username: string): Promise<{ name: string; avatar: string }> {
   const clean = username.replace(/^@/, "").trim();
   try {
-    const res = await fetchWithTimeout(`https://t.me/${encodeURIComponent(clean)}`, { headers: { "User-Agent": UA } }, 5000);
+    const res = await fetchWithTimeout(`https://t.me/${clean}`, { headers: { "User-Agent": UA } }, 5000);
     if (res.ok) {
       const html = await res.text();
       let name = "";
@@ -519,7 +532,7 @@ async function resolveTelegramUser(username: string): Promise<{ name: string; av
       const ogImage = html.match(/<meta property="og:image" content="([^"]+)"/i);
       if (ogTitle && ogTitle[1]) name = ogTitle[1].trim();
       if (ogImage && ogImage[1]) avatar = ogImage[1].replace(/&amp;/g, "&");
-      if (name && !isTelegramGenericTemplate(name, avatar, clean)) return { name: cleanDisplayName(name), avatar };
+      if (name && !isTelegramGenericTemplate(name, avatar, clean)) return { name, avatar };
     }
   } catch (_) {}
   return { name: "", avatar: "" };
@@ -895,7 +908,7 @@ const GEMINI_MODELS = ["gemini-flash-lite-latest", "gemini-3.5-flash-lite", "gem
 // qwen الأول عن قصد: اتجرّب وطلعت دقيق في الأسعار؛ gpt-oss كان بيخترع أسعار، فسايبينه الثاني بس.
 const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 const GROQ_MODELS = ["qwen/qwen3.8-27b", "openai/gpt-oss-120b"];
-const SITE_URL = "https://migoai.shop/";
+const SITE_URL = "https://naroelwakel-dot.github.io/MigoAi/";
 const WHATSAPP = "https://wa.me/201060934020";
 
 // Store-chat personalities. The widget picks one per visitor and sends its id as
@@ -946,7 +959,7 @@ async function getCatalog(): Promise<{ sku: string; price: number; kind: string 
 }
 
 // --- تفاصيل الخدمات من ملفات المتجر: وصف ومتطلبات ومددة فقط، بدون أي سعر ---
-const DETAILS_URL = "https://migoai.shop/details.json";
+const DETAILS_URL = "https://naroelwakel-dot.github.io/MigoAi/details.json";
 let __details: any[] | null = null;
 let __detailsAt = 0;
 async function getDetails(): Promise<any[]> {
@@ -1234,7 +1247,6 @@ const clientErrorBuckets = new Map<string, { windowStart: number; count: number 
 async function handleClientError(req: Request): Promise<Response> {
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
   const now = Date.now();
-  if (clientErrorBuckets.size > 5000) clientErrorBuckets.clear(); // تخلص من النمو الزايد (نفس قاعدة RATE_MAP)
   const bucket = clientErrorBuckets.get(ip);
   if (bucket && now - bucket.windowStart < 60_000 && bucket.count >= 20) {
     return new Response(null, { status: 204 });
@@ -1253,16 +1265,7 @@ async function handleClientError(req: Request): Promise<Response> {
   }
   const cap = (v: unknown, n: number) =>
     typeof v === "string" ? v.slice(0, n) : "";
-  // نفس تنقية الأسرار اللي logError بيطبقها على errorText: الطريق ده
-  // مفتوح من غير مصادقة، فرسالة العميل ما تدخلش سجل الأخطاء المركزي خام.
-  const scrubSecrets = (s: string) => {
-    let out = s;
-    const writeKey = Deno.env.get("LOG_WRITE_KEY") || "";
-    if (writeKey) out = out.split(writeKey).join("***");
-    if (SB_KEY) out = out.split(SB_KEY).join("***");
-    return out;
-  };
-  const message = scrubSecrets(cap(body.message, 300));
+  const message = cap(body.message, 300);
   if (!message) return new Response(null, { status: 204 });
 
   const context =

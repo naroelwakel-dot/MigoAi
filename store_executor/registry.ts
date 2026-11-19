@@ -134,3 +134,87 @@ export function urlLoader(url: string): Loader {
     return await res.json();
   };
 }
+
+// ------------------------------------------------- مصدر قاعدة البيانات
+/**
+ * محمّل تغذية المصدر من جدول `provenance_feed` في قاعدة المتجر نفسها
+ * (هجرة 021): صف وحيد (id=1) شايل وثيقة `migo-provenance` v1 كاملة
+ * في عمود `feed` (jsonb) — نفس الوثيقة اللي كانت بتتنشر ملفًا ثابتًا
+ * على الموقع العام. الناشر (نبض الخلفية) بيكتب الصف بنفس إيقاع النشر
+ * القديم، والمستهلكون بيقرأوه من هنا أولًا.
+ *
+ * ليه النقل: الملف الثابت كان في مستودع GitHub عام، فخريطة الموردين
+ * والتكاليف الدقيقة كانت مقروءة لأي حد (F-01/D-05). الجدول RLS مقفول
+ * بلا سياسات — القراءة بمفتاح الخدمة بس، ومفيش أي سطح عام.
+ *
+ * أي فشل (مفتاح غايب/الجدول لسه ما اتعملش/مفيش صف/HTTP) = رمي خطأ،
+ * فـ JsonRegistrySource بيرجّع null والمصدر الاحتياطي (الرابط) بيشتغل
+ * — المستهلك عمره ما يشوف تغذية فاضية في نص التحويل (Fail-Closed
+ * على القيم، متاح على المسار).
+ */
+export interface ProvenanceFeedDbOptions {
+  baseUrl: string; // https://<ref>.supabase.co
+  keyOf: () => string; // مفتاح الخدمة من البيئة — ما بيتحفظش هنا
+  fetchFn?: typeof fetch; // قابل للحقن للاختبارات — الافتراضي fetch العام
+}
+
+export function dbFeedLoader(opts: ProvenanceFeedDbOptions): Loader {
+  return async () => {
+    const key = opts.keyOf();
+    if (!key) throw new Error("SUPABASE_SERVICE_ROLE_KEY is not set");
+    const doFetch = opts.fetchFn ?? fetch;
+    const res = await doFetch(
+      `${opts.baseUrl}/rest/v1/provenance_feed?id=eq.1&select=feed`,
+      {
+        headers: {
+          "apikey": key,
+          "Authorization": `Bearer ${key}`,
+          "Accept": "application/json",
+        },
+        cache: "no-store",
+      },
+    );
+    if (!res.ok) throw new Error(`provenance_feed http ${res.status}`);
+    const rows: unknown = await res.json();
+    if (!Array.isArray(rows) || rows.length === 0) {
+      throw new Error("provenance_feed empty");
+    }
+    const feed = (rows[0] as { feed?: unknown } | null)?.feed;
+    if (!feed || typeof feed !== "object") {
+      throw new Error("provenance_feed row has no feed document");
+    }
+    return feed;
+  };
+}
+
+/**
+ * مصدر مركّب: الأساسي أولًا، والاحتياطي بس لو الأساسي رجّع null
+ * (غايب/قديم/فاسد). بيُستخدم في مرحلة التحويل: قاعدة البيانات أساسي
+ * والرابط المنشور احتياطي — فلو الجدول فاضي أو لسه ما اتعملش،
+ * المستهلك بيكمل من الرابط زي النهاردة بالظبط، ولو القاعدة شايلة
+ * لقطة صالحة هي اللي بتتحكم. إسقاط الاحتياطي خطوة لاحقة بعد إثبات
+ * مسار القاعدة حيًا (انظر خطة التحويل في هجرة 021).
+ */
+export class FallbackRegistrySource implements RegistrySource {
+  private primary: RegistrySource;
+  private fallback: RegistrySource;
+  constructor(primary: RegistrySource, fallback: RegistrySource) {
+    this.primary = primary;
+    this.fallback = fallback;
+  }
+  async snapshot(): Promise<RegistrySnapshot | null> {
+    const snap = await this.primary.snapshot();
+    if (snap) return snap;
+    return await this.fallback.snapshot();
+  }
+  async resolve(productKey: string): Promise<ProvenanceRecord | null> {
+    const snap = await this.snapshot();
+    if (!snap) return null;
+    return snap.records.find((r) => r.product_key === productKey) ?? null;
+  }
+  async resolveBySku(storeSku: string): Promise<ProvenanceRecord | null> {
+    const snap = await this.snapshot();
+    if (!snap) return null;
+    return snap.records.find((r) => r.store_sku === storeSku) ?? null;
+  }
+}
