@@ -51,6 +51,13 @@ class FakeClient implements BotExchangeRpcClient {
     if (this.fail) return Promise.reject(new Error("rpc boom"));
     return Promise.resolve({ claimed: true, event_id: args.p_event_id });
   }
+  callUnclaim(
+    args: Parameters<BotExchangeRpcClient["callUnclaim"]>[0],
+  ): Promise<Record<string, unknown>> {
+    this.calls.push(`unclaim:${args.p_event_id}:${args.p_bot_topup_id}`);
+    if (this.fail) return Promise.reject(new Error("rpc boom"));
+    return Promise.resolve({ unclaimed: true, event_id: args.p_event_id });
+  }
 }
 
 function deps(client: FakeClient, token = TOKEN): BotExchangeDeps {
@@ -180,4 +187,60 @@ Deno.test("RPC failure is a 502, never a half answer", async () => {
   eq(res?.status, 502, "status");
   eq((await res!.json()).error, "rpc_failed", "error");
   ok(client.calls.length === 1, "rpc attempted once");
+});
+
+Deno.test("unclaim happy path returns RPC result verbatim", async () => {
+  const client = new FakeClient();
+  const res = await handleBotExchangeRequest(
+    req("/wallet/bot-exchange-unclaim", {
+      event_id: EVENT_ID,
+      bot_topup_id: "topup-uuid-1",
+    }, TOKEN), deps(client));
+  eq(res?.status, 200, "status");
+  const body = await res!.json();
+  eq(body.ok, true, "ok");
+  eq(body.unclaimed, true, "unclaimed passthrough");
+  eq(client.calls, [`unclaim:${EVENT_ID}:topup-uuid-1`], "rpc call");
+});
+
+Deno.test("unclaim refusal passes through (never forced)", async () => {
+  const client = new FakeClient();
+  client.callUnclaim = () => Promise.resolve({
+    unclaimed: false,
+    reason: "not_bot_claimed",
+  });
+  const res = await handleBotExchangeRequest(
+    req("/wallet/bot-exchange-unclaim", {
+      event_id: EVENT_ID,
+      bot_topup_id: "topup-uuid-1",
+    }, TOKEN), deps(client));
+  eq(res?.status, 200, "status");
+  const body = await res!.json();
+  eq(body.ok, true, "ok");
+  eq(body.unclaimed, false, "refusal passthrough");
+  eq(body.reason, "not_bot_claimed", "reason passthrough");
+});
+
+Deno.test("unclaim validates body shape and bridge gate before RPC", async () => {
+  const client = new FakeClient();
+  const badEvent = await handleBotExchangeRequest(
+    req("/wallet/bot-exchange-unclaim",
+      { event_id: "not-a-uuid", bot_topup_id: "t-1" }, TOKEN),
+    deps(client));
+  eq(badEvent?.status, 400, "bad event id");
+  const noToken = await handleBotExchangeRequest(
+    req("/wallet/bot-exchange-unclaim",
+      { event_id: EVENT_ID, bot_topup_id: "t-1" }), deps(client));
+  eq(noToken?.status, 401, "no-token status");
+  eq(client.calls, [], "no RPC calls for invalid/unauthenticated bodies");
+});
+
+Deno.test("unclaim RPC failure is a 502", async () => {
+  const client = new FakeClient();
+  client.fail = true;
+  const res = await handleBotExchangeRequest(
+    req("/wallet/bot-exchange-unclaim",
+      { event_id: EVENT_ID, bot_topup_id: "t-1" }, TOKEN), deps(client));
+  eq(res?.status, 502, "status");
+  eq((await res!.json()).error, "rpc_failed", "error");
 });
