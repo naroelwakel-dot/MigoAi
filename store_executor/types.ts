@@ -194,6 +194,12 @@ export interface HttpTransport {
 /** عقد المحوّل — مرآة `ProviderAdapter` عند البوت. */
 export interface SupplierAdapter {
   key: string;
+  /**
+   * قيم سرية معروفة (مفتاح الـ API) — المنفّذ بينقّي بيها نصوص أخطاء
+   * المورد قبل ما تتخزن في last_error أو توصل سجل الأخطاء، فالمفتاح
+   * لو اتسرّب في جسم خطأ من المورد ما يتلقّطش في أي سطح عندنا.
+   */
+  secretValues?(): string[];
   getBalance(): Promise<BalanceResult>;
   getSnapshot(listingRef: string): Promise<SnapshotResult>;
   submitPurchase(input: {

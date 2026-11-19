@@ -1270,13 +1270,13 @@ async function verifyPlayerAccount() {
             if (nameInput) nameInput.value = retrievedName || uid;
             if (statusBox) {
                 statusBox.className = "p-2.5 rounded-xl text-xs font-bold text-center border bg-emerald-500/20 border-emerald-500/50 text-emerald-300";
-                statusBox.innerHTML = `✅ تم التحقق: <span class="text-white font-mono underline">${retrievedName || uid}</span>`;
+                statusBox.innerHTML = `✅ تم التحقق: <span class="text-white font-mono underline">${escapeHtml(retrievedName || uid)}</span>`;
             }
             if (avatarUrl) {
                 const iconBox = document.getElementById('modalTargetIcon');
                 if (iconBox) iconBox.innerHTML = `<img src="${avatarUrl}" class="w-full h-full object-cover rounded-xl" alt="avatar" loading="lazy" decoding="async">`;
             }
-            showToast(`تم التعرف على الحساب: ${retrievedName || uid}`);
+            showToast(`تم التعرف على الحساب: ${escapeHtml(retrievedName || uid)}`);
         } else {
             if (statusBox) {
                 statusBox.className = "p-2.5 rounded-xl text-xs font-bold text-center border bg-red-500/20 border-red-500/50 text-red-300";
@@ -1676,7 +1676,7 @@ function __awaitConfirm(email) {
         box.className = 'mt-2';
         form.appendChild(box);
     }
-    box.innerHTML = '<p class="otp-hint">بعتنالك لينك تأكيد على إيميلك <b>' + email + '</b>.<br>افتح الإيميل ودوس على اللينك، وبعدها ارجع هنا وسجّل دخول.</p>';
+    box.innerHTML = '<p class="otp-hint">بعتنالك لينك تأكيد على إيميلك <b>' + escapeHtml(email) + '</b>.<br>افتح الإيميل ودوس على اللينك، وبعدها ارجع هنا وسجّل دخول.</p>';
     showToast('بعتنالك لينك تأكيد على إيميلك');
 }
 function __finishFromUrl() {

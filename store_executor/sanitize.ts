@@ -172,6 +172,23 @@ export function findLeaks(
 }
 
 /**
+ * بوابة مخططات الروابط (مرآة بوابة SheerID في sheerid/service.ts):
+ * تحليل نصي خالص — ممنوع فتح الرابط أو جلبه أبدًا. القيمة اللي
+ * بتتحلّل كـ URL لازم مخططها يكون http/https؛ أي مخطط غير ويب
+ * (javascript:/data:/vbscript:/file: وأي scheme تاني) بيوقع العنصر.
+ * القيمة اللي مش URL أصلًا (كود/حساب/كلمة سر) بتعدي زي ما هي.
+ */
+export function hasNonWebScheme(value: string): boolean {
+  let parsed: URL | null = null;
+  try {
+    parsed = new URL(String(value ?? "").trim());
+  } catch {
+    return false; // مش URL — قيمة نصية عادية، مش شأن البوابة دي
+  }
+  return parsed.protocol !== "http:" && parsed.protocol !== "https:";
+}
+
+/**
  * بوابة التسليم للعميل: العناصر بتعدي بس لو نضيفة. عنصر ملوّث بيتحذف
  * وبيتسجّل — العميل بياخد الباقي النضيف، ولو الكل اتحذف فالتسليم
  * بيقف manual_review بدل ما يسرّب (بتتفرض في المنفّذ).
@@ -184,8 +201,13 @@ export function customerSafeDelivery(
   let dropped = 0;
   for (const item of items) {
     const probe: DeliveryItem[] = [item];
-    if (findLeaks(probe, opts).length === 0) safe.push(item);
-    else dropped++;
+    if (findLeaks(probe, opts).length > 0) {
+      dropped++;
+    } else if (hasNonWebScheme(item.value)) {
+      dropped++;
+    } else {
+      safe.push(item);
+    }
   }
   return { safe, dropped };
 }
