@@ -11,6 +11,10 @@
  *      والشحن بيحصلوا في القاعدة في نفس المعاملة.
  *   4) بتنادي wallet_sms_rematch انتهازيًا: أي رسالة جديدة بتلحق
  *      أحداث قديمة فضلت unmatched (عميل قدّم طلبه بعد الرسالة).
+ *   5) الحزمة 15: بتنادي order_sms_rematch بنفس الانتهازية وبعد
+ *      إعادة مطابقة الشحنات — نفس الأحداث بقت ممكن تؤكد طلبات
+ *      شراء (order_sms_try_match في القاعدة). فشل أي إعادة مطابقة
+ *      مش بيكسر الرد على الرسالة الحالية أبدًا.
  *
  * الأسرار من البيئة بس. غياب SMS_BRIDGE_KEY أو مفتاح الخدمة =
  * النقطة مقفولة (503) — مفيش إدخال مجهول أبدًا.
@@ -40,6 +44,7 @@ export interface SmsRpcClient {
     p_package_name: string | null;
   }): Promise<Record<string, unknown>>;
   callRematch(limit: number): Promise<Record<string, unknown>>;
+  callOrderRematch(limit: number): Promise<Record<string, unknown>>;
 }
 
 interface PgOptions {
@@ -85,6 +90,9 @@ export class PostgrestSmsClient implements SmsRpcClient {
   }
   callRematch(limit: number) {
     return this.rpc("wallet_sms_rematch", { p_limit: limit });
+  }
+  callOrderRematch(limit: number) {
+    return this.rpc("order_sms_rematch", { p_limit: limit });
   }
 }
 
@@ -242,7 +250,16 @@ export async function handleSmsRequest(
       deps.logError("wallet_sms.rematch", "rematch pass failed", e);
     }
 
-    return json({ ok: true, ...result, rematch });
+    // إعادة مطابقة الطلبات (الحزمة 15): بعد إعادة مطابقة الشحنات
+    // بنفس العزل — فشلها بيتسجل وبيعدّي، والرد بيضل ok.
+    let orderRematch: Record<string, unknown> | null = null;
+    try {
+      orderRematch = await deps.client.callOrderRematch(50);
+    } catch (e) {
+      deps.logError("wallet_sms.order_rematch", "order rematch pass failed", e);
+    }
+
+    return json({ ok: true, ...result, rematch, order_rematch: orderRematch });
   } catch (e) {
     // فشل الإدخال نفسه (قاعدة/شبكة): 502 → الموبايل بيحتفظ بالرسالة
     // في طابوره وبيعيد المحاولة — ومفتاح التكرار بيمنع الشحن مرتين.

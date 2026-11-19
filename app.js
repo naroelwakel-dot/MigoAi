@@ -74,6 +74,12 @@ const PAYMENT_METHODS_DATA = {
         value: "855602846",
         instruction: "قم بالتحويل الداخلي عبر Binance Pay إلى الـ Pay ID التالي:"
     },
+    bybit: {
+        title: "باي بيت (Bybit)",
+        type: "copy",
+        value: "593230356",
+        instruction: "قم بالتحويل الداخلي عبر Bybit إلى الـ UID التالي:"
+    },
     redotpay: {
         title: "RedotPay",
         type: "copy",
@@ -1341,6 +1347,8 @@ function closeCheckoutModal() {
     const modal = document.getElementById('checkoutModal');
     if (modal) { modal.classList.add('hidden'); modal.classList.remove('flex'); }
     selectedPayment = null;
+    // الحزمة 15: قفل النافذة بيصفّر عدّاد/تلميح التأكيد التلقائي.
+    if (typeof window.__resetAutoConfirmUi === 'function') window.__resetAutoConfirmUi();
     const box = document.getElementById('checkoutDetailsBox');
     const btn = document.getElementById('confirmPaymentBtn');
     if (box) box.classList.add('hidden');
@@ -1356,6 +1364,12 @@ function copyTextToClipboard(txt) {
 
 function selectPaymentMethod(methodKey, displayName, btnElement) {
     selectedPayment = displayName;
+    // الحزمة 15: مفتاح الوسيلة بيتحفظ عشان مسار «أكّد الدفع» في
+    // index.html يفرّق سكك التأكيد التلقائي من غير ما يعتمد على
+    // نص التسمية المعروض.
+    window.__selectedMethodKey = methodKey;
+    // أي عدّاد/تلميح تأكيد من وسيلة سابقة بيتصفّر مع تغيير الوسيلة.
+    if (typeof window.__resetAutoConfirmUi === 'function') window.__resetAutoConfirmUi();
     document.querySelectorAll('.pay-method-btn').forEach(btn => btn.classList.remove('border-sky-400', 'bg-slate-800'));
     if (btnElement) btnElement.classList.add('border-sky-400', 'bg-slate-800');
     
@@ -1373,6 +1387,16 @@ function selectPaymentMethod(methodKey, displayName, btnElement) {
             content.innerHTML = `الدفع عبر <b>${displayName}</b> متاح. اضغط تأكيد وسنزودك بالتفاصيل عبر واتساب.`;
         } else if (methodData.type === 'copy') {
             content.innerHTML = `${methodData.instruction}<br>${copyBtn(methodData.value)}`;
+            // الحزمة 15: سكك المنصات ليها خانة رقم عملية خاصة بها
+            // جوّه لوحة الوسيلة نفسها (مش خانة المُرسل العامة) —
+            // التأكيد بيطالب بها قبل أي نداء للخادم.
+            if (methodKey === 'binance' || methodKey === 'bybit') {
+                const appName = methodKey === 'binance' ? 'Binance' : 'Bybit';
+                content.innerHTML += `<div class="mt-3 text-right">
+                    <label class="block text-xs font-medium text-slate-300 mb-1" for="exchangeTxIdInput">حط رقم العملية هنا: <span class="text-red-400">*</span></label>
+                    <input type="text" id="exchangeTxIdInput" placeholder="مثال: رقم العملية من تطبيق ${appName}" class="w-full bg-[#12151b] border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-mono-code outline-none focus:border-white/30">
+                </div>`;
+            }
         } else if (methodData.type === 'bnpl') {
             content.innerHTML = `${methodData.text}<br><span class="text-sky-300 block mt-1 font-bold">${methodData.notice || '(تواصل معنا عبر واتساب للحصول على رابط إتمام الدفع)'}</span>`;
         } else {
@@ -1380,8 +1404,27 @@ function selectPaymentMethod(methodKey, displayName, btnElement) {
         }
     }
 
+    // الحزمة 15: تلميح خانة المُرسل بيتظبط حسب السكة — للمنصات هو
+    // إثبات المعرفة (حساب/Pay ID المُرسل)، وللباقي النص الأصلي
+    // بالحرف.
+    const senderInput = document.getElementById('senderAccountInput');
+    if (senderInput) {
+        if (methodKey === 'binance' || methodKey === 'bybit') {
+            senderInput.placeholder = 'رقم حسابك / Pay ID اللي حوّلت منه';
+        } else {
+            senderInput.placeholder = 'مثال: 010xxxxxxxx أو يوزر إنستاباي / باينانس';
+        }
+    }
+
     const confBtn = document.getElementById('confirmPaymentBtn');
-    if (confBtn) confBtn.classList.remove('hidden');
+    if (confBtn) {
+        confBtn.classList.remove('hidden');
+        // سكك التأكيد التلقائي الخمسة زرارها «أكّد الدفع» — باقي
+        // الوسائل تسميتها بيديرها ملف index.html زي ما هي.
+        if (['vodafone', 'instapay', 'etisalat', 'binance', 'bybit'].indexOf(methodKey) !== -1) {
+            confBtn.innerText = 'أكّد الدفع';
+        }
+    }
 }
 
 function finalizeOrderWhatsApp() {

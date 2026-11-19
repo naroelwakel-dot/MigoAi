@@ -858,6 +858,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <span class="w-11 h-11 rounded-xl bg-white flex items-center justify-center p-1.5 shadow"><img src="https://cdn-public.eesel.ai/0cbaf9ba-8014-447a-b542-35590921b469/f5283076-5741-4392-be55-32f19bc3b411/175cdc14e53246aaa4dff774d3f2e305.webp" alt="باينانس باي" class="max-w-full max-h-full object-contain" loading="lazy"></span>
       <span class="text-[10px] font-medium text-white">Binance Pay</span>
      </button>
+     <button type="button" onclick="selectPaymentMethod('bybit', '🟡 باي بيت (Bybit Pay)', this)" class="pay-method-btn sky-card p-2.5 rounded-xl flex flex-col items-center justify-center gap-1.5 cursor-pointer">
+      <span class="w-11 h-11 rounded-xl bg-white flex items-center justify-center p-1.5 shadow"><img src="images/bybit-logo.png" alt="باي بيت" class="max-w-full max-h-full object-contain" loading="lazy"></span>
+      <span class="text-[10px] font-medium text-white">Bybit Pay</span>
+     </button>
      <button type="button" onclick="selectPaymentMethod('redotpay', '🔴 ريدوت باي (RedotPay)', this)" class="pay-method-btn sky-card p-2.5 rounded-xl flex flex-col items-center justify-center gap-1.5 cursor-pointer">
       <span class="w-11 h-11 rounded-xl flex items-center justify-center text-white font-bold text-sm shadow" style="background:#e11d48">R</span>
       <span class="text-[10px] font-medium text-white">RedotPay</span>
@@ -915,9 +919,11 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <label class="block text-xs font-medium text-slate-400 mb-1" for="senderAccountInput">رقم المحفظة / الحساب الذي قمت بالتحويل منه: <span class="text-red-400">*</span></label>
       <input type="text" id="senderAccountInput" placeholder="مثال: 010xxxxxxxx أو يوزر إنستاباي / باينانس" class="w-full bg-[#1f2530] border border-white/10 rounded-xl px-3 py-2 text-xs text-white font-mono-code outline-none focus:border-white/30">
     </div>
+    <div id="confirmRetryHint" class="hidden mb-3 text-center text-[11px] leading-relaxed text-amber-300 bg-amber-400/10 border border-amber-300/20 rounded-xl px-3 py-2"></div>
     <button type="button" id="confirmPaymentBtn" onclick="finalizeOrderWhatsApp()" class="hidden w-full agentql-btn-primary py-2.5 rounded-xl text-xs cursor-pointer font-mono-code">
      CONFIRM & SEND INVOICE VIA WHATSAPP 💬
     </button>
+    <a id="confirmWhatsAppLink" href="#" target="_blank" rel="noopener" class="hidden mt-2 text-center text-[11px] text-sky-300 underline cursor-pointer">أو أكّد طلبك عبر واتساب</a>
    </div>
   </div>
   <!-- Operational Core Scripts -->
@@ -1580,6 +1586,216 @@ async function walletFinalize(snapshot) {
   showToast('طلبك اتسجل برقم ' + ref + ' لكن الدفع من المحفظة متعذّر دلوقتي — تواصل معانا لإتمامه', 'error');
 }
 
+// ===== الحزمة 15: تأكيد دفع الطلبات تلقائيًا (زر «أكّد الدفع») =====
+// سكك المحمول (فودافون/إنستاباي/اتصالات) بتتأكد من رسائل البنك
+// اللي الجسر بيجمعها (order_confirm_payment)، وسكك المنصات
+// (Binance/Bybit) من سجل المنصة نفسه برقم العملية
+// (order_claim_exchange_payment) — الاتنين مربوطين بالطلب اللي
+// recordOrder سجّله برقمه الحقيقي. مفيش تأكيد فوري = تلميح فوق
+// الزرار + عدّاد ٣٠ ثانية وإعادة ضغط (إعادة الضغط بتنادي التأكيد
+// بس — الطلب موجود ومش بيتنشأ تاني). فشل التسجيل نفسه بيرجع
+// العميل للمسار القديم (واتساب) زي ما هو — محدش بيقف.
+var P15_MOBILE_KEYS = { vodafone: 1, instapay: 1, etisalat: 1 };
+var P15_EXCHANGE_KEYS = { binance: 1, bybit: 1 };
+var p15State = null; // { ref, method_key, sender_account, snapshot, terminal }
+var p15CountdownTimer = null;
+
+function p15ArDigits(n) {
+  return String(n).replace(/[0-9]/g, function (d) { return '٠١٢٣٤٥٦٧٨٩'[Number(d)]; });
+}
+
+function p15Rpc(name, payload) {
+  return getSessionInfo().then(function (sess) {
+    return fetch(SUPABASE_URL + '/rest/v1/rpc/' + name, {
+      method: 'POST',
+      headers: { 'apikey': SUPABASE_ANON_KEY,
+                 'Authorization': 'Bearer ' + (sess.token || SUPABASE_ANON_KEY),
+                 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    }).then(function (r) {
+      if (!r.ok) throw new Error(name + ' HTTP ' + r.status);
+      return r.json();
+    });
+  });
+}
+
+function p15ShowHint(text) {
+  var hint = document.getElementById('confirmRetryHint');
+  if (hint) { hint.textContent = text; hint.classList.remove('hidden'); }
+}
+function p15HideHint() {
+  var hint = document.getElementById('confirmRetryHint');
+  if (hint) { hint.textContent = ''; hint.classList.add('hidden'); }
+}
+function p15StopCountdown() {
+  if (p15CountdownTimer) { clearInterval(p15CountdownTimer); p15CountdownTimer = null; }
+}
+function p15StartCountdown(btn) {
+  p15StopCountdown();
+  var left = 30;
+  btn.disabled = true;
+  btn.innerText = 'أكّد الدفع (' + p15ArDigits(left) + ')';
+  p15CountdownTimer = setInterval(function () {
+    left -= 1;
+    if (left <= 0) {
+      p15StopCountdown();
+      btn.disabled = false;
+      btn.innerText = 'أكّد الدفع';
+    } else {
+      btn.innerText = 'أكّد الدفع (' + p15ArDigits(left) + ')';
+    }
+  }, 1000);
+}
+
+// تصفير واجهة التأكيد — app.js بيناديها عند تغيير الوسيلة وقفل
+// النافذة: العدّاد بيقف، والتلميح والرابط بيختفوا، والحالة بتتنضف.
+window.__resetAutoConfirmUi = function () {
+  p15StopCountdown();
+  p15State = null;
+  p15HideHint();
+  var link = document.getElementById('confirmWhatsAppLink');
+  if (link) { link.classList.add('hidden'); link.classList.remove('block'); link.removeAttribute('href'); link.onclick = null; }
+  var btn = document.getElementById('confirmPaymentBtn');
+  if (btn) btn.disabled = false;
+};
+
+// رابط واتساب احتياطي برقم الطلب الحقيقي (نفس صيغة رسالة المسار
+// القديم، بس بالمرجع الحقيقي بدل الرقم العشوائي).
+function p15ArmWhatsAppLink(snapshot, ref) {
+  var link = document.getElementById('confirmWhatsAppLink');
+  if (!link) return;
+  var msg = 'السلام عليكم، أود تأكيد طلبي الجديد من Migo AI Solution\n';
+  msg += '*رقم الفاتورة:* #' + ref + '\n';
+  msg += '*طريقة الدفع:* ' + snapshot.payment + '\n';
+  msg += '*الحساب المُحوّل منه:* ' + snapshot.sender_account + '\n\n';
+  msg += '*--- تفاصيل الطلب ---*\n';
+  (snapshot.cart || []).forEach(function (item, index) {
+    msg += (index + 1) + '. *' + (item.name || '') + '*\n   - السعر: ' + Number(item.price || 0).toLocaleString() + ' ج.م\n   - البيانات: [' + (item.details || '') + ']\n';
+  });
+  msg += '\n*الإجمالي المطلوب:* ' + (snapshot.total_text || '');
+  if (snapshot.coupon) msg += '\n*(كود الخصم المطبق: ' + snapshot.coupon + ')*';
+  link.href = 'https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent(msg);
+  link.classList.remove('hidden');
+  link.classList.add('block');
+  link.onclick = function () {
+    try { localStorage.setItem('migo_last_order_v1', JSON.stringify({ t: Date.now(), orderId: ref, cart: snapshot.cart, coupon: snapshot.coupon })); } catch (e) {}
+    try { cart = []; appliedCoupon = null; saveCartToStorage(); } catch (e) {}
+    closeCheckoutModal();
+  };
+}
+
+function p15ShowSuccess(ref) {
+  p15StopCountdown();
+  p15HideHint();
+  var box = document.getElementById('checkoutDetailsBox');
+  var content = document.getElementById('checkoutPayContent');
+  if (box && content) {
+    box.classList.remove('hidden');
+    content.innerHTML = '<p class="text-white font-bold mb-1">تم تأكيد الدفع ✅</p>'
+      + '<p class="text-[11px] text-slate-300 leading-relaxed">طلبك رقم <b class="font-mono-code">' + ref + '</b> — الدفع اتأكد وطلبك قيد التنفيذ</p>';
+  }
+  var btn = document.getElementById('confirmPaymentBtn');
+  if (btn) { btn.disabled = true; btn.classList.add('hidden'); }
+  var link = document.getElementById('confirmWhatsAppLink');
+  if (link) { link.classList.add('hidden'); link.classList.remove('block'); }
+  try { localStorage.setItem('migo_last_order_v1', JSON.stringify({ t: Date.now(), orderId: ref, cart: p15State ? p15State.snapshot.cart : [], coupon: p15State ? p15State.snapshot.coupon : null })); } catch (e) {}
+  try { cart = []; appliedCoupon = null; saveCartToStorage(); } catch (e) {}
+  showToast('تم تأكيد الدفع ✅ طلبك ' + ref);
+}
+
+async function p15AttemptConfirm(btn, isExchange, txId) {
+  if (!p15State || !p15State.ref) return;
+  if (btn) btn.disabled = true;
+  var data = null;
+  try {
+    if (isExchange) {
+      data = await p15Rpc('order_claim_exchange_payment', {
+        p_order_ref: p15State.ref,
+        p_sender_account: p15State.sender_account,
+        p_rail: p15State.method_key,
+        p_exchange_ref: txId
+      });
+    } else {
+      data = await p15Rpc('order_confirm_payment', {
+        p_order_ref: p15State.ref,
+        p_sender_account: p15State.sender_account
+      });
+    }
+  } catch (e) {
+    // خطأ شبكة/RPC بيتعامل كـ pending: نفس تجربة إعادة المحاولة،
+    // والنافذة مش بتتكسر أبدًا.
+    console.error('[Migo] auto-confirm request failed', e);
+    data = null;
+  }
+  var st = (data && data.status) || 'pending';
+  if (st === 'confirmed') { p15ShowSuccess(p15State.ref); return; }
+  if (!isExchange && st === 'ambiguous') {
+    // غموض محسوم للمراجعة: الزرار بيقفل على الطلب ده نهائيًا.
+    p15State.terminal = 'ambiguous';
+    p15ShowHint('تحويلك وصلنا وهو قيد المراجعة — هنأكد طلبك خلال دقائق، مش محتاج تعمل حاجة');
+    if (btn) { btn.disabled = true; btn.innerText = 'أكّد الدفع'; }
+    return;
+  }
+  if (isExchange && st !== 'pending' && st !== 'rate_not_set' && st !== 'not_found') {
+    // حالات منصات برسائل جاهزة من مسار المحفظة (الحزمة 12):
+    // already_claimed / already_credited / invalid_asset /
+    // invalid_ref / invalid_rail — بنعرض رسالتها مكيّفة للطلبات،
+    // والزرار بيضل مفتوح عشان العميل يقدر يصحح رقم العملية.
+    var out = (typeof __walletClaimStatusAr === 'function')
+      ? __walletClaimStatusAr(data || {})
+      : { text: 'حصلت مشكلة في تأكيد الإيداع — حاول تاني أو كلّمنا' };
+    p15ShowHint(String(out.text).replace('الشحن التلقائي', 'التأكيد التلقائي').replace('اتشحن', 'اتأكد'));
+    if (btn) { btn.disabled = false; btn.innerText = 'أكّد الدفع'; }
+    return;
+  }
+  // pending (أو rate_not_set / not_found / خطأ): تلميح صاحب
+  // القرار + عدّاد ٣٠ ثانية فوق/على الزرار.
+  p15ShowHint('لسه موصلناش تأكيد التحويل — انتظر ٣٠ ثانية واضغط مرة أخرى');
+  if (btn) p15StartCountdown(btn);
+}
+
+async function autoConfirmOrderFlow(snapshot, legacyFallback) {
+  var btn = document.getElementById('confirmPaymentBtn');
+  var isExchange = !!P15_EXCHANGE_KEYS[snapshot.method_key];
+  // حساب المُرسل إلزامي — نفس رسالة التحقق الحالية بالحرف.
+  if (!snapshot.sender_account) {
+    showToast('يرجى إدخال رقم المحفظة أو الحساب الذي قمت بالتحويل منه', 'error');
+    return;
+  }
+  var txId = '';
+  if (isExchange) {
+    var txEl = document.getElementById('exchangeTxIdInput');
+    txId = txEl ? txEl.value.trim() : '';
+    if (!txId) { showToast('حط رقم العملية الأول', 'error'); return; }
+  }
+  // إعادة ضغط على نفس الطلب والوسيلة والمُرسل: مفيش إنشاء طلب
+  // تاني أبدًا — التأكيد بس اللي بيتعاد.
+  if (p15State && p15State.ref
+      && p15State.method_key === snapshot.method_key
+      && p15State.sender_account === snapshot.sender_account) {
+    if (p15State.terminal === 'ambiguous') {
+      p15ShowHint('تحويلك وصلنا وهو قيد المراجعة — هنأكد طلبك خلال دقائق، مش محتاج تعمل حاجة');
+      return;
+    }
+    p15AttemptConfirm(btn, isExchange, txId);
+    return;
+  }
+  if (btn) { btn.disabled = true; btn.innerText = 'أكّد الدفع'; }
+  var ref = null;
+  try { ref = await recordOrder(snapshot); } catch (e) { ref = null; }
+  if (!ref) {
+    // التسجيل فشل/اتحظر: العميل مش بيقف — المسار القديم بالكامل.
+    if (btn) btn.disabled = false;
+    if (typeof legacyFallback === 'function') legacyFallback();
+    return;
+  }
+  p15State = { ref: ref, method_key: snapshot.method_key,
+               sender_account: snapshot.sender_account,
+               snapshot: snapshot, terminal: null };
+  p15ArmWhatsAppLink(snapshot, ref);
+  p15AttemptConfirm(btn, isExchange, txId);
+}
+
 // Hook: same position and trigger as the legacy recorder (it wraps
 // finalizeOrderWhatsApp), with the CR-04 retry so the wrap lands even
 // when this script runs before app.js defines the function.
@@ -1598,6 +1814,7 @@ function __wrapRecorder(n) {
       snapshot = {
         cart: (typeof cart !== 'undefined' && cart ? cart : []).map(normalizeEntry),
         payment: (typeof selectedPayment !== 'undefined' ? selectedPayment : null),
+        method_key: window.__selectedMethodKey || null,
         sender_account: sa ? sa.value.trim() : null,
         customer_email: se && se.email || null,
         coupon: (typeof appliedCoupon !== 'undefined' && appliedCoupon) ? appliedCoupon.code : null,
@@ -1610,9 +1827,20 @@ function __wrapRecorder(n) {
       walletFinalize(snapshot);
       return;
     }
-    try { (window.dataLayer = window.dataLayer || []).push({ event: 'whatsapp_click' }); } catch (x) {}
-    try { if (snapshot) recordOrder(snapshot); } catch (x) { console.error('[Migo] recorder error', x); }
-    return o.apply(this, arguments);
+    // المسار القديم بالكامل في إغلاق واحد: سكك التأكيد التلقائي
+    // بتستخدمه كاحتياطي بس لو تسجيل الطلب نفسه فشل.
+    var self = this, args = arguments;
+    var legacy = function () {
+      try { (window.dataLayer = window.dataLayer || []).push({ event: 'whatsapp_click' }); } catch (x) {}
+      try { if (snapshot) recordOrder(snapshot); } catch (x) { console.error('[Migo] recorder error', x); }
+      return o.apply(self, args);
+    };
+    // الحزمة 15: سكك «أكّد الدفع» بتتأكد جوّه الموقع.
+    if (snapshot && (P15_MOBILE_KEYS[snapshot.method_key] || P15_EXCHANGE_KEYS[snapshot.method_key])) {
+      autoConfirmOrderFlow(snapshot, legacy).catch(function (e) { console.error('[Migo] auto-confirm flow error', e); });
+      return;
+    }
+    return legacy();
   };
 }
 if (document.readyState === 'complete') __wrapRecorder(0);
@@ -1651,7 +1879,9 @@ else window.addEventListener('load', function () { __wrapRecorder(0); });
             if (typeof refreshWalletUI === 'function') refreshWalletUI();
         } else {
             if (sender && sender.dataset.walletAutofill) { sender.value = ''; sender.readOnly = false; delete sender.dataset.walletAutofill; }
-            if (confBtn) confBtn.innerText = 'CONFIRM & SEND INVOICE VIA WHATSAPP 💬';
+            // الحزمة 15: سكك التأكيد التلقائي زرارها «أكّد الدفع» —
+            // باقي الوسائل بتفضل بتسمية واتساب الأصلية بالحرف.
+            if (confBtn) confBtn.innerText = (['vodafone', 'instapay', 'etisalat', 'binance', 'bybit'].indexOf(type) !== -1) ? 'أكّد الدفع' : 'CONFIRM & SEND INVOICE VIA WHATSAPP 💬';
         }
         };
         window.__walletPayInstalled = true;
