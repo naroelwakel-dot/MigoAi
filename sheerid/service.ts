@@ -17,10 +17,13 @@
  * - حارس التكرار: عملية في حالة submitting/processing أو منتهية ما
  *   بتتبعتش للمورد تاني أبدًا — مفيش خصم مزدوج.
  *
- * تكييفات الويب الموثّقة: «تسليم» نتيجة النجاح على الويب = الإيميل
- * اتبعت (قناة الدفع الوحيدة) أو العميل شاف النتيجة في صفحة فاتورته
- * (قناة السحب الدائمة) — وأي واحدة فيهم بتعلّم delivered_at ومانعة
- * أي إعادة إرسال، وبنفس فواصل إعادة المحاولة وحد الـ24 ساعة بتوع البوت.
+ * تكييفات الويب الموثّقة: «تسليم» نتيجة النجاح على الويب = إيميل
+ * العميل اتبعت (قناة الدفع) أو غياب قناة الإيميل أصلًا (ساعتها
+ * صفحة الفاتورة هي التسليم) — وده اللي بيعلّم delivered_at وبيمنع
+ * أي إعادة إرسال، بنفس فواصل إعادة المحاولة وحد الـ24 ساعة بتوع
+ * البوت. مشاهدة العميل للنتيجة في صفحة فاتورته بتعرض له الرابط
+ * لكنها ما بتعلّمش التسليم (إصلاح اللجنة #11: المشاهدة ≠ تسليم،
+ * عشان إعادة محاولات الإيميل ما تقفش على مجرد فتح الصفحة).
  */
 
 import {
@@ -30,15 +33,18 @@ import {
   DELIVERY_MAX_AGE_HOURS,
   IN_FLIGHT_STATUSES,
   POLL_DELAYS_SECONDS,
+  REFUND_RETRY_GAP_SECONDS,
   STATUS_AWAITING_LINK,
   STATUS_COMPLETED,
   STATUS_FAILED,
   STATUS_PROCESSING,
+  STATUS_REFUND_PENDING,
   STATUS_REFUNDED,
   STATUS_SUBMITTING,
   STUDENT_SKU,
   SWEEP_MAX_AGE_MINUTES,
   SWEEP_MIN_AGE_SECONDS,
+  SWEEP_STUCK_MAX_AGE_HOURS,
   TERMINAL_STATUSES,
   VERIFY_URL_HOST,
 } from "./config.ts";
@@ -48,6 +54,16 @@ import type { OrderPort, SheeridJob, SheeridRepository } from "./repo.ts";
 import { studentItemOf } from "./repo.ts";
 import type { StoreOrder } from "../store_executor/types.ts";
 import * as texts from "./texts.ts";
+
+/**
+ * الحالات اللي انتقال التسوية النهائي يقدر يبدأ منها — الانتقال نفسه
+ * مشروط ذرّيًا بواحدة منها (إصلاح اللجنة #2)، فمتسابق واحد بس بيكسب
+ * التسوية وبيبعت إيميلاتها وتنبيهاتها.
+ */
+const SETTLEABLE_STATUSES: readonly string[] = [
+  STATUS_AWAITING_LINK, STATUS_SUBMITTING, STATUS_PROCESSING,
+  STATUS_REFUND_PENDING,
+];
 
 const URL_RE = /https:\/\/services\.sheerid\.com\/verify\/[^\s<>"']+/;
 const TRAILING = ").,;!؟?…";
@@ -76,7 +92,8 @@ export function validateVerifyUrl(url: string): string {
     !parsed || parsed.protocol !== "https:" ||
     parsed.host !== VERIFY_URL_HOST || !parsed.pathname.startsWith("/verify/")
   ) {
-    throw new SheerIDError(texts.invalidLinkText());
+    // نصنا الثابت — آمن يظهر للعميل زي ما هو (customerSafe).
+    throw new SheerIDError(texts.invalidLinkText(), { customerSafe: true });
   }
   return value;
 }
@@ -90,7 +107,7 @@ export interface SheeridDeps {
   /** إيميل العميل (Brevo) — "unavailable" = مفيش قناة (مفتاح/إيميل غايب). */
   sendEmail?: (input: {
     order: StoreOrder;
-    kind: "completed" | "failed" | "fallback";
+    kind: "completed" | "failed" | "fallback" | "refund_pending";
     job: SheeridJob;
   }) => Promise<EmailOutcome>;
   alertAdmin?: (text: string) => void;
@@ -124,6 +141,8 @@ export interface SweepCounts {
   delivery_retried: number;
   delivery_delivered: number;
   opened: number;
+  refund_recovered: number;
+  stuck: number;
 }
 
 function epoch(iso: string | null | undefined): number | null {
@@ -158,10 +177,20 @@ export class SheeridService {
   }
 
   // ------------------------------------------------------------ التهيئة
-  /** تفتح عملية «مستنية الرابط» لطلب جديد، أو ترجّع المفتوحة له. */
+  /**
+   * تفتح عملية «مستنية الرابط» لطلب جديد، أو ترجّع المفتوحة له.
+   * بوابة دفع صلبة (إصلاح اللجنة #1): عملية جديدة ما تتفتحش لطلب
+   * غير مؤكد الدفع أبدًا — أي استدعاء من مسار عميل لطلب غير مدفوع
+   * بيترفض هنا حتى لو نسي المستدعي يفحص.
+   */
   async expectLink(order: StoreOrder): Promise<SheeridJob> {
     const existing = await this.deps.repo.findForOrder(order.order_ref);
     if (existing) return existing;
+    if (!this.isPaid(order)) {
+      throw new SheerIDError(texts.awaitingPaymentText(), {
+        customerSafe: true,
+      });
+    }
     return this.deps.repo.createJob({
       order_ref: order.order_ref,
       customer_email: order.customer_email ?? null,
@@ -193,32 +222,37 @@ export class SheeridService {
       }
       job = await this.expectLink(order);
     }
-    return this.stateForJob(job, true);
+    return this.stateForJob(job);
   }
 
-  private async stateForJob(
-    job: SheeridJob,
-    markViewed = false,
-  ): Promise<CustomerState> {
+  private async stateForJob(job: SheeridJob): Promise<CustomerState> {
     switch (job.status) {
       case STATUS_COMPLETED: {
-        if (markViewed && !job.delivered_at) {
-          // العميل شاف النتيجة بنفسه في صفحة فاتورته = التسليم تم.
-          await this.deps.repo.updateJob(job.id, {
-            delivered_at: this.nowFn().toISOString(),
-          }).catch((e) => this.log("sheerid view-mark failed", e));
-        }
+        // المشاهدة بتعرض الرابط بس — delivered_at مسؤولية مسار
+        // التسليم المتتبَّع (deliverActivation) لوحده (لجنة #11).
         return {
           state: "completed",
           message: texts.completedText(job.activation_url),
           activation_url: job.activation_url || undefined,
         };
       }
+      case STATUS_REFUND_PENDING:
+        // الفشل حصل لكن الاسترداد لسه قيد المعالجة — صياغة صادقة
+        // (إصلاح اللجنة #4): ممنوع ادعاء استرداد تم قبل تأكيده.
+        return { state: "failed", message: texts.refundPendingText() };
       case STATUS_REFUNDED:
       case STATUS_FAILED:
         return { state: "failed", message: texts.failedText() };
       case STATUS_SUBMITTING:
       case STATUS_PROCESSING:
+        if (job.manual_fallback) {
+          // عملية عالقة اتعلّمت مسار يدوي (مسح الـ24 ساعة) — العميل
+          // ما يفضلش شايف «لسه شغّال» للأبد.
+          return {
+            state: "manual_fallback",
+            message: texts.manualFallbackText(),
+          };
+        }
         return { state: "processing", message: texts.stillProcessingText() };
       default:
         if (job.manual_fallback) {
@@ -240,7 +274,16 @@ export class SheeridService {
   async submit(order: StoreOrder, url: string): Promise<CustomerState> {
     const clean = validateVerifyUrl(url);
     if (!studentItemOf(order)) {
-      throw new SheerIDError(texts.invalidLinkText());
+      throw new SheerIDError(texts.invalidLinkText(), { customerSafe: true });
+    }
+    // بوابة الدفع أولًا (إصلاح اللجنة #1 — حرج): طلب غير مؤكد الدفع
+    // ما يستهلكش أي نداء مورد ولا يتفتح له عملية، مهما كان الإثبات
+    // المقدَّم صحيح. الحالة «مستنية الدفع» وبس.
+    if (!this.isPaid(order)) {
+      return {
+        state: "awaiting_payment",
+        message: texts.awaitingPaymentText(),
+      };
     }
     let job = await this.deps.repo.findForOrder(order.order_ref);
     if (!job) job = await this.expectLink(order);
@@ -260,11 +303,20 @@ export class SheeridService {
       return { state: "manual_fallback", message: texts.manualFallbackText() };
     }
 
-    job = await this.deps.repo.updateJob(job.id, {
+    // حجز ذرّي (إصلاح اللجنة #2): الانتقال لـ submitting مشروط بأن
+    // العملية لسه awaiting_link في القاعدة لحظة التحديث — متسابقين
+    // على نفس الطلب واحد بس بيكسب الحجز وبيكلّم المورد، والخاسر
+    // بيرجع بالحالة الحالية من غير أي نداء (مفيش خصم مزدوج).
+    const claimed = await this.deps.repo.updateJobIf(job.id, {
       status: STATUS_SUBMITTING,
       sheerid_url: clean,
       manual_fallback: false,
-    });
+    }, { statuses: [STATUS_AWAITING_LINK] });
+    if (!claimed) {
+      const current = (await this.deps.repo.getJob(job.id)) || job;
+      return this.stateForJob(current);
+    }
+    job = claimed;
     let data: Record<string, unknown>;
     try {
       data = await this.deps.client.verify(
@@ -273,9 +325,10 @@ export class SheeridService {
       );
     } catch (e) {
       this.log("sheerid verify failed", e);
-      job = await this.deps.repo.updateJob(job.id, {
+      const reset = await this.deps.repo.updateJobIf(job.id, {
         status: STATUS_AWAITING_LINK,
-      });
+      }, { statuses: [STATUS_SUBMITTING] });
+      if (reset) job = reset;
       await this.manualFallback(order, job, "تعذّر إرسال طلب التحقق للمورد");
       return { state: "manual_fallback", message: texts.manualFallbackText() };
     }
@@ -283,18 +336,26 @@ export class SheeridService {
     const providerJobId = String(data["job_id"] || "");
     if (!providerJobId) {
       this.log("sheerid verify returned no job id", new Error(String(data).slice(0, 200)));
-      job = await this.deps.repo.updateJob(job.id, {
+      const reset = await this.deps.repo.updateJobIf(job.id, {
         status: STATUS_AWAITING_LINK,
-      });
+      }, { statuses: [STATUS_SUBMITTING] });
+      if (reset) job = reset;
       await this.manualFallback(order, job, "المورد لم يرجّع معرّف عملية للتحقق");
       return { state: "manual_fallback", message: texts.manualFallbackText() };
     }
 
-    job = await this.deps.repo.updateJob(job.id, {
+    const moved = await this.deps.repo.updateJobIf(job.id, {
       status: STATUS_PROCESSING,
       job_id: providerJobId,
       charged_usd: Number(data["charged_usd"] ?? job.charged_usd ?? 0) || 0,
-    });
+    }, { statuses: [STATUS_SUBMITTING] });
+    if (!moved) {
+      // إحنا حاجزين العملية فده ما بيحصلش عمليًا — حماية بس: الحالة
+      // اتغيّرت من ورانا، فبنرجع بالحالة الحالية من غير تسوية مكررة.
+      const current = (await this.deps.repo.getJob(job.id)) || job;
+      return this.stateForJob(current);
+    }
+    job = moved;
     const settled = await this.applyStatus(job, data);
     if (settled) return this.stateForJob(settled);
     return this.poll(job);
@@ -350,6 +411,7 @@ export class SheeridService {
     const counts: SweepCounts = {
       checked: 0, settled: 0, still_processing: 0, errors: 0,
       delivery_retried: 0, delivery_delivered: 0, opened: 0,
+      refund_recovered: 0, stuck: 0,
     };
     const at = now || this.nowFn();
     // فتح عمليات لطلبات مدفوعة فيها المنتج ولسه من غير عملية.
@@ -390,6 +452,64 @@ export class SheeridService {
         else counts.still_processing++;
       } catch (e) {
         this.log("sheerid sweep refresh failed", e);
+        counts.errors++;
+      }
+    }
+    // عمليات عالقة نهائيًا (إصلاح اللجنة #12): أي عملية جارية أقدم
+    // من الحد الأقصى (24 ساعة) بتتعلّم manual_fallback + تنبيه
+    // إدارة بدل ما تخرج من نافذة المسح وتتنسي للأبد.
+    let stuckJobs: SheeridJob[] = [];
+    try {
+      stuckJobs = await this.deps.repo.listInflight(
+        IN_FLIGHT_STATUSES,
+        new Date(0).toISOString(),
+        new Date(at.getTime() - SWEEP_STUCK_MAX_AGE_HOURS * 3600_000)
+          .toISOString(),
+      );
+    } catch (e) {
+      this.log("sheerid stuck list failed", e);
+      counts.errors++;
+    }
+    for (const job of stuckJobs) {
+      if (job.manual_fallback) continue; // متعلّمة أصلًا — من غير تنبيه مكرر
+      try {
+        const flagged = await this.deps.repo.updateJobIf(job.id, {
+          manual_fallback: true,
+        }, { statuses: IN_FLIGHT_STATUSES });
+        if (flagged) {
+          counts.stuck++;
+          this.alertAdmin(texts.adminFallbackText(
+            job.order_ref,
+            "عملية تحقق عالقة من أكثر من 24 ساعة من غير تسوية — " +
+              "اتعلّمت مسار يدوي وتحتاج متابعة",
+          ));
+        }
+      } catch (e) {
+        this.log("sheerid stuck flag failed", e);
+        counts.errors++;
+      }
+    }
+    // إعادة محاولة الاستردادات المعلّقة (إصلاح اللجنة #4): كل
+    // refund_pending عدّى عليها فاصل إعادة المحاولة بتتحاول تاني.
+    let pendings: SheeridJob[] = [];
+    try {
+      pendings = await this.deps.repo.listRefundPending();
+    } catch (e) {
+      this.log("sheerid refund-pending list failed", e);
+      counts.errors++;
+    }
+    for (const job of pendings) {
+      const updatedAt = epoch(job.updated_at);
+      if (
+        updatedAt !== null &&
+        at.getTime() / 1000 - updatedAt < REFUND_RETRY_GAP_SECONDS
+      ) {
+        continue;
+      }
+      try {
+        if (await this.retryRefund(job)) counts.refund_recovered++;
+      } catch (e) {
+        this.log("sheerid refund retry failed", e);
         counts.errors++;
       }
     }
@@ -443,19 +563,38 @@ export class SheeridService {
     const activation = String(
       data["activation_url"] || fresh.activation_url || "",
     );
-    const updated = await this.deps.repo.updateJob(fresh.id, {
+    // حجز التسوية ذرّيًا (إصلاح اللجنة #2): أول منتقل لحالة نهائية
+    // بيكسب — أي تسوية متزامنة تانية بتلاقي الحجز مقفول وبترجع
+    // بالصف الحالي من غير إيميل/تنفيذ مكرر.
+    const updated = await this.deps.repo.updateJobIf(fresh.id, {
       status: STATUS_COMPLETED,
       activation_url: activation,
       manual_fallback: false,
-    });
+    }, { statuses: SETTLEABLE_STATUSES });
+    if (!updated) return (await this.deps.repo.getJob(fresh.id)) || fresh;
     const order = await this.orderFor(fresh);
     if (order && order.items.every((it) => it.sku === STUDENT_SKU)) {
-      // مرآة قاعدة المنفّذ: الطلب fulfilled بس لما كل بنوده اتسلّمت —
-      // وده بيتحقق هنا لما الطلب كله هو منتج التحقق.
-      try {
-        await this.deps.orders.setOrderStatus(order.order_ref, "fulfilled");
-      } catch (e) {
-        this.log("sheerid order fulfil failed", e);
+      // بوابة الدفع (إصلاح اللجنة #1): اكتمال عند المورد ما بيعلّمش
+      // طلب fulfilled إلا لو الدفع مؤكد — طلب غير مدفوع بيتنبّه عليه
+      // الإدارة للمراجعة اليدوية بدل ما يتسلّم بصمت.
+      if (!this.isPaid(order)) {
+        this.log(
+          "sheerid completed for UNPAID order — fulfil blocked",
+          new Error(`order ${order.order_ref} status ${order.status}`),
+        );
+        this.alertAdmin(texts.adminFallbackText(
+          order.order_ref,
+          "اكتمل التحقق عند المورد لكن الطلب غير مؤكد الدفع — " +
+            "لم يُعلَّم fulfilled ويحتاج مراجعة يدوية فورية",
+        ));
+      } else {
+        // مرآة قاعدة المنفّذ: الطلب fulfilled بس لما كل بنوده اتسلّمت —
+        // وده بيتحقق هنا لما الطلب كله هو منتج التحقق.
+        try {
+          await this.deps.orders.setOrderStatus(order.order_ref, "fulfilled");
+        } catch (e) {
+          this.log("sheerid order fulfil failed", e);
+        }
       }
     }
     await this.deliverActivation(updated);
@@ -469,10 +608,10 @@ export class SheeridService {
   ): Promise<SheeridJob> {
     const fresh = (await this.deps.repo.getJob(job.id)) || job;
     if (TERMINAL_STATUSES.includes(fresh.status)) return fresh;
-    const updated = await this.deps.repo.updateJob(fresh.id, {
-      status: targetStatus,
-    });
     const order = await this.orderFor(fresh);
+    // الاسترداد أولًا (إصلاح اللجنة #4): محاولة الاسترداد بآليات
+    // المتجر بتتم قبل أي تثبيت نهائي، ونص العميل ما يدّعيش إن
+    // الاسترداد «تم» إلا لو اتأكد فعلًا في القاعدة.
     let refundConfirmed = false;
     if (order) {
       try {
@@ -483,12 +622,73 @@ export class SheeridService {
       } catch (e) {
         this.log("sheerid refund failed", e);
       }
-      await this.tryEmail(order, "failed", updated);
     }
+    if (!refundConfirmed) {
+      // الاسترداد لسه مش مؤكد: العملية بتروح refund_pending (حالة
+      // غير نهائية) والمسح الدوري بيعيد المحاولة لحد التأكيد،
+      // والعميل بياخد الصياغة الصادقة «جارٍ معالجة الاسترداد».
+      const pending = await this.deps.repo.updateJobIf(fresh.id, {
+        status: STATUS_REFUND_PENDING,
+      }, { statuses: SETTLEABLE_STATUSES });
+      if (!pending) return (await this.deps.repo.getJob(fresh.id)) || fresh;
+      if (order) await this.tryEmail(order, "refund_pending", pending);
+      this.alertAdmin(
+        texts.adminFailedText(fresh.order_ref, pending, false),
+      );
+      return pending;
+    }
+    // الاسترداد اتأكد: التثبيت النهائي بحجز ذرّي (إصلاح اللجنة #2)
+    // وبعدين إيميل الفشل اللي بيعلن الاسترداد — وهو دلوقتي حقيقي.
+    const updated = await this.deps.repo.updateJobIf(fresh.id, {
+      status: targetStatus,
+    }, { statuses: SETTLEABLE_STATUSES });
+    if (!updated) return (await this.deps.repo.getJob(fresh.id)) || fresh;
+    if (order) await this.tryEmail(order, "failed", updated);
     this.alertAdmin(
-      texts.adminFailedText(fresh.order_ref, updated, refundConfirmed),
+      texts.adminFailedText(fresh.order_ref, updated, true),
     );
     return updated;
+  }
+
+  /**
+   * إعادة محاولة استرداد معلّق من المسح الدوري: نجاح المحاولة
+   * بيقفل العملية نهائيًا (refunded لو المورد ردّها كده، وإلا
+   * failed) وبيبعت للعميل إيميل الفشل المؤكد الاسترداد.
+   */
+  private async retryRefund(job: SheeridJob): Promise<boolean> {
+    const order = await this.orderFor(job);
+    if (!order) return false;
+    let confirmed = false;
+    try {
+      confirmed = await this.deps.orders.refundOnFailure(
+        order,
+        "اتلغى: التحقق ماكتملش، والاسترداد اتعالج بمسار المتجر",
+      );
+    } catch (e) {
+      this.log("sheerid refund retry call failed", e);
+      return false;
+    }
+    if (!confirmed) return false;
+    let target: string = STATUS_FAILED;
+    if (job.job_id && this.enabled()) {
+      try {
+        const data = await this.deps.client.status(job.job_id);
+        if (
+          String(data["status"] || "").trim().toLowerCase() === "refunded"
+        ) {
+          target = STATUS_REFUNDED;
+        }
+      } catch (e) {
+        this.log("sheerid refund retry status check failed", e);
+      }
+    }
+    const updated = await this.deps.repo.updateJobIf(job.id, {
+      status: target,
+    }, { statuses: [STATUS_REFUND_PENDING] });
+    if (!updated) return false;
+    await this.tryEmail(order, "failed", updated);
+    this.alertAdmin(texts.adminFailedText(job.order_ref, updated, true));
+    return true;
   }
 
   // ------------------------------------------------------------ تسليم النتيجة
@@ -504,11 +704,21 @@ export class SheeridService {
     const fresh = (await this.deps.repo.getJob(job.id)) || job;
     if (fresh.delivered_at) return "already_delivered";
     if (fresh.status !== STATUS_COMPLETED) return "failed";
-    const attempts = (Number(fresh.delivery_attempts) || 0) + 1;
-    await this.deps.repo.updateJob(fresh.id, {
+    const attemptsBefore = Number(fresh.delivery_attempts) || 0;
+    const attempts = attemptsBefore + 1;
+    // حجز محاولة التسليم ذرّيًا (إصلاح اللجنة #2): الانتقال من عدد
+    // المحاولات الحالي للي بعده (CAS على القيمة نفسها) بيتم لصف
+    // واحد بس — متسابقين متزامنين واحد بس بيبعت الإيميل، والباقي
+    // بيرجع already_delivered من غير إرسال مكرر.
+    const attemptClaim = await this.deps.repo.updateJobIf(fresh.id, {
       delivery_attempts: attempts,
       last_delivery_attempt_at: this.nowFn().toISOString(),
+    }, {
+      statuses: [STATUS_COMPLETED],
+      deliveredNull: true,
+      deliveryAttempts: attemptsBefore,
     });
+    if (!attemptClaim) return "already_delivered";
     const order = await this.orderFor(fresh);
     let outcome: EmailOutcome = "unavailable";
     if (order) {
@@ -524,10 +734,11 @@ export class SheeridService {
     }
     // "sent" = الإيميل وصل قناة الدفع؛ "unavailable" = مفيش قناة دفع
     // أصلًا فصفحة الفاتورة هي التسليم (الرابط محفوظ وبيظهر للعميل).
-    await this.deps.repo.updateJob(fresh.id, {
+    // تعليم التسليم نفسه مشروط بأن delivered_at لسه null.
+    const doneClaim = await this.deps.repo.updateJobIf(fresh.id, {
       delivered_at: this.nowFn().toISOString(),
-    });
-    return "delivered";
+    }, { deliveredNull: true });
+    return doneClaim ? "delivered" : "already_delivered";
   }
 
   private deliveryDue(job: SheeridJob, now: Date): boolean {
@@ -599,7 +810,7 @@ export class SheeridService {
 
   private async tryEmail(
     order: StoreOrder,
-    kind: "completed" | "failed" | "fallback",
+    kind: "completed" | "failed" | "fallback" | "refund_pending",
     job: SheeridJob,
   ): Promise<EmailOutcome> {
     if (!this.deps.sendEmail) return "unavailable";

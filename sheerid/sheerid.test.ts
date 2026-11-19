@@ -14,6 +14,7 @@ import { STATUS_AWAITING_LINK, STUDENT_SKU } from "./config.ts";
 import {
   MemoryOrderPort,
   MemorySheeridRepository,
+  type OrderPort,
   type SheeridJob,
 } from "./repo.ts";
 import {
@@ -26,8 +27,13 @@ import {
   buildSheeridFromEnvAsync,
   fetchBridgeToken,
   handleSheeridRequest,
+  SheeridRateLimiter,
 } from "./mod.ts";
-import { BRIDGE_BASE_URL, BRIDGE_PATH } from "./config.ts";
+import { BRIDGE_PATH } from "./config.ts";
+
+// عنوان جسر وهمي للاختبارات — العنوان الحقيقي بقى من البيئة بس
+// (إصلاح اللجنة #10: مفيش عناوين مورّد/جسر مكتوبة في الكود).
+const TEST_BRIDGE_URL = "https://bridge.invalid";
 import { MemoryStoreDb } from "../store_executor/store_db.ts";
 import type { StoreOrder } from "../store_executor/types.ts";
 
@@ -434,9 +440,10 @@ Deno.test("delivery guarantee: failed email retries on gaps, never twice after s
 });
 
 // ---------------------------------------------------------------------
-// 13) مشاهدة العميل للنتيجة في صفحة الفاتورة = تسليم مؤكد
+// 13) مشاهدة العميل للنتيجة في صفحة الفاتورة ما بتعلّمش التسليم
+//     (إصلاح اللجنة #11 — كان السلوك القديم بيعلّم delivered_at)
 // ---------------------------------------------------------------------
-Deno.test("customer viewing the completed invoice state marks delivery", async () => {
+Deno.test("panel fix 9: viewing the completed invoice state does NOT mark delivery", async () => {
   const h = harness(makeOrder());
   h.emailOutcome = "failed";
   h.fake.statusQueue = [
@@ -446,7 +453,14 @@ Deno.test("customer viewing the completed invoice state marks delivery", async (
   eq((await jobOf(h)).delivered_at, null, "undelivered before view");
   const view = await h.service.stateForOrder(makeOrder());
   eq(view?.state, "completed", "view shows completed");
-  ok(!!(await jobOf(h)).delivered_at, "view marked delivered_at");
+  eq(view?.activation_url, "https://activate.example/view", "activation visible on the invoice");
+  eq((await jobOf(h)).delivered_at, null, "view does NOT set delivered_at anymore");
+  // والتسليم الحقيقي بيكمل من مسار التسليم المتتبَّع لما الإيميل يشتغل:
+  h.emailOutcome = "sent";
+  h.clock.t = new Date("2026-11-18T12:01:05.000Z");
+  const counts = await h.service.sweep();
+  eq(counts.delivery_delivered, 1, "sweep delivers via email after the view");
+  ok(!!(await jobOf(h)).delivered_at, "delivered_at set by real delivery only");
 });
 
 // ---------------------------------------------------------------------
@@ -631,7 +645,7 @@ Deno.test("bridge client: actions + token header + envelope, no provider key", a
   const fake = new FakeBridge();
   const client = new SheerIDClient({
     apiKey: "",
-    baseUrl: BRIDGE_BASE_URL,
+    baseUrl: TEST_BRIDGE_URL,
     bridgeToken: "tok-bridge-1",
     transport: fake.transport,
   });
@@ -647,7 +661,7 @@ Deno.test("bridge client: actions + token header + envelope, no provider key", a
 
   eq(fake.calls.length, 3, "three bridge calls");
   for (const call of fake.calls) {
-    eq(call.url, BRIDGE_BASE_URL + BRIDGE_PATH, "bridge endpoint url");
+    eq(call.url, TEST_BRIDGE_URL + BRIDGE_PATH, "bridge endpoint url");
     eq(call.method, "POST", "bridge method");
     eq(call.headers["x-bridge-token"], "tok-bridge-1", "bridge token header");
     ok(!("X-API-Key" in call.headers), "no provider key header via bridge");
@@ -670,7 +684,7 @@ Deno.test("bridge client: rejection envelope and 401 both raise SheerIDError", a
   fake.rejectAction = "verify";
   const client = new SheerIDClient({
     apiKey: "",
-    baseUrl: BRIDGE_BASE_URL,
+    baseUrl: TEST_BRIDGE_URL,
     bridgeToken: "tok-bridge-1",
     transport: fake.transport,
   });
@@ -700,7 +714,7 @@ Deno.test("bridge client: no token and no key → disabled, zero transport calls
   };
   const client = new SheerIDClient({
     apiKey: "",
-    baseUrl: BRIDGE_BASE_URL,
+    baseUrl: TEST_BRIDGE_URL,
     bridgeToken: "",
     transport: exploding,
   });
@@ -736,7 +750,10 @@ Deno.test("bridge wiring: token row in backend_config enables the service", asyn
     return Promise.resolve({ status: 404, text: "{}" });
   };
   const wiring = await buildSheeridFromEnvAsync({
-    env: envOf({ SUPABASE_SERVICE_ROLE_KEY: "svc-test" }),
+    env: envOf({
+      SUPABASE_SERVICE_ROLE_KEY: "svc-test",
+      SHEERID_BRIDGE_URL: TEST_BRIDGE_URL,
+    }),
     sbUrl: "https://db.invalid",
     logError: () => {},
     transport,
@@ -770,6 +787,7 @@ Deno.test("bridge wiring: SHEERID_API_KEY env override stays direct, no config r
   const wiring = await buildSheeridFromEnvAsync({
     env: envOf({
       SHEERID_API_KEY: "direct-key",
+      SHEERID_BASE_URL: "https://provider.invalid",
       SUPABASE_SERVICE_ROLE_KEY: "svc-test",
     }),
     sbUrl: "https://db.invalid",
@@ -795,4 +813,306 @@ Deno.test("fetchBridgeToken: read failure is fail-safe empty", async () => {
     transport: down,
   });
   eq(noKey, "", "empty token without service key");
+});
+
+// ---------------------------------------------------------------------
+// 21) إصلاحات اللجنة — (أ) إرسال لطلب غير مدفوع: رفض فوري، صفر نداءات
+// ---------------------------------------------------------------------
+Deno.test("panel fix 1a: unpaid submit → awaiting_payment, ZERO provider calls, no job", async () => {
+  const order = makeOrder({ status: "new" });
+  const h = harness(order);
+  const s = await h.service.submit(order, VALID_URL);
+  eq(s.state, "awaiting_payment", "unpaid submit state");
+  eq(h.fake.calls.length, 0, "zero provider calls for unpaid submit");
+  eq(await h.repo.findForOrder("MG-200001"), null, "no job opened for unpaid order");
+  // وحتى فتح العملية مباشرة من مسار عميل بيترفض لطلب غير مدفوع:
+  let threw = false;
+  try {
+    await h.service.expectLink(order);
+  } catch (e) {
+    threw = e instanceof SheerIDError;
+  }
+  ok(threw, "expectLink refuses an unpaid order");
+  eq(await h.repo.findForOrder("MG-200001"), null, "still no job after expectLink attempt");
+});
+
+// ---------------------------------------------------------------------
+// 22) إصلاحات اللجنة — (و) اكتمال عند المورد لطلب غير مدفوع ≠ fulfilled
+// ---------------------------------------------------------------------
+Deno.test("panel fix 1f: settleCompleted on unpaid order → completed job, order NOT fulfilled", async () => {
+  const order = makeOrder({ status: "new" });
+  const h = harness(order);
+  const job = await h.repo.createJob({
+    order_ref: "MG-200001",
+    customer_email: "student@example.com",
+    status: "processing",
+  });
+  await h.repo.updateJob(job.id, { job_id: "JOB-TEST-1" });
+  h.fake.statusQueue = [
+    { status: "completed", activation_url: "https://activate.example/unpaid" },
+  ];
+  const settled = await h.service.refresh("JOB-TEST-1");
+  eq(settled?.status, "completed", "job settles completed (provider fact recorded)");
+  eq(
+    h.store.orders.get("MG-200001")?.status,
+    "new",
+    "unpaid order is NOT marked fulfilled",
+  );
+  ok(
+    h.adminNotes.some((t) => t.includes("غير مؤكد الدفع")),
+    "admin alerted about completion on unpaid order",
+  );
+});
+
+// ---------------------------------------------------------------------
+// 23) إصلاحات اللجنة — (ب) إرسالان متزامنان: تحقق واحد بس عند المورد
+// ---------------------------------------------------------------------
+Deno.test("panel fix 2b: two concurrent submits → exactly ONE verify call", async () => {
+  const h = harness(makeOrder());
+  const [s1, s2] = await Promise.all([
+    h.service.submit(makeOrder(), VALID_URL),
+    h.service.submit(makeOrder(), VALID_URL),
+  ]);
+  eq(h.fake.count("/verify"), 1, "exactly one provider verify under concurrency");
+  eq(s1.state, "processing", "first caller sees processing");
+  eq(s2.state, "processing", "race loser backs off to processing state");
+  const job = await jobOf(h);
+  eq(job.status, "processing", "single job processing");
+  eq(job.job_id, "JOB-TEST-1", "single provider job id stored");
+});
+
+// ---------------------------------------------------------------------
+// 24) إصلاحات اللجنة — (ج) فشل الاسترداد: نص صادق + refund_pending
+// ---------------------------------------------------------------------
+Deno.test("panel fix 3c: refund failure → no false refund claim, job refund_pending, sweep recovers", async () => {
+  const h = harness(makeOrder());
+  // منفذ طلبات استرداده بيرجع false لحد ما نقلب العلم (محاكاة عطل
+  // في مسار الاسترداد) — باقي سلوكه هو منفذ الذاكرة الحقيقي.
+  let refundWorks = false;
+  const flakyOrders: OrderPort = {
+    getOrder: (r) => h.orders.getOrder(r),
+    setOrderStatus: (r, s) => h.orders.setOrderStatus(r, s),
+    listConfirmedOrders: (n) => h.orders.listConfirmedOrders(n),
+    refundOnFailure: (o, reason) =>
+      refundWorks
+        ? h.orders.refundOnFailure(o, reason)
+        : Promise.resolve(false),
+  };
+  const service = new SheeridService({
+    repo: h.repo,
+    client: new SheerIDClient({
+      apiKey: "test-key",
+      baseUrl: "https://provider.invalid",
+      transport: h.fake.transport,
+    }),
+    orders: flakyOrders,
+    sendEmail: ({ order: o, kind }) => {
+      h.emails.push({ kind, order_ref: o.order_ref });
+      return Promise.resolve(h.emailOutcome);
+    },
+    alertAdmin: (t) => h.adminNotes.push(t),
+    log: () => {},
+    sleeper: () => Promise.resolve(),
+    now: () => new Date(h.clock.t),
+    paidStatuses: ["paid", "payment_confirmed"],
+  });
+  h.fake.statusQueue = [{ status: "failed" }];
+  const s = await service.submit(makeOrder(), VALID_URL);
+  eq(s.state, "failed", "customer sees failed state");
+  ok(
+    !s.message.includes("تمت معالجة استرداد كامل"),
+    "customer text does NOT claim a completed refund",
+  );
+  ok(s.message.includes("جارٍ معالجة الاسترداد"), "honest pending wording");
+  let job = await jobOf(h);
+  eq(job.status, "refund_pending", "job parked refund_pending — NOT terminal");
+  eq(h.store.refundObligations.length, 0, "no obligation while refund unconfirmed");
+  ok(
+    h.emails.some((e) => e.kind === "refund_pending"),
+    "pending-refund email sent (honest kind)",
+  );
+  ok(
+    !h.emails.some((e) => e.kind === "failed"),
+    "no refund-claiming failure email yet",
+  );
+  // المسح قبل فاصل إعادة المحاولة (300 ثانية) ما يعيدش المحاولة:
+  await service.sweep();
+  eq((await jobOf(h)).status, "refund_pending", "still pending inside retry gap");
+  // بعد الفاصل والاسترداد اشتغل: المسح بيقفل العملية نهائيًا.
+  refundWorks = true;
+  h.clock.t = new Date("2026-11-18T12:06:00.000Z");
+  const counts = await service.sweep();
+  eq(counts.refund_recovered, 1, "sweep recovered the pending refund");
+  job = await jobOf(h);
+  eq(job.status, "failed", "job terminal after recovery");
+  eq(h.store.refundObligations.length, 1, "obligation created on recovery");
+  eq(h.store.orders.get("MG-200001")?.status, "refunded", "order refunded on recovery");
+  ok(
+    h.emails.some((e) => e.kind === "failed"),
+    "confirmed failure email sent only after recovery",
+  );
+});
+
+// ---------------------------------------------------------------------
+// 25) إصلاحات اللجنة — (د) خطأ مورد بنص ملوّن: العميل ما يشوفش منه حرف
+// ---------------------------------------------------------------------
+Deno.test("panel fix 4d: provider error text never reaches the customer", async () => {
+  // مستوى العميل: رسالة المورد الخام بتتحفظ في detail بس.
+  const leaky: Transport = () =>
+    Promise.resolve({
+      status: 200,
+      text: JSON.stringify({
+        ok: false,
+        message: "BunnyTools wallet empty BNY-777 balance 0.30 USD",
+      }),
+    });
+  const client = new SheerIDClient({
+    apiKey: "test-key",
+    baseUrl: "https://provider.invalid",
+    transport: leaky,
+  });
+  let err: unknown = null;
+  try {
+    await client.verify(VALID_URL);
+  } catch (e) {
+    err = e;
+  }
+  ok(err instanceof SheerIDError, "provider rejection raises SheerIDError");
+  const se = err as SheerIDError;
+  ok(!se.message.includes("Bunny"), "error message has no supplier name");
+  ok(!se.message.includes("BNY"), "error message has no provider job id");
+  ok(!se.message.includes("balance"), "error message has no balance wording");
+  ok(!se.customerSafe, "provider errors are not customer-safe");
+  ok(se.detail.includes("BunnyTools"), "raw provider text kept server-side (detail)");
+
+  // مستوى المعالج: خطأ مورد بيهرب من الخدمة → رد عام ثابت للعميل.
+  const h = harness(makeOrder());
+  const stubService = {
+    enabled: () => true,
+    stateForOrder: () => Promise.resolve(null),
+    submit: () =>
+      Promise.reject(
+        new SheerIDError("خدمة التحقق رفضت الطلب", {
+          detail: "BunnyTools wallet empty BNY-777",
+        }),
+      ),
+    refresh: () => Promise.resolve(null),
+    sweep: () => Promise.resolve({}),
+  } as unknown as SheeridService;
+  const res = await handleSheeridRequest(
+    req(
+      { order_ref: "MG-200001", sender_account: "01000000000", url: VALID_URL },
+      "/sheerid/submit",
+    ),
+    { service: stubService, orders: h.orders, isAuthorized: () => false },
+  );
+  const body = await res!.json();
+  eq(body.state, "manual_fallback", "sanitized failure → generic manual state");
+  ok(!String(body.message).includes("Bunny"), "handler response has no supplier name");
+  ok(!String(body.message).includes("BNY"), "handler response has no provider job id");
+});
+
+// ---------------------------------------------------------------------
+// 26) إصلاحات اللجنة — (هـ) سر الـ callback + حدود المعدل على المسارات
+// ---------------------------------------------------------------------
+Deno.test("panel fix 5e: callback secret enforced when configured; per-route rate limits trip", async () => {
+  const h = harness(makeOrder());
+  await h.service.submit(makeOrder(), VALID_URL); // عملية processing بـ JOB-TEST-1
+  const statusCallsBefore = h.fake.count("/status/");
+  const deps = {
+    service: h.service,
+    orders: h.orders,
+    isAuthorized: () => false,
+    callbackSecret: "cb-secret-1",
+    rateLimiter: new SheeridRateLimiter({
+      statusPerMinute: 100,
+      submitPerMinute: 100,
+      callbackPerMinute: 2,
+    }),
+  };
+  // من غير ترويسة السر: مرفوض 401 ومفيش أي سؤال حالة عند المورد.
+  let res = await handleSheeridRequest(
+    req({ job_id: "JOB-TEST-1" }, "/sheerid/callback"),
+    deps,
+  );
+  eq(res!.status, 401, "callback without secret header rejected");
+  eq(h.fake.count("/status/"), statusCallsBefore, "no refresh on rejected callback");
+  // بالترويسة الصح: 200 والتسوية بتحصل.
+  h.fake.statusQueue = [
+    { status: "completed", activation_url: "https://activate.example/cb" },
+  ];
+  res = await handleSheeridRequest(
+    req({ job_id: "JOB-TEST-1" }, "/sheerid/callback", {
+      "x-sheerid-callback-secret": "cb-secret-1",
+    }),
+    deps,
+  );
+  eq(res!.status, 200, "callback with secret accepted");
+  eq((await jobOf(h)).status, "completed", "accepted callback settled the job");
+  // حد المعدل (2/دقيقة للـ callback): النداء التالت بيترفض 429.
+  res = await handleSheeridRequest(
+    req({ job_id: "JOB-TEST-1" }, "/sheerid/callback", {
+      "x-sheerid-callback-secret": "cb-secret-1",
+    }),
+    deps,
+  );
+  eq(res!.status, 429, "third callback in the minute is rate-limited");
+
+  // حد معدل الإرسال: أول محاولة تعدّي والتانية 429.
+  const h2 = harness(makeOrder());
+  const deps2 = {
+    service: h2.service,
+    orders: h2.orders,
+    isAuthorized: () => false,
+    rateLimiter: new SheeridRateLimiter({
+      statusPerMinute: 100,
+      submitPerMinute: 1,
+      callbackPerMinute: 100,
+    }),
+  };
+  res = await handleSheeridRequest(
+    req(
+      { order_ref: "MG-200001", sender_account: "01000000000", url: "https://evil.example/verify/x" },
+      "/sheerid/submit",
+    ),
+    deps2,
+  );
+  eq((await res!.json()).state, "invalid_link", "first submit passes the limiter");
+  res = await handleSheeridRequest(
+    req(
+      { order_ref: "MG-200001", sender_account: "01000000000", url: "https://evil.example/verify/x" },
+      "/sheerid/submit",
+    ),
+    deps2,
+  );
+  eq(res!.status, 429, "second submit in the minute is rate-limited");
+});
+
+// ---------------------------------------------------------------------
+// 27) إصلاحات اللجنة — عملية جارية أقدم من 24 ساعة: مسار يدوي + تنبيه
+// ---------------------------------------------------------------------
+Deno.test("panel fix 9b: in-flight job older than 24h → manual_fallback + admin alert", async () => {
+  const h = harness(makeOrder());
+  await h.service.submit(makeOrder(), VALID_URL);
+  eq((await jobOf(h)).status, "processing", "processing before aging");
+  h.clock.t = new Date("2026-11-19T12:00:01.000Z"); // +24 ساعة وثانية
+  const counts = await h.service.sweep();
+  eq(counts.stuck, 1, "one stuck job flagged");
+  const job = await jobOf(h);
+  eq(job.manual_fallback, true, "stuck job flagged manual_fallback");
+  ok(
+    h.adminNotes.some((t) => t.includes("عالقة")),
+    "admin alerted about the stuck job",
+  );
+  const view = await h.service.stateForOrder(makeOrder());
+  eq(
+    view?.state,
+    "manual_fallback",
+    "customer sees manual fallback instead of eternal processing",
+  );
+  // مسح تاني: العملية متعلّمة أصلًا فمفيش تنبيه ولا عدّ مكرر.
+  const alertsBefore = h.adminNotes.length;
+  const counts2 = await h.service.sweep();
+  eq(counts2.stuck, 0, "already-flagged job is not re-flagged");
+  eq(h.adminNotes.length, alertsBefore, "no duplicate stuck alert");
 });

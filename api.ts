@@ -132,9 +132,18 @@ async function getSheeridDeps(): Promise<SheeridHandlerDeps> {
         isAuthorized: isAdmin,
         headersOf: (req: Request) => corsHeaders(req),
         logError,
+        // سر إشعار المورد (إصلاح اللجنة #6): فاضي = callback بالسلوك
+        // القديم + تحذير سجل — الضبط عند المورد خطوة مالك.
+        callbackSecret: Deno.env.get("SHEERID_CALLBACK_SECRET") || "",
       };
       return _sheeridDeps;
     })();
+    // إصلاح اللجنة #8: وعد بناء مرفوض ما يفضلش متخزّن للأبد —
+    // بنصفّيه عشان الطلب الجاي يعيد البناء بدل ما المسارات تفضل
+    // مكسورة لعمر الـ isolate كله.
+    _sheeridDepsPromise.catch(() => {
+      if (!_sheeridDeps) _sheeridDepsPromise = null;
+    });
   }
   return _sheeridDepsPromise;
 }
