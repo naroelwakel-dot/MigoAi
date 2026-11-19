@@ -48,6 +48,38 @@ export const FIXTURE_VODAFONE_SENT =
 export const FIXTURE_PROMO =
   "عرض خاص من فودافون: اشترك دلوقتي واكسب هدايا! للاشتراك اتصل بينا. تطبق الشروط والأحكام";
 
+/**
+ * اتصالات كاش (e& money) — وارد، بصيغة الرسالة الحقيقية اللي وصلت
+ * 2026-11-19 (الاسم مستبدل بـ Test User): «إستلام» بالهمزة، مبلغ
+ * بـ«ج.م»، رصيد بعده، وذيل إعلاني فيه أسعار تانية (160/225).
+ * رقم المُرسل هو رقم محفظة المتجر العلني المنشور على الموقع.
+ */
+export const FIXTURE_ETISALAT_RECEIPT =
+  "تم إستلام مبلغ 100.00 ج.م من رقم 01020323432 المسجل باسم Test User بنجاح. رصيد محفظتك الحالى 100.39 ج.م.\nاستخدم etisalat money هتكسب و العب هتكسب هدايا تانية كتير http://spr.ly/Spin_The_Wheel\n وكمان تقدر تستمتع بخصم  %30على وجبة كومبو من Buffalo Burger ب 160 جنيه بدل225 لما تدفع ب http://spr.ly/BuffaloBurger2 etisalat money";
+
+/** اتصالات كاش — رسالة ترويجية من نفس الهوية: لازم تفضل ignored. */
+export const FIXTURE_ETISALAT_PROMO =
+  "مبروووك! كسبت هدية من etisalat money. دوس على اللينك دلوقتى والعب واكسب عشان تستلم هديتك.";
+
+/**
+ * فودافون كاش — صيغة المالك الحقيقية (الاسم مستبدل بـ Test User):
+ * «جنيه» مش «ج.م»، «رصيدك الحالي» بنقطتين، ورقم عملية صريح.
+ */
+export const FIXTURE_VODAFONE_OWNER =
+  "تم استلام مبلغ 19.00 جنيه من رقم 01146691073 المسجل بإسم Test User على رقم محفظتك  01020323432.\nرصيدك الحالي: 19.00 جنيه\nتاريخ العملية: 07:52 26-10-22\nرقم العملية: 024972825468\nتابع كل مصروفاتك من تاريخ المعاملات على أبلكيشن أنا فودافون http://vf.eg/vfcash";
+
+/** فودافون كاش — نفس الصيغة العربية بس «إستلام» بالهمزة. */
+export const FIXTURE_VODAFONE_HAMZA =
+  "تم إستلام مبلغ 250.00 جنيه من رقم 01004445555 إلى محفظة فودافون كاش الخاصة بك. رصيدك الحالي 900.00 جنيه. رقم العملية 777888999000";
+
+/** إنستاباي — إيداع بصيغة «أُضيف» (همزة + ضمة): regression للتشكيل. */
+export const FIXTURE_INSTAPAY_UDIF =
+  "أُضيف مبلغ 300.00 جنيه إلى حسابك بنجاح";
+
+/** فودافون كاش — صادر بصيغة «تم إرسال» بالهمزة: regression للاتجاه. */
+export const FIXTURE_VODAFONE_IRSAL =
+  "تم إرسال مبلغ 200.00 جنيه إلى رقم 01001112222 من محفظتك";
+
 // ---------------------------------------------------------------------
 // الاختبارات
 // ---------------------------------------------------------------------
@@ -123,6 +155,65 @@ Deno.test("promo: مفيش مبلغ → قالب none ومش قابل للمطا
   const r = parseSms("VodafoneCash", FIXTURE_PROMO);
   eq(r.template, "none", "template");
   eq(r.amount_egp, null, "amount");
+  eq(r.matchable, false, "matchable");
+});
+
+Deno.test("normalizeDigits: طيّ همزات الألف (إ/أ/آ → ا) وحذف التشكيل", () => {
+  eq(normalizeDigits("إستلام"), "استلام", "hamza below");
+  eq(normalizeDigits("أضاف"), "اضاف", "hamza above");
+  eq(normalizeDigits("آمن"), "امن", "madda folds");
+  eq(normalizeDigits("أُضيف"), "اضيف", "damma stripped, word contiguous");
+  eq(normalizeDigits("جنيهًا"), "جنيها", "fathatan stripped");
+});
+
+Deno.test("etisalat money: وارد بالهمزة — مبلغ «مبلغ» يكسب على الرصيد والإعلانات", () => {
+  const r = parseSms("et money", FIXTURE_ETISALAT_RECEIPT);
+  eq(r.template, "etisalat_money", "template");
+  eq(r.direction, "received", "direction (مش unknown رغم همزة إستلام)");
+  eq(r.amount_egp, 100, "amount (مش الرصيد 100.39 ولا أسعار الإعلان 160/225)");
+  eq(r.sender_account, "01020323432", "sender");
+  eq(r.transfer_ref, null, "no ref in etisalat format");
+  eq(r.origin, "official", "origin");
+  ok(r.matchable, "matchable");
+});
+
+Deno.test("etisalat money: رسالة ترويجية من نفس الهوية تفضل ignored", () => {
+  const r = parseSms("et money", FIXTURE_ETISALAT_PROMO);
+  eq(r.template, "none", "template");
+  eq(r.amount_egp, null, "amount");
+  eq(r.matchable, false, "matchable");
+});
+
+Deno.test("vodafone owner format: صيغة المالك الحقيقية تعدّي كاملة (regression)", () => {
+  const r = parseSms("VF-Cash", FIXTURE_VODAFONE_OWNER);
+  eq(r.template, "vodafone_ar", "template");
+  eq(r.direction, "received", "direction");
+  eq(r.amount_egp, 19, "amount");
+  eq(r.sender_account, "01146691073", "sender");
+  eq(r.transfer_ref, "024972825468", "ref");
+  ok(r.matchable, "matchable");
+});
+
+Deno.test("vodafone hamza: «إستلام» بالهمزة من مرسل فودافون تعدّي وارد (regression)", () => {
+  const r = parseSms("VodafoneCash", FIXTURE_VODAFONE_HAMZA);
+  eq(r.template, "vodafone_ar", "template");
+  eq(r.direction, "received", "direction (مش unknown)");
+  eq(r.amount_egp, 250, "amount");
+  eq(r.sender_account, "01004445555", "sender");
+  eq(r.transfer_ref, "777888999000", "ref");
+  ok(r.matchable, "matchable");
+});
+
+Deno.test("instapay udif: «أُضيف» بالهمزة والتشكيل تعدّي وارد وقابلة للمطابقة (regression)", () => {
+  const r = parseSms("InstaPay", FIXTURE_INSTAPAY_UDIF);
+  eq(r.direction, "received", "direction (مش unknown رغم الهمزة والضمة)");
+  eq(r.amount_egp, 300, "amount");
+  ok(r.matchable, "matchable");
+});
+
+Deno.test("vodafone irsal: «تم إرسال» بالهمزة تفضل صادر مش unknown (regression)", () => {
+  const r = parseSms("VodafoneCash", FIXTURE_VODAFONE_IRSAL);
+  eq(r.direction, "sent", "direction (مش unknown)");
   eq(r.matchable, false, "matchable");
 });
 

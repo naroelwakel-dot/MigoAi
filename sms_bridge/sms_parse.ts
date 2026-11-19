@@ -28,7 +28,7 @@
 /** ناتج التحليل — بيتبعت للقاعدة كـ parsed وبيتستخرج منه الحقول. */
 export interface SmsParseResult {
   /** القالب اللي طلّع المبلغ (أو 'none'). */
-  template: "vodafone_ar" | "vodafone_en" | "instapay_generic" | "generic" | "none";
+  template: "vodafone_ar" | "vodafone_en" | "instapay_generic" | "etisalat_money" | "generic" | "none";
   /** اتجاه الحركة كما فهمه المحلّل من صياغة الرسالة. */
   direction: "received" | "sent" | "unknown";
   /** المبلغ بالجنيه (رقم عشري دقيق لحد قرشين) أو null. */
@@ -102,8 +102,16 @@ export function classifyOrigin(senderId: string): SmsOrigin {
 // ---------------------------------------------------------------------
 // تطبيع: أرقام عربية مشرقية (٠١٢٣) و«٫» فاصلة عشرية و«٬» فاصل آلاف —
 // رسائل مصرية كتير بتوصل بيهم، وكل التعابير تحت بتشتغل على اللاتيني.
+// وكمان طيّ همزات الألف (إ/أ/آ → ا): رسائل e& money الحقيقية بتكتب
+// «إستلام» بالهمزة بينما علامات الاتجاه والقوالب مكتوبة بالألف
+// العادية «استلام» — من غير الطيّ الاتجاه بيطلع unknown والرسالة
+// بتتسجل ignored رغم إن المبلغ والمرسل بيتقروا صح.
+// وكمان حذف التشكيل (U+064B–U+0652 وU+0670): الطيّ لوحده مش كفاية —
+// «أُضيف» بعد الطيّ بتبقى «اُضيف» والضمة فاصلة بين الحروف فعلامة
+// الاتجاه «اضيف» مش بتلقطها؛ بعد حذف التشكيل بتبقى «اضيف» متصلة.
 // ---------------------------------------------------------------------
 const AR_DIGITS = "٠١٢٣٤٥٦٧٨٩";
+const HAMZA_ALEFS: Record<string, string> = { "إ": "ا", "أ": "ا", "آ": "ا" };
 export function normalizeDigits(text: string): string {
   let out = "";
   for (const ch of text) {
@@ -111,6 +119,10 @@ export function normalizeDigits(text: string): string {
     if (idx >= 0) { out += String(idx); continue; }
     if (ch === "٫") { out += "."; continue; }   // فاصلة عشرية عربية
     if (ch === "٬") { out += ","; continue; }   // فاصل آلاف عربي
+    const cp = ch.codePointAt(0) ?? 0;
+    if ((cp >= 0x064B && cp <= 0x0652) || cp === 0x0670) continue; // تشكيل → يُحذف
+    const folded = HAMZA_ALEFS[ch];
+    if (folded) { out += folded; continue; }   // همزة ألف → ألف عادية
     out += ch;
   }
   return out;
@@ -132,8 +144,11 @@ const MONEY_PREFIX_RE = /(?:EGP|ج\.م\.?|جنيه(?:ًا|ا)?)\s*:?\s*([0-9]{1,
 const AMOUNT_WORD_RE = /(?:مبلغ|بقيمة|قيمة)\s*:?\s*([0-9]{1,3}(?:,[0-9]{3})*(?:\.[0-9]{1,2})?|[0-9]+(?:\.[0-9]{1,2})?)/;
 
 // علامات الاتجاه — الوارد لازم يبقى صريح؛ الصادر الصريح بيتلغي.
-const RECEIVED_MARKERS = /(?:استلام|استلمت|استقبلت|تم\s*(?:إضافة|اضافة|إيداع|ايداع)|وصل(?:ك|ت)?|تحويل وارد|أُضيف|اضيف إلى حسابك|received|credited|deposit(?:ed)?)/i;
-const SENT_MARKERS = /(?:تم تحويل مبلغ.*(?:إلى|الى|لرقم)|قمت بتحويل|تم إرسال|you (?:have )?sent|payment (?:of|sent))/i;
+// ⚠️ الحروف هنا مكتوبة بالأبجدية المطوية (ا مش إ/أ، والى مش إلى) ومن
+// غير تشكيل، لأن العلامات دي بتشتغل على النص بعد normalizeDigits بس —
+// أي صيغة غير مطوية هنا مش هتطابق أي نص حقيقي أبدًا.
+const RECEIVED_MARKERS = /(?:استلام|استلمت|استقبلت|تم\s*(?:اضافة|ايداع)|وصل(?:ك|ت)?|تحويل وارد|اضيف|اضيف الى حسابك|received|credited|deposit(?:ed)?)/i;
+const SENT_MARKERS = /(?:تم تحويل مبلغ.*(?:الى|لرقم)|قمت بتحويل|تم ارسال|you (?:have )?sent|payment (?:of|sent))/i;
 
 function detectDirection(body: string): "received" | "sent" | "unknown" {
   if (RECEIVED_MARKERS.test(body)) return "received";
@@ -221,6 +236,29 @@ function parseVodafoneEn(body: string): Partial<SmsParseResult> | null {
 }
 
 /**
+ * اتصالات كاش (e& money) — عربي. الصيغة الحقيقية (اتأكدت من رسالة
+ * وصلت فعليًا 2026-11-19):
+ * «تم إستلام مبلغ 100.00 ج.م من رقم 01020323432 المسجل باسم …
+ * بنجاح. رصيد محفظتك الحالى 100.39 ج.م.» + ذيل إعلاني فيه أسعار
+ * تانية. البوابة: «استلام» + «مبلغ» بعد التطبيع (الهمزة مطوية).
+ * المبلغ من extractAmount: مرشّح «مبلغ» بيكسب قبل رقم الرصيد
+ * وأسعار الإعلانات. مفيش رقم عملية في الصيغة دي → المرجع null.
+ * القالب مقيد بهوية المُرسل بس (شوف parseSms) — صياغة فودافون
+ * العربية شبهها بالظبط ولازم تفضل باسمها.
+ */
+function parseEtisalatMoney(body: string): Partial<SmsParseResult> | null {
+  if (!body.includes("استلام") || !body.includes("مبلغ")) return null;
+  const amount = extractAmount(body);
+  if (amount == null) return null;
+  return {
+    template: "etisalat_money",
+    amount_egp: amount,
+    sender_account: extractSender(body),
+    transfer_ref: extractRef(body),
+  };
+}
+
+/**
  * إنستاباي/بنك — عام: إشعار إيداع/تحويل وارد فيه مبلغ ورقم مرجعي.
  * تغطية إنستاباي الفعلية معتمدة على سلوك بنك المالك في الرسائل
  * (بنوك كتير بتبعت «تم إيداع مبلغ … رقم مرجعي …»).
@@ -266,6 +304,9 @@ export function parseSms(senderId: string, rawBody: string): SmsParseResult {
   const sid = String(senderId || "").toLowerCase();
 
   const attempts: Array<() => Partial<SmsParseResult> | null> = [];
+  if (sid.includes("et money") || sid.includes("e& money") || sid.includes("etisalat")) {
+    attempts.push(() => parseEtisalatMoney(body));
+  }
   if (sid.includes("vodafone") || sid.includes("vf-")) {
     attempts.push(() => parseVodafoneAr(body), () => parseVodafoneEn(body));
   }
