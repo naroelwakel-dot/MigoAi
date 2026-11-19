@@ -1,10 +1,16 @@
 /**
- * إيصالات رسائل لشحن محفظة البوت — نقطتان ضيّقتان لممر البوت:
+ * إيصالات رسائل لشحن محفظة البوت — ثلاث نقط ضيّقة لممر البوت:
  *   POST /wallet/bot-sms-candidates — إيصالات موثّقة لسه ما
  *     اتستهلكتش في أي سطح (هجرة 017: bot_sms_candidates).
  *   POST /wallet/bot-sms-claim — حجز ذرّي لإيصال واحد لطلب شحن
  *     بوت واحد (bot_sms_claim): الحجز هو علامة الاستهلاك نفسها،
  *     فإيصال واحد مستحيل يقيّد رصيدين عبر الأسطح الثلاثة.
+ *   POST /wallet/bot-sms-unclaim — فك حجز تعويضي (هجرة 019:
+ *     bot_sms_unclaim، إصلاح F-07): لو القيد عند البوت فشل بعد
+ *     حجز ناجح، الفك بيرجّع الإيصال (+ شريكه) لغير المستهلك عشان
+ *     يفضل إثبات العميل حيًّا للمحاولة الجاية/القرار اليدوي.
+ *     مش استرداد فلوس: مفيش قيد حصل أصلًا، والفك بيترفض لو
+ *     الحالة مش «محجوز للبوت ده» بالحرف.
  *
  * المستدعي الوحيد هو ممر الشحن التلقائي في بوت التليجرام
  * (wallet/sms_auto)، والمصادقة هي توكن الجسر القائم بين النظامين
@@ -27,6 +33,11 @@ export interface BotSmsRpcClient {
     p_bot_topup_id: string;
     p_partner_id: string | null;
     p_basis: string | null;
+  }): Promise<Record<string, unknown>>;
+  callUnclaim(args: {
+    p_event_id: string;
+    p_bot_topup_id: string;
+    p_partner_id: string | null;
   }): Promise<Record<string, unknown>>;
 }
 
@@ -74,6 +85,9 @@ export class PostgrestBotSmsClient implements BotSmsRpcClient {
   callClaim(args: Parameters<BotSmsRpcClient["callClaim"]>[0]) {
     return this.rpc("bot_sms_claim", { ...args });
   }
+  callUnclaim(args: Parameters<BotSmsRpcClient["callUnclaim"]>[0]) {
+    return this.rpc("bot_sms_unclaim", { ...args });
+  }
 }
 
 /** مقارنة زمنية ثابتة للسر (نفس مساعد جسر الرسائل). */
@@ -112,7 +126,8 @@ export async function handleBotSmsRequest(
   const path = url.pathname.replace(/\/+$/, "");
   const isCandidates = path.endsWith("/wallet/bot-sms-candidates");
   const isClaim = path.endsWith("/wallet/bot-sms-claim");
-  if (!isCandidates && !isClaim) return null;
+  const isUnclaim = path.endsWith("/wallet/bot-sms-unclaim");
+  if (!isCandidates && !isClaim && !isUnclaim) return null;
   const json = (body: unknown, status = 200) =>
     new Response(JSON.stringify(body), {
       status,
@@ -146,7 +161,7 @@ export async function handleBotSmsRequest(
       return json({ ok: true, ...result });
     }
 
-    // الحجز: تحقق شكلي صارم قبل الـ RPC (الـ RPC بيتحقق دلاليًا).
+    // الحجز/فكه: تحقق شكلي صارم قبل الـ RPC (الـ RPC بيتحقق دلاليًا).
     const eventId = String(body.event_id || "").trim();
     const topupId = String(body.bot_topup_id || "").trim();
     const partnerRaw = body.partner_id
@@ -158,6 +173,17 @@ export async function handleBotSmsRequest(
     }
     if (partnerRaw && !UUID_RE.test(partnerRaw)) {
       return json({ ok: false, error: "invalid_body" }, 400);
+    }
+    if (isUnclaim) {
+      // فك الحجز التعويضي: نفس صرامة الجسم، والـ RPC بيحسم الحالة
+      // (بيفك بس لو لسه محجوز للبوت ده بالحرف — غير كده رفض).
+      const result = await deps.client.callUnclaim({
+        p_event_id: eventId,
+        p_bot_topup_id: topupId,
+        p_partner_id: partnerRaw || null,
+      });
+      // نتيجة الـ RPC حرفيًا (unclaimed / reason …).
+      return json({ ok: true, ...result });
     }
     if (basisRaw && basisRaw !== "dual_channel" &&
       basisRaw !== "trusted_sender") {
