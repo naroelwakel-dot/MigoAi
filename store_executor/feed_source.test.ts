@@ -1,21 +1,20 @@
 /**
- * اختبارات مصدر تغذية المصدر من قاعدة البيانات + الاحتياطي الانتقالي
- * (إصلاح F-01/D-05 — هجرة 021): `deno test feed_source.test.ts`
- * من غير أي استيراد خارجي (بتشتغل offline بالكامل).
+ * اختبارات مصدر تغذية المصدر من قاعدة البيانات فقط (إصلاح
+ * F-01/D-05 — هجرة 021، خطوة الإغلاق النهائية): `deno test
+ * feed_source.test.ts` من غير أي استيراد خارجي (offline بالكامل).
  *
- * الشكل المُختبَر هو نفس وثيقة migo-provenance v1 الحية (نفس المنتجات
- * والتكاليف اللي في الملف المنشور النهاردة) عشان إثبات «حساب الأرضية
- * ما اتغيّرش» يبقى على بيانات حقيقية مش أرقام مخترعة:
+ * التغذية كانت ملفًا ثابتًا منشورًا في مستودع عام + احتياطي بالرابط
+ * في مرحلة التحويل؛ بعد إثبات مسار القاعدة حيًا اتشال الملف العام
+ * والاحتياطي، والمصدر الوحيد هو جدول `provenance_feed`:
  *   - القراءة من الجدول بترجّع الوثيقة المخزّنة بحذافيرها.
- *   - الجدول فاضي/غايب/مفتاح غايب = المصدر بيرجّع null والاحتياطي
- *     (الرابط) بيخدم نفس اللقطة — المستهلك عمره ما يشوف فراغ.
- *   - لقطة قاعدة قديمة (> 24 ساعة) بتتخطّى للرابط الطازج.
- *   - منفّذ الأسعار بيحسب نفس الأرضيات بالظبط من مسار القاعدة ومن
- *     مسار الرابط على نفس البيانات (1.49→123 · 4.65→384 · 0.04→4).
+ *   - الجدول فاضي/غايب/مفتاح غايب/خطأ HTTP = المصدر بيرجّع null
+ *     (Fail-Closed: مفيش تغذية = مفيش أرضيات ومفيش تنفيذ شراء).
+ *   - لقطة قاعدة قديمة (> 24 ساعة) = null برضه — مفيش أي مسار تاني.
+ *   - منفّذ الأسعار بيحسب الأرضيات الصح من مسار القاعدة على نفس
+ *     بيانات التغذية الحية (1.49→123 · 4.65→384 · 0.04→4).
  */
 import {
   dbFeedLoader,
-  FallbackRegistrySource,
   JsonRegistrySource,
 } from "./registry.ts";
 import type { RegistrySnapshot } from "./types.ts";
@@ -95,13 +94,6 @@ function dbSource(rows: unknown, status = 200, key = "test-service-key") {
   return { source: new JsonRegistrySource(loader, () => NOW), calls };
 }
 
-function urlSource(feed: RegistrySnapshot | null) {
-  return new JsonRegistrySource(
-    () => feed ? Promise.resolve(feed) : Promise.reject(new Error("feed http 404")),
-    () => NOW,
-  );
-}
-
 // ------------------------------------------------------------ الاختبارات
 
 Deno.test("db loader returns the stored feed document verbatim, service-key headers sent", async () => {
@@ -121,86 +113,61 @@ Deno.test("db loader returns the stored feed document verbatim, service-key head
 
 Deno.test("db source is null when the table is empty, missing, or the key is unset", async () => {
   eq(await dbSource([]).source.snapshot(), null, "no row → null");
-  eq(await dbSource({ message: "not found" }, 404).source.snapshot(), null, "404 (no table yet) → null");
+  eq(await dbSource({ message: "not found" }, 404).source.snapshot(), null, "404 (no table) → null");
   eq(await dbSource([{ feed: fixtureFeed() }], 200, "").source.snapshot(), null, "no service key → null");
 });
 
-Deno.test("fallback serves the URL snapshot when the DB table is empty", async () => {
-  const feed = fixtureFeed();
-  const src = new FallbackRegistrySource(dbSource([]).source, urlSource(feed));
-  const snap = await src.snapshot();
-  eq(snap, feed, "URL snapshot served during transition");
-  const rec = await src.resolve("grok-plus-1m");
-  eq(rec?.cost_usd, 4.65, "resolve works on the fallback snapshot");
-});
-
-Deno.test("fallback prefers the DB snapshot when the table is populated", async () => {
-  const dbFeed = fixtureFeed("2026-11-19T00:30:00Z");
-  dbFeed.records = dbFeed.records.map((r) =>
-    r.product_key === "grok-plus-1m" ? { ...r, cost_usd: 5.0 } : r
-  );
-  const src = new FallbackRegistrySource(
-    dbSource([{ feed: dbFeed }]).source,
-    urlSource(fixtureFeed()),
-  );
-  const snap = await src.snapshot();
-  eq(snap?.generated_at, "2026-11-19T00:30:00Z", "DB snapshot wins");
-  eq((await src.resolve("grok-plus-1m"))?.cost_usd, 5.0, "DB record wins");
-});
-
-Deno.test("stale DB snapshot (>24h) falls back to a fresh URL snapshot", async () => {
-  const stale = fixtureFeed("2026-11-17T00:00:00Z"); // يومين قبل NOW
-  const fresh = fixtureFeed();
-  const src = new FallbackRegistrySource(
-    new JsonRegistrySource(dbFeedLoader({
-      baseUrl: "https://store-ref.supabase.co",
-      keyOf: () => "test-service-key",
-      fetchFn: fakePostgrest([{ feed: stale }]).fetchFn,
-    }), () => NOW),
-    urlSource(fresh),
-  );
-  const snap = await src.snapshot();
-  eq(snap?.generated_at, GENERATED_AT, "fresh URL snapshot served, stale DB ignored");
-});
-
-Deno.test("both sources unavailable → null (fail-closed, never an empty feed)", async () => {
-  const src = new FallbackRegistrySource(dbSource([], 500).source, urlSource(null));
-  eq(await src.snapshot(), null, "null snapshot");
+Deno.test("db source is null on a PostgREST error — fail-closed, resolve is null too", async () => {
+  const src = dbSource([], 500).source;
+  eq(await src.snapshot(), null, "500 → null snapshot");
   eq(await src.resolve("grok-plus-1m"), null, "resolve is null too");
+  eq(await src.resolveBySku("Super Grok (xAI) (Grok Plus — شهر واحد)"), null, "resolveBySku is null too");
 });
 
-Deno.test("price floors from the DB path are identical to the URL path on the same fixture", async () => {
+Deno.test("populated DB snapshot serves and resolves by key and by SKU", async () => {
   const feed = fixtureFeed();
-  const run = async (registry: FallbackRegistrySource | JsonRegistrySource) => {
-    const calls: ApplyPriceFloorArgs[] = [];
-    const report = await runPriceFloorApplier({
-      registry,
-      client: {
-        applyPriceFloor: (args: ApplyPriceFloorArgs) => {
-          calls.push(args);
-          return Promise.resolve("already_at_or_above" as const);
-        },
+  const src = dbSource([{ feed }]).source;
+  const snap = await src.snapshot();
+  eq(snap, feed, "DB snapshot served verbatim");
+  eq((await src.resolve("grok-plus-1m"))?.cost_usd, 4.65, "resolve by product_key");
+  eq(
+    (await src.resolveBySku("حسابات Gmail جاهزة (حساب دائم)"))?.product_key,
+    "gmail-accounts",
+    "resolve by store SKU",
+  );
+});
+
+Deno.test("stale DB snapshot (>24h) is unavailable — null, no other path", async () => {
+  const stale = fixtureFeed("2026-11-17T00:00:00Z"); // يومين قبل NOW
+  const src = dbSource([{ feed: stale }]).source;
+  eq(await src.snapshot(), null, "stale snapshot → null");
+  eq(await src.resolve("grok-plus-1m"), null, "stale snapshot resolves nothing");
+});
+
+Deno.test("price floors from the DB path are exact on the live fixture", async () => {
+  const feed = fixtureFeed();
+  const calls: ApplyPriceFloorArgs[] = [];
+  const report = await runPriceFloorApplier({
+    registry: dbSource([{ feed }]).source,
+    client: {
+      applyPriceFloor: (args: ApplyPriceFloorArgs) => {
+        calls.push(args);
+        return Promise.resolve("already_at_or_above" as const);
       },
-      logError: () => {},
-    });
-    return { calls, report };
-  };
+    },
+    logError: () => {},
+  });
 
-  const viaDb = await run(new FallbackRegistrySource(
-    dbSource([{ feed }]).source,
-    urlSource(null), // الرابط واقع: القاعدة لوحدها لازم تكفي
-  ));
-  const viaUrl = await run(urlSource(feed));
+  eq(report.ok, true, "DB-path run ok");
+  eq(report.feed_generated_at, GENERATED_AT, "DB-path feed stamp");
+  eq(report.already_at_or_above, 8, "all 8 mapped records at/above");
+  eq(report.errors.length, 0, "no errors");
+  eq(calls.length, 8, "all 8 mapped records applied");
 
-  eq(viaDb.report.ok, true, "DB-path run ok");
-  eq(viaDb.report.feed_generated_at, GENERATED_AT, "DB-path feed stamp");
-  eq(viaDb.calls, viaUrl.calls, "identical RPC args from both paths");
-  eq(viaDb.calls.length, 8, "all 8 mapped records applied");
-
-  const floorOf = (calls: ApplyPriceFloorArgs[], key: string) =>
+  const floorOf = (key: string) =>
     calls.find((c) => c.p_product_key === key)?.p_floor_egp;
-  eq(floorOf(viaDb.calls, "duolingo-super-12m"), 123, "duolingo floor 1.49 → 123");
-  eq(floorOf(viaDb.calls, "grok-plus-1m"), 384, "grok floor 4.65 → 384");
-  eq(floorOf(viaDb.calls, "outlook-hotmail-accounts"), 4, "outlook floor 0.04 → 4");
-  eq(floorOf(viaDb.calls, "spotify-premium"), 83, "spotify floor 1.00 → 83");
+  eq(floorOf("duolingo-super-12m"), 123, "duolingo floor 1.49 → 123");
+  eq(floorOf("grok-plus-1m"), 384, "grok floor 4.65 → 384");
+  eq(floorOf("outlook-hotmail-accounts"), 4, "outlook floor 0.04 → 4");
+  eq(floorOf("spotify-premium"), 83, "spotify floor 1.00 → 83");
 });

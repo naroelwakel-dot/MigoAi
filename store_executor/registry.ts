@@ -147,10 +147,11 @@ export function urlLoader(url: string): Loader {
  * والتكاليف الدقيقة كانت مقروءة لأي حد (F-01/D-05). الجدول RLS مقفول
  * بلا سياسات — القراءة بمفتاح الخدمة بس، ومفيش أي سطح عام.
  *
- * أي فشل (مفتاح غايب/الجدول لسه ما اتعملش/مفيش صف/HTTP) = رمي خطأ،
- * فـ JsonRegistrySource بيرجّع null والمصدر الاحتياطي (الرابط) بيشتغل
- * — المستهلك عمره ما يشوف تغذية فاضية في نص التحويل (Fail-Closed
- * على القيم، متاح على المسار).
+ * ده المصدر الوحيد دلوقتي (الاحتياطي بالرابط العام اتشال بعد إثبات
+ * مسار القاعدة حيًا): أي فشل (مفتاح غايب/الجدول غايب/مفيش صف/HTTP)
+ * = رمي خطأ، فـ JsonRegistrySource بيرجّع null — والمستهلكون
+ * Fail-Closed: منفّذ الأسعار بيجهض الجولة من غير أي كتابة، ومنفّذ
+ * الشراء بيتخطّى البند (registry_unavailable) من غير تنفيذ ولا حجز.
  */
 export interface ProvenanceFeedDbOptions {
   baseUrl: string; // https://<ref>.supabase.co
@@ -185,36 +186,4 @@ export function dbFeedLoader(opts: ProvenanceFeedDbOptions): Loader {
     }
     return feed;
   };
-}
-
-/**
- * مصدر مركّب: الأساسي أولًا، والاحتياطي بس لو الأساسي رجّع null
- * (غايب/قديم/فاسد). بيُستخدم في مرحلة التحويل: قاعدة البيانات أساسي
- * والرابط المنشور احتياطي — فلو الجدول فاضي أو لسه ما اتعملش،
- * المستهلك بيكمل من الرابط زي النهاردة بالظبط، ولو القاعدة شايلة
- * لقطة صالحة هي اللي بتتحكم. إسقاط الاحتياطي خطوة لاحقة بعد إثبات
- * مسار القاعدة حيًا (انظر خطة التحويل في هجرة 021).
- */
-export class FallbackRegistrySource implements RegistrySource {
-  private primary: RegistrySource;
-  private fallback: RegistrySource;
-  constructor(primary: RegistrySource, fallback: RegistrySource) {
-    this.primary = primary;
-    this.fallback = fallback;
-  }
-  async snapshot(): Promise<RegistrySnapshot | null> {
-    const snap = await this.primary.snapshot();
-    if (snap) return snap;
-    return await this.fallback.snapshot();
-  }
-  async resolve(productKey: string): Promise<ProvenanceRecord | null> {
-    const snap = await this.snapshot();
-    if (!snap) return null;
-    return snap.records.find((r) => r.product_key === productKey) ?? null;
-  }
-  async resolveBySku(storeSku: string): Promise<ProvenanceRecord | null> {
-    const snap = await this.snapshot();
-    if (!snap) return null;
-    return snap.records.find((r) => r.store_sku === storeSku) ?? null;
-  }
 }
