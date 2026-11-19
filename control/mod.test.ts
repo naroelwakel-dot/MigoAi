@@ -16,6 +16,7 @@ import {
   type ControlStoreData,
   handleControlHomeRequest,
   parseCountRange,
+  PostgrestControlClient,
 } from "./mod.ts";
 
 // مساعدات تأكيد صغيرة (نفس نمط باقي الوحدات).
@@ -194,8 +195,35 @@ Deno.test("bridge bot client refuses when not configured", async () => {
 });
 
 Deno.test("parseCountRange reads PostgREST totals", () => {
-  eq(parseCountRange("0-0/123", 7), 123, "range with rows");
-  eq(parseCountRange("*/0", 7), 0, "star range zero");
-  eq(parseCountRange(null, 7), 7, "missing header falls back");
-  eq(parseCountRange("garbage", 7), 7, "garbage falls back");
+  eq(parseCountRange("0-0/123"), 123, "range with rows");
+  eq(parseCountRange("*/0"), 0, "star range zero");
+  eq(parseCountRange(null), null, "missing header is null — never a fallback");
+  eq(parseCountRange("garbage"), null, "garbage is null");
+  eq(parseCountRange("0-0/*"), null, "wildcard total is null");
+});
+
+Deno.test("store client fails loud when the count header is missing", async () => {
+  const realFetch = globalThis.fetch;
+  globalThis.fetch = () =>
+    Promise.resolve(
+      new Response(JSON.stringify([]), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }),
+    );
+  try {
+    const client = new PostgrestControlClient({
+      baseUrl: "https://example.invalid",
+      keyOf: () => "k",
+    });
+    let threw = false;
+    try {
+      await client.fetchStoreData();
+    } catch {
+      threw = true;
+    }
+    ok(threw, "missing Content-Range total must throw — never fabricate a count");
+  } finally {
+    globalThis.fetch = realFetch;
+  }
 });

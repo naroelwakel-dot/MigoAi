@@ -74,17 +74,18 @@ interface PgOptions {
 
 /**
  * بيقرا الإجمالي من ترويسة Content-Range بتاعة PostgREST
- * (شكلها «0-0/123»). غياب/خربانة = الرقم الاحتياطي.
+ * (شكلها «0-0/123»). غياب/خربانة/إجمالي نجمي = null، والمتصل
+ * بيفشل بصوت عالي (نفس قاعدة ناحية البوت: عدّاد يكدب برقم صغير
+ * أخطر من نقطة واقفة) — مفيش أي fallback لعدد الصفوف أبدًا.
  */
 export function parseCountRange(
   header: string | null,
-  fallback: number,
-): number {
-  if (!header) return fallback;
+): number | null {
+  if (!header) return null;
   const slash = header.lastIndexOf("/");
-  if (slash < 0) return fallback;
+  if (slash < 0) return null;
   const total = Number(header.slice(slash + 1));
-  return Number.isFinite(total) && total >= 0 ? total : fallback;
+  return Number.isFinite(total) && total >= 0 ? total : null;
 }
 
 /** عميل قراءة PostgREST بنفس نمط عملاء الوحدات التانية. */
@@ -118,16 +119,18 @@ export class PostgrestControlClient implements ControlStoreClient {
     } catch {
       rows = [];
     }
-    return {
-      rows,
-      total: countExact
-        ? parseCountRange(res.headers.get("content-range"), rows.length)
-        : null,
-    };
+    let total: number | null = null;
+    if (countExact) {
+      total = parseCountRange(res.headers.get("content-range"));
+      if (total === null) {
+        throw new Error("control read missing count (no Content-Range total)");
+      }
+    }
+    return { rows, total };
   }
 
   private async count(path: string): Promise<number> {
-    const { total } = await this.get(`${path}&limit=1`, true);
+    const { total } = await this.get(`${path}&limit=0`, true);
     return total ?? 0;
   }
 
@@ -164,7 +167,7 @@ export class PostgrestControlClient implements ControlStoreClient {
       ]);
 
     return {
-      pending_topups_count: pending.total ?? pending.rows.length,
+      pending_topups_count: pending.total ?? 0,
       pending_topups: pendingItems,
       unmatched_sms: unmatchedSms,
       new_orders: newOrders,
