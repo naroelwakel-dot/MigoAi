@@ -104,16 +104,70 @@
   .sheet.open, .sheet-veil.open{display:block;}
   .sheet p{font-size:16px; font-weight:600; margin-bottom:6px;}
   .sheet small{color:var(--muted); display:block; margin-bottom:14px;}
+  .msg.ok{display:block; background:#0F2A1A; border:1px solid var(--green); color:#C9F5DC;}
+  .badge{
+    display:inline-block; font-size:11.5px; font-weight:700; border-radius:999px;
+    padding:2px 9px; background:var(--surface2); border:1px solid var(--border); color:var(--muted);
+    vertical-align:middle;
+  }
+  .badge.bot{color:var(--blue); border-color:var(--blue);}
+  .badge.store{color:var(--gold); border-color:var(--gold);}
+  .search-row{display:flex; gap:8px;}
+  .search-row input{
+    flex:1; background:var(--surface2); border:1px solid var(--border); border-radius:10px;
+    color:var(--text); font-family:inherit; font-size:15px; padding:11px 12px; min-height:50px; min-width:0;
+  }
+  .search-row .btn{width:auto; padding:10px 20px; flex:none;}
+  .result-row{
+    display:flex; align-items:center; gap:10px; padding:12px 0;
+    border-top:1px solid var(--border); cursor:pointer;
+  }
+  .result-row:first-of-type{border-top:none; padding-top:2px;}
+  .result-row .who{flex:1; min-width:0;}
+  .result-row .who b{display:block; font-size:15px; overflow-wrap:anywhere;}
+  .result-row .who small{color:var(--muted); font-size:12.5px;}
+  .result-row .bal{font-weight:700; font-size:16px; text-align:left;}
+  .result-row .bal small{display:block; color:var(--muted); font-weight:400; font-size:12px;}
+  .wallet-card .bal-big{font-size:30px; font-weight:700; line-height:1.3;}
+  .wallet-card .bal-big small{font-size:14px; color:var(--muted); font-weight:500;}
+  .row-actions{display:flex; gap:8px; margin-top:9px; flex-wrap:wrap;}
+  .btn.small{display:inline-block; width:auto; min-height:40px; padding:6px 14px; font-size:14px; border-radius:10px;}
+  .btn.danger{background:var(--red); color:#FFFFFF;}
+  .btn.go{background:var(--green); color:#FFFFFF;}
+  .btn.ghost{background:var(--surface2); color:var(--text); border:1px solid var(--border);}
+  .btn.back{margin-bottom:2px;}
+  .status-txt{font-weight:600; font-size:13px;}
+  .st-pending{color:var(--amber);} .st-bad{color:var(--red);} .st-ok{color:var(--green);} .st-mut{color:var(--muted);}
+  .sheet.form{text-align:right; max-height:88vh; overflow-y:auto;}
+  .sheet.form .btn{margin-top:8px;}
+  .field{margin-bottom:12px;}
+  .field label{display:block; font-size:13.5px; color:var(--muted); margin-bottom:5px; font-weight:600;}
+  .field input, .field select, .field textarea{
+    width:100%; background:var(--surface2); border:1px solid var(--border); border-radius:10px;
+    color:var(--text); font-family:inherit; font-size:15px; padding:11px 12px; min-height:48px;
+  }
+  .seg{display:flex; gap:8px;}
+  .seg button{
+    flex:1; background:var(--surface2); border:1px solid var(--border); border-radius:10px;
+    color:var(--text); font-family:inherit; font-size:14.5px; font-weight:600;
+    padding:10px 4px; min-height:48px; cursor:pointer;
+  }
+  .seg button.on{background:var(--gold); color:var(--gold-text); border-color:var(--gold);}
+  .preview{
+    background:var(--surface2); border:1px solid var(--border); border-radius:10px;
+    padding:10px 12px; font-size:14.5px; margin-bottom:12px;
+  }
+  .preview .warn{color:var(--red); font-weight:600;}
 </style>
 </head>
 <body>
 
 <header class="top">
-  <h1>مهامي الآن</h1>
+  <h1 id="pageTitle">مهامي الآن</h1>
   <button class="pill" id="storePill" type="button"><span class="dot" id="storeDot"></span><span id="storePillText">بيحمّل…</span></button>
 </header>
 
-<main>
+<main id="homeMain">
   <div class="msg" id="msgBox"></div>
 
   <section class="card hidden" id="compCard">
@@ -137,11 +191,36 @@
   <div class="updated" id="updatedLine"></div>
 </main>
 
+<main id="customersMain" class="hidden">
+  <div class="msg" id="custMsg"></div>
+
+  <section class="card" id="custSearchCard">
+    <h2>بحث عن عميل</h2>
+    <div class="search-row">
+      <input id="custQ" type="text" placeholder="رقم عميل، إيميل، رقم عملية، أو رقم طلب">
+      <button class="btn" id="custSearchBtn" type="button">بحث</button>
+    </div>
+    <div class="sub" style="color:var(--muted); font-size:13px; margin-top:8px;">البحث بيدوّر في عملاء البوت وعملاء الموقع بنفس المعرّف.</div>
+    <div id="custResults" style="margin-top:6px;"></div>
+  </section>
+
+  <div id="custFile" class="hidden" style="display:flex; flex-direction:column; gap:14px;"></div>
+</main>
+
 <div class="sheet-veil" id="sheetVeil"></div>
 <div class="sheet" id="sheet">
   <p id="sheetTitle"></p>
   <small>القسم ده هيتبني في مرحلته الجاية من خطة اللوحة.</small>
   <button class="btn secondary" id="sheetClose" type="button">تمام</button>
+</div>
+
+<div class="sheet-veil" id="actVeil"></div>
+<div class="sheet form" id="actSheet">
+  <p id="actTitle"></p>
+  <div id="actBody"></div>
+  <div class="msg" id="actMsg"></div>
+  <button class="btn" id="actConfirm" type="button">تأكيد</button>
+  <button class="btn secondary" id="actCancel" type="button">إلغاء</button>
 </div>
 
 <nav class="bottom" id="bottomNav">
@@ -154,7 +233,8 @@
 
 <script>
 "use strict";
-var API_HOME = "https://migoai-72.naroelwakel-dot.deno.net/control/home";
+var API_BASE = "https://migoai-72.naroelwakel-dot.deno.net";
+var API_HOME = API_BASE + "/control/home";
 var KEY_SLOT = "migoControlAdminKey";
 
 function $(id){ return document.getElementById(id); }
@@ -357,12 +437,24 @@ function load(){
 $("refreshBtn").addEventListener("click", load);
 $("storePill").addEventListener("click", load);
 
-// التنقل السفلي: الرئيسية شغالة، والباقي في مراحل جاية — من غير شاشات وهمية.
-var navNames = { events: "الأحداث", orders: "الطلبات", customers: "العملاء", more: "المزيد" };
+// التنقل السفلي: الرئيسية والعملاء شغالين، والباقي في مراحل جاية — من غير شاشات وهمية.
+var navNames = { events: "الأحداث", orders: "الطلبات", more: "المزيد" };
+function showView(name){
+  var home = name === "home";
+  $("homeMain").classList.toggle("hidden", !home);
+  $("customersMain").classList.toggle("hidden", home);
+  $("pageTitle").textContent = home ? "مهامي الآن" : "العملاء";
+  document.querySelectorAll("#bottomNav button").forEach(function(b){
+    var n = b.getAttribute("data-nav");
+    b.classList.toggle("active", (home && n === "home") || (!home && n === "customers"));
+  });
+  window.scrollTo({ top: 0 });
+}
 document.querySelectorAll("#bottomNav button").forEach(function(b){
   b.addEventListener("click", function(){
     var nav = b.getAttribute("data-nav");
-    if (nav === "home") { window.scrollTo({ top: 0, behavior: "smooth" }); return; }
+    if (nav === "home") { showView("home"); return; }
+    if (nav === "customers") { showView("customers"); return; }
     $("sheetTitle").textContent = "قسم " + (navNames[nav] || "");
     $("sheet").classList.add("open");
     $("sheetVeil").classList.add("open");
@@ -371,6 +463,708 @@ document.querySelectorAll("#bottomNav button").forEach(function(b){
 function closeSheet(){ $("sheet").classList.remove("open"); $("sheetVeil").classList.remove("open"); }
 $("sheetClose").addEventListener("click", closeSheet);
 $("sheetVeil").addEventListener("click", closeSheet);
+
+// ============================================================
+// قسم العملاء (م١-أ): بحث موحد + ملف عميل + قرارات شحنات +
+// تعديل رصيد ونقل وعكس قيد — كل فعل بيتنفذ على الخادم فعلًا
+// والنجاح بيظهر بس بعد رد سليم منه.
+// ============================================================
+
+function showCustMsg(kind, html, withKeyBtn){
+  var box = $("custMsg");
+  box.className = "msg " + kind;
+  box.innerHTML = html + (withKeyBtn
+    ? '<button class="btn" id="custKeyBtn" type="button">كتابة المفتاح</button>' : "");
+  if (withKeyBtn) $("custKeyBtn").addEventListener("click", askKey);
+}
+function hideCustMsg(){ $("custMsg").className = "msg"; $("custMsg").innerHTML = ""; }
+
+// نداء واحد لكل نقاط قسم العملاء: بيبعت مفتاح الأدمن وبيفك الرد.
+function api(path, opts){
+  opts = opts || {};
+  var key = getKey();
+  if (!key) { askKey(); return Promise.reject({ noKey: true }); }
+  var headers = { "x-migo-admin": key };
+  var init = { method: opts.method || "GET", headers: headers };
+  if (opts.body) {
+    headers["Content-Type"] = "application/json";
+    init.body = JSON.stringify(opts.body);
+  }
+  return fetch(API_BASE + path, init).then(function(res){
+    return res.json().catch(function(){ return null; }).then(function(data){
+      if (res.status === 401) {
+        setKey("");
+        var e401 = new Error("unauthorized"); e401.status = 401; e401.data = data;
+        throw e401;
+      }
+      if (!res.ok || !data || data.ok === false) {
+        var e = new Error("api error");
+        e.status = res.status; e.data = data;
+        throw e;
+      }
+      return data;
+    });
+  });
+}
+
+// ترجمة أخطاء الخادم لكلام واضح بالعربي حسب سياق العملية.
+function errText(e, ctx){
+  if (e && e.noKey) return "";
+  if (e && e.userText) return e.userText;
+  if (e && e.status === 401) return "مفتاح الأدمن غلط أو مش مكتوب. اكتبه تاني عشان تكمل.";
+  var code = e && e.data && e.data.error;
+  if (code === "already_decided") return "الشحنة دي اتقرر فيها قبل كده.";
+  if (code === "insufficient") return "الرصيد مش هيكفي لتنفيذ العملية دي.";
+  if (code === "already_reversed") return "القيد ده اتعكس قبل كده.";
+  if (code === "bot_unavailable" || (e && e.data && e.data.bot_unavailable))
+    return "البوت مش بيرد دلوقتي — حاول تاني بعد شوية.";
+  if (code === "not_found" || (e && e.status === 404))
+    return ctx === "reverse" ? "القيد ده مش موجود." : "العميل مش موجود.";
+  if (e && e.status === 409)
+    return ctx === "decide" ? "الشحنة دي اتقرر فيها قبل كده." : "القيد ده اتعكس قبل كده.";
+  if (e && e.status === 422) return "الرصيد مش هيكفي لتنفيذ العملية دي.";
+  if (e && e.status === 400) {
+    if (ctx === "reverse") return "القيد ده نفسه عكس لقيد تاني، ومينفعش يتعكس.";
+    return "فيه بيانات ناقصة أو مش صحيحة في الطلب.";
+  }
+  if (e && (e.status === 502 || e.status === 503)) return "الخدمة مش بترد دلوقتي — حاول تاني بعد شوية.";
+  return "حصلت مشكلة ومش عارف أوصل للخادم. حاول تاني.";
+}
+
+function newIdem(){
+  if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c){
+    var r = Math.random() * 16 | 0, v = c === "x" ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+}
+function egpFromMinor(v){
+  if (v === null || v === undefined || v === "") return null;
+  var n = Number(v);
+  return isFinite(n) ? n / 100 : null;
+}
+function senderName(s){
+  if (s === "customer") return "العميل";
+  if (s === "bot") return "البوت";
+  if (s === "admin") return "الأدمن";
+  return s || "—";
+}
+
+// ---------------- ورقة الأفعال (تعديل/نقل/عكس/قرار) ----------------
+var actCtx = null;
+function openActSheet(title, bodyHtml, confirmLabel, onConfirm, errCtx){
+  $("actTitle").textContent = title;
+  $("actBody").innerHTML = bodyHtml;
+  var m = $("actMsg"); m.className = "msg"; m.innerHTML = "";
+  var c = $("actConfirm");
+  c.textContent = confirmLabel || "تأكيد"; c.disabled = false;
+  // مفتاح منع التكرار بيتولد مع فتح الورقة وبيفضل ثابت مع إعادة
+  // المحاولة لنفس النية، فالضغطة التانية ما تعملش العملية مرتين.
+  actCtx = { idem: newIdem(), onConfirm: onConfirm, errCtx: errCtx || "", confirmLabel: confirmLabel || "تأكيد" };
+  $("actSheet").classList.add("open");
+  $("actVeil").classList.add("open");
+  return actCtx;
+}
+function closeActSheet(){
+  $("actSheet").classList.remove("open");
+  $("actVeil").classList.remove("open");
+  actCtx = null;
+}
+function actError(text){
+  var m = $("actMsg");
+  m.className = "msg err";
+  m.textContent = text;
+}
+$("actCancel").addEventListener("click", closeActSheet);
+$("actVeil").addEventListener("click", closeActSheet);
+$("actConfirm").addEventListener("click", function(){
+  if (!actCtx || !actCtx.onConfirm) return;
+  var ctx = actCtx;
+  var c = $("actConfirm");
+  c.disabled = true; c.textContent = "بيتنفذ…";
+  Promise.resolve().then(ctx.onConfirm).then(function(){
+    closeActSheet();
+  }).catch(function(e){
+    if (e && e.noKey) { closeActSheet(); return; }
+    if (e && e.status === 401) {
+      closeActSheet();
+      showCustMsg("err", "مفتاح الأدمن غلط أو مش مكتوب. اكتبه تاني عشان تكمل.", true);
+      return;
+    }
+    c.disabled = false; c.textContent = ctx.confirmLabel;
+    actError(errText(e, ctx.errCtx));
+  });
+});
+function failValidation(text){
+  var e = new Error("validation");
+  e.userText = text;
+  throw e;
+}
+
+// ---------------- البحث الموحد ----------------
+var custState = { query: "", bot: [], store: [], searched: false };
+
+function doSearch(){
+  var q = $("custQ").value.trim();
+  if (!q) { showCustMsg("err", "اكتب معرّف الأول: رقم عميل، إيميل، رقم عملية، أو رقم طلب."); return; }
+  hideCustMsg();
+  custState.query = q;
+  custState.searched = true;
+  $("custResults").innerHTML = '<div class="sub" style="color:var(--muted)">بندوّر…</div>';
+  var btn = $("custSearchBtn");
+  btn.disabled = true;
+  api("/control/customers/search?q=" + encodeURIComponent(q))
+    .then(function(data){
+      custState.bot = Array.isArray(data.bot) ? data.bot : [];
+      custState.store = Array.isArray(data.store) ? data.store : [];
+      renderResults(data);
+    })
+    .catch(function(e){
+      if (e && e.noKey) { $("custResults").innerHTML = ""; return; }
+      if (e && e.status === 401) {
+        showCustMsg("err", "مفتاح الأدمن غلط أو مش مكتوب. اكتبه تاني عشان تكمل.", true);
+        $("custResults").innerHTML = "";
+        return;
+      }
+      $("custResults").innerHTML = "";
+      showCustMsg("err", errText(e, "search"));
+    })
+    .finally(function(){ btn.disabled = false; });
+}
+
+function renderResults(data){
+  var html = "";
+  if (data && data.bot_unavailable) {
+    html += '<div class="sub" style="color:var(--amber); padding:8px 0;">البوت مش بيرد دلوقتي — نتائج الموقع بس هي اللي ظاهرة.</div>';
+  }
+  custState.bot.forEach(function(r, i){
+    var age = relTime(r.last_at);
+    html += '<div class="result-row" data-open-bot="' + i + '">' +
+      '<div class="who"><b class="num">' + esc(r.ref || "—") + ' <span class="badge bot">بوت</span></b>' +
+      "<small>عميل تليجرام" + (age ? " · آخر نشاط " + esc(age) : "") + "</small></div>" +
+      '<div class="bal num">' + fmtNum(r.balance_egp) + ' <small>ج.م</small></div></div>';
+  });
+  custState.store.forEach(function(r, i){
+    var label = r.email || r.id || r.customer_id || "—";
+    html += '<div class="result-row" data-open-store="' + i + '">' +
+      '<div class="who"><b>' + esc(label) + ' <span class="badge store">موقع</span></b>' +
+      "<small>حساب موقع</small></div>" +
+      ((r.balance_egp !== null && r.balance_egp !== undefined && r.balance_egp !== "")
+        ? '<div class="bal num">' + fmtNum(r.balance_egp) + ' <small>ج.م</small></div>' : "") +
+      "</div>";
+  });
+  if (!custState.bot.length && !custState.store.length) {
+    html += '<div class="empty"><b>مفيش نتائج</b>مفيش عميل بالمعرّف ده في البوت ولا في الموقع.</div>';
+  }
+  $("custResults").innerHTML = html;
+  $("custResults").querySelectorAll("[data-open-bot]").forEach(function(el){
+    el.addEventListener("click", function(){
+      openCustomer("bot", custState.bot[Number(el.getAttribute("data-open-bot"))]);
+    });
+  });
+  $("custResults").querySelectorAll("[data-open-store]").forEach(function(el){
+    el.addEventListener("click", function(){
+      openCustomer("store", custState.store[Number(el.getAttribute("data-open-store"))]);
+    });
+  });
+}
+$("custSearchBtn").addEventListener("click", doSearch);
+$("custQ").addEventListener("keydown", function(ev){
+  if (ev.key === "Enter") { ev.preventDefault(); doSearch(); }
+});
+
+// ---------------- ملف العميل ----------------
+var custFile = { bot: null, store: null, botRef: "", storeId: "", storeEmail: "" };
+
+function openCustomer(surface, item){
+  if (!item) return;
+  custFile = { bot: null, store: null, botRef: "", storeId: "", storeEmail: "" };
+  hideCustMsg();
+  var wrap = $("custFile");
+  wrap.classList.remove("hidden");
+  wrap.innerHTML = '<div class="empty">بيحمّل ملف العميل…</div>';
+  wrap.scrollIntoView({ behavior: "smooth", block: "start" });
+  if (surface === "bot") {
+    custFile.botRef = String(item.ref || "");
+    api("/control/bot-customer?ref=" + encodeURIComponent(custFile.botRef))
+      .then(function(d){ custFile.bot = d; renderFile(); })
+      .catch(function(e){ fileLoadError(e); });
+  } else {
+    custFile.storeId = String(item.id || item.customer_id || "");
+    custFile.storeEmail = String(item.email || "");
+    var path = custFile.storeId
+      ? "/control/store-customer?id=" + encodeURIComponent(custFile.storeId)
+      : "/control/store-customer?email=" + encodeURIComponent(custFile.storeEmail);
+    api(path)
+      .then(function(d){
+        custFile.store = d;
+        if (d.customer && d.customer.id) custFile.storeId = String(d.customer.id);
+        if (d.customer && d.customer.email) custFile.storeEmail = String(d.customer.email);
+        renderFile();
+      })
+      .catch(function(e){ fileLoadError(e); });
+  }
+}
+function fileLoadError(e){
+  var wrap = $("custFile");
+  wrap.classList.add("hidden");
+  wrap.innerHTML = "";
+  if (e && e.noKey) return;
+  if (e && e.status === 401) {
+    showCustMsg("err", "مفتاح الأدمن غلط أو مش مكتوب. اكتبه تاني عشان تكمل.", true);
+    return;
+  }
+  showCustMsg("err", errText(e, "file"));
+}
+// إعادة تحميل سطح واحد بعد أي فعل، عشان الأرقام اللي تظهر تبقى من الخادم.
+function reloadSurface(surface){
+  if (surface === "bot" && custFile.botRef) {
+    return api("/control/bot-customer?ref=" + encodeURIComponent(custFile.botRef))
+      .then(function(d){ custFile.bot = d; renderFile(); });
+  }
+  if (surface === "store" && (custFile.storeId || custFile.storeEmail)) {
+    var path = custFile.storeId
+      ? "/control/store-customer?id=" + encodeURIComponent(custFile.storeId)
+      : "/control/store-customer?email=" + encodeURIComponent(custFile.storeEmail);
+    return api(path).then(function(d){ custFile.store = d; renderFile(); });
+  }
+  return Promise.resolve();
+}
+
+function statusTxt(map, s){
+  var m = map[s];
+  if (m) return '<span class="status-txt ' + m[1] + '">' + esc(m[0]) + "</span>";
+  return '<span class="status-txt st-mut">' + esc(s || "—") + "</span>";
+}
+var BOT_TOPUP_STATUS = {
+  pending: ["منتظرة", "st-pending"], needs_info: ["محتاج بيانات", "st-pending"],
+  approved: ["مقبولة", "st-ok"], rejected: ["مرفوضة", "st-bad"]
+};
+var STORE_TOPUP_STATUS = {
+  pending: ["منتظرة", "st-pending"], credited: ["معتمدة", "st-ok"], rejected: ["مرفوضة", "st-bad"]
+};
+var BOT_KIND = { credit: "إضافة", debit: "خصم" };
+var STORE_KIND = {
+  topup: "شحن محفظة", admin_deposit: "إيداع يدوي",
+  admin_compensation: "تعويض يدوي", admin_correction: "تصحيح يدوي"
+};
+
+function walletCardHtml(surface){
+  var isBot = surface === "bot";
+  var data = isBot ? custFile.bot : custFile.store;
+  var title = isBot ? "محفظة البوت" : "محفظة الموقع";
+  var badge = isBot ? '<span class="badge bot">بوت</span>' : '<span class="badge store">موقع</span>';
+  if (!data) {
+    return '<section class="card wallet-card"><h2>' + title + " " + badge + "</h2>" +
+      '<div class="sub" style="color:var(--muted)">المحفظة دي ما اتفتحتش في الملف ده. لو العميل عنده حساب على السطح ده، ارجع لنتائج البحث وافتح نتيجته من هناك.</div></section>';
+  }
+  var bal = Number(data.customer.balance_egp);
+  var html = '<section class="card wallet-card"><h2>' + title + " " + badge + "</h2>" +
+    '<div class="bal-big num">' + fmtNum(bal) + " <small>ج.م</small></div>" +
+    '<div class="row-actions">' +
+    '<button class="btn small" type="button" data-adjust="' + surface + '">تعديل رصيد</button>';
+  if (isBot) html += '<button class="btn ghost small" type="button" data-transfer="1">نقل لعميل تاني</button>';
+  html += "</div></section>";
+  return html;
+}
+
+function botTopupsHtml(){
+  var list = (custFile.bot && Array.isArray(custFile.bot.topups)) ? custFile.bot.topups : [];
+  if (!custFile.bot) return "";
+  var rows = "";
+  if (!list.length) rows = '<div class="sub" style="color:var(--muted)">مفيش شحنات.</div>';
+  list.forEach(function(t, i){
+    var age = relTime(t.created_at);
+    var amt = egpFromMinor(t.amount);
+    rows += '<div class="topup-row">' +
+      '<div class="amt num">' + fmtNum(amt) + ' ج.م <small>' + esc(t.method_label || "") + "</small></div>" +
+      '<div class="sub">' +
+      (t.operation_ref ? 'رقم العملية: <b class="num">' + esc(t.operation_ref) + "</b> · " : "") +
+      statusTxt(BOT_TOPUP_STATUS, t.status) +
+      (age ? " · " + esc(age) : "") +
+      (t.ref_seen_before ? ' · <b style="color:var(--red)">رقم العملية اتشاف قبل كده</b>' : "") +
+      "</div>";
+    if (t.status === "pending" || t.status === "needs_info") {
+      rows += '<div class="row-actions">' +
+        '<button class="btn go small" type="button" data-bdecide="approve" data-bidx="' + i + '">قبول</button>' +
+        '<button class="btn danger small" type="button" data-bdecide="reject" data-bidx="' + i + '">رفض</button>';
+      if (t.status === "pending")
+        rows += '<button class="btn ghost small" type="button" data-bdecide="needs_info" data-bidx="' + i + '">محتاج بيانات</button>';
+      rows += "</div>";
+    }
+    rows += "</div>";
+  });
+  return '<section class="card"><h2>شحنات البوت</h2>' + rows + "</section>";
+}
+
+function storeTopupsHtml(){
+  var list = (custFile.store && Array.isArray(custFile.store.topups)) ? custFile.store.topups : [];
+  if (!custFile.store) return "";
+  var rows = "";
+  if (!list.length) rows = '<div class="sub" style="color:var(--muted)">مفيش شحنات.</div>';
+  list.forEach(function(t, i){
+    var age = relTime(t.created_at);
+    rows += '<div class="topup-row">' +
+      '<div class="amt num">' + fmtNum(t.amount_egp) + ' ج.م <small>' + esc(t.payment_method || "") + "</small></div>" +
+      '<div class="sub">المُرسل: <b class="num">' + esc(t.sender_account || "—") + "</b>" +
+      (t.transfer_ref ? ' · رقم العملية: <b class="num">' + esc(t.transfer_ref) + "</b>" : "") +
+      " · " + statusTxt(STORE_TOPUP_STATUS, t.status) +
+      (age ? " · " + esc(age) : "") + "</div>";
+    if (t.status === "pending") {
+      rows += '<div class="row-actions">' +
+        '<button class="btn go small" type="button" data-sdecide="approve" data-sidx="' + i + '">قبول</button>' +
+        '<button class="btn danger small" type="button" data-sdecide="reject" data-sidx="' + i + '">رفض</button>' +
+        "</div>";
+    }
+    rows += "</div>";
+  });
+  return '<section class="card"><h2>شحنات الموقع</h2>' + rows + "</section>";
+}
+
+function botLedgerHtml(){
+  var list = (custFile.bot && Array.isArray(custFile.bot.ledger)) ? custFile.bot.ledger : [];
+  if (!custFile.bot) return "";
+  var rows = "";
+  if (!list.length) rows = '<div class="sub" style="color:var(--muted)">مفيش قيود لسه.</div>';
+  list.forEach(function(tx, i){
+    var age = relTime(tx.created_at);
+    var amt = egpFromMinor(tx.amount);
+    var after = egpFromMinor(tx.balance_after);
+    var sign = tx.kind === "credit" ? "+" : (tx.kind === "debit" ? "−" : "");
+    rows += '<div class="topup-row">' +
+      '<div class="amt num">' + sign + fmtNum(amt) + ' ج.م <small>' + esc(BOT_KIND[tx.kind] || tx.kind || "") + "</small></div>" +
+      '<div class="sub">الرصيد بعدها: <b class="num">' + fmtNum(after) + " ج.م</b>" + (age ? " · " + esc(age) : "") + "</div>" +
+      (tx.note ? '<div class="sub">' + esc(tx.note) + "</div>" : "");
+    var isReversal = (tx.note && tx.note.indexOf("[reversal]") === 0) ||
+      (tx.operation_ref && tx.operation_ref.indexOf("panel-reversal:") === 0);
+    if (!isReversal) {
+      rows += '<div class="row-actions"><button class="btn ghost small" type="button" data-breverse="' + i + '">عكس القيد</button></div>';
+    }
+    rows += "</div>";
+  });
+  return '<section class="card"><h2>قيود محفظة البوت</h2>' + rows + "</section>";
+}
+
+function storeLedgerHtml(){
+  var list = (custFile.store && Array.isArray(custFile.store.transactions)) ? custFile.store.transactions : [];
+  if (!custFile.store) return "";
+  var rows = "";
+  if (!list.length) rows = '<div class="sub" style="color:var(--muted)">مفيش قيود لسه.</div>';
+  list.forEach(function(tx, i){
+    var age = relTime(tx.created_at);
+    var amt = Number(tx.amount_egp);
+    rows += '<div class="topup-row">' +
+      '<div class="amt num">' + fmtNum(amt) + ' ج.م <small>' + esc(STORE_KIND[tx.kind] || tx.kind || "") + "</small></div>" +
+      '<div class="sub">' +
+      (tx.ref ? 'رقم العملية: <b class="num">' + esc(tx.ref) + "</b>" : "") +
+      (tx.order_ref ? ' · طلب: <b class="num">' + esc(tx.order_ref) + "</b>" : "") +
+      (age ? " · " + esc(age) : "") + "</div>" +
+      (tx.note ? '<div class="sub">' + esc(tx.note) + "</div>" : "");
+    if (isFinite(amt) && amt !== 0) {
+      rows += '<div class="row-actions"><button class="btn ghost small" type="button" data-sreverse="' + i + '">عكس القيد</button></div>';
+    }
+    rows += "</div>";
+  });
+  return '<section class="card"><h2>قيود محفظة الموقع</h2>' + rows + "</section>";
+}
+
+function botOrdersHtml(){
+  var list = (custFile.bot && Array.isArray(custFile.bot.orders)) ? custFile.bot.orders : [];
+  if (!custFile.bot) return "";
+  var rows = "";
+  if (!list.length) rows = '<div class="sub" style="color:var(--muted)">مفيش طلبات.</div>';
+  list.forEach(function(o){
+    var age = relTime(o.created_at);
+    rows += '<div class="topup-row">' +
+      '<div class="amt num">' + fmtNum(egpFromMinor(o.total)) + ' ج.م <small>' + esc(o.product_name || "") + "</small></div>" +
+      '<div class="sub">' + statusTxt({}, o.status) + (age ? " · " + esc(age) : "") + "</div></div>";
+  });
+  return '<section class="card"><h2>طلبات البوت</h2>' + rows + "</section>";
+}
+
+function storeOrdersHtml(){
+  var list = (custFile.store && Array.isArray(custFile.store.orders)) ? custFile.store.orders : [];
+  if (!custFile.store) return "";
+  var rows = "";
+  if (!list.length) rows = '<div class="sub" style="color:var(--muted)">مفيش طلبات.</div>';
+  list.forEach(function(o){
+    var age = relTime(o.created_at);
+    rows += '<div class="topup-row">' +
+      '<div class="amt num">' + fmtNum(o.server_total) + ' ج.م <small>' + esc(o.order_ref || "") + "</small></div>" +
+      '<div class="sub">' + statusTxt({}, o.status) + (age ? " · " + esc(age) : "") + "</div></div>";
+  });
+  return '<section class="card"><h2>طلبات الموقع</h2>' + rows + "</section>";
+}
+
+function botSheerHtml(){
+  var list = (custFile.bot && Array.isArray(custFile.bot.sheerid)) ? custFile.bot.sheerid : [];
+  if (!custFile.bot || !list.length) return "";
+  var rows = "";
+  list.forEach(function(j){
+    var age = relTime(j.created_at);
+    rows += '<div class="topup-row"><div class="sub">' + statusTxt({}, j.status) + (age ? " · " + esc(age) : "") + "</div></div>";
+  });
+  return '<section class="card"><h2>طلبات تحقق أخيرة</h2>' + rows + "</section>";
+}
+
+function renderFile(){
+  var wrap = $("custFile");
+  var bot = custFile.bot, store = custFile.store;
+  if (!bot && !store) { wrap.classList.add("hidden"); wrap.innerHTML = ""; return; }
+  var html = '<button class="btn secondary back" type="button" id="fileBack">رجوع لنتائج البحث</button>';
+
+  // رأسيّة الهوية من السطح المحمّل
+  html += '<section class="card"><h2>ملف العميل</h2>';
+  if (bot) {
+    html += '<div class="sub">رقم العميل (تليجرام): <b class="num">' + esc(bot.customer.ref || custFile.botRef) + '</b> <span class="badge bot">بوت</span></div>';
+    var conv = bot.conversation || {};
+    var lastAge = relTime(conv.last_at);
+    if (conv.last_at) {
+      html += '<div class="sub">آخر تفاعل: رسالة من ' + esc(senderName(conv.last_sender)) + (lastAge ? " · " + esc(lastAge) : "") + "</div>";
+    } else {
+      html += '<div class="sub">آخر تفاعل: مفيش محادثات مسجلة.</div>';
+    }
+    if (bot.customer.wallet_created_at) {
+      var wc = relTime(bot.customer.wallet_created_at);
+      html += '<div class="sub">المحفظة اتعملت: ' + esc(wc || "") + "</div>";
+    }
+  }
+  if (store) {
+    html += '<div class="sub">حساب الموقع: <b>' + esc(store.customer.email || store.customer.id || "") + '</b> <span class="badge store">موقع</span></div>';
+    if (store.customer.email && store.customer.id) {
+      html += '<div class="sub">رقم الحساب: <b class="num">' + esc(store.customer.id) + "</b></div>";
+    }
+  }
+  html += "</section>";
+
+  html += walletCardHtml("bot");
+  html += walletCardHtml("store");
+  html += botTopupsHtml();
+  html += storeTopupsHtml();
+  html += botLedgerHtml();
+  html += storeLedgerHtml();
+  html += botOrdersHtml();
+  html += storeOrdersHtml();
+  html += botSheerHtml();
+
+  wrap.innerHTML = html;
+  wrap.classList.remove("hidden");
+
+  $("fileBack").addEventListener("click", function(){
+    wrap.classList.add("hidden");
+    wrap.innerHTML = "";
+    custFile = { bot: null, store: null, botRef: "", storeId: "", storeEmail: "" };
+    $("custSearchCard").scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+  wrap.querySelectorAll("[data-adjust]").forEach(function(b){
+    b.addEventListener("click", function(){ openAdjust(b.getAttribute("data-adjust"), null); });
+  });
+  var tr = wrap.querySelector("[data-transfer]");
+  if (tr) tr.addEventListener("click", openTransfer);
+  wrap.querySelectorAll("[data-bdecide]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var t = custFile.bot.topups[Number(b.getAttribute("data-bidx"))];
+      openDecide("bot", t, b.getAttribute("data-bdecide"));
+    });
+  });
+  wrap.querySelectorAll("[data-sdecide]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var t = custFile.store.topups[Number(b.getAttribute("data-sidx"))];
+      openDecide("store", t, b.getAttribute("data-sdecide"));
+    });
+  });
+  wrap.querySelectorAll("[data-breverse]").forEach(function(b){
+    b.addEventListener("click", function(){
+      openBotReverse(custFile.bot.ledger[Number(b.getAttribute("data-breverse"))]);
+    });
+  });
+  wrap.querySelectorAll("[data-sreverse]").forEach(function(b){
+    b.addEventListener("click", function(){
+      openStoreReverse(custFile.store.transactions[Number(b.getAttribute("data-sreverse"))]);
+    });
+  });
+}
+
+// ---------------- قرار شحنة ----------------
+var DECIDE_LABEL = { approve: "قبول الشحنة", reject: "رفض الشحنة", needs_info: "طلب بيانات أكتر" };
+function openDecide(surface, t, action){
+  if (!t) return;
+  var isBot = surface === "bot";
+  var amt = isBot ? egpFromMinor(t.amount) : Number(t.amount_egp);
+  var method = isBot ? (t.method_label || "") : (t.payment_method || "");
+  var body = '<div class="preview">المبلغ: <b class="num">' + fmtNum(amt) + " ج.م</b>" +
+    (method ? " · " + esc(method) : "") +
+    (isBot && t.operation_ref ? '<br>رقم العملية: <b class="num">' + esc(t.operation_ref) + "</b>" : "") +
+    (!isBot && t.sender_account ? '<br>المُرسل: <b class="num">' + esc(t.sender_account) + "</b>" : "") +
+    "</div>" +
+    '<div class="field"><label>ملحوظة (اختياري)</label><input id="decNote" type="text"></div>';
+  openActSheet(DECIDE_LABEL[action] || "قرار شحنة", body, "تنفيذ القرار", function(){
+    var note = $("decNote").value.trim();
+    var payload, path;
+    if (isBot) {
+      path = "/control/bot-topup-decide";
+      payload = { request_id: t.id, action: action };
+    } else {
+      path = "/control/store-topup-decide";
+      payload = { topup_id: t.id, action: action };
+    }
+    if (note) payload.note = note;
+    return api(path, { method: "POST", body: payload }).then(function(){
+      return reloadSurface(surface);
+    }).then(function(){
+      showCustMsg("ok", "اتنفذ: " + (DECIDE_LABEL[action] || "القرار") + " — الأرقام اللي تحت دي من الخادم بعد التنفيذ.");
+    });
+  }, "decide");
+}
+
+// ---------------- تعديل الرصيد ----------------
+function openAdjust(surface, preset){
+  var isBot = surface === "bot";
+  var data = isBot ? custFile.bot : custFile.store;
+  if (!data) return;
+  var bal = Number(data.customer.balance_egp);
+  var who = isBot ? ("عميل البوت " + (data.customer.ref || custFile.botRef)) : ("حساب الموقع " + (data.customer.email || data.customer.id || ""));
+  var body =
+    '<div class="preview">العميل: <b>' + esc(who) + '</b><br>الرصيد دلوقتي: <b class="num">' + fmtNum(bal) + ' ج.م</b></div>' +
+    '<div class="field"><label>نوع التعديل</label><div class="seg" id="adjSeg">' +
+    '<button type="button" data-mode="add">إضافة</button>' +
+    '<button type="button" data-mode="deduct">خصم</button>' +
+    '<button type="button" data-mode="set">اضبط على</button></div></div>' +
+    '<div class="field"><label id="adjAmtLbl">المبلغ (ج.م)</label><input id="adjAmt" type="number" inputmode="decimal" min="0" step="0.01"></div>' +
+    '<div class="field"><label>نوع القيد</label><select id="adjKind">' +
+    '<option value="deposit">إيداع</option><option value="compensation">تعويض</option><option value="correction">تصحيح</option></select></div>' +
+    '<div class="field"><label>السبب (إلزامي)</label><input id="adjReason" type="text"></div>' +
+    '<div class="preview" id="adjPreview"></div>';
+  var ctx = openActSheet(isBot ? "تعديل رصيد محفظة البوت" : "تعديل رصيد محفظة الموقع", body, "تنفيذ التعديل", function(){
+    var amt = parseFloat($("adjAmt").value);
+    var kind = $("adjKind").value;
+    var reason = $("adjReason").value.trim();
+    if (!isFinite(amt)) failValidation("اكتب مبلغ صحيح.");
+    if (mode === "set" ? amt < 0 : amt <= 0) failValidation(mode === "set" ? "الرصيد الجديد مينفعش يكون بالسالب." : "المبلغ لازم يكون أكبر من صفر.");
+    if (!reason) failValidation("السبب إلزامي — اكتب سبب التعديل.");
+    var payload, path;
+    if (isBot) {
+      path = "/control/bot-wallet-adjust";
+      payload = { customer_ref: data.customer.ref || custFile.botRef, mode: mode, kind: kind, reason: reason, idempotency_key: ctx.idem };
+    } else {
+      path = "/control/store-wallet-adjust";
+      payload = { customer_id: data.customer.id || custFile.storeId, mode: mode, kind: kind, reason: reason, idempotency_key: ctx.idem };
+    }
+    if (mode === "set") payload.target_egp = amt; else payload.amount_egp = amt;
+    return api(path, { method: "POST", body: payload }).then(function(){
+      return reloadSurface(surface);
+    }).then(function(){
+      showCustMsg("ok", "اتنفذ تعديل الرصيد — الرصيد اللي تحت ده من الخادم بعد التنفيذ.");
+    });
+  }, "adjust");
+
+  var mode = (preset && preset.mode) || "add";
+  var segBtns = $("adjSeg").querySelectorAll("button");
+  function paintSeg(){
+    segBtns.forEach(function(b){ b.classList.toggle("on", b.getAttribute("data-mode") === mode); });
+    $("adjAmtLbl").textContent = mode === "set" ? "الرصيد الجديد (ج.م)" : "المبلغ (ج.م)";
+    updPreview();
+  }
+  function updPreview(){
+    var amt = parseFloat($("adjAmt").value);
+    var el = $("adjPreview");
+    if (!isFinite(amt)) {
+      el.innerHTML = 'الرصيد دلوقتي: <b class="num">' + fmtNum(bal) + ' ج.م</b> — اكتب مبلغ عشان تشوف الرصيد بعد التنفيذ.';
+      return;
+    }
+    var after = mode === "add" ? bal + amt : (mode === "deduct" ? bal - amt : amt);
+    el.innerHTML = 'قبل: <b class="num">' + fmtNum(bal) + ' ج.م</b> ← بعد: <b class="num">' + fmtNum(after) + ' ج.م</b>' +
+      (after < 0 ? '<br><span class="warn">الرصيد مش هيكفي — الخادم هيرفض العملية.</span>' : "");
+  }
+  segBtns.forEach(function(b){
+    b.addEventListener("click", function(){ mode = b.getAttribute("data-mode"); paintSeg(); });
+  });
+  $("adjAmt").addEventListener("input", updPreview);
+  if (preset) {
+    mode = preset.mode || mode;
+    if (typeof preset.amount === "number") $("adjAmt").value = preset.amount;
+    if (preset.kind) $("adjKind").value = preset.kind;
+    if (preset.reason) $("adjReason").value = preset.reason;
+  }
+  paintSeg();
+}
+
+// ---------------- نقل بين عميلين (بوت بس) ----------------
+function openTransfer(){
+  var data = custFile.bot;
+  if (!data) return;
+  var bal = Number(data.customer.balance_egp);
+  var fromRef = data.customer.ref || custFile.botRef;
+  var body =
+    '<div class="preview">من عميل البوت: <b class="num">' + esc(fromRef) + '</b><br>رصيده دلوقتي: <b class="num">' + fmtNum(bal) + ' ج.م</b></div>' +
+    '<div class="field"><label>رقم العميل التاني (تليجرام)</label><input id="trTo" type="text" inputmode="numeric"></div>' +
+    '<div class="field"><label>المبلغ (ج.م)</label><input id="trAmt" type="number" inputmode="decimal" min="0" step="0.01"></div>' +
+    '<div class="field"><label>السبب (إلزامي)</label><input id="trReason" type="text"></div>' +
+    '<div class="preview" id="trPreview"></div>';
+  var ctx = openActSheet("نقل رصيد لعميل تاني", body, "تنفيذ النقل", function(){
+    var to = $("trTo").value.trim();
+    var amt = parseFloat($("trAmt").value);
+    var reason = $("trReason").value.trim();
+    if (!to) failValidation("اكتب رقم العميل التاني.");
+    if (to === String(fromRef)) failValidation("مينفعش تنقل لنفس العميل.");
+    if (!isFinite(amt) || amt <= 0) failValidation("اكتب مبلغ صحيح أكبر من صفر.");
+    if (!reason) failValidation("السبب إلزامي — اكتب سبب النقل.");
+    return api("/control/bot-wallet-transfer", { method: "POST", body: {
+      from_ref: fromRef, to_ref: to, amount_egp: amt, reason: reason, idempotency_key: ctx.idem
+    } }).then(function(){
+      return reloadSurface("bot");
+    }).then(function(){
+      showCustMsg("ok", "اتنفذ النقل — رصيد العميل اللي تحت ده من الخادم بعد التنفيذ.");
+    });
+  }, "transfer");
+  function upd(){
+    var amt = parseFloat($("trAmt").value);
+    var el = $("trPreview");
+    if (!isFinite(amt)) { el.innerHTML = "اكتب مبلغ عشان تشوف رصيد العميل ده بعد النقل."; return; }
+    var after = bal - amt;
+    el.innerHTML = 'رصيد العميل ده بعد النقل: <b class="num">' + fmtNum(after) + ' ج.م</b>' +
+      (after < 0 ? '<br><span class="warn">الرصيد مش هيكفي — الخادم هيرفض العملية.</span>' : "");
+  }
+  $("trAmt").addEventListener("input", upd);
+  upd();
+}
+
+// ---------------- عكس قيد ----------------
+function openBotReverse(tx){
+  if (!tx) return;
+  var data = custFile.bot;
+  var amt = egpFromMinor(tx.amount);
+  var body =
+    '<div class="preview">القيد: <b>' + esc(BOT_KIND[tx.kind] || tx.kind || "") + '</b> بمبلغ <b class="num">' + fmtNum(amt) + ' ج.م</b>' +
+    (tx.note ? "<br>" + esc(tx.note) : "") +
+    "<br>العكس هيعمل قيد معاكس بنفس المبلغ على محفظة العميل.</div>" +
+    '<div class="field"><label>سبب العكس (إلزامي)</label><input id="revReason" type="text"></div>';
+  var ctx = openActSheet("عكس قيد محفظة البوت", body, "تنفيذ العكس", function(){
+    var reason = $("revReason").value.trim();
+    if (!reason) failValidation("سبب العكس إلزامي.");
+    return api("/control/bot-wallet-reverse", { method: "POST", body: {
+      customer_ref: data.customer.ref || custFile.botRef, tx_id: tx.id, reason: reason, idempotency_key: ctx.idem
+    } }).then(function(){
+      return reloadSurface("bot");
+    }).then(function(){
+      showCustMsg("ok", "اتنفذ عكس القيد — القيود اللي تحت دي من الخادم بعد التنفيذ.");
+    });
+  }, "reverse");
+}
+function openStoreReverse(tx){
+  if (!tx) return;
+  var amt = Number(tx.amount_egp);
+  // قيود الشحن قيمتها موجبة، وقيود التعديل اليدوي قيمتها بسالب أو موجب
+  // حسب الاتجاه — العكس بيتم بتعديل معاكس بنفس القيمة المطلقة.
+  var signed = tx.kind === "topup" ? Math.abs(amt) : amt;
+  var preset = {
+    mode: signed > 0 ? "deduct" : "add",
+    amount: Math.abs(signed),
+    kind: "correction",
+    reason: "عكس قيد" + (tx.ref ? " — رقم العملية: " + tx.ref : "")
+  };
+  openAdjust("store", preset);
+}
 
 load();
 </script>
