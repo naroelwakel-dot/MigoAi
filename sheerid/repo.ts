@@ -21,7 +21,7 @@ import {
   PostgrestStoreDb,
 } from "../store_executor/store_db.ts";
 import { PostgrestRefundClient } from "../store_executor/refund.ts";
-import { STUDENT_PRODUCT_KEY, STUDENT_SKU, STUDENT_SUPPLIER_KEY, TABLE_JOBS } from "./config.ts";
+import { STATUS_REFUND_PENDING, STUDENT_PRODUCT_KEY, STUDENT_SKU, STUDENT_SUPPLIER_KEY, TABLE_JOBS } from "./config.ts";
 
 export interface SheeridJob {
   id: string;
@@ -42,6 +42,16 @@ export interface SheeridJob {
   updated_at: string;
 }
 
+/** توقّع شرطي لتحديث ذرّي: التحديث بيتنفّذ بس لو الصف لسه مطابق. */
+export interface JobUpdateExpect {
+  /** الحالة الحالية لازم تكون واحدة من دول. */
+  statuses?: readonly string[];
+  /** delivered_at لازم يكون لسه null. */
+  deliveredNull?: boolean;
+  /** عدد محاولات التسليم الحالي لازم يساوي القيمة دي بالظبط (CAS). */
+  deliveryAttempts?: number;
+}
+
 export interface SheeridRepository {
   createJob(input: {
     order_ref: string;
@@ -52,12 +62,25 @@ export interface SheeridRepository {
   getJob(id: string): Promise<SheeridJob | null>;
   getByProviderJobId(jobId: string): Promise<SheeridJob | null>;
   updateJob(id: string, patch: Partial<SheeridJob>): Promise<SheeridJob>;
+  /**
+   * تحديث مشروط ذرّي (إصلاح اللجنة #2): بيتنفّذ بس لو الصف لسه
+   * مطابق للتوقّع وقت التحديث، ويرجّع الصف المحدّث — أو null لو
+   * التوقّع ما طابقش (متسابق تاني كسب الانتقال). ده اللي بيمنع
+   * الخصم/الإيميل/الاسترداد المزدوج تحت التزامن.
+   */
+  updateJobIf(
+    id: string,
+    patch: Partial<SheeridJob>,
+    expect: JobUpdateExpect,
+  ): Promise<SheeridJob | null>;
   listInflight(
     statuses: readonly string[],
     createdAfterIso: string,
     createdBeforeIso: string,
   ): Promise<SheeridJob[]>;
   listUndelivered(createdAfterIso: string): Promise<SheeridJob[]>;
+  /** عمليات فشل اتسوّت لكن استردادها لسه معلّق (refund_pending). */
+  listRefundPending(): Promise<SheeridJob[]>;
 }
 
 function nowIso(): string {
@@ -84,6 +107,12 @@ export class MemorySheeridRepository implements SheeridRepository {
     customer_email: string | null;
     status: string;
   }): Promise<SheeridJob> {
+    // مرآة قيد الإنتاج: order_ref فريد في الجدول، ونداء الإنشاء
+    // المتزامن التاني بياخد 409 ويرجع بالصف القائم (تنفيذ PostgREST
+    // فوق) — فالإنشاء هنا إيدمبوتنت لكل طلب بنفس المعنى.
+    for (const j of this.jobs.values()) {
+      if (j.order_ref === input.order_ref) return Promise.resolve(clone(j));
+    }
     const now = this.now();
     const job: SheeridJob = {
       id: `job-${++this.seq}`,
@@ -127,6 +156,30 @@ export class MemorySheeridRepository implements SheeridRepository {
     Object.assign(j, clone(patch), { updated_at: this.now() });
     return Promise.resolve(clone(j));
   }
+  updateJobIf(
+    id: string,
+    patch: Partial<SheeridJob>,
+    expect: JobUpdateExpect,
+  ): Promise<SheeridJob | null> {
+    const j = this.jobs.get(id);
+    if (!j) throw new Error(`sheerid job not found: ${id}`);
+    // الفحص والتطبيق في خطوة واحدة متزامنة = ذرّي في نموذج الذاكرة،
+    // مرآة سلوك PATCH المشروط في PostgREST.
+    if (expect.statuses && !expect.statuses.includes(j.status)) {
+      return Promise.resolve(null);
+    }
+    if (expect.deliveredNull && j.delivered_at) {
+      return Promise.resolve(null);
+    }
+    if (
+      expect.deliveryAttempts !== undefined &&
+      (Number(j.delivery_attempts) || 0) !== expect.deliveryAttempts
+    ) {
+      return Promise.resolve(null);
+    }
+    Object.assign(j, clone(patch), { updated_at: this.now() });
+    return Promise.resolve(clone(j));
+  }
   listInflight(
     statuses: readonly string[],
     createdAfterIso: string,
@@ -148,6 +201,13 @@ export class MemorySheeridRepository implements SheeridRepository {
           j.status === "completed" && !j.delivered_at &&
           j.created_at >= createdAfterIso
         )
+        .map(clone),
+    );
+  }
+  listRefundPending(): Promise<SheeridJob[]> {
+    return Promise.resolve(
+      [...this.jobs.values()]
+        .filter((j) => j.status === STATUS_REFUND_PENDING)
         .map(clone),
     );
   }
@@ -270,6 +330,34 @@ export class PostgrestSheeridRepository implements SheeridRepository {
     const rows = Array.isArray(json) ? json : [json];
     return rowToJob(rows[0] as Record<string, unknown>);
   }
+  async updateJobIf(
+    id: string,
+    patch: Partial<SheeridJob>,
+    expect: JobUpdateExpect,
+  ): Promise<SheeridJob | null> {
+    // نفس PATCH لكن بفلاتر توقّع على الصف نفسه: القاعدة بتطبّق
+    // التحديث على الصفوف المطابقة بس، و«صفر صفوف» = خسرنا السباق.
+    let query = `${TABLE_JOBS}?id=eq.${encodeURIComponent(id)}`;
+    if (expect.statuses?.length) {
+      const list = expect.statuses.map((s) => encodeURIComponent(s)).join(",");
+      query += `&status=in.(${list})`;
+    }
+    if (expect.deliveredNull) query += `&delivered_at=is.null`;
+    if (expect.deliveryAttempts !== undefined) {
+      query += `&delivery_attempts=eq.${expect.deliveryAttempts}`;
+    }
+    const { status, json } = await this.req(
+      "PATCH",
+      query,
+      { ...patch, updated_at: nowIso() },
+      "return=representation",
+    );
+    if (status < 200 || status >= 300) {
+      throw new Error(`updateJobIf failed with status ${status}`);
+    }
+    const rows = Array.isArray(json) ? json : [];
+    return rows.length ? rowToJob(rows[0] as Record<string, unknown>) : null;
+  }
   async listInflight(
     statuses: readonly string[],
     createdAfterIso: string,
@@ -291,6 +379,14 @@ export class PostgrestSheeridRepository implements SheeridRepository {
       `${TABLE_JOBS}?status=eq.completed&delivered_at=is.null&created_at=gte.${
         encodeURIComponent(createdAfterIso)
       }&select=*&order=created_at.asc`,
+    );
+    const rows = Array.isArray(json) ? json : [];
+    return rows.map((r) => rowToJob(r as Record<string, unknown>));
+  }
+  async listRefundPending(): Promise<SheeridJob[]> {
+    const { json } = await this.req(
+      "GET",
+      `${TABLE_JOBS}?status=eq.${STATUS_REFUND_PENDING}&select=*&order=created_at.asc`,
     );
     const rows = Array.isArray(json) ? json : [];
     return rows.map((r) => rowToJob(r as Record<string, unknown>));

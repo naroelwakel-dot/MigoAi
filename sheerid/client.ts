@@ -26,9 +26,24 @@ import {
 } from "./config.ts";
 
 export class SheerIDError extends Error {
-  constructor(message: string) {
+  /**
+   * تفاصيل خام من المورد (رسالته الأصلية) — للسجل/الإدارة بس
+   * (إصلاح اللجنة #5): ممنوع تتحط في message أو توصل لأي عميل.
+   */
+  readonly detail: string;
+  /**
+   * true بس لأخطاء نصها من نصوصنا الثابتة الآمنة للعميل (رفض
+   * الرابط) — المعالج بيعدّي message للعميل للحالات دي بس.
+   */
+  readonly customerSafe: boolean;
+  constructor(
+    message: string,
+    opts?: { detail?: string; customerSafe?: boolean },
+  ) {
     super(message);
     this.name = "SheerIDError";
+    this.detail = opts?.detail || "";
+    this.customerSafe = opts?.customerSafe === true;
   }
 }
 
@@ -163,10 +178,13 @@ export class SheerIDClient {
     }
     const envelope = parsed as Record<string, unknown>;
     if (!envelope["ok"]) {
-      // رسالة المورد بتتحفظ للسجل/الإدارة بس — الخدمة ما بتعدّيهاش
-      // للعميل أبدًا (نصوص العميل ثابتة عندنا).
+      // رسالة المورد الخام بتتحفظ في detail للسجل/الإدارة بس —
+      // message عام ثابت، والخدمة ما بتعدّيش أي بصمة مورد للعميل
+      // أبدًا (إصلاح اللجنة #5: الاسم/الرصيد/المعرّفات ممنوعة).
       const message = String(envelope["message"] || "الطلب اترفض");
-      throw new SheerIDError(`خدمة التحقق رفضت الطلب: ${message.slice(0, 200)}`);
+      throw new SheerIDError("خدمة التحقق رفضت الطلب", {
+        detail: message.slice(0, 200),
+      });
     }
     const data = envelope["data"];
     return (data && typeof data === "object" && !Array.isArray(data))

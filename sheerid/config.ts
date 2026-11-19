@@ -28,7 +28,10 @@ export const ENV_BRIDGE_BASE_URL = "SHEERID_BRIDGE_URL";
 // جسر SheerID عند البوت: نقطة داخلية واحدة (POST) بأفعال في الجسم
 // (balance / verify / status) وبترد بنفس مظروف المورد {ok, data} —
 // فعميل الموقع بيتعامل مع الجسر زي المورد بالظبط، والفرق في النقل بس.
-export const BRIDGE_BASE_URL = "https://pixel-farm-6ww1-omega.vercel.app";
+// ⚠️ عنوان الجسر بييجي من البيئة (SHEERID_BRIDGE_URL) بس — مفيش
+// قيمة حقيقية مكتوبة في الكود (إصلاح اللجنة #10: المستودع عام،
+// والعناوين الحقيقية بصمة مورّد/بنية ممنوع نشرها). غيابه = الميزة
+// مقفولة fail-closed زي غياب التوكن بالظبط.
 export const BRIDGE_PATH = "/api/sheerid-bridge";
 // توكن الجسر في جدول إعدادات قابل للقراءة من الخادم نفسه (migration 019):
 export const BRIDGE_CONFIG_TABLE = "backend_config";
@@ -39,8 +42,9 @@ export const BRIDGE_TOKEN_KEY = "sheerid_bridge_token";
 export const SITE_CALLBACK_URL =
   "https://migoai-72.naroelwakel-dot.deno.net/sheerid/callback";
 
-// عنوان خدمة التحقق (نفس عنوان واجهة المورد العامة اللي البوت بيستخدمها).
-export const BASE_URL = "https://bunnytoolsbot.tech";
+// عنوان خدمة التحقق بييجي من البيئة (SHEERID_BASE_URL) بس — مفيش
+// نطاق مورّد مكتوب في الكود (إصلاح اللجنة #10: قاعدة العلامة
+// البيضاء + المستودع العام). غيابه = الوضع المباشر مقفول.
 
 export const PATH_BALANCE = "/api/v1/sheerid/balance";
 export const PATH_VERIFY = "/api/v1/sheerid/verify";
@@ -70,10 +74,16 @@ export const STATUS_PROCESSING = "processing";
 export const STATUS_COMPLETED = "completed";
 export const STATUS_REFUNDED = "refunded";
 export const STATUS_FAILED = "failed";
+// فشل اتسوّى لكن استرداده لسه مش مؤكد في القاعدة (إصلاح اللجنة #4):
+// حالة غير نهائية — المسح الدوري بيعيد محاولة الاسترداد لحد ما
+// يتأكد، والعميل بياخد صياغة «جارٍ معالجة الاسترداد» الصادقة.
+// ⚠️ هجرة 018 قيّدت عمود الحالة بالقيم الست الأصلية — القيمة دي
+// محتاجة توسيع الـ CHECK في هجرة 020 قبل التشغيل على الإنتاج.
+export const STATUS_REFUND_PENDING = "refund_pending";
 
 export const STATUSES = [
   STATUS_AWAITING_LINK, STATUS_SUBMITTING, STATUS_PROCESSING,
-  STATUS_COMPLETED, STATUS_REFUNDED, STATUS_FAILED,
+  STATUS_COMPLETED, STATUS_REFUNDED, STATUS_FAILED, STATUS_REFUND_PENDING,
 ] as const;
 export type JobStatus = typeof STATUSES[number];
 export const TERMINAL_STATUSES: readonly string[] = [
@@ -89,6 +99,11 @@ export const IN_FLIGHT_STATUSES: readonly string[] = [
 ];
 export const SWEEP_MAX_AGE_MINUTES = 20;
 export const SWEEP_MIN_AGE_SECONDS = 40;
+// فاصل إعادة محاولة الاسترداد المعلّق في المسح الدوري (ثواني).
+export const REFUND_RETRY_GAP_SECONDS = 300;
+// حدّ العملية العالقة: عملية جارية أقدم من كده بتتعلّم مسار يدوي
+// + تنبيه إدارة في المسح بدل ما تتنسي برّه نافذة الـ20 دقيقة.
+export const SWEEP_STUCK_MAX_AGE_HOURS = 24;
 
 // ------------------------------------------------------------------ تسليم النتيجة
 // نفس فواصل البوت: بعد المحاولة 1 ← 60 ثانية، بعد 2 ← 180 ثانية، ومن
@@ -110,14 +125,20 @@ export function webhookUrl(env: (n: string) => string | undefined): string {
 }
 
 export function baseUrl(env: (n: string) => string | undefined): string {
-  return ((env(ENV_BASE_URL) || "").trim() || BASE_URL).replace(/\/+$/, "");
+  // من البيئة بس (إصلاح اللجنة #10) — "" لو مش مضبوط.
+  return ((env(ENV_BASE_URL) || "").trim()).replace(/\/+$/, "");
 }
 
 export function bridgeBaseUrl(
   env: (n: string) => string | undefined,
 ): string {
-  return ((env(ENV_BRIDGE_BASE_URL) || "").trim() || BRIDGE_BASE_URL)
-    .replace(/\/+$/, "");
+  const override = (env(ENV_BRIDGE_BASE_URL) || "").trim();
+  if (!override) return "";
+  // فرض HTTPS (إصلاح اللجنة #9): توكن الجسر ما يسافرش على http
+  // أبدًا — قيمة بيئة غير آمنة بترجع "" (إقفال fail-closed عند
+  // المستدعي) بدل ما التوكن يتبعت مكشوف.
+  if (!override.startsWith("https://")) return "";
+  return override.replace(/\/+$/, "");
 }
 
 export function bridgeTokenFromEnv(

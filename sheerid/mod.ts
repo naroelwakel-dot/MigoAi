@@ -10,7 +10,10 @@
  *     → إرسال رابط التحقق (استطلاع جوه الطلب عند +20/+40 ثانية).
  *   POST /sheerid/callback {job_id | data.job_id | job.id}
  *     → إشعار المورد: بناخد المعرّف بس، والقرار دايمًا من سؤال حالة
- *       خادمي — وبيرد دايمًا 200 {"ok": true} زي البوت بالظبط.
+ *       خادمي. لما SHEERID_CALLBACK_SECRET مضبوط، النداء لازم يحمل
+ *       ترويسة x-sheerid-callback-secret مطابقة وإلا بيترفض 401
+ *       (ضبط الترويسة عند المورد خطوة مالك)؛ وكل المسارات عليها
+ *       حدّ معدل لكل IP فوق حدّ api.ts العام.
  *   POST /sheerid/sweep    (ترويسة x-migo-admin — نفس حماية /exec/)
  *     → المسح الدوري: تحديث الجاري + ضمان التسليم + فتح عمليات جديدة.
  *
@@ -83,7 +86,7 @@ export function createBrevoNotifier(opts: {
   http?: Transport;
   logError?: LogError;
 }): (
-  input: { order: StoreOrder; kind: "completed" | "failed" | "fallback"; job: { activation_url: string } },
+  input: { order: StoreOrder; kind: "completed" | "failed" | "fallback" | "refund_pending"; job: { activation_url: string } },
 ) => Promise<EmailOutcome> {
   const config = notifyConfigFromEnv(opts.env);
   const http: Transport = opts.http || (async (req) => {
@@ -106,6 +109,10 @@ export function createBrevoNotifier(opts: {
     } else if (kind === "failed") {
       subject = "تعذّر إتمام التحقق وتمت معالجة استرداد مبلغك — Migo Ai";
       text = `أهلًا بيك،\n${texts.failedText()}\n\nفريق Migo Ai`;
+    } else if (kind === "refund_pending") {
+      // الاسترداد لسه قيد المعالجة — العنوان والنص صادقين (لجنة #4).
+      subject = "تعذّر إتمام التحقق وجارٍ معالجة استرداد مبلغك — Migo Ai";
+      text = `أهلًا بيك،\n${texts.refundPendingText()}\n\nفريق Migo Ai`;
     } else {
       subject = `تحديث على طلبك ${order.order_ref} — Migo Ai`;
       text = `أهلًا بيك،\n${texts.manualFallbackText()}\n\nفريق Migo Ai`;
@@ -239,9 +246,18 @@ function buildSheeridWiring(
  */
 export function buildSheeridFromEnv(opts: BuildOpts): SheeridWiring {
   const env = opts.env;
+  const base = envBaseUrl(env);
+  if (!base) {
+    // مفيش عنوان مورّد في البيئة (إصلاح اللجنة #10: مفيش افتراضي
+    // مكتوب في الكود) — الوضع المباشر مقفول fail-closed.
+    opts.logError(
+      "sheerid.config",
+      "SHEERID_BASE_URL not set — direct mode disabled (fail-closed)",
+    );
+  }
   const client = new SheerIDClient({
-    apiKey: envApiKey(env),
-    baseUrl: envBaseUrl(env),
+    apiKey: base ? envApiKey(env) : "",
+    baseUrl: base,
     transport: opts.transport,
   });
   return buildSheeridWiring(opts, client, envWebhookUrl(env));
@@ -260,7 +276,19 @@ export async function buildSheeridFromEnvAsync(
   opts: BuildOpts,
 ): Promise<SheeridWiring> {
   const env = opts.env;
-  if (envApiKey(env)) return buildSheeridFromEnv(opts);
+  if (envApiKey(env)) {
+    // تحذير صريح (إصلاح اللجنة #13): مفتاح مباشر وتوكن جسر مضبوطين
+    // في البيئة مع بعض = الوضع المباشر بيكسب والجسر بيتلغي بصمت —
+    // لازم يبان في السجل عشان ما يبقاش تجاوز مخفي.
+    if (bridgeTokenFromEnv(env)) {
+      opts.logError(
+        "sheerid.config",
+        "SHEERID_API_KEY and SHEERID_BRIDGE_TOKEN are both set — " +
+          "direct mode overrides the bridge; remove one of them",
+      );
+    }
+    return buildSheeridFromEnv(opts);
+  }
   let token = bridgeTokenFromEnv(env);
   if (!token) {
     token = await fetchBridgeToken({
@@ -269,15 +297,82 @@ export async function buildSheeridFromEnvAsync(
       transport: opts.transport,
     });
   }
+  const bridgeUrl = bridgeBaseUrl(env);
+  if (token && !bridgeUrl) {
+    // رابط جسر مرفوض (مش https) أو غايب: إقفال fail-closed — التوكن
+    // ما يتبعتش لأي عنوان تاني أبدًا.
+    opts.logError(
+      "sheerid.config",
+      "bridge base URL missing or not https — service disabled (fail-closed)",
+    );
+    token = "";
+  }
   const client = new SheerIDClient({
     apiKey: "",
-    baseUrl: bridgeBaseUrl(env),
+    baseUrl: bridgeUrl,
     bridgeToken: token,
     transport: opts.transport,
   });
   const webhook = envWebhookUrl(env) || SITE_CALLBACK_URL;
   return buildSheeridWiring(opts, client, webhook);
 }
+
+// ------------------------------------------------------------ حدّ المعدل
+export interface SheeridRateLimits {
+  statusPerMinute: number;
+  submitPerMinute: number;
+  callbackPerMinute: number;
+}
+
+/**
+ * حدود افتراضية واسعة عمدًا: استطلاع صفحة الفاتورة الشرعي (كل كام
+ * ثانية) وإشعارات المورد الطبيعية عمرها ما توصل لها — الغرض سدّ
+ * الإغراق/التخمين بس (إصلاح اللجنة #6)، فوق حدّ api.ts العام أصلًا.
+ */
+export const DEFAULT_SHEERID_RATE_LIMITS: SheeridRateLimits = {
+  statusPerMinute: 120,
+  submitPerMinute: 20,
+  callbackPerMinute: 120,
+};
+
+/** حدّ معدل في الذاكرة لكل (مسار + IP) — نفس نمط rateLimited في api.ts. */
+export class SheeridRateLimiter {
+  private map = new Map<string, { n: number; t: number }>();
+  private limits: SheeridRateLimits;
+  private nowFn: () => number;
+  constructor(
+    limits: SheeridRateLimits = DEFAULT_SHEERID_RATE_LIMITS,
+    nowFn: () => number = Date.now,
+  ) {
+    this.limits = limits;
+    this.nowFn = nowFn;
+  }
+  /** true = الطلب يعدّي؛ false = تجاوز الحد في الدقيقة دي. */
+  allow(route: "status" | "submit" | "callback", ip: string): boolean {
+    const limit = route === "status"
+      ? this.limits.statusPerMinute
+      : route === "submit"
+      ? this.limits.submitPerMinute
+      : this.limits.callbackPerMinute;
+    const now = this.nowFn();
+    if (this.map.size > 5000) this.map.clear();
+    const key = `${route}:${ip}`;
+    const rec = this.map.get(key);
+    if (!rec || now - rec.t > 60_000) {
+      this.map.set(key, { n: 1, t: now });
+      return true;
+    }
+    rec.n++;
+    return rec.n <= limit;
+  }
+}
+
+let _defaultRateLimiter: SheeridRateLimiter | null = null;
+function defaultRateLimiter(): SheeridRateLimiter {
+  if (!_defaultRateLimiter) _defaultRateLimiter = new SheeridRateLimiter();
+  return _defaultRateLimiter;
+}
+let _callbackSecretWarned = false;
 
 // ------------------------------------------------------------ المعالج
 export interface SheeridHandlerDeps {
@@ -287,6 +382,15 @@ export interface SheeridHandlerDeps {
   /** ترويسات الرد (CORS من api.ts) — اختيارية. */
   headersOf?: (req: Request) => Record<string, string>;
   logError?: LogError;
+  /**
+   * سر إشعار المورد (env ‏SHEERID_CALLBACK_SECRET): لما يبقى مضبوط،
+   * الـ callback لازم يحمل ترويسة x-sheerid-callback-secret مطابقة
+   * وإلا بيترفض. فاضي = السلوك القديم (قبول الكل) + تحذير في السجل
+   * — ضبطه عند المورد خطوة مالك موثّقة في الـ PR.
+   */
+  callbackSecret?: string;
+  /** حدّ معدل المسارات — الافتراضي المشترك لو ما اتحقنش. */
+  rateLimiter?: SheeridRateLimiter;
 }
 
 function extractJobId(payload: unknown): string {
@@ -324,10 +428,36 @@ export async function handleSheeridRequest(
   };
   const json = (body: unknown, status = 200) =>
     new Response(JSON.stringify(body), { status, headers });
+  const limiter = deps.rateLimiter || defaultRateLimiter();
+  const ip = (req.headers.get("x-forwarded-for") || "").split(",")[0].trim() ||
+    "unknown";
 
-  // إشعار المورد: دايمًا 200/ok زي البوت — الجسم مش مصدر قرار أبدًا.
+  // إشعار المورد: الجسم مش مصدر قرار أبدًا — لكن النداء نفسه بقى
+  // محمي (إصلاح اللجنة #6): حدّ معدل + ترويسة سر مشترك لما السر
+  // مضبوط. من غير ضبط السر بيشتغل السلوك القديم مع تحذير سجل مرة.
   if (isCallback) {
     if (req.method !== "POST") return json({ ok: true });
+    if (!limiter.allow("callback", ip)) {
+      return json({ ok: false, error: "rate_limited" }, 429);
+    }
+    const secret = (deps.callbackSecret || "").trim();
+    if (secret) {
+      if (req.headers.get("x-sheerid-callback-secret") !== secret) {
+        deps.logError?.(
+          "sheerid.callback",
+          "callback rejected: missing/wrong secret header",
+        );
+        return json({ ok: false, error: "unauthorized" }, 401);
+      }
+    } else if (!_callbackSecretWarned) {
+      _callbackSecretWarned = true;
+      deps.logError?.(
+        "sheerid.callback",
+        "SHEERID_CALLBACK_SECRET not configured — callback stays " +
+          "unauthenticated (legacy behavior); set it + the provider " +
+          "webhook header to enforce",
+      );
+    }
     try {
       const payload = await req.json().catch(() => null);
       const jobId = extractJobId(payload);
@@ -356,6 +486,11 @@ export async function handleSheeridRequest(
       deps.logError?.("sheerid.sweep", "unhandled sweep error", e);
       return json({ ok: false, error: (e as Error)?.name || "exception" }, 500);
     }
+  }
+
+  // حدّ معدل مسارات العميل (إصلاح اللجنة #6) — قبل أي شغل قاعدة.
+  if (!limiter.allow(isStatus ? "status" : "submit", ip)) {
+    return json({ ok: false, error: "rate_limited" }, 429);
   }
 
   // مسارات العميل: إثبات الملكية = رقم الطلب + حساب المُرسل (نفس
@@ -405,8 +540,8 @@ export async function handleSheeridRequest(
       const state = await deps.service.submit(order, extracted);
       return json(stateBody(state));
     } catch (e) {
-      if (e instanceof SheerIDError) {
-        // نص الخطأ الوحيد اللي بيعدّي للعميل هو نص رفض الرابط النضيف.
+      if (e instanceof SheerIDError && e.customerSafe) {
+        // النص الوحيد اللي بيعدّي للعميل هو نصنا الثابت (رفض الرابط).
         return json({
           ok: true,
           found: true,
@@ -414,6 +549,23 @@ export async function handleSheeridRequest(
           enabled: true,
           state: "invalid_link",
           message: e.message,
+        });
+      }
+      if (e instanceof SheerIDError) {
+        // أي خطأ مورد/نقل تاني (إصلاح اللجنة #5): تفاصيله الخام
+        // بتروح للسجل بس (detail)، والعميل بياخد صياغة عامة ثابتة
+        // من غير اسم مورد ولا رصيد ولا معرّفات عمليات.
+        deps.logError?.("sheerid.submit", "provider error sanitized", e, {
+          order_ref: orderRef,
+          detail: e.detail,
+        });
+        return json({
+          ok: true,
+          found: true,
+          has_student: true,
+          enabled: true,
+          state: "manual_fallback",
+          message: texts.manualFallbackText(),
         });
       }
       throw e;
