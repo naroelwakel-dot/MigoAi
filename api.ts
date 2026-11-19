@@ -895,7 +895,7 @@ const GEMINI_MODELS = ["gemini-flash-lite-latest", "gemini-3.5-flash-lite", "gem
 // qwen الأول عن قصد: اتجرّب وطلعت دقيق في الأسعار؛ gpt-oss كان بيخترع أسعار، فسايبينه الثاني بس.
 const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 const GROQ_MODELS = ["qwen/qwen3.8-27b", "openai/gpt-oss-120b"];
-const SITE_URL = "https://naroelwakel-dot.github.io/MigoAi/";
+const SITE_URL = "https://migoai.shop/";
 const WHATSAPP = "https://wa.me/201060934020";
 
 // Store-chat personalities. The widget picks one per visitor and sends its id as
@@ -946,7 +946,7 @@ async function getCatalog(): Promise<{ sku: string; price: number; kind: string 
 }
 
 // --- تفاصيل الخدمات من ملفات المتجر: وصف ومتطلبات ومددة فقط، بدون أي سعر ---
-const DETAILS_URL = "https://naroelwakel-dot.github.io/MigoAi/details.json";
+const DETAILS_URL = "https://migoai.shop/details.json";
 let __details: any[] | null = null;
 let __detailsAt = 0;
 async function getDetails(): Promise<any[]> {
