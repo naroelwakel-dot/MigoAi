@@ -16,8 +16,11 @@ import {
   type ApplyOutcome,
   type ApplyPriceFloorArgs,
   computeFloorEgp,
+  DEFAULT_PRICE_FLOOR_FEED_URL,
+  handlePriceFloorRequest,
   type PriceFloorClient,
   type PriceFloorDeps,
+  resolvePriceFloorFeedUrl,
   runPriceFloorApplier,
 } from "./mod.ts";
 import type {
@@ -302,4 +305,112 @@ Deno.test("feed SKU missing from the catalog is reported, not fatal", async () =
   eq(report.skipped.length, 1, "one skip");
   eq(report.skipped[0].reason, "sku_not_found", "skip reason from RPC outcome");
   eq(client.audit.length, 0, "no audit");
+});
+
+// ------------------------------------------------------------ تقوية اللجنة (الحزمة التانية): ثقة التكلفة
+
+Deno.test("feed URL resolution: dedicated env wins, shared env next, published default last", () => {
+  const envOf = (m: Record<string, string>) => (n: string) => m[n] || "";
+  eq(
+    resolvePriceFloorFeedUrl(envOf({
+      PRICE_FLOOR_FEED_URL: "https://a.example/feed.json",
+      PROVENANCE_FEED_URL: "https://b.example/feed.json",
+    })),
+    "https://a.example/feed.json",
+    "PRICE_FLOOR_FEED_URL has priority",
+  );
+  eq(
+    resolvePriceFloorFeedUrl(envOf({
+      PROVENANCE_FEED_URL: "https://b.example/feed.json",
+    })),
+    "https://b.example/feed.json",
+    "falls back to PROVENANCE_FEED_URL",
+  );
+  eq(
+    resolvePriceFloorFeedUrl(envOf({})),
+    DEFAULT_PRICE_FLOOR_FEED_URL,
+    "falls back to the published default",
+  );
+  ok(
+    DEFAULT_PRICE_FLOOR_FEED_URL.startsWith("https://migoai.shop/prov-"),
+    "default is the published prov-* provenance feed",
+  );
+});
+
+function pfReq(body: unknown, admin = true): Request {
+  return new Request("https://api.example/catalog/apply-price-floors", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      ...(admin ? { "x-migo-admin": "adm" } : {}),
+    },
+    body: JSON.stringify(body ?? {}),
+  });
+}
+const pfAuth = (r: Request) => r.headers.get("x-migo-admin") === "adm";
+
+Deno.test("handler: forged caller cost in the request body is IGNORED — feed cost rules", async () => {
+  const client = new FakePriceFloorClient();
+  const SKU = "Super Grok (xAI) (Grok Plus — شهر واحد)";
+  client.catalog.set(SKU, 349);
+  const deps = depsWith(
+    [rec({
+      product_key: "grok-plus-1m",
+      store_sku: SKU,
+      supplier_key: "drayik",
+      cost_usd: 4.65, // أرضية التغذية الحقيقية: 384
+    })],
+    client,
+  );
+  // جسم هجومي: تكلفة مزوّرة برخص التراب + أرضية مزوّرة 1 جنيه.
+  const res = await handlePriceFloorRequest(
+    pfReq({
+      costs: { [SKU]: 0.01 },
+      items: [{ sku: SKU, cost_usd: 0.01, floor_egp: 1 }],
+    }),
+    deps,
+    pfAuth,
+  );
+  eq(res!.status, 200, "handler ok");
+  const body = await res!.json();
+  eq(body.ok, true, "run ok");
+  eq(body.raised.length, 1, "one raise");
+  eq(body.raised[0].floor_egp, 384, "raised to the FEED floor, not the forged 1");
+  eq(client.calls.length, 1, "one RPC call");
+  eq(client.calls[0].p_cost_usd, 4.65, "RPC got the feed cost, never the caller's");
+  eq(client.calls[0].p_floor_egp, 384, "RPC got the feed-derived floor");
+  eq(client.catalog.get(SKU), 384, "catalog at the feed floor");
+});
+
+Deno.test("handler: feed unavailable → 503, aborted, ZERO price changes", async () => {
+  const client = new FakePriceFloorClient();
+  client.catalog.set("Duolingo Super (12 شهر)", 100);
+  const res = await handlePriceFloorRequest(
+    pfReq({}),
+    depsWith(null, client),
+    pfAuth,
+  );
+  eq(res!.status, 503, "fail-closed status");
+  const body = await res!.json();
+  eq(body.ok, false, "not ok");
+  eq(body.aborted, "feed_unavailable_or_stale", "abort reason in response");
+  eq(client.calls.length, 0, "zero RPC calls");
+  eq(client.catalog.get("Duolingo Super (12 شهر)"), 100, "price untouched");
+});
+
+Deno.test("handler: unauthorized caller → 401 and zero RPC calls", async () => {
+  const client = new FakePriceFloorClient();
+  client.catalog.set("Duolingo Super (12 شهر)", 100);
+  const deps = depsWith(
+    [rec({
+      product_key: "duolingo-super-12m",
+      store_sku: "Duolingo Super (12 شهر)",
+      cost_usd: 1.49,
+    })],
+    client,
+  );
+  const res = await handlePriceFloorRequest(pfReq({}, false), deps, pfAuth);
+  eq(res!.status, 401, "unauthorized");
+  eq(client.calls.length, 0, "no RPC call without auth");
+  eq(client.catalog.get("Duolingo Super (12 شهر)"), 100, "price untouched");
 });

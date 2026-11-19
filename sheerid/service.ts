@@ -98,6 +98,46 @@ export function validateVerifyUrl(url: string): string {
   return value;
 }
 
+/**
+ * تحقق من رابط تفعيل جاي من المورد قبل تخزينه أو تسليمه للعميل
+ * (تقوية اللجنة — الحزمة التانية، بتصميم المالك المصحّح):
+ *
+ * المورد موثوق وصيغ روابط التسليم/التفعيل بتاعته بتتغيّر (نطاقات
+ * ومسارات وباراميترات مختلفة) — فمفيش قائمة نطاقات مسموحة أبدًا:
+ * أي رابط http/https بيتسلّم للعميل زي ما هو بالظبط، أيًّا كان
+ * الـ host أو المسار أو الـ query. الحظر الوحيد: مخططات غير الويب
+ * الخطيرة (javascript:‎/data:‎/vbscript:‎/file:‎ وأي scheme مش
+ * http/https) — دي مش روابط أصلًا، وبتحوّل العملية لمسار يدوي
+ * + تنبيه إدارة بدل ما توصل للعميل. نطاقات غير معروفة ممكن تتلاحظ
+ * في سجلات السيرفر (الـ host بس) للرؤية — من غير أي حظر.
+ *
+ * ⚠️ قاعدة مالك ملزمة: التحقق ده تحليل نصي خالص لنص الرابط
+ * (scheme + host) — ممنوع منعًا باتًا فتح الرابط أو جلبه أو عمل
+ * أي طلب شبكي عليه (ولا HEAD ولا معاينة): روابط التفعيل ممكن
+ * تتلف لو اتفتحت على أكتر من جهاز، فلازم توصل للعميل «عذراء»
+ * زي ما جت من المورد بالظبط. الدالة دي ما بتعملش أي شبكة أبدًا.
+ *
+ * البنية الراجعة: ok + الـ host المستخرج (للتسجيل الآمن — الـ host
+ * بس، ممنوع الرابط الكامل بباراميتراته في أي نص عميل أو سجل).
+ */
+export function validateActivationUrl(
+  raw: string,
+): { ok: boolean; host: string } {
+  const value = String(raw || "").trim();
+  let parsed: URL | null = null;
+  try {
+    parsed = new URL(value);
+  } catch {
+    parsed = null;
+  }
+  if (!parsed) return { ok: false, host: "" };
+  const host = parsed.hostname;
+  if (parsed.protocol !== "https:" && parsed.protocol !== "http:") {
+    return { ok: false, host };
+  }
+  return { ok: true, host };
+}
+
 export type EmailOutcome = "sent" | "unavailable" | "failed";
 
 export interface SheeridDeps {
@@ -228,6 +268,18 @@ export class SheeridService {
   private async stateForJob(job: SheeridJob): Promise<CustomerState> {
     switch (job.status) {
       case STATUS_COMPLETED: {
+        // رابط مخزّن بمخطط غير ويب ما يتعرضش للعميل أبدًا — العرض
+        // بيتحوّل لمسار يدوي (دفاع في العمق: بوابة التسوية أصلًا
+        // بتمنع اكتمال عملية برابط كده).
+        if (
+          job.activation_url &&
+          !validateActivationUrl(job.activation_url).ok
+        ) {
+          return {
+            state: "manual_fallback",
+            message: texts.manualFallbackText(),
+          };
+        }
         // المشاهدة بتعرض الرابط بس — delivered_at مسؤولية مسار
         // التسليم المتتبَّع (deliverActivation) لوحده (لجنة #11).
         return {
@@ -563,6 +615,19 @@ export class SheeridService {
     const activation = String(
       data["activation_url"] || fresh.activation_url || "",
     );
+    if (activation) {
+      // بوابة رابط التفعيل (تقوية اللجنة — الحزمة التانية): تحليل
+      // نصي خالص — أي http/https بيعدّي زي ما هو (المورد موثوق
+      // وصيغه بتتغيّر)، والمخططات غير الويب بس هي اللي بتتحظر
+      // وبتحوّل العملية لمسار يدوي بدل ما توصل للعميل.
+      const check = validateActivationUrl(activation);
+      if (!check.ok) {
+        return this.routeInvalidActivation(fresh, check.host);
+      }
+      // رؤية بس: الـ host بيتلاحظ في سجل السيرفر — الرابط نفسه
+      // بيتخزّن وبيتسلّم زي ما هو، من غير فتح ولا تعديل.
+      this.log(`sheerid activation link host: ${check.host}`);
+    }
     // حجز التسوية ذرّيًا (إصلاح اللجنة #2): أول منتقل لحالة نهائية
     // بيكسب — أي تسوية متزامنة تانية بتلاقي الحجز مقفول وبترجع
     // بالصف الحالي من غير إيميل/تنفيذ مكرر.
@@ -600,6 +665,38 @@ export class SheeridService {
     await this.deliverActivation(updated);
     this.alertAdmin(texts.adminCompletedText(fresh.order_ref, updated));
     return updated;
+  }
+
+  /**
+   * رابط تفعيل بمخطط غير ويب وصل مع اكتمال عند المورد: ممنوع
+   * يتخزّن على العملية وممنوع يوصل للعميل — العملية بتتعلّم
+   * manual_fallback (بنفس نمط تعليم العالقة في المسح: حجز مشروط
+   * + تنبيه واحد) وبتاخد صياغة المسار اليدوي، والإدارة بتتنبّه
+   * بالـ host بس (الرابط الكامل ما بيظهرش في أي نص).
+   */
+  private async routeInvalidActivation(
+    fresh: SheeridJob,
+    host: string,
+  ): Promise<SheeridJob> {
+    this.log(
+      `sheerid activation link blocked — non-web scheme (host: ${
+        host || "none"
+      })`,
+    );
+    if (fresh.manual_fallback) return fresh; // متعلّمة أصلًا — من غير تكرار
+    const flagged = await this.deps.repo.updateJobIf(fresh.id, {
+      manual_fallback: true,
+    }, { statuses: SETTLEABLE_STATUSES });
+    if (!flagged) return (await this.deps.repo.getJob(fresh.id)) || fresh;
+    const order = await this.orderFor(fresh);
+    if (order) await this.tryEmail(order, "fallback", flagged);
+    this.alertAdmin(texts.adminFallbackText(
+      fresh.order_ref,
+      "وصل رابط تفعيل بمخطط غير ويب مع اكتمال التحقق عند المورد — " +
+        "الرابط اتحظر وما اتسلّمش للعميل، والعملية اتعلّمت مسار يدوي " +
+        `(host: ${host || "بدون"})`,
+    ));
+    return flagged;
   }
 
   private async settleFailure(
@@ -704,6 +801,21 @@ export class SheeridService {
     const fresh = (await this.deps.repo.getJob(job.id)) || job;
     if (fresh.delivered_at) return "already_delivered";
     if (fresh.status !== STATUS_COMPLETED) return "failed";
+    if (
+      fresh.activation_url &&
+      !validateActivationUrl(fresh.activation_url).ok
+    ) {
+      // دفاع في العمق: رابط مخزّن بمخطط غير ويب ممنوع يدخل إيميل
+      // التسليم — تنبيه إدارة مرة واحدة (أول محاولة) ومن غير إرسال.
+      this.log("sheerid delivery blocked — stored link has non-web scheme");
+      if ((Number(fresh.delivery_attempts) || 0) === 0) {
+        this.alertAdmin(texts.adminFallbackText(
+          fresh.order_ref,
+          "رابط تفعيل مخزّن بمخطط غير ويب — التسليم موقوف ويحتاج تدخل يدوي",
+        ));
+      }
+      return "failed";
+    }
     const attemptsBefore = Number(fresh.delivery_attempts) || 0;
     const attempts = attemptsBefore + 1;
     // حجز محاولة التسليم ذرّيًا (إصلاح اللجنة #2): الانتقال من عدد

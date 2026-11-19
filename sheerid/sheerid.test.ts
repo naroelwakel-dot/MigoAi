@@ -20,6 +20,7 @@ import {
 import {
   findVerifyUrl,
   SheeridService,
+  validateActivationUrl,
   validateVerifyUrl,
   type EmailOutcome,
 } from "./service.ts";
@@ -1115,4 +1116,98 @@ Deno.test("panel fix 9b: in-flight job older than 24h → manual_fallback + admi
   const counts2 = await h.service.sweep();
   eq(counts2.stuck, 0, "already-flagged job is not re-flagged");
   eq(h.adminNotes.length, alertsBefore, "no duplicate stuck alert");
+});
+
+// ---------------------------------------------------------------------
+// 28) تقوية اللجنة (الحزمة التانية) — رابط التفعيل: المورد موثوق
+//     وصيغه بتتغيّر، فأي http/https بيتسلّم زي ما هو على أي نطاق؛
+//     الحظر الوحيد لمخططات غير الويب. التحقق تحليل نصي خالص —
+//     ممنوع فتح/جلب الرابط أبدًا (قاعدة المالك: الرابط بيتلف لو
+//     اتفتح على جهاز تاني قبل ما يوصل للعميل).
+// ---------------------------------------------------------------------
+Deno.test("panel hardening C: provider https link on an UNLISTED host with ref/query → delivered UNCHANGED", async () => {
+  const h = harness(makeOrder());
+  const link =
+    "https://delivery.provider-x.net/activate/abc123?ref=ORD-9917&sig=zz9&utm=x";
+  h.fake.statusQueue = [{ status: "completed", activation_url: link }];
+  const state = await h.service.submit(makeOrder(), VALID_URL);
+  eq(state.state, "completed", "completed with unlisted-host link");
+  eq(state.activation_url, link, "link delivered byte-identical (no allowlist, no rewrite)");
+  const job = await jobOf(h);
+  eq(job.status, "completed", "job completed");
+  eq(job.activation_url, link, "link stored byte-identical");
+  ok(!!job.delivered_at, "delivered via email");
+  eq(h.emails.filter((e) => e.kind === "completed").length, 1, "one completion email");
+  eq(h.store.orders.get("MG-200001")?.status, "fulfilled", "order fulfilled");
+  // http برضه بيعدّي زي ما هو (تصحيح المالك: أي http/https):
+  const h2 = harness(makeOrder());
+  const httpLink = "http://links.supplier-y.org/get/42?t=1";
+  h2.fake.statusQueue = [{ status: "completed", activation_url: httpLink }];
+  const s2 = await h2.service.submit(makeOrder(), VALID_URL);
+  eq(s2.state, "completed", "http link completes too");
+  eq(s2.activation_url, httpLink, "http link delivered unchanged");
+});
+
+Deno.test("panel hardening C: javascript: activation link → blocked, manual_fallback, never stored or delivered", async () => {
+  const h = harness(makeOrder());
+  h.fake.statusQueue = [
+    { status: "completed", activation_url: "javascript:alert(1)" },
+    { status: "completed", activation_url: "javascript:alert(1)" },
+  ];
+  const state = await h.service.submit(makeOrder(), VALID_URL);
+  eq(state.state, "manual_fallback", "customer gets manual-fallback state, not the link");
+  eq(state.activation_url, undefined, "no activation_url in customer state");
+  const job = await jobOf(h);
+  eq(job.status, "processing", "job NOT completed with a poisoned link");
+  eq(job.manual_fallback, true, "job flagged manual_fallback");
+  ok(!job.activation_url, "poisoned link never stored on the job");
+  eq(job.delivered_at, null, "nothing delivered");
+  eq(h.emails.filter((e) => e.kind === "completed").length, 0, "no completion email");
+  ok(h.emails.some((e) => e.kind === "fallback"), "fallback email sent");
+  eq(h.store.orders.get("MG-200001")?.status, "paid", "order NOT fulfilled");
+  ok(
+    !h.adminNotes.join("\n").includes("alert(1)"),
+    "admin alert carries no raw link payload (host only / none)",
+  );
+  const alertsAfterSubmit = h.adminNotes.length;
+  ok(alertsAfterSubmit > 0, "admin alerted once");
+  // تسوية متكررة بنفس الرابط المسموم: مفيش تنبيه مكرر ولا اكتمال.
+  await h.service.refresh("JOB-TEST-1");
+  eq(h.adminNotes.length, alertsAfterSubmit, "no duplicate admin alert on re-settle");
+  eq((await jobOf(h)).status, "processing", "still not completed");
+  const view = await h.service.stateForOrder(makeOrder());
+  eq(view?.state, "manual_fallback", "invoice view shows manual fallback");
+});
+
+Deno.test("panel hardening C: validateActivationUrl — scheme gate only, pure parsing", () => {
+  // أي http/https على أي نطاق/مسار/باراميترات بيعدّي:
+  for (
+    const good of [
+      "https://services.sheerid.com/verify/x",
+      "https://activate.example/xyz",
+      "https://anything.unknown.tld/a/b?c=d&e=f",
+      "http://plain-http.example/link",
+    ]
+  ) {
+    eq(validateActivationUrl(good).ok, true, `passes: ${good}`);
+  }
+  eq(
+    validateActivationUrl("https://delivery.provider-x.net/a?ref=1").host,
+    "delivery.provider-x.net",
+    "host extracted for server logs",
+  );
+  // مخططات غير الويب + كلام مش روابط = محظور:
+  for (
+    const bad of [
+      "javascript:alert(1)",
+      "data:text/html;base64,PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pg==",
+      "vbscript:msgbox(1)",
+      "file:///etc/passwd",
+      "ftp://files.example/x",
+      "مش رابط أصلًا",
+      "",
+    ]
+  ) {
+    eq(validateActivationUrl(bad).ok, false, `blocked: ${bad.slice(0, 24)}`);
+  }
 });

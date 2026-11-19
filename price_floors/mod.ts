@@ -34,6 +34,13 @@
  *     أي تخمين.
  *   - الأسرار من البيئة بس (SUPABASE_SERVICE_ROLE_KEY) — غيابها =
  *     كل نداء RPC بيفشل وبيتعدّ خطأ، ومفيش كتابة بتحصل.
+ *   - ثقة التكلفة (تقوية اللجنة — الحزمة التانية): المعالج ما بيقراش
+ *     جسم الطلب أصلًا — مفيش أي مدخل للمستدعي يمرّر تكلفة أو سعر.
+ *     التكلفة الوحيدة اللي بتتحسب منها الأرضية هي اللي في تغذية
+ *     المصدر المقروءة من السيرفر نفسه، فأي جسم مزوّر بيتبعت مع
+ *     النداء بيترمي بالكامل وممنوع يوصل لـ RPC (مثبّت باختبار).
+ *     عنوان التغذية بيتحل بترتيب: PRICE_FLOOR_FEED_URL ثم
+ *     PROVENANCE_FEED_URL (مشترك مع المنفّذ) ثم الافتراضي المنشور.
  */
 
 import type {
@@ -63,6 +70,29 @@ export function computeFloorEgp(costUsd: number): number | null {
   const num = micro * 825;
   const den = 100_000;
   return Math.floor((num + den - 1) / den);
+}
+
+// ------------------------------------------------------------ عنوان التغذية
+
+/**
+ * عنوان تغذية المصدر المنشورة على موقع المتجر (نفس اللقطة اللي
+ * سجل المصدر بينشرها والمنفّذ بيقراها) — افتراضي بس، والبيئة تقدر
+ * تتجاوزه من غير تعديل كود.
+ */
+export const DEFAULT_PRICE_FLOOR_FEED_URL =
+  "https://migoai.shop/prov-69193132a31aeb3ce66e70a61befbeaed79b1cba41d9a7b8.json";
+
+/**
+ * حل عنوان تغذية المنفّذ بترتيب أولوية: متغير خاص بالمنفّذ
+ * (PRICE_FLOOR_FEED_URL) ثم المتغير المشترك مع منفّذ الشراء
+ * (PROVENANCE_FEED_URL) ثم الافتراضي المنشور فوق.
+ */
+export function resolvePriceFloorFeedUrl(
+  env: (n: string) => string,
+): string {
+  return (env("PRICE_FLOOR_FEED_URL") || "").trim() ||
+    (env("PROVENANCE_FEED_URL") || "").trim() ||
+    DEFAULT_PRICE_FLOOR_FEED_URL;
 }
 
 // ------------------------------------------------------------ العقود
