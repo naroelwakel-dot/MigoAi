@@ -128,6 +128,11 @@
     <div id="topupRows"></div>
   </section>
 
+  <section class="card hidden" id="botTopupCard">
+    <h2>أحدث شحنات البوت المنتظرة</h2>
+    <div id="botTopupRows"></div>
+  </section>
+
   <button class="btn" id="refreshBtn" type="button">تحديث</button>
   <div class="updated" id="updatedLine"></div>
 </main>
@@ -197,7 +202,8 @@ function askKey(){
 
 function botCount(bot, key){
   if (!bot) return null;
-  var v = bot[key];
+  var src = (bot.queues && typeof bot.queues === "object") ? bot.queues : bot;
+  var v = src[key];
   return (typeof v === "number" && isFinite(v)) ? v : null;
 }
 
@@ -256,8 +262,9 @@ function render(data){
   var cards = "";
   cards += queueCard("شحنات منتظرة القرار", "شحنات محفظة البوت", botCount(bot, "pending_topups"), "amber");
   cards += queueCard("شحنات متعلمة بمشكلة", "رقم العملية اتستخدم قبل كده", botCount(bot, "flagged_topups"), "red");
+  cards += queueCard("طلبات تحقق محتاجة مراجعة", "واقفة على قرار منك", botCount(bot, "sheerid_needs_review"), "red");
   cards += queueCard("طلبات فاشلة", "طلبات بوت محتاجة تدخل", botCount(bot, "failed_orders"), "red");
-  cards += queueCard("محادثات من غير رد", "عملاء مستنيين رد", botCount(bot, "unanswered_conversations"), "blue");
+  cards += queueCard("محادثات من غير رد", "عملاء مستنيين رد", botCount(bot, "unanswered_chats"), "blue");
   cards += queueCard("طلبات يدوية", "تنفيذ يدوي عند مورد", botCount(bot, "manual_orders"), "purple");
   cards += queueCard("شحنات محفظة الموقع منتظرة القرار", "من صفحة المحفظة", (typeof store.pending_topups_count === "number") ? store.pending_topups_count : null, "amber");
   cards += queueCard("رسائل دفع لسه متربطتش", "وصلت ومتربطتش بشحنة ولا طلب", (typeof store.unmatched_sms === "number") ? store.unmatched_sms : null, "amber");
@@ -289,6 +296,23 @@ function render(data){
   }
   $("topupRows").innerHTML = html;
   $("topupCard").classList.remove("hidden");
+
+  // أحدث شحنات البوت المنتظرة (من نقطة البوت نفسها)
+  var bItems = (bot && Array.isArray(bot.latest_topups)) ? bot.latest_topups : [];
+  if (bItems.length) {
+    var bHtml = "";
+    bItems.forEach(function(t){
+      var bAge = relTime(t.created_at);
+      bHtml += '<div class="topup-row">' +
+        '<div class="amt num">' + fmtNum(t.amount) + ' <small>' + esc(t.currency || "") +
+        (t.method_label ? " · " + esc(t.method_label) : "") + "</small></div>" +
+        '<div class="sub">العميل: <b class="num">' + esc(t.customer_ref || "—") + "</b>" +
+        (t.ref_seen_before ? ' · <b style="color:var(--red)">رقم العملية اتشاف قبل كده</b>' : "") +
+        (bAge ? " · " + esc(bAge) : "") + "</div></div>";
+    });
+    $("botTopupRows").innerHTML = bHtml;
+    $("botTopupCard").classList.remove("hidden");
+  }
 
   var gen = relTime(data.generated_at);
   $("updatedLine").textContent = "آخر تحديث: " + (gen || "دلوقتي");

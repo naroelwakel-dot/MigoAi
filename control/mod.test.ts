@@ -32,11 +32,15 @@ const ADMIN_KEY = "admin-key-for-tests";
 const BOT_HOME = {
   ok: true,
   generated_at: "2026-11-19T19:00:00.000Z",
-  pending_topups: 3,
-  flagged_topups: 1,
-  failed_orders: 2,
-  unanswered_conversations: 4,
-  manual_orders: 1,
+  queues: {
+    pending_topups: 3,
+    flagged_topups: 1,
+    sheerid_needs_review: 1,
+    failed_orders: 2,
+    unanswered_chats: 4,
+    manual_orders: 1,
+  },
+  latest_topups: [],
 };
 
 const STORE_DATA: ControlStoreData = {

@@ -29,9 +29,12 @@
  * النداء لأي سبب = bot: null وعلم bot_unavailable — ممنوع اختراع
  * أرقام بوت أبدًا.
  *
- * شكل رد البوت المتوقع (بيتبني على ناحية البوت):
- *   { ok: true, generated_at, pending_topups, flagged_topups,
- *     failed_orders, unanswered_conversations, manual_orders }
+ * شكل رد البوت الفعلي (نقطة البوت GET /api/control/home):
+ *   { ok: true, generated_at,
+ *     queues: { pending_topups, flagged_topups, sheerid_needs_review,
+ *               failed_orders, unanswered_chats, manual_orders },
+ *     latest_topups: [{ id, customer_ref, method_label, amount,
+ *                       currency, created_at, ref_seen_before }] }
  * أي حقل ناقص من ناحية البوت بيظهر في الواجهة «غير متاح» — مش صفر.
  */
 
