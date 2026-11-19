@@ -29,8 +29,10 @@ import { handleSmsRequest, PostgrestSmsClient, type SmsDeps } from "./sms_bridge
 import {
   handlePriceFloorRequest,
   PostgrestPriceFloorClient,
+  resolvePriceFloorFeedUrl,
   type PriceFloorDeps,
 } from "./price_floors/mod.ts";
+import { makeAdminChecker } from "./admin_auth.ts";
 
 let _smsDeps: SmsDeps | null = null;
 function getSmsDeps(): SmsDeps {
@@ -52,17 +54,20 @@ function getSmsDeps(): SmsDeps {
 // POST /catalog/apply-price-floors بيندهها مجدول خارجي (نفس نمط
 // /exec/sweep ومسارات المحفظة): بترفع سعر كتالوج المتجر لأرضية سجل
 // المصدر (ceil(cost × 82.5)) لو نزل تحتها، ومش بتخفّض أبدًا. مصدر
-// الخريطة والتكلفة هو نفس تغذية المصدر اللي المنفّذ بيقراها
-// (PROVENANCE_FEED_URL)، والكتابة الوحيدة عبر RPC ‏apply_price_floor
-// (هجرة 017) بمفتاح الخدمة. التفاصيل في price_floors/mod.ts.
+// الخريطة والتكلفة هو تغذية المصدر المقروءة من السيرفر نفسه —
+// المعالج ما بيقراش جسم الطلب أصلًا فمفيش تكلفة من المستدعي بتعدّي
+// (تقوية اللجنة، الحزمة التانية). عنوان التغذية بيتحل بـ
+// resolvePriceFloorFeedUrl (‏PRICE_FLOOR_FEED_URL ثم
+// PROVENANCE_FEED_URL ثم المنشور الافتراضي)، والكتابة الوحيدة عبر
+// RPC ‏apply_price_floor (هجرة 017) بمفتاح الخدمة. التفاصيل في
+// price_floors/mod.ts.
 // ---------------------------------------------------------------------------
 let _priceFloorDeps: PriceFloorDeps | null = null;
 function getPriceFloorDeps(): PriceFloorDeps {
   if (_priceFloorDeps) return _priceFloorDeps;
   const env = (n: string) => Deno.env.get(n) || "";
   _priceFloorDeps = {
-    registry: new JsonRegistrySource(
-      urlLoader(env("PROVENANCE_FEED_URL") || "https://migoai.shop/provenance.json")),
+    registry: new JsonRegistrySource(urlLoader(resolvePriceFloorFeedUrl(env))),
     client: new PostgrestPriceFloorClient({
       baseUrl: SB_URL,
       keyOf: () => env("SUPABASE_SERVICE_ROLE_KEY"),
@@ -129,7 +134,7 @@ async function getSheeridDeps(): Promise<SheeridHandlerDeps> {
       _sheeridDeps = {
         service: wiring.service,
         orders: wiring.orders,
-        isAuthorized: isAdmin,
+        isAuthorized: isSheeridAdmin,
         headersOf: (req: Request) => corsHeaders(req),
         logError,
         // سر إشعار المورد (إصلاح اللجنة #6): فاضي = callback بالسلوك
@@ -258,6 +263,15 @@ const ADMIN_TOKEN = (globalThis as any).Deno?.env?.get?.("ADMIN_TOKEN") || "";
 function isAdmin(req: Request): boolean {
   return !!ADMIN_TOKEN && req.headers.get("x-migo-admin") === ADMIN_TOKEN;
 }
+
+// توكنات إدارية خاصة اختيارية لكل مجموعة مسارات (تقوية اللجنة —
+// الحزمة التانية؛ الدلالات الكاملة في admin_auth.ts): كل مجموعة
+// بتقبل توكنها الخاص أو التوكن المشترك، فالمستدعون الحاليون
+// بالترويسة المشتركة (وحدات المسح) بيكملوا شغالين زي ما هم.
+const envAdmin = (n: string) => (globalThis as any).Deno?.env?.get?.(n) || "";
+const isSheeridAdmin = makeAdminChecker(ADMIN_TOKEN, envAdmin("ADMIN_TOKEN_SHEERID"));
+const isWalletAdmin = makeAdminChecker(ADMIN_TOKEN, envAdmin("ADMIN_TOKEN_WALLET"));
+const isCatalogAdmin = makeAdminChecker(ADMIN_TOKEN, envAdmin("ADMIN_TOKEN_CATALOG"));
 
 const UA =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36";
@@ -1292,7 +1306,7 @@ export async function handleWalletRequest(
       headers: { "Content-Type": "application/json" },
     });
   if (req.method !== "POST") return json({ ok: false, error: "method" }, 405);
-  if (!isAdmin(req)) {
+  if (!isWalletAdmin(req)) {
     return json({ ok: false, error: "unauthorized" }, 401);
   }
   try {
@@ -1427,7 +1441,7 @@ Deno.serve(async (req: Request) => {
   }
 
 
-  // الحزمة 10: مسارات تأكيد إيداع المحفظة (محمية بـ isAdmin) —
+  // الحزمة 10: مسارات تأكيد إيداع المحفظة (محمية بفاحص المحفظة) —
   // المرسل الوحيد هو مراقب الإيداعات على الـ VM بترويسة الأدمن.
   if (url.pathname.replace(/\/+$/, "").includes("/wallet/")) {
     try {
@@ -1437,11 +1451,11 @@ Deno.serve(async (req: Request) => {
       logError("wallet.route", "unhandled wallet route error", e);
     }
   }
-  // منفّذ حدّ الأسعار الأدنى (محمي بـ isAdmin جوه المعالج) —
-  // بيتنادى من مجدول خارجي بنفس ترويسة الأدمن زي باقي المسارات.
+  // منفّذ حدّ الأسعار الأدنى (محمي بفاحص الكتالوج جوه المعالج) —
+  // بيتنادى من مجدول خارجي بترويسة الأدمن زي باقي المسارات.
   if (url.pathname.replace(/\/+$/, "").includes("/catalog/")) {
     try {
-      const pfRes = await handlePriceFloorRequest(req, getPriceFloorDeps(), isAdmin);
+      const pfRes = await handlePriceFloorRequest(req, getPriceFloorDeps(), isCatalogAdmin);
       if (pfRes) return pfRes;
     } catch (e) {
       logError("price_floors.route", "unhandled price-floor route error", e);
