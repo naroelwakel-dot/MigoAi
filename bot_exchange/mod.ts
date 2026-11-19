@@ -1,5 +1,5 @@
 /**
- * إيداعات منصات لشحن محفظة البوت — نقطتان ضيّقتان لممر البوت:
+ * إيداعات منصات لشحن محفظة البوت — ثلاث نقط ضيّقة لممر البوت:
  *   POST /wallet/bot-exchange-candidates — أحداث إيداع USDT قابلة
  *     للربط ولسه ما اتستهلكتش في أي سطح + السعر الحي (هجرة 018:
  *     bot_exchange_candidates).
@@ -8,6 +8,12 @@
  *     `credited` + `matched_bot_topup_id`، فإيداع واحد مستحيل
  *     يقيّد رصيدين عبر الأسطح الأربعة (نية/مطالبة محفظة/مطالبة
  *     طلب/شحن بوت).
+ *   POST /wallet/bot-exchange-unclaim — فك حجز تعويضي (هجرة 019:
+ *     bot_exchange_unclaim، إصلاح F-07): لو القيد عند البوت فشل
+ *     بعد حجز ناجح، الفك بيرجّع الحدث لنتيجته قبل الحجز وبيشيل
+ *     علامة البوت، فيفضل إثبات العميل حيًّا للمحاولة الجاية/
+ *     القرار اليدوي. مش استرداد فلوس: مفيش قيد حصل أصلًا،
+ *     والفك بيترفض لو الحالة مش «محجوز للبوت ده» بالحرف.
  *
  * المستدعي الوحيد هو ممر شحن المنصات التلقائي في بوت التليجرام
  * (wallet/exchange_auto)، والمصادقة هي توكن الجسر القائم بين
@@ -31,6 +37,10 @@ export interface BotExchangeRpcClient {
     p_bot_topup_id: string;
     p_expected_egp: string;
     p_topup_created_at: string;
+  }): Promise<Record<string, unknown>>;
+  callUnclaim(args: {
+    p_event_id: string;
+    p_bot_topup_id: string;
   }): Promise<Record<string, unknown>>;
 }
 
@@ -78,6 +88,9 @@ export class PostgrestBotExchangeClient implements BotExchangeRpcClient {
   callClaim(args: Parameters<BotExchangeRpcClient["callClaim"]>[0]) {
     return this.rpc("bot_exchange_claim", { ...args });
   }
+  callUnclaim(args: Parameters<BotExchangeRpcClient["callUnclaim"]>[0]) {
+    return this.rpc("bot_exchange_unclaim", { ...args });
+  }
 }
 
 /** مقارنة زمنية ثابتة للسر (نفس مساعد إيصالات البوت). */
@@ -119,7 +132,8 @@ export async function handleBotExchangeRequest(
   const path = url.pathname.replace(/\/+$/, "");
   const isCandidates = path.endsWith("/wallet/bot-exchange-candidates");
   const isClaim = path.endsWith("/wallet/bot-exchange-claim");
-  if (!isCandidates && !isClaim) return null;
+  const isUnclaim = path.endsWith("/wallet/bot-exchange-unclaim");
+  if (!isCandidates && !isClaim && !isUnclaim) return null;
   const json = (body: unknown, status = 200) =>
     new Response(JSON.stringify(body), {
       status,
@@ -153,9 +167,22 @@ export async function handleBotExchangeRequest(
       return json({ ok: true, ...result });
     }
 
-    // الحجز: تحقق شكلي صارم قبل الـ RPC (الـ RPC بيتحقق دلاليًا).
+    // الحجز/فكه: تحقق شكلي صارم قبل الـ RPC (الـ RPC بيتحقق دلاليًا).
     const eventId = String(body.event_id || "").trim();
     const topupId = String(body.bot_topup_id || "").trim();
+    if (isUnclaim) {
+      // فك الحجز التعويضي: معرّفان بس — والـ RPC بيحسم الحالة
+      // (بيفك بس لو لسه محجوز للبوت ده بالحرف — غير كده رفض).
+      if (!UUID_RE.test(eventId) || !topupId || topupId.length > 64) {
+        return json({ ok: false, error: "invalid_body" }, 400);
+      }
+      const result = await deps.client.callUnclaim({
+        p_event_id: eventId,
+        p_bot_topup_id: topupId,
+      });
+      // نتيجة الـ RPC حرفيًا (unclaimed / reason …).
+      return json({ ok: true, ...result });
+    }
     const expectedEgp = typeof body.expected_egp === "number"
       ? String(body.expected_egp)
       : String(body.expected_egp || "").trim();
