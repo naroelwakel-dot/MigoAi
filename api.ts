@@ -29,7 +29,6 @@ import { handleSmsRequest, PostgrestSmsClient, type SmsDeps } from "./sms_bridge
 import {
   handlePriceFloorRequest,
   PostgrestPriceFloorClient,
-  resolvePriceFloorFeedUrl,
   type PriceFloorDeps,
 } from "./price_floors/mod.ts";
 import { makeAdminChecker, tokenEquals } from "./admin_auth.ts";
@@ -56,29 +55,24 @@ function getSmsDeps(): SmsDeps {
 // المصدر (ceil(cost × 82.5)) لو نزل تحتها، ومش بتخفّض أبدًا. مصدر
 // الخريطة والتكلفة هو تغذية المصدر المقروءة من السيرفر نفسه —
 // المعالج ما بيقراش جسم الطلب أصلًا فمفيش تكلفة من المستدعي بتعدّي
-// (تقوية اللجنة، الحزمة التانية). مصدر التغذية مركّب: جدول
-// provenance_feed في قاعدة المتجر أولًا (هجرة 021 — الملف الثابت
+// (تقوية اللجنة، الحزمة التانية). مصدر التغذية الوحيد: جدول
+// provenance_feed في قاعدة المتجر (هجرة 021 — الملف الثابت
 // المنشور كان في مستودع عام فخريطة الموردين والتكاليف كانت مكشوفة،
-// F-01/D-05)، والرابط المنشور احتياطي انتقال بس: عنوانه بيتحل بـ
-// resolvePriceFloorFeedUrl (‏PRICE_FLOOR_FEED_URL ثم
-// PROVENANCE_FEED_URL ثم المنشور الافتراضي) وبيشتغل بس لو الجدول
-// فاضي/غايب/لقطته قديمة — فالمستهلك عمره ما يشوف تغذية فاضية في نص
-// التحويل. إسقاط الاحتياطي والرابط خطوة لاحقة بعد إثبات مسار القاعدة
-// حيًا. والكتابة الوحيدة عبر RPC ‏apply_price_floor (هجرة 017)
-// بمفتاح الخدمة. التفاصيل في price_floors/mod.ts.
+// F-01/D-05؛ الاحتياطي بالرابط العام اتشال بعد إثبات مسار القاعدة
+// حيًا). جدول فاضي/غايب/لقطة قديمة = المصدر بيرجّع null والجولة
+// بتتجهض Fail-Closed من غير أي كتابة. والكتابة الوحيدة عبر RPC
+// ‏apply_price_floor (هجرة 017) بمفتاح الخدمة. التفاصيل في
+// price_floors/mod.ts.
 // ---------------------------------------------------------------------------
 let _priceFloorDeps: PriceFloorDeps | null = null;
 function getPriceFloorDeps(): PriceFloorDeps {
   if (_priceFloorDeps) return _priceFloorDeps;
   const env = (n: string) => Deno.env.get(n) || "";
   _priceFloorDeps = {
-    registry: new FallbackRegistrySource(
-      new JsonRegistrySource(dbFeedLoader({
-        baseUrl: SB_URL,
-        keyOf: () => env("SUPABASE_SERVICE_ROLE_KEY"),
-      })),
-      new JsonRegistrySource(urlLoader(resolvePriceFloorFeedUrl(env))),
-    ),
+    registry: new JsonRegistrySource(dbFeedLoader({
+      baseUrl: SB_URL,
+      keyOf: () => env("SUPABASE_SERVICE_ROLE_KEY"),
+    })),
     client: new PostgrestPriceFloorClient({
       baseUrl: SB_URL,
       keyOf: () => env("SUPABASE_SERVICE_ROLE_KEY"),
@@ -102,7 +96,6 @@ import {
   dbFeedLoader,
   DrayikAdapter,
   FeedAvailabilitySource,
-  FallbackRegistrySource,
   FetchTransport,
   flagsFromEnv,
   GenericHttpAdapter,
@@ -200,16 +193,13 @@ function getExecutor(): StoreExecutor {
   });
   _executor = createExecutor({
     store: storeDb,
-    // سجل المصدر: جدول provenance_feed أولًا (هجرة 021) والرابط
-    // المنشور احتياطي انتقال بس — نفس تركيب منفّذ الأسعار فوق.
-    registry: new FallbackRegistrySource(
-      new JsonRegistrySource(dbFeedLoader({
-        baseUrl: SB_URL,
-        keyOf: () => env("SUPABASE_SERVICE_ROLE_KEY"),
-      })),
-      new JsonRegistrySource(
-        urlLoader(env("PROVENANCE_FEED_URL") || "https://migoai.shop/provenance.json")),
-    ),
+    // سجل المصدر: جدول provenance_feed فقط (هجرة 021) — نفس تركيب
+    // منفّذ الأسعار فوق. لقطة غايبة/قديمة = registry_unavailable
+    // والبند بيتخطّى من غير تنفيذ (Fail-Closed).
+    registry: new JsonRegistrySource(dbFeedLoader({
+      baseUrl: SB_URL,
+      keyOf: () => env("SUPABASE_SERVICE_ROLE_KEY"),
+    })),
     availability: new FeedAvailabilitySource(
       urlLoader(env("AVAILABILITY_FEED_URL") || "https://migoai.shop/availability.json")),
     adapters,

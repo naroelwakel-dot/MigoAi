@@ -16,11 +16,9 @@ import {
   type ApplyOutcome,
   type ApplyPriceFloorArgs,
   computeFloorEgp,
-  DEFAULT_PRICE_FLOOR_FEED_URL,
   handlePriceFloorRequest,
   type PriceFloorClient,
   type PriceFloorDeps,
-  resolvePriceFloorFeedUrl,
   runPriceFloorApplier,
 } from "./mod.ts";
 import type {
@@ -308,34 +306,6 @@ Deno.test("feed SKU missing from the catalog is reported, not fatal", async () =
 });
 
 // ------------------------------------------------------------ تقوية اللجنة (الحزمة التانية): ثقة التكلفة
-
-Deno.test("feed URL resolution: dedicated env wins, shared env next, published default last", () => {
-  const envOf = (m: Record<string, string>) => (n: string) => m[n] || "";
-  eq(
-    resolvePriceFloorFeedUrl(envOf({
-      PRICE_FLOOR_FEED_URL: "https://a.example/feed.json",
-      PROVENANCE_FEED_URL: "https://b.example/feed.json",
-    })),
-    "https://a.example/feed.json",
-    "PRICE_FLOOR_FEED_URL has priority",
-  );
-  eq(
-    resolvePriceFloorFeedUrl(envOf({
-      PROVENANCE_FEED_URL: "https://b.example/feed.json",
-    })),
-    "https://b.example/feed.json",
-    "falls back to PROVENANCE_FEED_URL",
-  );
-  eq(
-    resolvePriceFloorFeedUrl(envOf({})),
-    DEFAULT_PRICE_FLOOR_FEED_URL,
-    "falls back to the published default",
-  );
-  ok(
-    DEFAULT_PRICE_FLOOR_FEED_URL.startsWith("https://migoai.shop/prov-"),
-    "default is the published prov-* provenance feed",
-  );
-});
 
 function pfReq(body: unknown, admin = true): Request {
   return new Request("https://api.example/catalog/apply-price-floors", {
