@@ -31,6 +31,7 @@ import {
   type SnapshotResult,
   type StoreOrder,
   type StoreOrderItem,
+  type SupplierAdapter,
 } from "./types.ts";
 import { isEnabled } from "./flags.ts";
 import { customerSafeDelivery, sanitizeText } from "./sanitize.ts";
@@ -41,6 +42,19 @@ export const FLOOR_PER_USD = 82.5;
 export const SETTLEMENT_WINDOW_MS = 20 * 60_000;
 /** أفق إعادة محاولات إشعار التسليم (ضمان التسليم MR!68). */
 export const DELIVERY_RETRY_HORIZON_MS = 24 * 3600_000;
+
+/**
+ * قيم أسرار المحوّل لتنقية نصوص أخطائه قبل الحفظ/التسجيل: جسم خطأ
+ * من المورد ممكن يردّد مفتاح الـ API، فالمفتاح ما يتلقّطش في
+ * last_error ولا في سجل الأخطاء المركزي.
+ */
+function adapterSecrets(adapter: SupplierAdapter): string[] {
+  try {
+    return adapter.secretValues?.() ?? [];
+  } catch {
+    return [];
+  }
+}
 
 export interface ItemResult {
   sku: string;
@@ -306,7 +320,7 @@ export class StoreExecutor {
         // رفض نهائي مؤكد (قبل الإرسال أو بكود نهائي): الطلب ما اتعملش.
         ex = await store.updateExecution(ex.id, {
           status: "failed",
-          last_error: sanitizeText(e.message).slice(0, 300),
+          last_error: sanitizeText(e.message, { secrets: adapterSecrets(adapter) }).slice(0, 300),
         });
         this.log("store_exec.purchase", "definite supplier rejection", e, {
           order_ref: ex.order_ref,
@@ -317,7 +331,7 @@ export class StoreExecutor {
       if (e instanceof AmbiguousOutcome || e instanceof GateBlocked) {
         ex = await store.updateExecution(ex.id, {
           status: "manual_review",
-          last_error: sanitizeText(e.message).slice(0, 300),
+          last_error: sanitizeText(e.message, { secrets: adapterSecrets(adapter) }).slice(0, 300),
         });
         this.log("store_exec.purchase", "ambiguous supplier outcome — manual review", e, {
           order_ref: ex.order_ref,
@@ -332,7 +346,7 @@ export class StoreExecutor {
       // خطأ غير متوقع بعد نقطة اللاعودة المحتملة = غامض بنفس القاعدة.
       ex = await store.updateExecution(ex.id, {
         status: ex.status === "processing" ? "manual_review" : ex.status,
-        last_error: sanitizeText(String((e as Error)?.message ?? e)).slice(0, 300),
+        last_error: sanitizeText(String((e as Error)?.message ?? e), { secrets: adapterSecrets(adapter) }).slice(0, 300),
       });
       this.log("store_exec.purchase", "unexpected execution error", e, {
         order_ref: ex.order_ref,

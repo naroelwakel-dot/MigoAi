@@ -436,13 +436,21 @@ function extractPlayerName(data: any): string {
   return "";
 }
 
+// أسماء العرض راجعة من منصات خارجية (نيكنيم TikTok/Telegram) وبتتعرض في
+// واجهة المتجر — بنشيل منها محارف الـ markup عند حدّ الكاشط نفسه، فمفيش
+// اسم مصمم يقدر يشيل <>&"' لأي مستهلك بعد كده (دفاع على طبقتين مع
+// الـ escaping في الواجهة).
+function cleanDisplayName(name: string): string {
+  return String(name || "").replace(/[<>&"']/g, "").trim();
+}
+
 // ----------------------------------------------------------------------------
 // Real source: TikTok profile (scrape)
 // ----------------------------------------------------------------------------
 async function resolveTikTokUser(username: string): Promise<{ name: string; avatar: string }> {
   const clean = username.replace(/^@/, "").trim().toLowerCase();
   try {
-    const res = await fetchWithTimeout(`https://www.tiktok.com/@${clean}`, {
+    const res = await fetchWithTimeout(`https://www.tiktok.com/@${encodeURIComponent(clean)}`, {
       headers: { "User-Agent": UA, "Accept": "text/html", "Accept-Language": "en-US,en;q=0.9" },
     }, 5000);
     if (res.ok) {
@@ -457,7 +465,7 @@ async function resolveTikTokUser(username: string): Promise<{ name: string; avat
           if (userObj) {
             nickname = userObj.nickname || userObj.uniqueId || clean;
             avatar = userObj.avatarLarger || userObj.avatarMedium || userObj.avatarThumb || "";
-            return { name: nickname, avatar };
+            return { name: cleanDisplayName(nickname), avatar };
           }
         } catch (_) {}
       }
@@ -465,7 +473,7 @@ async function resolveTikTokUser(username: string): Promise<{ name: string; avat
       const ogImage = html.match(/<meta property="og:image" content="([^"]+)"/i);
       if (ogTitle && ogTitle[1]) nickname = ogTitle[1].replace(/\s*\(@[^)]+\).*$/, "").replace(/\| TikTok$/, "").trim();
       if (ogImage && ogImage[1]) avatar = ogImage[1].replace(/&amp;/g, "&");
-      if (nickname) return { name: nickname, avatar };
+      if (nickname) return { name: cleanDisplayName(nickname), avatar };
     }
   } catch (_) {}
   return { name: "", avatar: "" };
@@ -502,7 +510,7 @@ function isTelegramGenericTemplate(name: string, avatar: string, clean: string):
 async function resolveTelegramUser(username: string): Promise<{ name: string; avatar: string }> {
   const clean = username.replace(/^@/, "").trim();
   try {
-    const res = await fetchWithTimeout(`https://t.me/${clean}`, { headers: { "User-Agent": UA } }, 5000);
+    const res = await fetchWithTimeout(`https://t.me/${encodeURIComponent(clean)}`, { headers: { "User-Agent": UA } }, 5000);
     if (res.ok) {
       const html = await res.text();
       let name = "";
@@ -511,7 +519,7 @@ async function resolveTelegramUser(username: string): Promise<{ name: string; av
       const ogImage = html.match(/<meta property="og:image" content="([^"]+)"/i);
       if (ogTitle && ogTitle[1]) name = ogTitle[1].trim();
       if (ogImage && ogImage[1]) avatar = ogImage[1].replace(/&amp;/g, "&");
-      if (name && !isTelegramGenericTemplate(name, avatar, clean)) return { name, avatar };
+      if (name && !isTelegramGenericTemplate(name, avatar, clean)) return { name: cleanDisplayName(name), avatar };
     }
   } catch (_) {}
   return { name: "", avatar: "" };
@@ -1226,6 +1234,7 @@ const clientErrorBuckets = new Map<string, { windowStart: number; count: number 
 async function handleClientError(req: Request): Promise<Response> {
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
   const now = Date.now();
+  if (clientErrorBuckets.size > 5000) clientErrorBuckets.clear(); // تخلص من النمو الزايد (نفس قاعدة RATE_MAP)
   const bucket = clientErrorBuckets.get(ip);
   if (bucket && now - bucket.windowStart < 60_000 && bucket.count >= 20) {
     return new Response(null, { status: 204 });
@@ -1244,7 +1253,16 @@ async function handleClientError(req: Request): Promise<Response> {
   }
   const cap = (v: unknown, n: number) =>
     typeof v === "string" ? v.slice(0, n) : "";
-  const message = cap(body.message, 300);
+  // نفس تنقية الأسرار اللي logError بيطبقها على errorText: الطريق ده
+  // مفتوح من غير مصادقة، فرسالة العميل ما تدخلش سجل الأخطاء المركزي خام.
+  const scrubSecrets = (s: string) => {
+    let out = s;
+    const writeKey = Deno.env.get("LOG_WRITE_KEY") || "";
+    if (writeKey) out = out.split(writeKey).join("***");
+    if (SB_KEY) out = out.split(SB_KEY).join("***");
+    return out;
+  };
+  const message = scrubSecrets(cap(body.message, 300));
   if (!message) return new Response(null, { status: 204 });
 
   const context =

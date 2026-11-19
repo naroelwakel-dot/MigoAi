@@ -187,6 +187,10 @@ abstract class BaseAdapter implements SupplierAdapter {
       return [];
     }
   }
+  /** وصول علني لقيم الأسرار — المنفّذ بينقّي بيها نصوص أخطاء المورد. */
+  secretValues(): string[] {
+    return this.secrets();
+  }
   protected apiKey(): string {
     const key = this.secretOf();
     if (!key) throw new DefiniteRejection("مفتاح المورد مش مضبوط في البيئة", true);
