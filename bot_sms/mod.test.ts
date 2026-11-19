@@ -1,11 +1,13 @@
 /**
- * اختبارات معالج إيصالات البوت (هجرة 017) — `deno test bot_sms/`
+ * اختبارات معالج إيصالات البوت (هجرتا 017 + 019) — `deno test bot_sms/`
  * من غير أي استيراد خارجي (offline بالكامل): عميل RPC وهمي بيسجل
  * النداءات، والمعالج بيتركب عليه مباشرة.
  *
- * التغطية: بوابة الجسر (مقفول/مرفوض)، تحقق جسم الحجز الشكلي،
- * وعدّ تمرير نتائج الـ RPC زي ما هي. قرارات الفلوس نفسها مش هنا:
- * الحجز ذرّي في القاعدة (bot_sms_claim) والقيد عند البوت.
+ * التغطية: بوابة الجسر (مقفول/مرفوض)، تحقق جسم الحجز/فك الحجز
+ * الشكلي، وعدّ تمرير نتائج الـ RPC زي ما هي (بما فيها رفض فك
+ * الحجز — الفك مش بيتم بالقوة أبدًا). قرارات الفلوس نفسها مش
+ * هنا: الحجز وفكه ذرّيان في القاعدة (bot_sms_claim/unclaim)
+ * والقيد عند البوت.
  */
 import {
   type BotSmsDeps,
@@ -42,6 +44,13 @@ class FakeClient implements BotSmsRpcClient {
     this.calls.push(`claim:${args.p_event_id}:${args.p_bot_topup_id}`);
     if (this.fail) return Promise.reject(new Error("rpc boom"));
     return Promise.resolve({ claimed: true, event_id: args.p_event_id });
+  }
+  callUnclaim(
+    args: Parameters<BotSmsRpcClient["callUnclaim"]>[0],
+  ): Promise<Record<string, unknown>> {
+    this.calls.push(`unclaim:${args.p_event_id}:${args.p_bot_topup_id}`);
+    if (this.fail) return Promise.reject(new Error("rpc boom"));
+    return Promise.resolve({ unclaimed: true, event_id: args.p_event_id });
   }
 }
 
@@ -151,4 +160,64 @@ Deno.test("RPC failure is a 502, never a half answer", async () => {
   eq(res?.status, 502, "status");
   eq((await res!.json()).error, "rpc_failed", "error");
   ok(client.calls.length === 1, "rpc attempted once");
+});
+
+Deno.test("unclaim happy path returns RPC result verbatim", async () => {
+  const client = new FakeClient();
+  const res = await handleBotSmsRequest(
+    req("/wallet/bot-sms-unclaim", {
+      event_id: EVENT_ID,
+      bot_topup_id: "topup-uuid-1",
+      partner_id: PARTNER_ID,
+    }, TOKEN), deps(client));
+  eq(res?.status, 200, "status");
+  const body = await res!.json();
+  eq(body.ok, true, "ok");
+  eq(body.unclaimed, true, "unclaimed passthrough");
+  eq(client.calls, [`unclaim:${EVENT_ID}:topup-uuid-1`], "rpc call");
+});
+
+Deno.test("unclaim refusal passes through (never forced)", async () => {
+  const client = new FakeClient();
+  client.callUnclaim = () => Promise.resolve({
+    unclaimed: false,
+    reason: "not_bot_claimed",
+  });
+  const res = await handleBotSmsRequest(
+    req("/wallet/bot-sms-unclaim", {
+      event_id: EVENT_ID,
+      bot_topup_id: "topup-uuid-1",
+    }, TOKEN), deps(client));
+  eq(res?.status, 200, "status");
+  const body = await res!.json();
+  eq(body.ok, true, "ok");
+  eq(body.unclaimed, false, "refusal passthrough");
+  eq(body.reason, "not_bot_claimed", "reason passthrough");
+});
+
+Deno.test("unclaim validates body shape and bridge gate before RPC", async () => {
+  const client = new FakeClient();
+  const badEvent = await handleBotSmsRequest(
+    req("/wallet/bot-sms-unclaim", { event_id: "not-a-uuid",
+      bot_topup_id: "t-1" }, TOKEN), deps(client));
+  eq(badEvent?.status, 400, "bad event id");
+  const badPartner = await handleBotSmsRequest(
+    req("/wallet/bot-sms-unclaim", { event_id: EVENT_ID,
+      bot_topup_id: "t-1", partner_id: "zzz" }, TOKEN), deps(client));
+  eq(badPartner?.status, 400, "bad partner id");
+  const noToken = await handleBotSmsRequest(
+    req("/wallet/bot-sms-unclaim", { event_id: EVENT_ID,
+      bot_topup_id: "t-1" }), deps(client));
+  eq(noToken?.status, 401, "no-token status");
+  eq(client.calls, [], "no RPC calls for invalid/unauthenticated bodies");
+});
+
+Deno.test("unclaim RPC failure is a 502", async () => {
+  const client = new FakeClient();
+  client.fail = true;
+  const res = await handleBotSmsRequest(
+    req("/wallet/bot-sms-unclaim", { event_id: EVENT_ID,
+      bot_topup_id: "t-1" }, TOKEN), deps(client));
+  eq(res?.status, 502, "status");
+  eq((await res!.json()).error, "rpc_failed", "error");
 });
