@@ -1327,7 +1327,11 @@ export async function handleWalletRequest(
   const isExpire = path.endsWith("/wallet/expire-intents");
   const isPendingClaims = path.endsWith("/wallet/pending-claims");
   const isResolveClaim = path.endsWith("/wallet/resolve-claim");
-  if (!isCredit && !isExpire && !isPendingClaims && !isResolveClaim) {
+  const isResolveOrderClaims = path.endsWith("/wallet/resolve-order-claims");
+  if (
+    !isCredit && !isExpire && !isPendingClaims && !isResolveClaim &&
+    !isResolveOrderClaims
+  ) {
     return null;
   }
   const json = (body: unknown, status = 200) =>
@@ -1349,6 +1353,25 @@ export async function handleWalletRequest(
         return json({ ok: false, error: "rpc_failed" }, 502);
       }
       return json({ ok: true, expired: data });
+    }
+    if (isResolveOrderClaims) {
+      // الحزمة 15: حسم مطالبات منصات مربوطة بطلبات شراء (المطالبة
+      // اتعملت قبل ما الإيداع يوصل — المراقب بينادي هنا بعد ما سجّل
+      // أحداث الإيداع الجديدة في نفس الدورة).
+      const { status, data } = await walletRpc(
+        "order_resolve_exchange_claims",
+        { p_limit: 50 },
+      );
+      if (status >= 300) {
+        logError(
+          "wallet.order_claims",
+          "resolve order claims RPC failed",
+          undefined,
+          { status },
+        );
+        return json({ ok: false, error: "rpc_failed" }, 502);
+      }
+      return json({ ok: true, resolved: data });
     }
     if (isPendingClaims) {
       const { status, data } = await walletRpc("wallet_pending_claims", {
