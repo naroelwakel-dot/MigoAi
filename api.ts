@@ -27,6 +27,7 @@
 // ---------------------------------------------------------------------------
 import { handleSmsRequest, PostgrestSmsClient, type SmsDeps } from "./sms_bridge/mod.ts";
 import { handleBotSmsRequest, PostgrestBotSmsClient, type BotSmsDeps } from "./bot_sms/mod.ts";
+import { handleBotExchangeRequest, PostgrestBotExchangeClient, type BotExchangeDeps } from "./bot_exchange/mod.ts";
 import {
   handlePriceFloorRequest,
   PostgrestPriceFloorClient,
@@ -85,6 +86,44 @@ function getBotSmsDeps(): BotSmsDeps {
     logError,
   };
   return _botSmsDeps;
+}
+
+// ---------------------------------------------------------------------------
+// إيداعات منصات لشحن محفظة البوت (هجرة 018): مرشّحون + حجز ذرّي
+// لممر شحن المنصات التلقائي في البوت. المصادقة = توكن الجسر
+// القائم بين النظامين (نفس مصدر نسخة الإيصالات فوق بالحرف:
+// متغير البيئة أولًا، وإلا صف backend_config).
+// ---------------------------------------------------------------------------
+let _botExchangeDeps: BotExchangeDeps | null = null;
+function getBotExchangeDeps(): BotExchangeDeps {
+  if (_botExchangeDeps) return _botExchangeDeps;
+  const env = (n: string) => Deno.env.get(n) || "";
+  _botExchangeDeps = {
+    client: new PostgrestBotExchangeClient({
+      baseUrl: SB_URL,
+      keyOf: () => env("SUPABASE_SERVICE_ROLE_KEY"),
+    }),
+    bridgeTokenOf: async () => {
+      const fromEnv = env("SHEERID_BRIDGE_TOKEN");
+      if (fromEnv) return fromEnv;
+      try {
+        const key = env("SUPABASE_SERVICE_ROLE_KEY");
+        const res = await fetch(
+          `${SB_URL}/rest/v1/backend_config?key=eq.sheerid_bridge_token&select=value`,
+          { headers: { apikey: key, Authorization: `Bearer ${key}` } },
+        );
+        if (!res.ok) return "";
+        const rows = await res.json();
+        return (Array.isArray(rows) && rows[0]?.value)
+          ? String(rows[0].value)
+          : "";
+      } catch {
+        return "";
+      }
+    },
+    logError,
+  };
+  return _botExchangeDeps;
 }
 
 // ---------------------------------------------------------------------------
@@ -1562,6 +1601,13 @@ Deno.serve(async (req: Request) => {
   if (req.method === "POST" && url.pathname.replace(/\/+$/, "").includes("/wallet/bot-sms-")) {
     const botSmsRes = await handleBotSmsRequest(req, getBotSmsDeps());
     if (botSmsRes) return botSmsRes;
+  }
+  // إيداعات البوت (هجرة 018): مرشّحون/حجز لممر شحن المنصات
+  // التلقائي — المصادقة جوه المعالج بتوكن الجسر، والمتصل الوحيد
+  // هو البوت.
+  if (req.method === "POST" && url.pathname.replace(/\/+$/, "").includes("/wallet/bot-exchange-")) {
+    const botExchangeRes = await handleBotExchangeRequest(req, getBotExchangeDeps());
+    if (botExchangeRes) return botExchangeRes;
   }
 
   // تحقق SheerID: حالة/إرسال العميل + إشعار المورد + المسح الدوري
