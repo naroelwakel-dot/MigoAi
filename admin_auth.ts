@@ -16,10 +16,31 @@
  *     زي ما هم من غير أي تغيير، سواء التوكنات الخاصة اتظبطت ولا لأ.
  *   - ولا توكن مضبوط أصلًا = الكل مرفوض (fail-closed زي اليوم).
  *
- * المقارنة بنفس أسلوب الكود الحالي (مساواة مباشرة على قيمة الترويسة).
+ * المقارنة بزمن ثابت (constant-time) عبر `tokenEquals` — مش مساواة
+ * مباشرة — فزمن الرد مش بيكشف طول أطول بادئة متطابقة من التوكن.
  */
 
 export type AdminChecker = (req: Request) => boolean;
+
+const encoder = new TextEncoder();
+
+/**
+ * مقارنة توكنات بزمن ثابت: بتقارن بايتات UTF-8 للطرفين كلها من غير
+ * أي خروج مبكر عند أول اختلاف، فالزمن المستغرق مش بيدي إشارة عن
+ * طول أطول بادئة متطابقة. توكن متوقع فاضي = رفض دايمًا (fail-closed)،
+ * وتوكن معروض فاضي = رفض.
+ */
+export function tokenEquals(presented: string, expected: string): boolean {
+  const a = encoder.encode(String(presented || ""));
+  const b = encoder.encode(String(expected || ""));
+  if (b.length === 0) return false;
+  let diff = a.length ^ b.length;
+  const n = Math.max(a.length, b.length);
+  for (let i = 0; i < n; i++) {
+    diff |= (a[i] ?? 0) ^ (b[i] ?? 0);
+  }
+  return diff === 0;
+}
 
 /** بيبني فاحص ترويسة x-migo-admin لمجموعة مسارات واحدة. */
 export function makeAdminChecker(
@@ -31,7 +52,7 @@ export function makeAdminChecker(
   return (req: Request): boolean => {
     const presented = req.headers.get("x-migo-admin");
     if (!presented) return false;
-    if (specific && presented === specific) return true;
-    return !!shared && presented === shared;
+    if (specific && tokenEquals(presented, specific)) return true;
+    return !!shared && tokenEquals(presented, shared);
   };
 }

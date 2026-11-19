@@ -32,7 +32,7 @@ import {
   resolvePriceFloorFeedUrl,
   type PriceFloorDeps,
 } from "./price_floors/mod.ts";
-import { makeAdminChecker } from "./admin_auth.ts";
+import { makeAdminChecker, tokenEquals } from "./admin_auth.ts";
 
 let _smsDeps: SmsDeps | null = null;
 function getSmsDeps(): SmsDeps {
@@ -261,7 +261,8 @@ function rateLimited(req: Request): boolean {
 // أدوات التشخيص (force/debug) متاحة بس لما هيدر x-migo-admin يطابق ADMIN_TOKEN في البيئة.
 const ADMIN_TOKEN = (globalThis as any).Deno?.env?.get?.("ADMIN_TOKEN") || "";
 function isAdmin(req: Request): boolean {
-  return !!ADMIN_TOKEN && req.headers.get("x-migo-admin") === ADMIN_TOKEN;
+  const presented = req.headers.get("x-migo-admin");
+  return !!ADMIN_TOKEN && !!presented && tokenEquals(presented, ADMIN_TOKEN);
 }
 
 // توكنات إدارية خاصة اختيارية لكل مجموعة مسارات (تقوية اللجنة —
