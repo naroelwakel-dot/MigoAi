@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0E1621">
+<title>لوحة تحكم Migo — مهامي الآن</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0E1621; --surface:#17212B; --surface2:#1D2A38; --border:#232E3C;
+    --gold:#E8B33D; --gold-text:#1A1405; --blue:#2AABEE; --green:#2FBF71;
+    --amber:#F5A623; --red:#E53935; --purple:#B392F0;
+    --text:#FFFFFF; --muted:#7F91A4;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    background:var(--bg); color:var(--text);
+    font-family:"IBM Plex Sans Arabic", -apple-system, "Segoe UI", Tahoma, Arial, sans-serif;
+    font-size:15px; line-height:1.6; padding-bottom:84px;
+  }
+  .num{font-variant-numeric:tabular-nums; letter-spacing:.2px;}
+  header.top{
+    position:sticky; top:0; z-index:20; background:var(--bg);
+    border-bottom:1px solid var(--border);
+    padding:12px 16px; display:flex; align-items:center; gap:10px;
+  }
+  header.top h1{font-size:19px; font-weight:700; flex:1;}
+  .pill{
+    display:inline-flex; align-items:center; gap:6px;
+    border:1px solid var(--border); background:var(--surface);
+    border-radius:999px; padding:4px 12px; font-size:13px; font-weight:600;
+    cursor:pointer; color:var(--text); min-height:36px;
+  }
+  .dot{width:9px; height:9px; border-radius:50%; background:var(--muted); flex:none;}
+  .dot.ok{background:var(--green);} .dot.bad{background:var(--red);} .dot.warn{background:var(--amber);}
+  main{padding:14px 14px 6px; display:flex; flex-direction:column; gap:14px; max-width:640px; margin:0 auto;}
+  .card{background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:14px;}
+  .card h2{font-size:16px; font-weight:700; margin-bottom:10px;}
+  .comp-row{display:flex; align-items:center; gap:9px; padding:9px 0; border-top:1px solid var(--border);}
+  .comp-row:first-of-type{border-top:none; padding-top:2px;}
+  .comp-row .name{font-weight:600; flex:1;}
+  .comp-row .meta{color:var(--muted); font-size:13px; text-align:left;}
+  .comp-row .meta b{color:var(--text); font-weight:600;}
+  .queue-card{
+    background:var(--surface); border:1px solid var(--border); border-radius:14px;
+    padding:13px 14px; display:flex; align-items:center; gap:12px;
+    border-right:5px solid var(--muted);
+  }
+  .queue-card .lbl{flex:1; font-weight:600; font-size:15px;}
+  .queue-card .lbl small{display:block; color:var(--muted); font-weight:400; font-size:12.5px;}
+  .queue-card .cnt{font-size:26px; font-weight:700; line-height:1;}
+  .queue-card .cnt.na{font-size:14px; color:var(--amber); font-weight:600;}
+  .sev-amber{border-right-color:var(--amber);} .sev-red{border-right-color:var(--red);}
+  .sev-blue{border-right-color:var(--blue);} .sev-purple{border-right-color:var(--purple);}
+  .sev-green{border-right-color:var(--green);}
+  .empty{
+    text-align:center; color:var(--muted); padding:26px 10px; font-size:16px;
+    background:var(--surface); border:1px dashed var(--border); border-radius:14px;
+  }
+  .empty b{color:var(--green); display:block; font-size:18px; margin-bottom:4px;}
+  .topup-row{padding:11px 0; border-top:1px solid var(--border);}
+  .topup-row:first-of-type{border-top:none; padding-top:2px;}
+  .topup-row .amt{font-size:20px; font-weight:700;}
+  .topup-row .amt small{font-size:13px; color:var(--muted); font-weight:500;}
+  .topup-row .sub{color:var(--muted); font-size:13.5px;}
+  .topup-row .sub b{color:var(--text); font-weight:600;}
+  .btn{
+    display:block; width:100%; min-height:50px; border:none; border-radius:12px;
+    background:var(--gold); color:var(--gold-text); font-family:inherit;
+    font-size:16px; font-weight:700; cursor:pointer; padding:10px;
+  }
+  .btn:disabled{opacity:.55; cursor:default;}
+  .btn.secondary{background:var(--surface2); color:var(--text); border:1px solid var(--border);}
+  .msg{display:none; border-radius:12px; padding:12px 14px; font-size:14.5px;}
+  .msg.err{display:block; background:#2A1416; border:1px solid var(--red); color:#FFD7D5;}
+  .msg.warn{display:block; background:#2A2110; border:1px solid var(--amber); color:#FFE1B0;}
+  .msg .btn{margin-top:10px;}
+  .updated{color:var(--muted); font-size:12.5px; text-align:center;}
+  .hidden{display:none !important;}
+  nav.bottom{
+    position:fixed; bottom:0; right:0; left:0; z-index:30;
+    background:var(--surface); border-top:1px solid var(--border);
+    display:flex; padding-bottom:env(safe-area-inset-bottom);
+  }
+  nav.bottom button{
+    flex:1; background:none; border:none; color:var(--muted); font-family:inherit;
+    font-size:12.5px; font-weight:600; padding:10px 2px 12px; cursor:pointer; min-height:58px;
+  }
+  nav.bottom button .ic{display:block; font-size:20px; line-height:1.25;}
+  nav.bottom button.active{color:var(--gold);}
+  .sheet-veil{
+    position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:40; display:none;
+  }
+  .sheet{
+    position:fixed; right:0; left:0; bottom:0; z-index:41; display:none;
+    background:var(--surface); border-top:1px solid var(--border);
+    border-radius:18px 18px 0 0; padding:20px 18px calc(20px + env(safe-area-inset-bottom));
+    text-align:center;
+  }
+  .sheet.open, .sheet-veil.open{display:block;}
+  .sheet p{font-size:16px; font-weight:600; margin-bottom:6px;}
+  .sheet small{color:var(--muted); display:block; margin-bottom:14px;}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <h1>مهامي الآن</h1>
+  <button class="pill" id="storePill" type="button"><span class="dot" id="storeDot"></span><span id="storePillText">بيحمّل…</span></button>
+</header>
+
+<main>
+  <div class="msg" id="msgBox"></div>
+
+  <section class="card hidden" id="compCard">
+    <h2>حالة الأجزاء</h2>
+    <div id="compRows"></div>
+  </section>
+
+  <div id="queueWrap" class="hidden" style="display:flex; flex-direction:column; gap:10px;"></div>
+
+  <section class="card hidden" id="topupCard">
+    <h2>أحدث شحنات محفظة الموقع المنتظرة</h2>
+    <div id="topupRows"></div>
+  </section>
+
+  <button class="btn" id="refreshBtn" type="button">تحديث</button>
+  <div class="updated" id="updatedLine"></div>
+</main>
+
+<div class="sheet-veil" id="sheetVeil"></div>
+<div class="sheet" id="sheet">
+  <p id="sheetTitle"></p>
+  <small>القسم ده هيتبني في مرحلته الجاية من خطة اللوحة.</small>
+  <button class="btn secondary" id="sheetClose" type="button">تمام</button>
+</div>
+
+<nav class="bottom" id="bottomNav">
+  <button type="button" class="active" data-nav="home"><span class="ic">🏠</span>مهامي الآن</button>
+  <button type="button" data-nav="events"><span class="ic">🔔</span>الأحداث</button>
+  <button type="button" data-nav="orders"><span class="ic">📦</span>الطلبات</button>
+  <button type="button" data-nav="customers"><span class="ic">👥</span>العملاء</button>
+  <button type="button" data-nav="more"><span class="ic">☰</span>المزيد</button>
+</nav>
+
+<script>
+"use strict";
+var API_HOME = "https://migoai-72.naroelwakel-dot.deno.net/control/home";
+var KEY_SLOT = "migoControlAdminKey";
+
+function $(id){ return document.getElementById(id); }
+function esc(s){
+  return String(s == null ? "" : s)
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+}
+function fmtNum(n){
+  var x = Number(n);
+  if (!isFinite(x)) return "—";
+  return x.toLocaleString("en-US", { maximumFractionDigits: 2 });
+}
+function relTime(iso){
+  if (!iso) return null;
+  var t = new Date(iso).getTime();
+  if (!isFinite(t)) return null;
+  var sec = Math.max(0, Math.floor((Date.now() - t) / 1000));
+  if (sec < 60) return "دلوقتي";
+  var min = Math.floor(sec / 60);
+  if (min < 60) return "منذ " + min + (min === 1 ? " دقيقة" : " دقيقة");
+  var hr = Math.floor(min / 60);
+  if (hr < 24) return "منذ " + hr + (hr === 1 ? " ساعة" : " ساعة");
+  var day = Math.floor(hr / 24);
+  return "منذ " + day + (day === 1 ? " يوم" : " يوم");
+}
+
+function showMsg(kind, html, withKeyBtn){
+  var box = $("msgBox");
+  box.className = "msg " + kind;
+  box.innerHTML = html + (withKeyBtn
+    ? '<button class="btn" id="keyBtn" type="button">كتابة المفتاح</button>' : "");
+  if (withKeyBtn) $("keyBtn").addEventListener("click", askKey);
+}
+function hideMsg(){ $("msgBox").className = "msg"; $("msgBox").innerHTML = ""; }
+
+function getKey(){ try { return sessionStorage.getItem(KEY_SLOT) || ""; } catch(e){ return ""; } }
+function setKey(k){ try {
+  if (k) sessionStorage.setItem(KEY_SLOT, k); else sessionStorage.removeItem(KEY_SLOT);
+} catch(e){} }
+function askKey(){
+  var k = window.prompt("اكتب مفتاح الأدمن:");
+  if (k) { setKey(k.trim()); load(); }
+}
+
+function botCount(bot, key){
+  if (!bot) return null;
+  var v = bot[key];
+  return (typeof v === "number" && isFinite(v)) ? v : null;
+}
+
+function compRow(name, okState, metaHtml){
+  // okState: "ok" | "bad" | "warn"
+  var word = okState === "ok" ? "يعمل" : (okState === "warn" ? "في مشكلة" : "غير متاح");
+  var cls = okState === "ok" ? "ok" : (okState === "warn" ? "warn" : "bad");
+  return '<div class="comp-row"><span class="dot ' + cls + '"></span>' +
+    '<span class="name">' + esc(name) + '</span>' +
+    '<span class="meta">' + word + "<br>" + metaHtml + "</span></div>";
+}
+
+function queueCard(label, sub, count, sev){
+  if (count === null) {
+    return '<div class="queue-card sev-' + sev + '"><div class="lbl">' + esc(label) +
+      (sub ? "<small>" + esc(sub) + "</small>" : "") +
+      '</div><div class="cnt na">غير متاح</div></div>';
+  }
+  if (count === 0) return "";
+  return '<div class="queue-card sev-' + sev + '"><div class="lbl">' + esc(label) +
+    (sub ? "<small>" + esc(sub) + "</small>" : "") +
+    '</div><div class="cnt num">' + fmtNum(count) + "</div></div>";
+}
+
+function render(data){
+  var store = data.store || {};
+  var bot = data.bot || null;
+
+  // شريط حالة المتجر
+  $("storeDot").className = "dot ok";
+  $("storePillText").textContent = "المتجر يعمل";
+
+  // حالة الأجزاء
+  var rows = "";
+  var botAt = bot ? relTime(bot.generated_at) : null;
+  rows += compRow("البوت",
+    bot ? "ok" : "bad",
+    bot ? ("آخر اتصال: <b>" + esc(botAt || "—") + "</b>")
+        : "مش عارفين نوصله دلوقتي");
+  var smsAt = relTime(store.latest_sms_at);
+  rows += compRow("تطبيق قراءة رسائل التليفون",
+    store.latest_sms_at ? "ok" : "warn",
+    store.latest_sms_at
+      ? ("آخر رسالة وصلت: <b>" + esc(smsAt || "—") + "</b>")
+      : "لسه مفيش رسائل وصلت");
+  var depAt = relTime(store.latest_deposit_at);
+  rows += compRow("إيداعات Binance وBybit",
+    store.latest_deposit_at ? "ok" : "warn",
+    store.latest_deposit_at
+      ? ("آخر إيداع وصل: <b>" + esc(depAt || "—") + "</b>")
+      : "لسه مفيش إيداعات وصلت");
+  $("compRows").innerHTML = rows;
+  $("compCard").classList.remove("hidden");
+
+  // طوابير «محتاج قرار الآن»
+  var cards = "";
+  cards += queueCard("شحنات منتظرة القرار", "شحنات محفظة البوت", botCount(bot, "pending_topups"), "amber");
+  cards += queueCard("شحنات متعلمة بمشكلة", "رقم العملية اتستخدم قبل كده", botCount(bot, "flagged_topups"), "red");
+  cards += queueCard("طلبات فاشلة", "طلبات بوت محتاجة تدخل", botCount(bot, "failed_orders"), "red");
+  cards += queueCard("محادثات من غير رد", "عملاء مستنيين رد", botCount(bot, "unanswered_conversations"), "blue");
+  cards += queueCard("طلبات يدوية", "تنفيذ يدوي عند مورد", botCount(bot, "manual_orders"), "purple");
+  cards += queueCard("شحنات محفظة الموقع منتظرة القرار", "من صفحة المحفظة", (typeof store.pending_topups_count === "number") ? store.pending_topups_count : null, "amber");
+  cards += queueCard("رسائل دفع لسه متربطتش", "وصلت ومتربطتش بشحنة ولا طلب", (typeof store.unmatched_sms === "number") ? store.unmatched_sms : null, "amber");
+  cards += queueCard("إيداعات منصات لسه متربطتش", "وصلت ومتربطتش بشحنة ولا طلب", (typeof store.unmatched_exchange === "number") ? store.unmatched_exchange : null, "amber");
+  cards += queueCard("طلبات موقع جديدة", "لسه ما اتنفذتش", (typeof store.new_orders === "number") ? store.new_orders : null, "blue");
+
+  var wrap = $("queueWrap");
+  if (cards) {
+    wrap.innerHTML = cards;
+  } else {
+    wrap.innerHTML = '<div class="empty"><b>مفيش حاجة محتاجة تدخل</b>كل الطوابير فاضية دلوقتي.</div>';
+  }
+  wrap.classList.remove("hidden");
+
+  // أحدث شحنات المحفظة المنتظرة
+  var items = Array.isArray(store.pending_topups) ? store.pending_topups : [];
+  var html = "";
+  if (!items.length) {
+    html = '<div class="sub">مفيش شحنات منتظرة.</div>';
+  } else {
+    items.forEach(function(t){
+      var age = relTime(t.created_at);
+      html += '<div class="topup-row">' +
+        '<div class="amt num">' + fmtNum(t.amount_egp) + ' ج.م <small>' + esc(t.payment_method || "") + "</small></div>" +
+        '<div class="sub">المُرسل: <b class="num">' + esc(t.sender_account || "—") + "</b>" +
+        (t.transfer_ref ? ' · رقم العملية: <b class="num">' + esc(t.transfer_ref) + "</b>" : "") +
+        (age ? " · " + esc(age) : "") + "</div></div>";
+    });
+  }
+  $("topupRows").innerHTML = html;
+  $("topupCard").classList.remove("hidden");
+
+  var gen = relTime(data.generated_at);
+  $("updatedLine").textContent = "آخر تحديث: " + (gen || "دلوقتي");
+}
+
+function load(){
+  var key = getKey();
+  if (!key) { askKey(); return; }
+  hideMsg();
+  var btn = $("refreshBtn");
+  btn.disabled = true; btn.textContent = "بيحمّل…";
+  fetch(API_HOME, { headers: { "x-migo-admin": key } })
+    .then(function(res){
+      if (res.status === 401) {
+        setKey("");
+        $("storeDot").className = "dot bad";
+        $("storePillText").textContent = "المفتاح غلط";
+        showMsg("err", "مفتاح الأدمن غلط أو مش مكتوب. اكتبه تاني عشان اللوحة تفتح.", true);
+        return null;
+      }
+      if (!res.ok) throw new Error("http " + res.status);
+      return res.json();
+    })
+    .then(function(data){
+      if (!data) return;
+      if (!data.ok) throw new Error("bad response");
+      render(data);
+      if (data.bot_unavailable) {
+        showMsg("warn", "أرقام الموقع ظاهرة، بس البوت مش بيرد دلوقتي — أرقامه مكتوبة «غير متاح» بدل ما تتخترع.", false);
+      }
+    })
+    .catch(function(){
+      $("storeDot").className = "dot bad";
+      $("storePillText").textContent = "مفيش اتصال";
+      showMsg("err", "مش عارف أوصل للخادم. اتأكد من النت واضغط تحديث.", false);
+    })
+    .finally(function(){
+      btn.disabled = false; btn.textContent = "تحديث";
+    });
+}
+
+$("refreshBtn").addEventListener("click", load);
+$("storePill").addEventListener("click", load);
+
+// التنقل السفلي: الرئيسية شغالة، والباقي في مراحل جاية — من غير شاشات وهمية.
+var navNames = { events: "الأحداث", orders: "الطلبات", customers: "العملاء", more: "المزيد" };
+document.querySelectorAll("#bottomNav button").forEach(function(b){
+  b.addEventListener("click", function(){
+    var nav = b.getAttribute("data-nav");
+    if (nav === "home") { window.scrollTo({ top: 0, behavior: "smooth" }); return; }
+    $("sheetTitle").textContent = "قسم " + (navNames[nav] || "");
+    $("sheet").classList.add("open");
+    $("sheetVeil").classList.add("open");
+  });
+});
+function closeSheet(){ $("sheet").classList.remove("open"); $("sheetVeil").classList.remove("open"); }
+$("sheetClose").addEventListener("click", closeSheet);
+$("sheetVeil").addEventListener("click", closeSheet);
+
+load();
+</script>
+</body>
+</html>

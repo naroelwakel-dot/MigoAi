@@ -1,3 +1,4 @@
+// control phase 0 (2026-11-19): GET /control/home aggregation endpoint for the control panel (control.html) + x-migo-admin added to CORS allow-headers
 // redeploy trigger 2026-11-19b: force Deno promotion of merge #14 (provenance feed DB-only) after the 15/hour deploy cap blocked its first attempts
 // env refresh 2026-11-18d: DRAYIK_API_KEY added + Gmail joined the auto-buy allowlist
 // env refresh 2026-11-18c: Package 6 Deno steps complete (10/10) - executor armed for outlook-hotmail-accounts
@@ -33,6 +34,13 @@ import {
   PostgrestPriceFloorClient,
   type PriceFloorDeps,
 } from "./price_floors/mod.ts";
+import {
+  BridgeBotControlClient,
+  type ControlDeps,
+  handleControlHomeRequest,
+  PostgrestControlClient,
+} from "./control/mod.ts";
+import { bridgeBaseUrl } from "./sheerid/config.ts";
 import { makeAdminChecker, tokenEquals } from "./admin_auth.ts";
 
 let _smsDeps: SmsDeps | null = null;
@@ -124,6 +132,52 @@ function getBotExchangeDeps(): BotExchangeDeps {
     logError,
   };
   return _botExchangeDeps;
+}
+
+// ---------------------------------------------------------------------------
+// لوحة التحكم (المرحلة م٠): تجميع رئيسية «مهامي الآن» — عدّادات
+// الموقع من قاعدته بمفتاح الخدمة، وعدّادات البوت بنداء خادمي لنقطة
+// البوت /api/control/home بنفس اعتماد الجسر القائم (الرابط من
+// SHEERID_BRIDGE_URL بفرض https، والتوكن بنفس حلّال نسختي
+// bot-sms/bot-exchange فوق: البيئة أولًا وإلا backend_config).
+// المصادقة على النقطة نفسها = فاحص x-migo-admin المشترك (isAdmin).
+// ---------------------------------------------------------------------------
+let _controlDeps: ControlDeps | null = null;
+function getControlDeps(): ControlDeps {
+  if (_controlDeps) return _controlDeps;
+  const env = (n: string) => Deno.env.get(n) || "";
+  const bridgeTokenOf = async (): Promise<string> => {
+    const fromEnv = env("SHEERID_BRIDGE_TOKEN");
+    if (fromEnv) return fromEnv;
+    try {
+      const key = env("SUPABASE_SERVICE_ROLE_KEY");
+      const res = await fetch(
+        `${SB_URL}/rest/v1/backend_config?key=eq.sheerid_bridge_token&select=value`,
+        { headers: { apikey: key, Authorization: `Bearer ${key}` } },
+      );
+      if (!res.ok) return "";
+      const rows = await res.json();
+      return (Array.isArray(rows) && rows[0]?.value)
+        ? String(rows[0].value)
+        : "";
+    } catch {
+      return "";
+    }
+  };
+  _controlDeps = {
+    client: new PostgrestControlClient({
+      baseUrl: SB_URL,
+      keyOf: () => env("SUPABASE_SERVICE_ROLE_KEY"),
+    }),
+    botClient: new BridgeBotControlClient({
+      baseUrlOf: () => bridgeBaseUrl((n) => Deno.env.get(n)),
+      bridgeTokenOf,
+    }),
+    isAdmin,
+    corsOf: (r: Request) => corsHeaders(r),
+    logError,
+  };
+  return _controlDeps;
 }
 
 // ---------------------------------------------------------------------------
@@ -323,7 +377,7 @@ function corsHeaders(req?: Request): Record<string, string> {
     "Content-Type": "application/json; charset=utf-8",
     "Access-Control-Allow-Origin": allow,
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Headers": "Content-Type, x-migo-admin",
     "Vary": "Origin",
   };
 }
@@ -1608,6 +1662,17 @@ Deno.serve(async (req: Request) => {
   if (req.method === "POST" && url.pathname.replace(/\/+$/, "").includes("/wallet/bot-exchange-")) {
     const botExchangeRes = await handleBotExchangeRequest(req, getBotExchangeDeps());
     if (botExchangeRes) return botExchangeRes;
+  }
+
+  // لوحة التحكم (المرحلة م٠): رئيسية «مهامي الآن» — تجميع قراءة بس
+  // محمي بفاحص الأدمن المشترك جوه المعالج، وبيتنادى من control.html.
+  if (url.pathname.replace(/\/+$/, "").endsWith("/control/home")) {
+    try {
+      const controlRes = await handleControlHomeRequest(req, getControlDeps());
+      if (controlRes) return controlRes;
+    } catch (e) {
+      logError("control.route", "unhandled control route error", e);
+    }
   }
 
   // تحقق SheerID: حالة/إرسال العميل + إشعار المورد + المسح الدوري
