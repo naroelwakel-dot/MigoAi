@@ -1,3 +1,4 @@
+// control phase م١-أ (2026-11-19): /control customers + wallets endpoints (store customer file, topup decisions, wallet adjust, bot proxies, unified search) in control/customers.ts
 // control phase 0 (2026-11-19): GET /control/home aggregation endpoint for the control panel (control.html) + x-migo-admin added to CORS allow-headers
 // redeploy trigger 2026-11-19b: force Deno promotion of merge #14 (provenance feed DB-only) after the 15/hour deploy cap blocked its first attempts
 // env refresh 2026-11-18d: DRAYIK_API_KEY added + Gmail joined the auto-buy allowlist
@@ -40,6 +41,12 @@ import {
   handleControlHomeRequest,
   PostgrestControlClient,
 } from "./control/mod.ts";
+import {
+  BridgeBotControlProxyClient,
+  type ControlCustomersDeps,
+  handleControlCustomersRequest,
+  PostgrestControlCustomersClient,
+} from "./control/customers.ts";
 import { bridgeBaseUrl } from "./sheerid/config.ts";
 import { makeAdminChecker, tokenEquals } from "./admin_auth.ts";
 
@@ -178,6 +185,52 @@ function getControlDeps(): ControlDeps {
     logError,
   };
   return _controlDeps;
+}
+
+// ---------------------------------------------------------------------------
+// لوحة التحكم (المرحلة م١-أ): العملاء والمحافظ — ملف عميل الموقع من
+// قاعدته (وهويته من GoTrue Admin)، وقرارات الشحن وتعديل الرصيد
+// بدوال القاعدة الداخلية (هجرة 022)، وأفعال البوت بتمرير خادمي
+// لنقاطه الداخلية بنفس اعتماد الجسر (الرابط والتوكن زي رئيسية
+// اللوحة فوق بالظبط). المصادقة = فاحص x-migo-admin المشترك جوه
+// المعالج نفسه.
+// ---------------------------------------------------------------------------
+let _controlCustomersDeps: ControlCustomersDeps | null = null;
+function getControlCustomersDeps(): ControlCustomersDeps {
+  if (_controlCustomersDeps) return _controlCustomersDeps;
+  const env = (n: string) => Deno.env.get(n) || "";
+  const bridgeTokenOf = async (): Promise<string> => {
+    const fromEnv = env("SHEERID_BRIDGE_TOKEN");
+    if (fromEnv) return fromEnv;
+    try {
+      const key = env("SUPABASE_SERVICE_ROLE_KEY");
+      const res = await fetch(
+        `${SB_URL}/rest/v1/backend_config?key=eq.sheerid_bridge_token&select=value`,
+        { headers: { apikey: key, Authorization: `Bearer ${key}` } },
+      );
+      if (!res.ok) return "";
+      const rows = await res.json();
+      return (Array.isArray(rows) && rows[0]?.value)
+        ? String(rows[0].value)
+        : "";
+    } catch {
+      return "";
+    }
+  };
+  _controlCustomersDeps = {
+    client: new PostgrestControlCustomersClient({
+      baseUrl: SB_URL,
+      keyOf: () => env("SUPABASE_SERVICE_ROLE_KEY"),
+    }),
+    botClient: new BridgeBotControlProxyClient({
+      baseUrlOf: () => bridgeBaseUrl((n) => Deno.env.get(n)),
+      bridgeTokenOf,
+    }),
+    isAdmin,
+    corsOf: (r: Request) => corsHeaders(r),
+    logError,
+  };
+  return _controlCustomersDeps;
 }
 
 // ---------------------------------------------------------------------------
@@ -1672,6 +1725,21 @@ Deno.serve(async (req: Request) => {
       if (controlRes) return controlRes;
     } catch (e) {
       logError("control.route", "unhandled control route error", e);
+    }
+  }
+
+  // لوحة التحكم (المرحلة م١-أ): العملاء والمحافظ — ملف/قرارات/
+  // تعديل رصيد الموقع + تمرير أفعال البوت + البحث الموحد. المعالج
+  // بيرجع null لأي مسار مش بتاعه (بما فيه /control/home فوق).
+  if (url.pathname.replace(/\/+$/, "").includes("/control/")) {
+    try {
+      const customersRes = await handleControlCustomersRequest(
+        req,
+        getControlCustomersDeps(),
+      );
+      if (customersRes) return customersRes;
+    } catch (e) {
+      logError("control.customers.route", "unhandled customers route error", e);
     }
   }
 
