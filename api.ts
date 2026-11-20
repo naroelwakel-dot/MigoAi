@@ -35,6 +35,7 @@ import {
   handlePriceFloorRequest,
   PostgrestPriceFloorClient,
   type PriceFloorDeps,
+  runPriceFloorApplier,
 } from "./price_floors/mod.ts";
 import {
   BridgeBotControlClient,
@@ -63,6 +64,11 @@ import {
   handleControlOrdersRequest,
   PostgrestControlOrdersClient,
 } from "./control/orders.ts";
+import {
+  type ControlPricesDeps,
+  handleControlPricesRequest,
+  PostgrestControlPricesClient,
+} from "./control/prices.ts";
 import { bridgeBaseUrl } from "./sheerid/config.ts";
 import { makeAdminChecker, tokenEquals } from "./admin_auth.ts";
 
@@ -378,6 +384,66 @@ function getControlOrdersDeps(): ControlOrdersDeps {
     logError,
   };
   return _controlOrdersDeps;
+}
+
+// ---------------------------------------------------------------------------
+// لوحة التحكم (المرحلة م٣): أسعار الموقع — مقارنة أسعار ملفات العرض
+// بأسعار القاعدة، وتشغيل مُطبِّق حد الأسعار القائم من اللوحة
+// (runPriceFloorApplier بنفس تبعيات نقطة المجدول الخارجي)، وقراءة
+// حالة منفّذ الموقع. ملفات العرض بتتقرأ من أصل الموقع نفسه.
+// المصادقة = فاحص x-migo-admin المشترك جوه المعالج نفسه.
+// ---------------------------------------------------------------------------
+let _controlPricesDeps: ControlPricesDeps | null = null;
+function getControlPricesDeps(): ControlPricesDeps {
+  if (_controlPricesDeps) return _controlPricesDeps;
+  const env = (n: string) => Deno.env.get(n) || "";
+  const bridgeTokenOf = async (): Promise<string> => {
+    const fromEnv = env("SHEERID_BRIDGE_TOKEN");
+    if (fromEnv) return fromEnv;
+    try {
+      const key = env("SUPABASE_SERVICE_ROLE_KEY");
+      const res = await fetch(
+        `${SB_URL}/rest/v1/backend_config?key=eq.sheerid_bridge_token&select=value`,
+        { headers: { apikey: key, Authorization: `Bearer ${key}` } },
+      );
+      if (!res.ok) return "";
+      const rows = await res.json();
+      return (Array.isArray(rows) && rows[0]?.value)
+        ? String(rows[0].value)
+        : "";
+    } catch {
+      return "";
+    }
+  };
+  _controlPricesDeps = {
+    client: new PostgrestControlPricesClient({
+      baseUrl: SB_URL,
+      keyOf: () => env("SUPABASE_SERVICE_ROLE_KEY"),
+    }),
+    botClient: new BridgeBotControlProxyClient({
+      baseUrlOf: () => bridgeBaseUrl((n) => Deno.env.get(n)),
+      bridgeTokenOf,
+    }),
+    isAdmin,
+    corsOf: (r: Request) => corsHeaders(r),
+    logError,
+    fetchText: async (u: string) => {
+      // مهلة ٥ ثواني لكل ملف: ملف معلّق ما يعلّقش المقارنة كلها،
+      // وانقطاع المهلة بيترمي كفشل جلب فبيظهر في file_errors.
+      const ctrl = new AbortController();
+      const timer = setTimeout(() => ctrl.abort(), 5000);
+      try {
+        const res = await fetch(u, { signal: ctrl.signal });
+        if (!res.ok) throw new Error(`storefront file http ${res.status}`);
+        return await res.text();
+      } finally {
+        clearTimeout(timer);
+      }
+    },
+    runFloors: () => runPriceFloorApplier(getPriceFloorDeps()),
+    siteBaseOf: () => "https://migoai.shop",
+  };
+  return _controlPricesDeps;
 }
 
 // ---------------------------------------------------------------------------
@@ -1836,6 +1902,44 @@ Deno.serve(async (req: Request) => {
       logError("wallet.route", "unhandled wallet route error", e);
     }
   }
+  // أسعار الكتالوج العامة (المرحلة م٣): خريطة أسعار قاعدة البيانات
+  // بأسماء عناصر السلة — الواجهة بتجيبها وقت التحميل وبتعرضها فوق
+  // أسعار الملفات الثابتة، فالقاعدة تبقى مصدر السعر الوحيد. الخريطة
+  // متقسمة على خريطتين: أسعار السوشيال (kind = smm_rate) لوحدها في
+  // smm_prices وباقي الأسعار في prices، عشان اسم خدمة سوشيال شبه
+  // اسم منتج عادي ما يلخبطش الاتنين في الواجهة. الأسعار بيانات عرض
+  // عامة أصلًا (نفس اللي getCatalog بيغذّي بيه شات المتجر) فالمسار
+  // من غير مصادقة، وردّه بنفس CORS باقي المسارات العامة. فشل
+  // القراءة = 502 والواجهة بتكمّل بأسعار الملفات.
+  if (
+    req.method === "GET" &&
+    url.pathname.replace(/\/+$/, "").endsWith("/catalog/prices")
+  ) {
+    try {
+      const cat = await getCatalog();
+      const prices: Record<string, number> = {};
+      const smmPrices: Record<string, number> = {};
+      for (const r of cat) {
+        if (r && r.sku) {
+          if (r.kind === "smm_rate") smmPrices[r.sku] = r.price;
+          else prices[r.sku] = r.price;
+        }
+      }
+      return new Response(
+        JSON.stringify({ ok: true, prices, smm_prices: smmPrices }),
+        {
+          status: 200,
+          headers: corsHeaders(req),
+        },
+      );
+    } catch (e) {
+      logError("catalog.prices", "public catalog prices failed", e);
+      return new Response(
+        JSON.stringify({ ok: false, error: "catalog_failed" }),
+        { status: 502, headers: corsHeaders(req) },
+      );
+    }
+  }
   // منفّذ حدّ الأسعار الأدنى (محمي بفاحص الكتالوج جوه المعالج) —
   // بيتنادى من مجدول خارجي بترويسة الأدمن زي باقي المسارات.
   if (url.pathname.replace(/\/+$/, "").includes("/catalog/")) {
@@ -1903,6 +2007,11 @@ Deno.serve(async (req: Request) => {
         getControlOrdersDeps(),
       );
       if (ordersRes) return ordersRes;
+      const pricesRes = await handleControlPricesRequest(
+        req,
+        getControlPricesDeps(),
+      );
+      if (pricesRes) return pricesRes;
     } catch (e) {
       logError("control.customers.route", "unhandled customers route error", e);
     }

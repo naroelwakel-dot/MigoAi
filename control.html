@@ -186,6 +186,14 @@
   .bubble.cust{margin-inline-start:auto;}
   .bubble.ours{margin-inline-end:auto; border:1px solid var(--gold);}
   .bubble.botm{margin-inline-end:auto; border:1px solid var(--border);}
+  .ptable{width:100%; border-collapse:collapse; font-size:13px;}
+  .ptable th, .ptable td{padding:7px 6px; border-top:1px solid var(--border); text-align:right; vertical-align:top; overflow-wrap:anywhere;}
+  .ptable th{color:var(--muted); font-weight:600; border-top:none;}
+  .ptable td.price, .ptable th.price{text-align:left; white-space:nowrap;}
+  .ptable tr.drift td{background:#2A2110;}
+  .cnt-chips{display:flex; gap:8px; flex-wrap:wrap;}
+  .cnt-chips .chip{background:var(--surface2); border:1px solid var(--border); border-radius:999px; padding:5px 12px; font-size:13px; font-weight:600;}
+  .cnt-chips .chip b{font-weight:700;}
 </style>
 </head>
 <body>
@@ -303,10 +311,33 @@
   <div id="chatScreen" class="hidden" style="display:flex; flex-direction:column; gap:14px;"></div>
 </main>
 
+<main id="pricesMain" class="hidden">
+  <div class="msg" id="pricesMsg"></div>
+
+  <section class="card">
+    <h2>مقارنة الأسعار</h2>
+    <div class="sub" style="color:var(--muted); font-size:13px;">سعر قاعدة البيانات هو السعر الأصلي اللي بيتحسب بيه أي طلب. الجدول ده بيقارنه بسعر ملفات العرض في الموقع، وأي اختلاف بيظهر هنا لحد ما يتصلّح.</div>
+    <div class="cnt-chips" id="pricesCounts" style="margin-top:10px;"></div>
+    <div id="pricesTable" style="margin-top:6px; overflow-x:auto;"></div>
+    <button class="btn secondary" id="pricesReloadBtn" type="button" style="margin-top:10px;">تحديث المقارنة</button>
+  </section>
+
+  <section class="card">
+    <h2>حد الأسعار الأدنى</h2>
+    <div class="sub" style="color:var(--muted); font-size:13px;">لو سعر منتج في القاعدة نزل عن تكلفته مع هامش الربح، الزرار ده بيرفعه للحد الأدنى الآمن. الأسعار من هنا بتطلع بس — ما بتنزلش أبدًا.</div>
+    <button class="btn" id="pricesApplyBtn" type="button" style="margin-top:10px;">طبّق حد الأسعار الآن</button>
+  </section>
+
+  <section class="card">
+    <h2>منفّذ طلبات الموقع التلقائي</h2>
+    <div id="execStateBody"><div class="sub" style="color:var(--muted)">بيحمّل الحالة…</div></div>
+  </section>
+</main>
+
 <div class="sheet-veil" id="sheetVeil"></div>
 <div class="sheet" id="sheet">
   <p id="sheetTitle"></p>
-  <small>القسم ده هيتبني في مرحلته الجاية من خطة اللوحة.</small>
+  <div id="sheetBody"><small>القسم ده هيتبني في مرحلته الجاية من خطة اللوحة.</small></div>
   <button class="btn secondary" id="sheetClose" type="button">تمام</button>
 </div>
 
@@ -535,17 +566,21 @@ $("refreshBtn").addEventListener("click", load);
 $("storePill").addEventListener("click", load);
 
 // التنقل السفلي: الرئيسية والعملاء والطلبات والمحادثات شغالين،
-// والباقي (الأحداث/المزيد) في مراحل جاية — من غير شاشات وهمية.
+// و«المزيد» فيها أسعار الموقع (م٣) — والأحداث لسه في مرحلة جاية،
+// من غير شاشات وهمية.
 var navNames = { events: "الأحداث", more: "المزيد" };
-var viewTitles = { home: "مهامي الآن", customers: "العملاء", orders: "الطلبات", chats: "المحادثات" };
+var viewTitles = { home: "مهامي الآن", customers: "العملاء", orders: "الطلبات", chats: "المحادثات", prices: "أسعار الموقع" };
 function showView(name){
   $("homeMain").classList.toggle("hidden", name !== "home");
   $("customersMain").classList.toggle("hidden", name !== "customers");
   $("ordersMain").classList.toggle("hidden", name !== "orders");
   $("chatsMain").classList.toggle("hidden", name !== "chats");
+  $("pricesMain").classList.toggle("hidden", name !== "prices");
   $("pageTitle").textContent = viewTitles[name] || "";
   document.querySelectorAll("#bottomNav button").forEach(function(b){
-    b.classList.toggle("active", b.getAttribute("data-nav") === name);
+    var nav = b.getAttribute("data-nav");
+    // أسعار الموقع بتتفتح من «المزيد» فزرها هو اللي بيتلوّن وهي مفتوحة.
+    b.classList.toggle("active", nav === name || (name === "prices" && nav === "more"));
   });
   if (name !== "chats" && typeof stopChatPolling === "function") stopChatPolling();
   window.scrollTo({ top: 0 });
@@ -557,7 +592,24 @@ document.querySelectorAll("#bottomNav button").forEach(function(b){
     if (nav === "customers") { showView("customers"); ensureMoneyLoaded(); return; }
     if (nav === "orders") { showView("orders"); ensureOrdersLoaded(); return; }
     if (nav === "chats") { showView("chats"); ensureChatsLoaded(); return; }
+    if (nav === "more") {
+      $("sheetTitle").textContent = "المزيد";
+      $("sheetBody").innerHTML =
+        '<div class="menu-list">' +
+        '<button class="btn" id="morePricesBtn" type="button">أسعار الموقع</button>' +
+        "</div>" +
+        "<small>قسم الأحداث هيتبني في مرحلته الجاية من خطة اللوحة.</small>";
+      $("sheet").classList.add("open");
+      $("sheetVeil").classList.add("open");
+      $("morePricesBtn").addEventListener("click", function(){
+        closeSheet();
+        showView("prices");
+        ensurePricesLoaded();
+      });
+      return;
+    }
     $("sheetTitle").textContent = "قسم " + (navNames[nav] || "");
+    $("sheetBody").innerHTML = "<small>القسم ده هيتبني في مرحلته الجاية من خطة اللوحة.</small>";
     $("sheet").classList.add("open");
     $("sheetVeil").classList.add("open");
   });
@@ -622,6 +674,7 @@ function errText(e, ctx){
   if (code === "invalid_status") return "الحالة دي مش من حالات طلبات الموقع المعروفة.";
   if (code === "invalid_transition") return "تغيير الحالة ده مش مسموح من حالة الطلب الحالية.";
   if (code === "reason_required") return "اكتب سبب الإلغاء أو الاسترداد الأول.";
+  if (code === "feed_unavailable") return "بيانات تكاليف الموردين مش متاحة دلوقتي — ما اتطبقش أي تغيير على أي سعر.";
   if (code === "state_changed") return "حالة الطلب اتغيرت قبل ما العملية تكمل. حدّث الشاشة وشوف حالته دلوقتي.";
   if (code === "order_not_found") return "الطلب مش موجود.";
   if (code === "not_refunded") return "المورد لسه ما أكدش رجوع الفلوس — الاسترداد مش هيتم قبل تأكيده.";
@@ -2847,6 +2900,117 @@ function sendChatGive(){
     })
     .catch(function(e){ showChatMsg("err", errText(e, "chat")); });
 }
+
+// ============================================================
+// قسم أسعار الموقع (م٣): مقارنة أسعار ملفات العرض بأسعار
+// القاعدة + تطبيق حد الأسعار الأدنى من اللوحة + حالة منفّذ
+// طلبات الموقع. كل فعل بيتنفذ على الخادم فعلًا والنجاح بيظهر
+// بس بعد رد سليم منه.
+// ============================================================
+
+function showPricesMsg(kind, html, withKeyBtn){
+  var box = $("pricesMsg");
+  box.className = "msg " + kind;
+  box.innerHTML = html + (withKeyBtn
+    ? '<button class="btn" id="pricesKeyBtn" type="button">كتابة المفتاح</button>' : "");
+  if (withKeyBtn) $("pricesKeyBtn").addEventListener("click", askKey);
+}
+function hidePricesMsg(){ $("pricesMsg").className = "msg"; $("pricesMsg").innerHTML = ""; }
+
+var pricesState = { loaded: false };
+var PRICE_STATE = {
+  match: ["متطابق", "st-ok"],
+  drift: ["مختلف", "st-bad"],
+  db_only: ["في القاعدة فقط", "st-pending"],
+  file_only: ["في الملف فقط", "st-pending"]
+};
+function fmtPrice(v){
+  if (v === null || v === undefined) return "—";
+  var n = Number(v);
+  if (!isFinite(n)) return "—";
+  return '<span class="num">' + n.toLocaleString("en-US", { maximumFractionDigits: 2 }) + "</span>";
+}
+function ensurePricesLoaded(){
+  if (pricesState.loaded) return;
+  pricesState.loaded = true;
+  loadPrices();
+  loadExecState();
+}
+function loadPrices(){
+  hidePricesMsg();
+  $("pricesCounts").innerHTML = "";
+  $("pricesTable").innerHTML = '<div class="sub" style="color:var(--muted)">بيحمّل المقارنة…</div>';
+  api("/control/store-prices")
+    .then(function(data){
+      var c = data.counts || {};
+      $("pricesCounts").innerHTML =
+        '<span class="chip">متطابق <b class="num">' + (c.match || 0) + "</b></span>" +
+        '<span class="chip">مختلف <b class="num">' + (c.drift || 0) + "</b></span>" +
+        '<span class="chip">في القاعدة فقط <b class="num">' + (c.db_only || 0) + "</b></span>" +
+        '<span class="chip">في الملف فقط <b class="num">' + (c.file_only || 0) + "</b></span>";
+      var items = Array.isArray(data.items) ? data.items : [];
+      if (!items.length) {
+        $("pricesTable").innerHTML = '<div class="empty"><b>مفيش أسعار للمقارنة</b>القاعدة والملفات فاضيين.</div>';
+        return;
+      }
+      var html = '<table class="ptable"><thead><tr><th>المنتج</th><th class="price">سعر الملف</th><th class="price">سعر القاعدة</th><th>الحالة</th></tr></thead><tbody>';
+      items.forEach(function(it){
+        var st = PRICE_STATE[it.state] || [it.state, "st-mut"];
+        html += '<tr' + (it.state === "drift" ? ' class="drift"' : "") + ">" +
+          "<td>" + esc(it.sku) + "</td>" +
+          '<td class="price">' + fmtPrice(it.file_price) + "</td>" +
+          '<td class="price">' + fmtPrice(it.db_price) + "</td>" +
+          '<td><span class="status-txt ' + st[1] + '">' + esc(st[0]) + "</span></td></tr>";
+      });
+      html += "</tbody></table>";
+      if (Array.isArray(data.file_errors) && data.file_errors.length) {
+        html += '<div class="sub" style="color:var(--amber); font-size:13px; margin-top:8px;">ملحوظة: الملفات دي ما اتقرتش من الموقع: ' +
+          esc(data.file_errors.join("، ")) + " — أسعارها مش داخلة في المقارنة دي.</div>";
+      }
+      $("pricesTable").innerHTML = html;
+    })
+    .catch(function(e){
+      $("pricesTable").innerHTML = "";
+      showPricesMsg("err", esc(errText(e, "prices")));
+    });
+}
+function loadExecState(){
+  api("/control/store-executor-state")
+    .then(function(data){
+      var ex = Number(data.executions || 0);
+      var rf = Number(data.refunds || 0);
+      var line = ex === 0
+        ? 'منفّذ الطلبات التلقائي: لم يعمل بعد — <b class="num">0</b> تنفيذات'
+        : 'التنفيذات المسجلة: <b class="num">' + ex.toLocaleString("en-US") + "</b>";
+      $("execStateBody").innerHTML =
+        '<div class="kv"><span class="k">الحالة</span><span class="v">' + line + "</span></div>" +
+        '<div class="kv"><span class="k">طلبات الاسترداد المسجلة</span><span class="v num">' + rf.toLocaleString("en-US") + "</span></div>" +
+        '<div class="sub" style="color:var(--muted); font-size:13px; margin-top:8px;">' + esc(data.note || "") + "</div>";
+    })
+    .catch(function(e){
+      $("execStateBody").innerHTML = '<div class="sub" style="color:var(--red)">' + esc(errText(e, "prices")) + "</div>";
+    });
+}
+function openApplyFloorsSheet(){
+  var body = '<div class="preview">أي سعر في القاعدة تحت حده الآمن هيترفع للحد. الأسعار اللي فوق الحد مش هتتلمس، ومفيش سعر هينزل من هنا أبدًا.</div>' +
+    '<div class="field"><label>السبب (مطلوب)</label><input id="floorsReason" type="text"></div>';
+  var ctx = openActSheet("تطبيق حد الأسعار الأدنى", body, "طبّق حد الأسعار الآن", function(){
+    var reason = $("floorsReason").value.trim();
+    if (!reason) failValidation("لازم تكتب سبب التطبيق.");
+    return api("/control/store-prices-apply-floors", { method: "POST", body: { reason: reason } })
+      .then(function(data){
+        var raised = Array.isArray(data.raised) ? data.raised.length : 0;
+        var msg = raised > 0
+          ? "اترفع سعر " + raised + " منتج للحد الآمن."
+          : "كل الأسعار فوق الحد الآمن — مفيش سعر اتغيّر.";
+        if (data.audit_failed) msg += " (تنبيه: تسجيل العملية في سجل التدقيق فشل.)";
+        showPricesMsg("ok", msg);
+        loadPrices();
+      });
+  }, "prices");
+}
+$("pricesReloadBtn").addEventListener("click", loadPrices);
+$("pricesApplyBtn").addEventListener("click", openApplyFloorsSheet);
 
 load();
 </script>
