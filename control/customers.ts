@@ -14,9 +14,12 @@
  *   POST /control/bot-wallet-reverse   → تمرير لنقطة البوت
  *   GET  /control/customers/search?q=<أي معرّف>
  *
- * أفعال الموقع بتتنفّذ بدوال القاعدة الداخلية بس (هجرة 009/022):
+ * أفعال الموقع بتتنفّذ بدوال القاعدة الداخلية بس (هجرة 009/022/023):
  * الاعتماد بـ wallet_credit_topup_internal، والرفض بـ
- * wallet_reject_topup_internal، والتعديل بـ wallet_adjust_internal
+ * wallet_reject_topup_internal، والتعديل (إضافة/خصم) بـ
+ * wallet_adjust_internal، و«اضبط على» بـ wallet_set_balance_internal
+ * (الفرق بيتحسب جوه القاعدة تحت قفل صف المحفظة — مفيش قراءة رصيد
+ * وحساب فرق في طبقة Deno، والـ ref بيستهلك حتى لو الفرق صفر).
  * — مفيش كتابة جداول مباشرة من هنا أبدًا. أفعال البوت تمرير خادمي
  * لنقاط البوت الداخلية باعتماد الجسر القائم: رد البوت (حالة + جسم)
  * بيعدّي زي ما هو، وفشل الاتصال/الضبط = 502 bot_unavailable —
@@ -70,6 +73,13 @@ export interface ControlCustomersClient {
   adjustInternal(args: {
     customerId: string;
     delta: number;
+    kind: string;
+    ref: string;
+    note: string;
+  }): Promise<Record<string, unknown>>;
+  setBalanceInternal(args: {
+    customerId: string;
+    target: number;
     kind: string;
     ref: string;
     note: string;
@@ -285,6 +295,22 @@ export class PostgrestControlCustomersClient
     });
   }
 
+  setBalanceInternal(args: {
+    customerId: string;
+    target: number;
+    kind: string;
+    ref: string;
+    note: string;
+  }) {
+    return this.rpc("wallet_set_balance_internal", {
+      p_customer_id: args.customerId,
+      p_target: args.target,
+      p_kind: args.kind,
+      p_ref: args.ref,
+      p_note: args.note,
+    });
+  }
+
   async searchBySenderAccount(q: string): Promise<SenderAccountMatch[]> {
     const needle = q.replace(/[%_\\]/g, "\\$&");
     const rows = await this.get(
@@ -373,9 +399,17 @@ export interface ControlCustomersDeps {
 
 const ADJUST_KINDS = ["deposit", "compensation", "correction"];
 
+/**
+ * مبلغ من جسم الطلب — صارم عمدًا (إصلاح مراجعة م١-أ): أرقام JSON بس.
+ * التحويل الضمني كان بيعدّي "" و null و false كـ 0 (هدف «اضبط على»
+ * فاضي = تصفير محفظة) و true كـ 1، وبيعدّي كسور أصغر من القرش
+ * (0.004) بتتقصّ في القاعدة بصمت. دلوقتي: أي نوع غير number، وأي
+ * قيمة غير منتهية، وأي كسر أعمق من منزلتين عشريتين = مرفوض (null).
+ */
 function numField(v: unknown): number | null {
-  const n = typeof v === "number" ? v : Number(v);
-  return Number.isFinite(n) ? n : null;
+  if (typeof v !== "number" || !Number.isFinite(v)) return null;
+  if (Math.abs(v * 100 - Math.round(v * 100)) > 1e-9) return null;
+  return v;
 }
 
 /**
@@ -569,28 +603,41 @@ export async function handleControlCustomersRequest(
       return json({ ok: false, error: "idempotency_key_required" }, 400);
     }
     try {
-      let delta: number;
       if (mode === "set") {
+        // «اضبط على»: الهدف بيروح للدالة زي ما هو والفرق بيتحسب
+        // جوه القاعدة تحت قفل صف المحفظة (هجرة 023) — قراءة الرصيد
+        // وحساب الفرق هنا كانوا سباق مع أي حركة محفظة متزامنة،
+        // وحالة «الهدف = الرصيد» كانت بتعدّي من غير ما تستهلك
+        // مفتاح الإيدمبوتنسي.
         const target = numField(body.target_egp);
         if (target === null || target < 0) {
           return json({ ok: false, error: "bad_target" }, 400);
         }
-        const current = await deps.client.walletBalance(customerId);
-        delta = Math.round((target - current) * 100) / 100;
-        if (delta === 0) {
+        const r = await deps.client.setBalanceInternal({
+          customerId,
+          target,
+          kind,
+          ref: `panel:${idem}`,
+          note: `[${kind}] ${reason}`,
+        });
+        if (r.already === true) {
           return json({
             ok: true,
-            adjusted: false,
-            balance_after: current,
+            already: true,
+            balance_after: r.balance_after ?? null,
           });
         }
-      } else {
-        const amount = numField(body.amount_egp);
-        if (amount === null || amount <= 0) {
-          return json({ ok: false, error: "bad_amount" }, 400);
-        }
-        delta = mode === "add" ? amount : -amount;
+        return json({
+          ok: true,
+          adjusted: r.adjusted === true,
+          balance_after: r.balance_after ?? null,
+        });
       }
+      const amount = numField(body.amount_egp);
+      if (amount === null || amount <= 0) {
+        return json({ ok: false, error: "bad_amount" }, 400);
+      }
+      const delta = mode === "add" ? amount : -amount;
       const r = await deps.client.adjustInternal({
         customerId,
         delta,
@@ -608,6 +655,11 @@ export async function handleControlCustomersRequest(
       return json({ ok: true, adjusted: true, balance_after: r.balance_after ?? null });
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
+      // نفس الـ ref مربوط بعميل تاني (هجرة 023): تعارض حقيقي مش
+      // إعادة — 409 بدل ما يرجع نجاح وهمي برصيد عميل تاني.
+      if (msg.includes("ref_conflict")) {
+        return json({ ok: false, error: "ref_conflict" }, 409);
+      }
       if (msg.includes("insufficient")) {
         return json({ ok: false, error: "insufficient" }, 422);
       }
