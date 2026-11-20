@@ -21,6 +21,7 @@
     background:var(--bg); color:var(--text);
     font-family:"IBM Plex Sans Arabic", -apple-system, "Segoe UI", Tahoma, Arial, sans-serif;
     font-size:15px; line-height:1.6; padding-bottom:84px;
+    overflow-x:clip;
   }
   .num{font-variant-numeric:tabular-nums; letter-spacing:.2px;}
   header.top{
@@ -186,10 +187,15 @@
   .bubble.cust{margin-inline-start:auto;}
   .bubble.ours{margin-inline-end:auto; border:1px solid var(--gold);}
   .bubble.botm{margin-inline-end:auto; border:1px solid var(--border);}
-  .ptable{width:100%; border-collapse:collapse; font-size:13px;}
+  .ptable{width:100%; min-width:520px; border-collapse:collapse; font-size:13px;}
   .ptable th, .ptable td{padding:7px 6px; border-top:1px solid var(--border); text-align:right; vertical-align:top; overflow-wrap:anywhere;}
   .ptable th{color:var(--muted); font-weight:600; border-top:none;}
   .ptable td.price, .ptable th.price{text-align:left; white-space:nowrap;}
+  .ptable th:last-child, .ptable td:last-child{white-space:nowrap;}
+  .ev-row{display:block; padding:12px 0; border-top:1px solid var(--border);}
+  .ev-row:first-of-type{border-top:none; padding-top:2px;}
+  .ev-row .who b{font-size:15px; overflow-wrap:anywhere;}
+  .ev-row .who small{color:var(--muted); font-size:12.5px;}
   .ptable tr.drift td{background:#2A2110;}
   .cnt-chips{display:flex; gap:8px; flex-wrap:wrap;}
   .cnt-chips .chip{background:var(--surface2); border:1px solid var(--border); border-radius:999px; padding:5px 12px; font-size:13px; font-weight:600;}
@@ -4843,7 +4849,7 @@ function evAmountText(it){
 function storeEventCard(it){
   var isDep = it.source === "binance" || it.source === "bybit";
   var age = relTime(it.created_at);
-  var html = '<div class="result-row" style="cursor:default"><div class="who">' +
+  var html = '<div class="ev-row"><div class="who">' +
     '<b class="num">' + esc(evAmountText(it)) + "</b> " +
     evStatusBadge(it.status) + " " + evConfBadge(it.confidence) +
     "<small>" + esc(EV_SOURCE_LABELS[it.source] || it.source) +
@@ -4902,7 +4908,7 @@ function botTopupCard(t, idx){
   var age = relTime(t.created_at);
   var amt = egpFromMinor(t.amount_minor !== undefined && t.amount_minor !== null
     ? t.amount_minor : t.amount);
-  var html = '<div class="result-row" style="cursor:default"><div class="who">' +
+  var html = '<div class="ev-row"><div class="who">' +
     '<b class="num">' + fmtNum(amt) + " ج.م</b> " +
     evStatusBadge(topupStatusCat(t)) +
     "<small>شحنة بوت" +
