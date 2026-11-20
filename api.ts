@@ -110,6 +110,10 @@ import {
   type ControlVisitorsDeps,
   handleControlVisitorsRequest,
 } from "./control/visitors.ts";
+import {
+  type ControlSecurityDeps,
+  handleControlSecurityRequest,
+} from "./control/security.ts";
 import { bridgeBaseUrl } from "./sheerid/config.ts";
 import { makeAdminChecker, tokenEquals } from "./admin_auth.ts";
 
@@ -715,6 +719,27 @@ function getControlVisitorsDeps(): ControlVisitorsDeps {
     logError,
   };
   return _controlVisitorsDeps;
+}
+
+// ---------------------------------------------------------------------------
+// لوحة التحكم (المرحلة م٦-د): حماية اللوحة — الرقم السري (PIN)
+// وتراجع الإعدادات. الهاش وعدّاد المحاولات والقفل وبوابة الأفعال
+// الحساسة عند البوت؛ اللوحة بتمرّر بس، بنفس اعتماد الجسر
+// والمصادقة بتاعة م٥.
+// ---------------------------------------------------------------------------
+let _controlSecurityDeps: ControlSecurityDeps | null = null;
+function getControlSecurityDeps(): ControlSecurityDeps {
+  if (_controlSecurityDeps) return _controlSecurityDeps;
+  _controlSecurityDeps = {
+    botClient: new BridgeBotControlProxyClient({
+      baseUrlOf: () => bridgeBaseUrl((n) => Deno.env.get(n)),
+      bridgeTokenOf: controlBridgeTokenOf(),
+    }),
+    isAdmin,
+    corsOf: (r: Request) => corsHeaders(r),
+    logError,
+  };
+  return _controlSecurityDeps;
 }
 
 // ---------------------------------------------------------------------------
@@ -2345,6 +2370,11 @@ Deno.serve(async (req: Request) => {
         getControlVisitorsDeps(),
       );
       if (visitorsRes) return visitorsRes;
+      const securityRes = await handleControlSecurityRequest(
+        req,
+        getControlSecurityDeps(),
+      );
+      if (securityRes) return securityRes;
     } catch (e) {
       logError("control.customers.route", "unhandled customers route error", e);
     }
