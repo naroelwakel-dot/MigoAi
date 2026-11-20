@@ -2,7 +2,14 @@
  * اختبارات التوكنات الإدارية الخاصة بكل مجموعة مسارات —
  * `deno test admin_auth.test.ts` (offline بالكامل، طلبات وهمية).
  */
-import { makeAdminChecker, tokenEquals } from "./admin_auth.ts";
+import {
+  isSessionShaped,
+  makeAdminChecker,
+  makeSessionToken,
+  SESSION_TTL_SECONDS,
+  tokenEquals,
+  verifySessionToken,
+} from "./admin_auth.ts";
 
 function eq(actual: unknown, expected: unknown, label: string) {
   const a = JSON.stringify(actual);
@@ -76,4 +83,53 @@ Deno.test("checker rejects near-miss tokens (truncated / extended / case-changed
   eq(sheeridCheck(reqWith("TOK-SHEERID")), false, "case-changed route token");
   eq(sheeridCheck(reqWith("shared-maste")), false, "truncated shared token");
   eq(walletCheck(reqWith("tok-wallett")), false, "extended wallet token");
+});
+
+// ---------------------------------------------------------- جلسة اللوحة (م٦-هـ)
+const NOW = 1_800_000_000;
+
+Deno.test("session: isSessionShaped — v1. و٣ أجزاء بس", () => {
+  eq(isSessionShaped("v1.123.abc"), true, "well-shaped");
+  eq(isSessionShaped("v1.123"), false, "two parts");
+  eq(isSessionShaped("v1.1.2.3"), false, "four parts");
+  eq(isSessionShaped("v2.123.abc"), false, "wrong version");
+  eq(isSessionShaped(SHARED), false, "raw token is not a session");
+  eq(isSessionShaped(""), false, "empty");
+});
+
+Deno.test("session: make + verify roundtrip, والانتهاء = دلوقتي + ٨ ساعات", async () => {
+  const s = await makeSessionToken(SHARED, NOW);
+  eq(isSessionShaped(s), true, "made token is session-shaped");
+  eq(s.split(".")[1], String(NOW + SESSION_TTL_SECONDS), "exp is now + TTL");
+  eq(SESSION_TTL_SECONDS, 8 * 3600, "TTL is 8 hours");
+  eq(await verifySessionToken(s, SHARED, NOW), true, "verifies at issue time");
+  eq(await verifySessionToken(s, SHARED, NOW + SESSION_TTL_SECONDS - 1), true, "verifies just before expiry");
+  eq(await verifySessionToken(s, SHARED, NOW + SESSION_TTL_SECONDS), false, "expired at exp");
+  eq(await verifySessionToken(s, SHARED, NOW + SESSION_TTL_SECONDS + 60), false, "expired after exp");
+});
+
+Deno.test("session: سرّ غلط أو توقيع متلاعب فيه أو انتهاء متلاعب فيه = رفض", async () => {
+  const s = await makeSessionToken(SHARED, NOW);
+  eq(await verifySessionToken(s, "other-secret", NOW), false, "wrong secret");
+  const parts = s.split(".");
+  const tamperedSig = `v1.${parts[1]}.${parts[2].slice(0, -1)}${parts[2].endsWith("A") ? "B" : "A"}`;
+  eq(await verifySessionToken(tamperedSig, SHARED, NOW), false, "tampered signature");
+  const tamperedExp = `v1.${NOW + SESSION_TTL_SECONDS + 99999}.${parts[2]}`;
+  eq(await verifySessionToken(tamperedExp, SHARED, NOW), false, "extended exp without re-signing");
+  eq(await verifySessionToken("v1.abc.def", SHARED, NOW), false, "non-numeric exp");
+  eq(await verifySessionToken("v1..", SHARED, NOW), false, "empty parts");
+  eq(await verifySessionToken(SHARED, SHARED, NOW), false, "raw token is not a session");
+  eq(await verifySessionToken("", SHARED, NOW), false, "empty presented");
+});
+
+Deno.test("session: توكن مشترك فاضي = رفض دايمًا من الطرفين", async () => {
+  const s = await makeSessionToken(SHARED, NOW);
+  eq(await verifySessionToken(s, "", NOW), false, "verify with empty secret");
+  let threw = false;
+  try {
+    await makeSessionToken("", NOW);
+  } catch (_) {
+    threw = true;
+  }
+  eq(threw, true, "make with empty secret throws");
 });

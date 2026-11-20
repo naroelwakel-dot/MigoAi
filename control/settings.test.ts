@@ -247,3 +247,71 @@ Deno.test("ردود الإعدادات ممنوعة من الكاش (no-store)",
   );
   eq(backup?.headers.get("Cache-Control"), "no-store", "backup no-store");
 });
+
+// ------------------------------------------------- جدولة التغييرات (م٦-هـ)
+Deno.test("وكلاء الجدولة التلاتة: بوابة و405 وتمرير حرفي", async () => {
+  const bot = new FakeBotClient();
+  const denied = depsOf(bot, false);
+  const schedPaths: [string, string][] = [
+    ["/control/bot-settings-schedule", "POST"],
+    ["/control/bot-settings-schedules", "GET"],
+    ["/control/bot-settings-schedule-cancel", "POST"],
+  ];
+  for (const [p, m] of schedPaths) {
+    const res = await handleControlSettingsRequest(
+      req(p, m, m === "POST" ? {} : undefined),
+      denied,
+    );
+    eq(res?.status, 401, `${p} behind gate`);
+  }
+  const wrong: [string, string][] = [
+    ["/control/bot-settings-schedule", "GET"],
+    ["/control/bot-settings-schedules", "POST"],
+    ["/control/bot-settings-schedule-cancel", "GET"],
+  ];
+  for (const [p, m] of wrong) {
+    const res = await handleControlSettingsRequest(req(p, m), denied);
+    eq(res?.status, 405, `${p} ${m} method-first`);
+  }
+  eq(bot.calls.length, 0, "zero bot calls behind gate/405");
+
+  const d = depsOf(bot);
+  const createBody = {
+    key: "sales_enabled",
+    value: false,
+    run_at: "2026-11-21T10:00:00.000Z",
+    pin: "2468",
+  };
+  bot.result = { status: 200, body: { ok: true, id: 7, status: "pending" } };
+  let res = await handleControlSettingsRequest(
+    req("/control/bot-settings-schedule", "POST", createBody),
+    d,
+  );
+  eq(res?.status, 200, "schedule status");
+  eq(bot.calls[0].method, "POST", "schedule method");
+  eq(bot.calls[0].path, "/api/control/settings-schedule", "schedule path");
+  eq(bot.calls[0].body, createBody, "schedule body verbatim");
+
+  bot.result = {
+    status: 200,
+    body: { ok: true, items: [{ id: 7, setting_key: "sales_enabled", status: "pending" }] },
+  };
+  res = await handleControlSettingsRequest(
+    req("/control/bot-settings-schedules"),
+    d,
+  );
+  eq(res?.status, 200, "schedules status");
+  eq(bot.calls[1].method, "GET", "schedules method");
+  eq(bot.calls[1].path, "/api/control/settings-schedules", "schedules path");
+  eq((await bodyOf(res)).items, [{ id: 7, setting_key: "sales_enabled", status: "pending" }], "schedules body verbatim");
+
+  bot.result = { status: 400, body: { ok: false, error: "not_pending" } };
+  res = await handleControlSettingsRequest(
+    req("/control/bot-settings-schedule-cancel", "POST", { id: 7 }),
+    d,
+  );
+  eq(res?.status, 400, "cancel status passthrough");
+  eq(bot.calls[2].path, "/api/control/settings-schedule-cancel", "cancel path");
+  eq(bot.calls[2].body, { id: 7 }, "cancel body verbatim");
+  eq((await bodyOf(res)).error, "not_pending", "cancel error verbatim");
+});

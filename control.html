@@ -507,9 +507,42 @@
   </section>
 
   <section class="card">
+    <h2>التحقق بخطوتين</h2>
+    <div class="sub" style="color:var(--muted); font-size:13px;">طبقة دخول تانية للوحة: بعد مفتاح الأدمن، الدخول بيطلب رمزًا من تطبيق مصادقة على تليفونك (زي Google Authenticator) بيتغيّر كل 30 ثانية. خمس محاولات غلط ورا بعض بيقفلوا المحاولات 15 دقيقة.</div>
+    <div class="sub" id="totpState" style="margin-top:8px;">الحالة: …</div>
+    <div id="totpEnrollBox" style="margin-top:10px;">
+      <button class="btn" id="totpEnrollBtn" type="button">تفعيل التحقق بخطوتين</button>
+    </div>
+    <div id="totpSecretBox" class="hidden" style="margin-top:10px; border:1px solid var(--gold, #c9a227); border-radius:8px; padding:10px;">
+      <b>اكتب الرمز ده في تطبيق المصادقة (زي Google Authenticator) — مش هيظهر تاني.</b>
+      <div class="row-actions" style="margin-top:8px;">
+        <input id="totpSecret" type="text" readonly dir="ltr" style="flex:1;">
+      </div>
+      <div class="field" style="margin-top:10px;"><label>رمز التحقق من التطبيق للتأكيد</label><input id="totpConfirmCode" type="text" inputmode="numeric" autocomplete="off" dir="ltr"></div>
+      <button class="btn" id="totpConfirmBtn" type="button" style="margin-top:10px;">تأكيد التفعيل</button>
+    </div>
+    <div id="totpDisableBox" class="hidden" style="margin-top:10px;">
+      <div class="field"><label>رمز التحقق الحالي من التطبيق</label><input id="totpDisableCode" type="text" inputmode="numeric" autocomplete="off" dir="ltr"></div>
+      <button class="btn secondary" id="totpDisableBtn" type="button" style="margin-top:10px;">إيقاف التحقق بخطوتين</button>
+    </div>
+  </section>
+
+  <section class="card">
     <h2>سجل التغييرات</h2>
     <div class="sub" style="color:var(--muted); font-size:13px;">آخر تغييرات اتعملت على الإعدادات من اللوحة: إيه اتغيّر ومن كام لكام وإمتى. قيم المفاتيح السرية بتظهر مقنّعة.</div>
     <div id="setHistory" style="margin-top:6px;"></div>
+  </section>
+
+  <section class="card">
+    <h2>تغييرات مجدولة</h2>
+    <div class="sub" style="color:var(--muted); font-size:13px;">تغييرات إعدادات هتتطبق لوحدها في وقتها. التغيير المنتظر تقدر تلغيه قبل وقته؛ واللي اتطبق بيظهر في سجل التغييرات فوق زي أي تغيير.</div>
+    <div id="schedList" style="margin-top:6px;"></div>
+    <div class="field" style="margin-top:12px;"><label>الإعداد</label><select id="schedKey"></select></div>
+    <div class="field"><label>القيمة الجديدة</label><span id="schedValueWrap"></span></div>
+    <div class="field"><label>وقت التنفيذ</label><input id="schedWhen" type="datetime-local"></div>
+    <div class="field"><label>سبب (اختياري)</label><input id="schedReason" type="text"></div>
+    <button class="btn" id="schedAddBtn" type="button" style="margin-top:10px;">جدولة التغيير</button>
+    <div class="sub" style="color:var(--muted); font-size:12px; margin-top:8px;">التغيير بيتنفذ تلقائيًا مع دورة البوت التالية بعد وقته.</div>
   </section>
 
   <section class="card">
@@ -565,6 +598,29 @@
     <div class="sub" style="color:var(--muted); font-size:13px;">الناس اللي كلّموا البوت، مرتبين بآخر نشاط. اللي ليه محادثة تقدر تفتحها من زرار «افتح المحادثة» في صفه.</div>
     <div id="visList" style="margin-top:6px;"></div>
     <button class="btn secondary" id="visReloadBtn" type="button" style="margin-top:10px;">تحديث القائمة</button>
+  </section>
+</main>
+
+<main id="previewMain" class="hidden">
+  <div class="msg" id="pvMsg"></div>
+
+  <section class="card">
+    <h2>القائمة الرئيسية كما يراها العميل</h2>
+    <div class="sub" style="color:var(--muted); font-size:13px;">معاينة للقراءة بس — دي نفس الرسالة اللي بتوصل العميل في تليجرام.</div>
+    <div id="pvMenuBox" style="margin-top:10px;"></div>
+    <button class="btn secondary" id="pvMenuReloadBtn" type="button" style="margin-top:10px;">تحديث المعاينة</button>
+  </section>
+
+  <section class="card">
+    <h2>بطاقة منتج كما يراها العميل</h2>
+    <div class="sub" style="color:var(--muted); font-size:13px;">معاينة للقراءة بس — دي نفس الرسالة اللي بتوصل العميل في تليجرام.</div>
+    <div class="field" style="margin-top:10px;"><label>المنتج</label>
+      <div class="row-actions">
+        <select id="pvProductSel" style="flex:1;"><option value="">اختر منتجًا…</option></select>
+        <button class="btn secondary" id="pvProductBtn" type="button">عرض البطاقة</button>
+      </div>
+    </div>
+    <div id="pvProductBox" style="margin-top:10px;"></div>
   </section>
 </main>
 
@@ -730,6 +786,7 @@
 var API_BASE = "https://migoai-72.naroelwakel-dot.deno.net";
 var API_HOME = API_BASE + "/control/home";
 var KEY_SLOT = "migoControlAdminKey";
+var SESSION_SLOT = "migo_admin_session";
 
 function $(id){ return document.getElementById(id); }
 function esc(s){
@@ -765,13 +822,80 @@ function showMsg(kind, html, withKeyBtn){
 }
 function hideMsg(){ $("msgBox").className = "msg"; $("msgBox").innerHTML = ""; }
 
-function getKey(){ try { return sessionStorage.getItem(KEY_SLOT) || ""; } catch(e){ return ""; } }
+function getSession(){ try { return sessionStorage.getItem(SESSION_SLOT) || ""; } catch(e){ return ""; } }
+function setSession(s){ try {
+  if (s) sessionStorage.setItem(SESSION_SLOT, s); else sessionStorage.removeItem(SESSION_SLOT);
+} catch(e){} }
+// قيمة الترويسة اللي اللوحة بتشتغل بيها: جلسة محفوظة سارية
+// الأول (م٦-هـ — بعد دخول بخطوتين ناجح)، وإلا التوكن الخام
+// زي النهاردة بالحرف.
+function getKey(){ try { return sessionStorage.getItem(SESSION_SLOT) || sessionStorage.getItem(KEY_SLOT) || ""; } catch(e){ return ""; } }
 function setKey(k){ try {
   if (k) sessionStorage.setItem(KEY_SLOT, k); else sessionStorage.removeItem(KEY_SLOT);
 } catch(e){} }
+// خروج كامل: التوكن الخام والجلسة معًا (أي 401 أثناء الاستخدام).
+function clearAuth(){ setKey(""); setSession(""); }
 function askKey(){
   var k = window.prompt("اكتب مفتاح الأدمن:");
-  if (k) { setKey(k.trim()); load(); }
+  if (k) { attemptLogin(k.trim()); }
+}
+// دخول اللوحة (م٦-هـ): قبل ما أي حاجة تتخزّن، بنسأل الخادم
+// بالتوكن الخام عن حالة التحقق بخطوتين. مش مفعّل = سلوك
+// النهاردة بالحرف (التوكن بيتحفظ والدخول بيكمل). مفعّل = رمز
+// التطبيق إلزامي: نجاحه بيخزّن الجلسة بس وبيشيل التوكن الخام،
+// وفشله بيوقف الدخول برسالة واضحة من غير ما يخزّن حاجة. حالة
+// مش معروفة (البوت مش بيرد) = الدخول بيقف بدل ما يتجاوز
+// الخطوة التانية بصمت.
+function attemptLogin(raw){
+  fetch(API_BASE + "/control/session-status", {
+    headers: { "x-migo-admin": raw }
+  }).then(function(res){
+    return res.json().catch(function(){ return null; }).then(function(d){
+      return { status: res.status, data: d };
+    });
+  }).then(function(r){
+    if (r.status === 401) {
+      showMsg("err", "مفتاح الأدمن غلط أو مش مكتوب. اكتبه تاني عشان اللوحة تفتح.", true);
+      return;
+    }
+    if (!r.data || r.data.ok === false || typeof r.data.active !== "boolean") {
+      showMsg("err", "مش عارفين نتأكد من حالة التحقق بخطوتين دلوقتي — البوت مش بيرد. جرّب تاني بعد شوية.", false);
+      return;
+    }
+    if (r.data.active !== true) {
+      setKey(raw);
+      load();
+      return;
+    }
+    var code = window.prompt("التحقق بخطوتين مفعّل. اكتب رمز التحقق من تطبيق المصادقة:");
+    if (!code) {
+      showMsg("err", "الدخول محتاج رمز التحقق من تطبيق المصادقة.", true);
+      return;
+    }
+    fetch(API_BASE + "/control/session-login", {
+      method: "POST",
+      headers: { "x-migo-admin": raw, "Content-Type": "application/json" },
+      body: JSON.stringify({ code: code.trim() })
+    }).then(function(res){
+      return res.json().catch(function(){ return null; }).then(function(d){
+        return { status: res.status, data: d };
+      });
+    }).then(function(r2){
+      if (r2.status === 200 && r2.data && r2.data.ok && r2.data.session) {
+        setSession(r2.data.session);
+        setKey("");
+        hideMsg();
+        load();
+        return;
+      }
+      var e = { data: r2.data, status: r2.status };
+      showMsg("err", pinGateText(e) || "رمز التحقق غلط أو انتهى. حاول تاني.", true);
+    }).catch(function(){
+      showMsg("err", "مش عارف أوصل للخادم. اتأكد من النت وحاول تاني.", false);
+    });
+  }).catch(function(){
+    showMsg("err", "مش عارف أوصل للخادم. اتأكد من النت وحاول تاني.", false);
+  });
 }
 
 function botCount(bot, key){
@@ -940,7 +1064,7 @@ function load(){
   fetch(API_HOME, { headers: { "x-migo-admin": key } })
     .then(function(res){
       if (res.status === 401) {
-        setKey("");
+        clearAuth();
         $("storeDot").className = "dot bad";
         $("storePillText").textContent = "المفتاح غلط";
         showMsg("err", "مفتاح الأدمن غلط أو مش مكتوب. اكتبه تاني عشان اللوحة تفتح.", true);
@@ -974,7 +1098,7 @@ $("storePill").addEventListener("click", load);
 // شغالين، و«المزيد» فيها أسعار الموقع (م٣) والكتالوج والموردون
 // (م٣-ب) والأحداث والمكونات (م٤).
 var navNames = { events: "الأحداث", more: "المزيد" };
-var viewTitles = { home: "مهامي الآن", customers: "العملاء", orders: "الطلبات", chats: "المحادثات", prices: "أسعار الموقع", catalog: "الكتالوج", suppliers: "الموردون", events: "الأحداث والمكونات", settings: "إعدادات البوت", channel: "قناة التليجرام", coupons: "الكوبونات", merchants: "التجار", site: "الموقع", visitors: "زوار البوت" };
+var viewTitles = { home: "مهامي الآن", customers: "العملاء", orders: "الطلبات", chats: "المحادثات", prices: "أسعار الموقع", catalog: "الكتالوج", suppliers: "الموردون", events: "الأحداث والمكونات", settings: "إعدادات البوت", channel: "قناة التليجرام", coupons: "الكوبونات", merchants: "التجار", site: "الموقع", visitors: "زوار البوت", preview: "شوف كما يراه العميل" };
 function showView(name){
   $("homeMain").classList.toggle("hidden", name !== "home");
   $("customersMain").classList.toggle("hidden", name !== "customers");
@@ -990,11 +1114,12 @@ function showView(name){
   $("merchantsMain").classList.toggle("hidden", name !== "merchants");
   $("siteMain").classList.toggle("hidden", name !== "site");
   $("visitorsMain").classList.toggle("hidden", name !== "visitors");
+  $("previewMain").classList.toggle("hidden", name !== "preview");
   $("pageTitle").textContent = viewTitles[name] || "";
   document.querySelectorAll("#bottomNav button").forEach(function(b){
     var nav = b.getAttribute("data-nav");
     // أسعار الموقع والكتالوج والموردون والإعدادات والقناة والكوبونات والتجار بيتفتحوا من «المزيد» فزرها هو اللي بيتلوّن وهم مفتوحين.
-    b.classList.toggle("active", nav === name || ((name === "prices" || name === "catalog" || name === "suppliers" || name === "settings" || name === "channel" || name === "coupons" || name === "merchants" || name === "site") && nav === "more"));
+    b.classList.toggle("active", nav === name || ((name === "prices" || name === "catalog" || name === "suppliers" || name === "settings" || name === "channel" || name === "coupons" || name === "merchants" || name === "site" || name === "preview") && nav === "more"));
   });
   if (name !== "chats" && typeof stopChatPolling === "function") stopChatPolling();
   window.scrollTo({ top: 0 });
@@ -1020,6 +1145,7 @@ document.querySelectorAll("#bottomNav button").forEach(function(b){
         '<button class="btn" id="moreCouponsBtn" type="button">الكوبونات</button>' +
         '<button class="btn" id="moreMerchantsBtn" type="button">التجار</button>' +
         '<button class="btn" id="moreSiteBtn" type="button">الموقع</button>' +
+        '<button class="btn" id="morePreviewBtn" type="button">شوف كما يراه العميل</button>' +
         "</div>";
       $("sheet").classList.add("open");
       $("sheetVeil").classList.add("open");
@@ -1068,6 +1194,11 @@ document.querySelectorAll("#bottomNav button").forEach(function(b){
         showView("site");
         ensureSiteLoaded();
       });
+      $("morePreviewBtn").addEventListener("click", function(){
+        closeSheet();
+        showView("preview");
+        ensurePreviewLoaded();
+      });
       return;
     }
     $("sheetTitle").textContent = "قسم " + (navNames[nav] || "");
@@ -1109,7 +1240,7 @@ function api(path, opts){
   return fetch(API_BASE + path, init).then(function(res){
     return res.json().catch(function(){ return null; }).then(function(data){
       if (res.status === 401) {
-        setKey("");
+        clearAuth();
         var e401 = new Error("unauthorized"); e401.status = 401; e401.data = data;
         throw e401;
       }
@@ -5214,6 +5345,7 @@ var setState = {
   entries: [], listFailed: false,
   payMethods: [], paySource: null, payKnown: false,
   history: [], historyFailed: false,
+  schedules: [], schedulesFailed: false,
   supportEntry: null, supportSeen: false,
   textEntries: [],
   replies: [], repliesSeen: false
@@ -5400,7 +5532,27 @@ function loadSettings(){
     pinStatusCache = null;
     renderPinCard();
   });
-  return Promise.all([pList, pHist, pPin]).then(function(){
+  var pTotp = api("/control/session-status").then(function(d){
+    totpStatusCache = (d && typeof d === "object") ? d : null;
+    renderTotpCard();
+  }).catch(function(e){
+    if (e && e.status === 401) { unauthorized = true; return; }
+    if (e && e.noKey) return;
+    totpStatusCache = null;
+    renderTotpCard();
+  });
+  var pSched = api("/control/bot-settings-schedules").then(function(d){
+    var arr = [d.schedules, d.items, d.entries]
+      .find(function(v){ return Array.isArray(v); });
+    setState.schedules = arr || [];
+    setState.schedulesFailed = false;
+  }).catch(function(e){
+    if (e && e.status === 401) { unauthorized = true; return; }
+    if (e && e.noKey) return;
+    setState.schedules = [];
+    setState.schedulesFailed = true;
+  });
+  return Promise.all([pList, pHist, pPin, pTotp, pSched]).then(function(){
     setState.loading = false;
     setState.loaded = true;
     renderPaySource();
@@ -5408,6 +5560,8 @@ function loadSettings(){
     renderBotContent();
     renderSettingRows();
     renderHistory();
+    renderSchedules();
+    renderSchedKeyOptions();
     if (unauthorized) {
       showSettingsMsg("err", "مفتاح الأدمن غلط أو مش مكتوب. اكتبه تاني عشان تكمل.");
     }
@@ -5873,6 +6027,94 @@ $("pinChangeBtn").addEventListener("click", function(){
     .finally(function(){ btn.disabled = false; });
 });
 
+// ---------------- التحقق بخطوتين (م٦-هـ) ----------------
+// السرّ والتحقق عند البوت؛ اللوحة بتفعّل بالرقم السري وبتعرض
+// السرّ مرة واحدة بس وقت التفعيل، والتأكيد والإيقاف برمز
+// حالي من التطبيق. الحالة من نقطة حالة الجلسة (وكيل البوت).
+var totpStatusCache = null;
+function totpIsActive(){
+  return !!(totpStatusCache && totpStatusCache.active === true);
+}
+function renderTotpCard(){
+  var state = $("totpState");
+  if (!totpStatusCache) {
+    state.textContent = "الحالة: مش عارفين نوصل للبوت دلوقتي.";
+    $("totpEnrollBox").classList.remove("hidden");
+    $("totpDisableBox").classList.add("hidden");
+    return;
+  }
+  var active = totpIsActive();
+  state.textContent = "الحالة: " + (active ? "مفعّل — الدخول بيطلب رمز التطبيق." : "غير مفعّل.");
+  $("totpEnrollBox").classList.toggle("hidden", active);
+  $("totpDisableBox").classList.toggle("hidden", !active);
+}
+function refreshTotpStatus(){
+  return api("/control/session-status").then(function(d){
+    totpStatusCache = (d && typeof d === "object") ? d : null;
+    renderTotpCard();
+    return totpStatusCache;
+  }).catch(function(){
+    totpStatusCache = null;
+    renderTotpCard();
+    return null;
+  });
+}
+$("totpEnrollBtn").addEventListener("click", function(){
+  var btn = $("totpEnrollBtn");
+  btn.disabled = true;
+  withPin({}).then(function(b){
+    return api("/control/bot-totp-enroll", { method: "POST", body: b });
+  }).then(function(d){
+    if (!d || !d.secret_b32) throw new Error("bad enroll response");
+    $("totpSecret").value = String(d.secret_b32);
+    $("totpConfirmCode").value = "";
+    $("totpSecretBox").classList.remove("hidden");
+    showSettingsMsg("ok", "اكتب الرمز اللي ظهر في تطبيق المصادقة، وبعدين اكتب رمزًا منه هنا للتأكيد.");
+  }).catch(function(e){
+    showSettingsMsg("err", pinGateText(e) || errText(e, "settings"));
+  }).finally(function(){ btn.disabled = false; });
+});
+$("totpConfirmBtn").addEventListener("click", function(){
+  var code = $("totpConfirmCode").value.trim();
+  if (!code) { showSettingsMsg("err", "اكتب رمز التحقق من التطبيق الأول."); return; }
+  var btn = $("totpConfirmBtn");
+  btn.disabled = true;
+  api("/control/bot-totp-verify", { method: "POST", body: { code: code } })
+    .then(function(){
+      $("totpSecretBox").classList.add("hidden");
+      $("totpSecret").value = "";
+      $("totpConfirmCode").value = "";
+      return refreshTotpStatus();
+    })
+    .then(function(){
+      // التفعيل بينهي جلسة المفتاح الخام: اللوحة بتقفل والدخول من جديد
+      // بيمر بمسار الجلسة اللي بيطلب رمز التطبيق وبيخزّن الجلسة بس.
+      clearAuth();
+      showSettingsMsg("ok", "اتفعّل التحقق بخطوتين — سجّل الدخول من جديد بالمفتاح ورمز التطبيق.");
+      askKey();
+    })
+    .catch(function(e){
+      showSettingsMsg("err", pinGateText(e) || errText(e, "settings"));
+    })
+    .finally(function(){ btn.disabled = false; });
+});
+$("totpDisableBtn").addEventListener("click", function(){
+  var code = $("totpDisableCode").value.trim();
+  if (!code) { showSettingsMsg("err", "اكتب رمز التحقق الحالي من التطبيق الأول."); return; }
+  var btn = $("totpDisableBtn");
+  btn.disabled = true;
+  withPin({ code: code }).then(function(b){
+    return api("/control/bot-totp-disable", { method: "POST", body: b });
+  }).then(function(){
+    $("totpDisableCode").value = "";
+    return refreshTotpStatus();
+  }).then(function(){
+    showSettingsMsg("ok", "اتوقف التحقق بخطوتين.");
+  }).catch(function(e){
+    showSettingsMsg("err", pinGateText(e) || errText(e, "settings"));
+  }).finally(function(){ btn.disabled = false; });
+});
+
 function askUndoHistory(id, key){
   openActSheet("تراجع عن تغيير إعداد",
     "<p>التراجع هيرجع الإعداد لقيمته قبل التغيير ده، وهيتكتب كتغيير جديد في السجل.</p>",
@@ -5932,6 +6174,148 @@ function renderHistory(){
     });
   });
 }
+
+// ---------------- تغييرات مجدولة (م٦-هـ) ----------------
+// الإنشاء والتحقق وبوابة الرقم السري والتطبيق عند البوت؛
+// اللوحة بتعرض القائمة وبتبني النموذج من سجل الإعدادات المحمّل.
+var SCHED_STATUS = {
+  pending: ["منتظر", "st-pending"],
+  applying: ["بيتنفذ", "st-pending"],
+  applied: ["اتطبق", "st-ok"],
+  cancelled: ["اتلغى", "st-mut"],
+  failed: ["فشل", "st-bad"]
+};
+function schedulableEntries(){
+  return setState.entries.filter(function(e){
+    if (!e || !e.key || e.editable === false) return false;
+    if (e.secret === true) return false;
+    var k = e.kind || e.type || "";
+    return k === "bool" || k === "boolean" || k === "number" ||
+      k === "int" || k === "integer" || k === "decimal" ||
+      k === "string" || k === "text";
+  });
+}
+function schedEntryOf(key){
+  return setState.entries.find(function(e){ return e && e.key === key; }) || null;
+}
+function renderSchedules(){
+  var box = $("schedList");
+  if (setState.schedulesFailed) {
+    box.innerHTML = '<div class="sub" style="color:var(--amber)">البوت مش بيرد دلوقتي — التغييرات المجدولة مش ظاهرة بدل ما تتخترع.</div>';
+    return;
+  }
+  if (!setState.schedules.length) {
+    box.innerHTML = '<div class="empty">مفيش تغييرات مجدولة.</div>';
+    return;
+  }
+  box.innerHTML = setState.schedules.map(function(s){
+    var entry = schedEntryOf(s.setting_key || s.key);
+    var label = entry ? setLabelOf(entry) : String(s.setting_key || s.key || "");
+    var st = SCHED_STATUS[s.status] || [String(s.status || "—"), "st-mut"];
+    var at = s.run_at || s.at;
+    var when = at ? (relTime(at) || "") : "";
+    var full = at ? new Date(at).toLocaleString("en-GB") : "";
+    var cancelBtn = (s.status === "pending" && s.id !== null && s.id !== undefined)
+      ? '<button class="btn small" type="button" data-sched-cancel="' +
+        esc(String(s.id)) + '">إلغاء</button>'
+      : "";
+    return '<div class="result-row" style="cursor:default"><div class="who"><b>' +
+      esc(label) + '</b> <span class="status-txt ' + st[1] + '">' + esc(st[0]) + "</span><small>" +
+      '<span class="num">' + esc(String(s.setting_key || s.key || "")) + "</span><br>" +
+      "القيمة الجديدة: " + esc(setHistVal(s.value, false)) +
+      (when ? "<br>التنفيذ: " + esc(when) + (full ? ' (<span class="num">' + esc(full) + "</span>)" : "") : "") +
+      (s.error
+        ? '<br><span style="color:var(--red)">' +
+          (s.status === "failed" ? "سبب الفشل: " : "ملحوظة: ") +
+          esc(String(s.error)) + "</span>" : "") +
+      "</small></div>" + cancelBtn + "</div>";
+  }).join("");
+  box.querySelectorAll("[data-sched-cancel]").forEach(function(b){
+    b.addEventListener("click", function(){
+      askCancelSchedule(b.getAttribute("data-sched-cancel"));
+    });
+  });
+}
+function askCancelSchedule(id){
+  openActSheet("إلغاء تغيير مجدول",
+    "<p>التغيير ده مش هيتطبق. الإعداد نفسه مش هيتغيّر دلوقتي.</p>",
+    "إلغاء التغيير", function(){
+      return api("/control/bot-settings-schedule-cancel", { method: "POST",
+        body: { id: Number(id) } })
+        .then(function(){ return loadSettings(); })
+        .then(function(){
+          showSettingsMsg("ok", "اتلغى التغيير المجدول.");
+        });
+    }, "settings");
+}
+function renderSchedValueControl(){
+  var wrap = $("schedValueWrap");
+  var key = $("schedKey").value;
+  var entry = schedEntryOf(key);
+  if (!entry) { wrap.innerHTML = ""; return; }
+  var kind = setKindOf(entry);
+  if (kind === "bool") {
+    wrap.innerHTML = '<select id="schedValue"><option value="true">شغال</option><option value="false">متوقف</option></select>';
+  } else if (kind === "number") {
+    wrap.innerHTML = '<input id="schedValue" type="number" step="any">';
+  } else if ((entry.kind || entry.type) === "text") {
+    wrap.innerHTML = '<textarea id="schedValue" rows="3"></textarea>';
+  } else {
+    wrap.innerHTML = '<input id="schedValue" type="text">';
+  }
+}
+function renderSchedKeyOptions(){
+  var sel = $("schedKey");
+  var cur = sel.value;
+  var list = schedulableEntries();
+  sel.innerHTML = list.map(function(e){
+    return '<option value="' + esc(e.key) + '">' + esc(setLabelOf(e)) + "</option>";
+  }).join("");
+  if (cur && list.some(function(e){ return e.key === cur; })) sel.value = cur;
+  renderSchedValueControl();
+}
+$("schedKey").addEventListener("change", renderSchedValueControl);
+$("schedAddBtn").addEventListener("click", function(){
+  var key = $("schedKey").value;
+  var entry = schedEntryOf(key);
+  if (!entry) { showSettingsMsg("err", "اختر الإعداد الأول."); return; }
+  var kind = setKindOf(entry);
+  var input = $("schedValue");
+  if (!input) { showSettingsMsg("err", "اختر الإعداد الأول."); return; }
+  var value;
+  if (kind === "bool") {
+    value = input.value === "true";
+  } else if (kind === "number") {
+    value = Number(input.value);
+    if (input.value === "" || !isFinite(value)) {
+      showSettingsMsg("err", "اكتب قيمة رقمية صحيحة."); return;
+    }
+  } else {
+    value = String(input.value);
+  }
+  var whenRaw = $("schedWhen").value;
+  if (!whenRaw) { showSettingsMsg("err", "حدّد وقت التنفيذ الأول."); return; }
+  var when = new Date(whenRaw);
+  if (!isFinite(when.getTime())) { showSettingsMsg("err", "وقت التنفيذ مش صحيح."); return; }
+  var body = { key: key, value: value, run_at: when.toISOString() };
+  var reason = $("schedReason").value.trim();
+  if (reason) body.reason = reason;
+  var btn = $("schedAddBtn");
+  btn.disabled = true;
+  // جدولة مفاتيح الإيقاف محروسة بالرقم السري زي ضبطها وتراجعها.
+  var ready = (key === "sales_enabled" || key === "merchant_api_enabled")
+    ? withPin(body) : Promise.resolve(body);
+  ready.then(function(b){
+    return api("/control/bot-settings-schedule", { method: "POST", body: b });
+  }).then(function(){
+    $("schedReason").value = "";
+    return loadSettings();
+  }).then(function(){
+    showSettingsMsg("ok", "اتجدول التغيير — هيتنفذ مع دورة البوت التالية بعد وقته.");
+  }).catch(function(e){
+    showSettingsMsg("err", pinGateText(e) || errText(e, "settings"));
+  }).finally(function(){ btn.disabled = false; });
+});
 
 $("setReloadBtn").addEventListener("click", loadSettings);
 $("setExportBtn").addEventListener("click", function(){
@@ -6332,13 +6716,23 @@ function withPin(body){
   });
 }
 // نص عربي واضح لأخطاء بوابة الرقم السري — من كود الخطأ بس،
-// من غير ما نطبع الكود نفسه للمستخدم.
+// من غير ما نطبع الكود نفسه للمستخدم. اتمدّت في م٦-هـ برسائل
+// التحقق بخطوتين (TOTP) عشان أفعال التفعيل/الإيقاف والدخول
+// تعرض نفس الأسلوب.
 function pinGateText(e){
   var code = e && e.data && e.data.error;
   if (code === "pin_required") return "العملية دي محتاجة الرقم السري.";
   if (code === "pin_wrong") return "الرقم السري غلط.";
   if (code === "pin_locked") return "المحاولات اتقفلت 15 دقيقة.";
   if (code === "pin_not_set") return "الرقم السري لسه مش مضبوط.";
+  if (code === "totp_wrong") return "رمز التحقق غلط.";
+  if (code === "totp_locked") {
+    var until = e && e.data && e.data.locked_until;
+    var when = until ? new Date(until).toLocaleString("en-GB") : "";
+    return "محاولات كتير غلط — التحقق مقفول" + (when ? " لحد " + when : " 15 دقيقة") + ".";
+  }
+  if (code === "totp_not_set" || code === "totp_not_active") return "التحقق بخطوتين مش مفعّل.";
+  if (code === "totp_already_active") return "التحقق بخطوتين مفعّل أصلًا.";
   return null;
 }
 function throwPinGate(e){
@@ -7478,6 +7872,87 @@ function ensureSiteLoaded(){
   loadSiteMethods();
   loadSiteContent();
 }
+
+// ============================================================
+// شوف كما يراه العميل (م٦-هـ): معاينة قراءة بس لقائمة البوت
+// الرئيسية وبطاقة منتج — النص والأزرار من البوت نفسه بنفس
+// تركيب رسائل العملاء، والأزرار هنا عرض بس من غير أي فعل.
+// ============================================================
+
+function showPvMsg(kind, html, withKeyBtn){
+  var box = $("pvMsg");
+  box.className = "msg " + kind;
+  box.innerHTML = html + (withKeyBtn
+    ? '<button class="btn" id="pvKeyBtn" type="button">كتابة المفتاح</button>' : "");
+  if (withKeyBtn) $("pvKeyBtn").addEventListener("click", askKey);
+}
+function hidePvMsg(){ $("pvMsg").className = "msg"; $("pvMsg").innerHTML = ""; }
+
+function pvButtonsHtml(buttons){
+  if (!Array.isArray(buttons)) return "";
+  return buttons.map(function(row){
+    if (!Array.isArray(row) || !row.length) return "";
+    return '<div class="row-actions" style="margin-top:6px;">' + row.map(function(b){
+      var label = (b && b.label != null) ? String(b.label) : "";
+      return '<button class="btn secondary" type="button" disabled style="flex:1;">' +
+        esc(label) + "</button>";
+    }).join("") + "</div>";
+  }).join("");
+}
+function pvTextHtml(text){
+  return '<div dir="rtl" style="white-space:pre-wrap; text-align:right;">' +
+    esc(text == null ? "" : String(text)) + "</div>";
+}
+function loadPreviewMenu(){
+  var box = $("pvMenuBox");
+  box.innerHTML = '<div class="sub" style="color:var(--muted)">بيحمّل المعاينة…</div>';
+  api("/control/bot-preview-menu").then(function(d){
+    box.innerHTML = pvTextHtml(d.text) + pvButtonsHtml(d.buttons);
+  }).catch(function(e){
+    box.innerHTML = '<div class="sub" style="color:var(--amber)">مش عارفين نجيب معاينة القائمة دلوقتي.</div>';
+    if (e && e.noKey) showPvMsg("err", "لازم تكتب مفتاح الأدمن الأول.", true);
+    else if (!(e && e.status === 401)) showPvMsg("err", esc(errText(e, "preview")));
+  });
+}
+function renderPvProductOptions(){
+  var sel = $("pvProductSel");
+  var cur = sel.value;
+  sel.innerHTML = '<option value="">اختر منتجًا…</option>' +
+    catalogState.items.map(function(p){
+      return '<option value="' + esc(String(p.id)) + '">' +
+        esc(String(p.name || p.slug || p.id)) + "</option>";
+    }).join("");
+  if (cur) sel.value = cur;
+}
+function ensurePreviewLoaded(){
+  hidePvMsg();
+  ensureCatalogLoaded();
+  renderPvProductOptions();
+  loadPreviewMenu();
+}
+$("pvMenuReloadBtn").addEventListener("click", loadPreviewMenu);
+$("pvProductBtn").addEventListener("click", function(){
+  var id = $("pvProductSel").value;
+  var box = $("pvProductBox");
+  if (!id) { showPvMsg("err", "اختر منتجًا الأول."); return; }
+  hidePvMsg();
+  box.innerHTML = '<div class="sub" style="color:var(--muted)">بيحمّل البطاقة…</div>';
+  api("/control/bot-preview-product?product_id=" + encodeURIComponent(id))
+    .then(function(d){
+      var note = d.has_photo
+        ? '<div class="sub" style="color:var(--muted); font-size:12px; margin-bottom:6px;">البطاقة دي بتتبعت للعميل كتعليق على صورة المنتج.</div>'
+        : "";
+      box.innerHTML = note + pvTextHtml(d.text) + pvButtonsHtml(d.buttons);
+    })
+    .catch(function(e){
+      box.innerHTML = "";
+      if (e && e.noKey) { showPvMsg("err", "لازم تكتب مفتاح الأدمن الأول.", true); return; }
+      if (e && e.data && e.data.error === "product_not_found") {
+        showPvMsg("err", "المنتج ده مش منشور أو مش موجود — العميل مش هيشوفه."); return;
+      }
+      if (!(e && e.status === 401)) showPvMsg("err", esc(errText(e, "preview")));
+    });
+});
 
 load();
 </script>

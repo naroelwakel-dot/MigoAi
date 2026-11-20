@@ -114,8 +114,21 @@ import {
   type ControlSecurityDeps,
   handleControlSecurityRequest,
 } from "./control/security.ts";
+import {
+  type ControlSessionDeps,
+  handleControlSessionRequest,
+} from "./control/session.ts";
+import {
+  type ControlPreviewDeps,
+  handleControlPreviewRequest,
+} from "./control/preview.ts";
 import { bridgeBaseUrl } from "./sheerid/config.ts";
-import { makeAdminChecker, tokenEquals } from "./admin_auth.ts";
+import {
+  isSessionShaped,
+  makeAdminChecker,
+  tokenEquals,
+  verifySessionToken,
+} from "./admin_auth.ts";
 
 let _smsDeps: SmsDeps | null = null;
 function getSmsDeps(): SmsDeps {
@@ -740,6 +753,44 @@ function getControlSecurityDeps(): ControlSecurityDeps {
     logError,
   };
   return _controlSecurityDeps;
+}
+
+// ---------------------------------------------------------------------------
+// لوحة التحكم (المرحلة م٦-هـ): جلسة اللوحة والتحقق بخطوتين —
+// حالة/تفعيل/إيقاف التحقق عند البوت، ودخول الجلسة بيبدّل رمز
+// التطبيق الناجح بجلسة موقعة من التوكن المشترك (admin_auth.ts).
+// ومعاينة «شوف كما يراه العميل» — تمرير قراءة بس لنقطتي البوت.
+// ---------------------------------------------------------------------------
+let _controlSessionDeps: ControlSessionDeps | null = null;
+function getControlSessionDeps(): ControlSessionDeps {
+  if (_controlSessionDeps) return _controlSessionDeps;
+  _controlSessionDeps = {
+    botClient: new BridgeBotControlProxyClient({
+      baseUrlOf: () => bridgeBaseUrl((n) => Deno.env.get(n)),
+      bridgeTokenOf: controlBridgeTokenOf(),
+    }),
+    isAdmin,
+    corsOf: (r: Request) => corsHeaders(r),
+    logError,
+    adminToken: ADMIN_TOKEN,
+    nowSeconds: () => Math.floor(Date.now() / 1000),
+  };
+  return _controlSessionDeps;
+}
+
+let _controlPreviewDeps: ControlPreviewDeps | null = null;
+function getControlPreviewDeps(): ControlPreviewDeps {
+  if (_controlPreviewDeps) return _controlPreviewDeps;
+  _controlPreviewDeps = {
+    botClient: new BridgeBotControlProxyClient({
+      baseUrlOf: () => bridgeBaseUrl((n) => Deno.env.get(n)),
+      bridgeTokenOf: controlBridgeTokenOf(),
+    }),
+    isAdmin,
+    corsOf: (r: Request) => corsHeaders(r),
+    logError,
+  };
+  return _controlPreviewDeps;
 }
 
 // ---------------------------------------------------------------------------
@@ -2175,6 +2226,42 @@ Deno.serve(async (req: Request) => {
 
   const url = new URL(req.url);
 
+  // لوحة التحكم (المرحلة م٦-هـ): دخول الجلسة بيتحاكم بالتوكن
+  // الخام بس — بيتنادى هنا بالطلب الأصلي قبل أي تحقق من جلسة،
+  // فالجلسة القائمة ما تقدرش تعمل دخول جديد (المعالج نفسه
+  // بيرفض أي ترويسة شكلها جلسة صراحة).
+  if (url.pathname.replace(/\/+$/, "").endsWith("/control/session-login")) {
+    try {
+      const loginRes = await handleControlSessionRequest(
+        req,
+        getControlSessionDeps(),
+      );
+      if (loginRes) return loginRes;
+    } catch (e) {
+      logError("control.session.route", "unhandled session route error", e);
+    }
+  }
+
+  // جلسة اللوحة الموقعة (م٦-هـ): الفاحصات الحالية متزامنة
+  // (admin_auth.ts)، فتحقق الجلسة غير المتزامن بيحصل هنا مرة
+  // واحدة عند الدخول: ترويسة شكلها جلسة (v1.…) وتوقيعها سليم
+  // وسارية → الترويسة بتتبدّل داخليًا بالتوكن المشترك، وكل
+  // الفاحصات والمسارات بعد كده بتشتغل زي النهاردة بالحرف.
+  // جلسة غلط أو منتهية بتفضل زي ما هي فبترفضها الفاحصات.
+  const presentedAdmin = req.headers.get("x-migo-admin");
+  if (presentedAdmin && isSessionShaped(presentedAdmin)) {
+    const sessionOk = await verifySessionToken(
+      presentedAdmin,
+      ADMIN_TOKEN,
+      Math.floor(Date.now() / 1000),
+    ).catch(() => false);
+    if (sessionOk) {
+      const sessionHeaders = new Headers(req.headers);
+      sessionHeaders.set("x-migo-admin", ADMIN_TOKEN);
+      req = new Request(req, { headers: sessionHeaders });
+    }
+  }
+
   // الحزمة 6: مسارات التنفيذ (محمية بـ isAdmin) — قبل /chat والتحقق.
   // الكنس بيتنادى من مجدول خارجي كل 20 ثانية (نمط sheerid-sweep) بنفس
   // ترويسة الأدمن؛ والتنفيذ الفوري بيتنادى بعد تأكيد دفع أي طلب.
@@ -2375,6 +2462,16 @@ Deno.serve(async (req: Request) => {
         getControlSecurityDeps(),
       );
       if (securityRes) return securityRes;
+      const sessionRes = await handleControlSessionRequest(
+        req,
+        getControlSessionDeps(),
+      );
+      if (sessionRes) return sessionRes;
+      const previewRes = await handleControlPreviewRequest(
+        req,
+        getControlPreviewDeps(),
+      );
+      if (previewRes) return previewRes;
     } catch (e) {
       logError("control.customers.route", "unhandled customers route error", e);
     }

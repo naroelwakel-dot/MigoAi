@@ -1,8 +1,9 @@
 // لوحة التحكم (المرحلة م٥-أ): سجل إعدادات البوت — تمرير خادمي
-// لنقاط إعدادات البوت الخمس (القائمة/الحفظ/سجل التغييرات/النسخة
-// الاحتياطية/الاستيراد). مفيش منطق إعدادات هنا: السجل والتحقق
-// والتدقيق وسجل التغييرات عند البوت، واللوحة بتمرّر الردود
-// بحالتها وجسمها زي ما هي (نمط وكلاء م٤ بالحرف).
+// لنقاط إعدادات البوت (القائمة/الحفظ/سجل التغييرات/النسخة
+// الاحتياطية/الاستيراد)، واتضافت لها في م٦-هـ نقاط جدولة
+// التغييرات (إنشاء/قائمة/إلغاء). مفيش منطق إعدادات هنا: السجل
+// والتحقق والتدقيق وسجل التغييرات عند البوت، واللوحة بتمرّر
+// الردود بحالتها وجسمها زي ما هي (نمط وكلاء م٤ بالحرف).
 
 import type {
   BotControlProxyClient,
@@ -63,6 +64,20 @@ export async function handleControlSettingsRequest(
     "/control/bot-settings-import": {
       method: "POST",
       botPath: "/api/control/settings-import",
+    },
+    // جدولة تغييرات الإعدادات (م٦-هـ): الإنشاء/القائمة/الإلغاء
+    // عند البوت — التحقق وبوابة الرقم السري والتطبيق كله هناك.
+    "/control/bot-settings-schedule": {
+      method: "POST",
+      botPath: "/api/control/settings-schedule",
+    },
+    "/control/bot-settings-schedules": {
+      method: "GET",
+      botPath: "/api/control/settings-schedules",
+    },
+    "/control/bot-settings-schedule-cancel": {
+      method: "POST",
+      botPath: "/api/control/settings-schedule-cancel",
     },
   };
   // أطول لاحقة الأول عشان ما يحصلش تطابق جزئي غلط بين مسارين
