@@ -168,6 +168,24 @@
   .result-row.sel{outline:2px solid var(--gold); outline-offset:-2px; border-radius:10px; background:var(--surface2);}
   .group-title{font-weight:700; font-size:14.5px; margin:14px 0 2px; color:var(--gold);}
   .group-title:first-child{margin-top:2px;}
+  .badge.kind{color:var(--muted); border-color:var(--border);}
+  .badge.unans{color:#FFD7D5; border-color:var(--red); background:#2A1416;}
+  .seg .cnt{color:var(--gold); font-weight:700;}
+  .actbar{
+    position:sticky; bottom:70px; display:flex; gap:8px; background:var(--surface);
+    border:1px solid var(--border); border-radius:14px; padding:10px; z-index:5;
+  }
+  .actbar .btn{flex:1;}
+  .menu-list{display:flex; flex-direction:column; gap:8px; margin-top:10px;}
+  .kv{display:flex; justify-content:space-between; gap:10px; padding:7px 0; border-top:1px solid var(--border); font-size:14px;}
+  .kv:first-of-type{border-top:none;}
+  .kv .k{color:var(--muted); flex:none;}
+  .kv .v{font-weight:600; text-align:left; overflow-wrap:anywhere;}
+  .bubble{max-width:88%; padding:9px 12px; border-radius:14px; margin:7px 0; font-size:14.5px; overflow-wrap:anywhere; white-space:pre-wrap; background:var(--surface2);}
+  .bubble .who{display:block; font-size:11.5px; color:var(--muted); font-weight:700; margin-bottom:3px;}
+  .bubble.cust{margin-inline-start:auto;}
+  .bubble.ours{margin-inline-end:auto; border:1px solid var(--gold);}
+  .bubble.botm{margin-inline-end:auto; border:1px solid var(--border);}
 </style>
 </head>
 <body>
@@ -232,6 +250,59 @@
   <div id="custFile" class="hidden" style="display:flex; flex-direction:column; gap:14px;"></div>
 </main>
 
+<main id="ordersMain" class="hidden">
+  <div class="msg" id="ordMsg"></div>
+
+  <div id="ordLists" style="display:flex; flex-direction:column; gap:14px;">
+    <section class="card">
+      <h2>طلبات البوت</h2>
+      <div class="seg" id="ordQueueSeg">
+        <button type="button" data-queue="intervention" class="on">محتاج تدخل <span class="cnt num" id="cntIntervention"></span></button>
+        <button type="button" data-queue="manual">يدوي <span class="cnt num" id="cntManual"></span></button>
+        <button type="button" data-queue="all">الكل <span class="cnt num" id="cntAll"></span></button>
+      </div>
+      <div class="seg" id="ordSurfaceSeg" style="margin-top:8px;">
+        <button type="button" data-surface="" class="on">كل الطلبات</button>
+        <button type="button" data-surface="shop">شراء</button>
+        <button type="button" data-surface="provider">موردين</button>
+        <button type="button" data-surface="sheerid">تحقق طلابي</button>
+      </div>
+      <div id="ordList" style="margin-top:8px;"></div>
+      <div class="row-actions">
+        <button class="btn secondary" id="ordReloadBtn" type="button">تحديث القائمة</button>
+        <button class="btn ghost" id="ordCreateBtn" type="button">إنشاء طلب لعميل</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>المهام اليدوية</h2>
+      <div class="sub" style="color:var(--muted); font-size:13px;">طلبات بتتنفذ بره النظام (زي تنفيذ مورد يدوي): تسجيل الدفع وبعده التسليم للعميل من هنا.</div>
+      <div id="manualList" style="margin-top:6px;"></div>
+      <button class="btn secondary" id="manualNewBtn" type="button" style="margin-top:10px;">مهمة يدوية جديدة</button>
+    </section>
+
+    <section class="card">
+      <h2>طلبات الموقع</h2>
+      <div id="storeOrdList"></div>
+      <button class="btn secondary" id="storeOrdReloadBtn" type="button" style="margin-top:10px;">تحديث القائمة</button>
+    </section>
+  </div>
+
+  <div id="ordDetail" class="hidden" style="display:flex; flex-direction:column; gap:14px;"></div>
+</main>
+
+<main id="chatsMain" class="hidden">
+  <div class="msg" id="chatMsg"></div>
+
+  <section class="card" id="chatListCard">
+    <h2>المحادثات</h2>
+    <div id="chatList"></div>
+    <button class="btn secondary" id="chatReloadBtn" type="button" style="margin-top:10px;">تحديث القائمة</button>
+  </section>
+
+  <div id="chatScreen" class="hidden" style="display:flex; flex-direction:column; gap:14px;"></div>
+</main>
+
 <div class="sheet-veil" id="sheetVeil"></div>
 <div class="sheet" id="sheet">
   <p id="sheetTitle"></p>
@@ -253,6 +324,7 @@
   <button type="button" data-nav="events"><span class="ic">🔔</span>الأحداث</button>
   <button type="button" data-nav="orders"><span class="ic">📦</span>الطلبات</button>
   <button type="button" data-nav="customers"><span class="ic">👥</span>العملاء</button>
+  <button type="button" data-nav="chats"><span class="ic">💬</span>المحادثات</button>
   <button type="button" data-nav="more"><span class="ic">☰</span>المزيد</button>
 </nav>
 
@@ -462,17 +534,20 @@ function load(){
 $("refreshBtn").addEventListener("click", load);
 $("storePill").addEventListener("click", load);
 
-// التنقل السفلي: الرئيسية والعملاء شغالين، والباقي في مراحل جاية — من غير شاشات وهمية.
-var navNames = { events: "الأحداث", orders: "الطلبات", more: "المزيد" };
+// التنقل السفلي: الرئيسية والعملاء والطلبات والمحادثات شغالين،
+// والباقي (الأحداث/المزيد) في مراحل جاية — من غير شاشات وهمية.
+var navNames = { events: "الأحداث", more: "المزيد" };
+var viewTitles = { home: "مهامي الآن", customers: "العملاء", orders: "الطلبات", chats: "المحادثات" };
 function showView(name){
-  var home = name === "home";
-  $("homeMain").classList.toggle("hidden", !home);
-  $("customersMain").classList.toggle("hidden", home);
-  $("pageTitle").textContent = home ? "مهامي الآن" : "العملاء";
+  $("homeMain").classList.toggle("hidden", name !== "home");
+  $("customersMain").classList.toggle("hidden", name !== "customers");
+  $("ordersMain").classList.toggle("hidden", name !== "orders");
+  $("chatsMain").classList.toggle("hidden", name !== "chats");
+  $("pageTitle").textContent = viewTitles[name] || "";
   document.querySelectorAll("#bottomNav button").forEach(function(b){
-    var n = b.getAttribute("data-nav");
-    b.classList.toggle("active", (home && n === "home") || (!home && n === "customers"));
+    b.classList.toggle("active", b.getAttribute("data-nav") === name);
   });
+  if (name !== "chats" && typeof stopChatPolling === "function") stopChatPolling();
   window.scrollTo({ top: 0 });
 }
 document.querySelectorAll("#bottomNav button").forEach(function(b){
@@ -480,6 +555,8 @@ document.querySelectorAll("#bottomNav button").forEach(function(b){
     var nav = b.getAttribute("data-nav");
     if (nav === "home") { showView("home"); return; }
     if (nav === "customers") { showView("customers"); ensureMoneyLoaded(); return; }
+    if (nav === "orders") { showView("orders"); ensureOrdersLoaded(); return; }
+    if (nav === "chats") { showView("chats"); ensureChatsLoaded(); return; }
     $("sheetTitle").textContent = "قسم " + (navNames[nav] || "");
     $("sheet").classList.add("open");
     $("sheetVeil").classList.add("open");
@@ -542,6 +619,12 @@ function errText(e, ctx){
   if (code === "insufficient") return "الرصيد مش هيكفي لتنفيذ العملية دي.";
   if (code === "already_reversed") return "القيد ده اتعكس قبل كده.";
   if (code === "customer_not_found") return "العميل مش موجود.";
+  if (code === "invalid_status") return "الحالة دي مش من حالات طلبات الموقع المعروفة.";
+  if (code === "invalid_transition") return "تغيير الحالة ده مش مسموح من حالة الطلب الحالية.";
+  if (code === "reason_required") return "اكتب سبب الإلغاء أو الاسترداد الأول.";
+  if (code === "state_changed") return "حالة الطلب اتغيرت قبل ما العملية تكمل. حدّث الشاشة وشوف حالته دلوقتي.";
+  if (code === "order_not_found") return "الطلب مش موجود.";
+  if (code === "not_refunded") return "المورد لسه ما أكدش رجوع الفلوس — الاسترداد مش هيتم قبل تأكيده.";
   if (code === "unknown_key") return "الإعداد ده مش معروف.";
   if (code === "bad_rate") return "سعر الدولار لازم يكون رقم صحيح أكبر من صفر.";
   if (code === "bad_address") return "العنوان مش صح — راجعه حرف حرف.";
@@ -554,6 +637,10 @@ function errText(e, ctx){
     return "البوت مش بيرد دلوقتي — حاول تاني بعد شوية.";
   if (code === "not_found" || (e && e.status === 404))
     return ctx === "reverse" ? "القيد ده مش موجود." : "العميل مش موجود.";
+  if (e && e.status === 409 && ctx === "manual")
+    return "فيه تعارض — غالبًا مرجع الدفع ده اتسجل قبل كده. حدّث القائمة وشوف حالة المهمة.";
+  if (e && e.status === 409 && ctx === "order")
+    return "العملية دي اتعملت قبل كده أو حالة الطلب اتغيرت. حدّث الشاشة وشوف حالته دلوقتي.";
   if (e && e.status === 409)
     return ctx === "decide" ? "الشحنة دي اتقرر فيها قبل كده." : "القيد ده اتعكس قبل كده.";
   if (e && e.status === 422) return "الرصيد مش هيكفي لتنفيذ العملية دي.";
@@ -917,11 +1004,15 @@ function botOrdersHtml(){
   if (!custFile.bot) return "";
   var rows = "";
   if (!list.length) rows = '<div class="sub" style="color:var(--muted)">مفيش طلبات.</div>';
-  list.forEach(function(o){
+  list.forEach(function(o, i){
     var age = relTime(o.created_at);
     rows += '<div class="topup-row">' +
       '<div class="amt num">' + fmtNum(egpFromMinor(o.total)) + ' ج.م <small>' + esc(o.product_name || "") + "</small></div>" +
-      '<div class="sub">' + statusTxt({}, o.status) + (age ? " · " + esc(age) : "") + "</div></div>";
+      '<div class="sub">' + statusTxt({}, o.status) + (age ? " · " + esc(age) : "") + "</div>";
+    if (o.id) {
+      rows += '<div class="row-actions"><button class="btn ghost small" type="button" data-ord-jump="' + i + '">تفاصيل الطلب</button></div>';
+    }
+    rows += "</div>";
   });
   return '<section class="card"><h2>طلبات البوت</h2>' + rows + "</section>";
 }
@@ -972,6 +1063,7 @@ function renderFile(){
       var wc = relTime(bot.customer.wallet_created_at);
       html += '<div class="sub">المحفظة اتعملت: ' + esc(wc || "") + "</div>";
     }
+    html += '<div class="row-actions"><button class="btn small" type="button" data-open-chat="1">افتح محادثة</button></div>';
   }
   if (store) {
     html += '<div class="sub">حساب الموقع: <b>' + esc(store.customer.email || store.customer.id || "") + '</b> <span class="badge store">موقع</span></div>';
@@ -1061,6 +1153,20 @@ function renderFile(){
   var sb = wrap.querySelector("[data-store-ban]");
   if (sb) sb.addEventListener("click", function(){
     openStoreBanSheet(sb.getAttribute("data-store-ban") === "1");
+  });
+  var oc = wrap.querySelector("[data-open-chat]");
+  if (oc) oc.addEventListener("click", function(){
+    showView("chats");
+    openChat(custFile.botRef);
+  });
+  wrap.querySelectorAll("[data-ord-jump]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var o = custFile.bot.orders[Number(b.getAttribute("data-ord-jump"))];
+      if (!o || !o.id) return;
+      showView("orders");
+      ensureOrdersLoaded();
+      openOrderDetail("shop", o.id);
+    });
   });
 }
 
@@ -1893,6 +1999,854 @@ $("lostSearchBtn").addEventListener("click", doLostSearch);
 $("lostQ").addEventListener("keydown", function(ev){
   if (ev.key === "Enter") { ev.preventDefault(); doLostSearch(); }
 });
+
+// ============================================================
+// قسم الطلبات (م٢): طوابير طلبات البوت (شراء/موردين/تحقق) +
+// المهام اليدوية + طلبات الموقع + شاشة تفاصيل الطلب وأفعالها.
+// كل فعل بيتنفذ على الخادم فعلًا من نقاط البوت الداخلية أو من
+// قاعدة الموقع، والنجاح بيظهر بس بعد رد سليم منه.
+// ============================================================
+
+function showOrdMsg(kind, html, withKeyBtn){
+  var box = $("ordMsg");
+  box.className = "msg " + kind;
+  box.innerHTML = html + (withKeyBtn
+    ? '<button class="btn" id="ordKeyBtn" type="button">كتابة المفتاح</button>' : "");
+  if (withKeyBtn) $("ordKeyBtn").addEventListener("click", askKey);
+}
+function hideOrdMsg(){ $("ordMsg").className = "msg"; $("ordMsg").innerHTML = ""; }
+function pickArr(d, keys){
+  if (!d) return [];
+  for (var i = 0; i < keys.length; i++) {
+    if (Array.isArray(d[keys[i]])) return d[keys[i]];
+  }
+  return [];
+}
+
+var ORD_KIND = { shop: "طلب شراء", provider: "طلب مورد", sheerid: "تحقق طلابي" };
+var ORD_STATUS = {
+  pending: ["منتظر", "st-pending"], processing: ["بيتنفذ", "st-pending"],
+  fulfilled: ["اتسلّم", "st-ok"], delivered: ["اتسلّم", "st-ok"],
+  completed: ["اكتمل", "st-ok"], cancelled: ["ملغي", "st-bad"],
+  canceled: ["ملغي", "st-bad"], failed: ["فشل", "st-bad"],
+  awaiting_funds: ["مستني تمويل المورد", "st-pending"],
+  queued: ["في الانتظار", "st-pending"], submitted: ["اتبعت للمورد", "st-pending"],
+  manual_review: ["محتاج مراجعة", "st-pending"],
+  needs_review: ["محتاج مراجعة", "st-pending"], refunded: ["اتسترد", "st-mut"]
+};
+var MANUAL_STATUS = {
+  waiting_payment: ["مستنية الدفع", "st-pending"],
+  waiting_execution: ["مستنية التنفيذ", "st-pending"],
+  delivered: ["اتسلّمت", "st-ok"], cancelled: ["ملغية", "st-bad"]
+};
+var STORE_ORD_STATUS = {
+  new: ["جديد", "st-pending"], payment_confirmed: ["الدفع مؤكد", "st-ok"],
+  fulfilled: ["اتسلّم", "st-ok"], cancelled: ["ملغي", "st-bad"],
+  refunded: ["اتسترد", "st-mut"]
+};
+var STORE_ORD_STATUS_KEYS = ["new", "payment_confirmed", "fulfilled", "cancelled", "refunded"];
+
+var ordState = {
+  loaded: false, queue: "intervention", surface: "",
+  orders: [], counts: {}, manual: [], storeOrders: [], detail: null
+};
+function ensureOrdersLoaded(){ if (!ordState.loaded) loadOrders(); }
+
+function ordKindOf(o){ return o.kind || o.surface || o.type || ""; }
+function ordProductOf(o){
+  if (o.product_label || o.product_name || o.product) return o.product_label || o.product_name || o.product;
+  if (Array.isArray(o.items) && o.items[0]) return o.items[0].name || o.items[0].product_name || "طلب";
+  return "طلب";
+}
+function ordAmountOf(o){
+  if (o.amount_egp != null) return Number(o.amount_egp);
+  if (o.price_egp != null) return Number(o.price_egp);
+  if (o.amount_minor != null) return egpFromMinor(o.amount_minor);
+  if (o.total != null) return egpFromMinor(o.total);
+  if (o.server_total != null) return Number(o.server_total);
+  if (o.total_egp != null) return Number(o.total_egp);
+  return null;
+}
+function ordCustomerOf(o){ return o.customer_ref || o.customer || o.customer_email || ""; }
+function ordErrorOf(o){ return o.supplier_error || o.last_error || o.error || ""; }
+
+function loadOrders(){
+  ordState.loaded = true;
+  hideOrdMsg();
+  $("ordList").innerHTML = '<div class="sub" style="color:var(--muted)">بيحمّل الطلبات…</div>';
+  var q = "/control/bot-orders?queue=" + encodeURIComponent(ordState.queue) + "&limit=50";
+  if (ordState.surface) q += "&surface=" + encodeURIComponent(ordState.surface);
+  api(q).then(function(d){
+    ordState.orders = pickArr(d, ["orders", "items", "rows"]);
+    if (d && d.counts) ordState.counts = d.counts;
+    renderOrdCounts();
+    renderOrdList();
+  }).catch(function(e){
+    if (e && e.noKey) { $("ordList").innerHTML = ""; return; }
+    $("ordList").innerHTML = '<div class="sub" style="color:var(--red)">' + esc(errText(e, "order")) + "</div>";
+  });
+  loadManualTasks();
+  loadStoreOrders();
+}
+function renderOrdCounts(){
+  var c = ordState.counts || {};
+  var set = function(id, v){ var el = $(id); if (el) el.textContent = (v == null ? "" : "(" + v + ")"); };
+  set("cntIntervention", c.intervention);
+  set("cntManual", c.manual);
+  set("cntAll", c.all);
+}
+function renderOrdList(){
+  var wrap = $("ordList");
+  var list = ordState.orders;
+  if (!list.length) {
+    wrap.innerHTML = '<div class="empty"><b>مفيش طلبات هنا</b>القايمة دي فاضية دلوقتي.</div>';
+    return;
+  }
+  var rows = "";
+  list.forEach(function(o, i){
+    var kind = ordKindOf(o);
+    var age = relTime(o.created_at);
+    var err = ordErrorOf(o);
+    rows += '<div class="topup-row">' +
+      '<div class="amt num">' + fmtNum(ordAmountOf(o)) + ' ج.م <small>' + esc(ordProductOf(o)) + "</small></div>" +
+      '<div class="sub"><span class="badge kind">' + esc(ORD_KIND[kind] || "طلب") + "</span> " +
+      statusTxt(ORD_STATUS, o.status) +
+      (ordCustomerOf(o) ? ' · العميل: <b class="num">' + esc(ordCustomerOf(o)) + "</b>" : "") +
+      (age ? " · " + esc(age) : "") + "</div>" +
+      (err ? '<div class="sub" style="color:var(--red)">خطأ المورد: ' + esc(err) + "</div>" : "") +
+      '<div class="row-actions"><button class="btn small" type="button" data-ord-open="' + i + '">التفاصيل</button></div></div>';
+  });
+  wrap.innerHTML = rows;
+  wrap.querySelectorAll("[data-ord-open]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var o = ordState.orders[Number(b.getAttribute("data-ord-open"))];
+      if (o && o.id != null) openOrderDetail(ordKindOf(o) || "shop", o.id);
+    });
+  });
+}
+$("ordQueueSeg").querySelectorAll("button").forEach(function(b){
+  b.addEventListener("click", function(){
+    ordState.queue = b.getAttribute("data-queue");
+    $("ordQueueSeg").querySelectorAll("button").forEach(function(x){ x.classList.toggle("on", x === b); });
+    loadOrders();
+  });
+});
+$("ordSurfaceSeg").querySelectorAll("button").forEach(function(b){
+  b.addEventListener("click", function(){
+    ordState.surface = b.getAttribute("data-surface") || "";
+    $("ordSurfaceSeg").querySelectorAll("button").forEach(function(x){ x.classList.toggle("on", x === b); });
+    loadOrders();
+  });
+});
+$("ordReloadBtn").addEventListener("click", loadOrders);
+$("ordCreateBtn").addEventListener("click", openCreateBehalfSheet);
+
+function openCreateBehalfSheet(){
+  var body = '<div class="preview">الطلب هيتعمل بنفس مسار شراء العميل نفسه من البوت: الخصم من محفظته، ولو الرصيد مش مكفي أو الشراء واقف عليه، الطلب هيترفض.</div>' +
+    '<div class="field"><label>رقم عميل البوت</label><input id="cbRef" type="text"></div>' +
+    '<div class="field"><label>رقم المنتج في البوت</label><input id="cbProduct" type="text"></div>' +
+    '<div class="field"><label>السبب (اختياري)</label><input id="cbReason" type="text"></div>';
+  var ctx = openActSheet("إنشاء طلب لعميل", body, "اعمل الطلب", function(){
+    var ref = $("cbRef").value.trim();
+    var pid = $("cbProduct").value.trim();
+    if (!ref) failValidation("اكتب رقم عميل البوت.");
+    if (!pid) failValidation("اكتب رقم المنتج.");
+    return api("/control/bot-order-create-behalf", { method: "POST", body: {
+      customer_ref: ref, product_id: pid, reason: $("cbReason").value.trim(),
+      idempotency_key: ctx.idem } })
+      .then(function(){
+        showOrdMsg("ok", "اتعمل الطلب للعميل.");
+        loadOrders();
+      });
+  }, "order");
+}
+
+// ---------------- المهام اليدوية ----------------
+function loadManualTasks(){
+  api("/control/bot-manual-tasks?status=").then(function(d){
+    ordState.manual = pickArr(d, ["tasks", "manual_tasks", "items"]);
+    renderManualList();
+  }).catch(function(e){
+    if (e && e.noKey) return;
+    $("manualList").innerHTML = '<div class="sub" style="color:var(--red)">' + esc(errText(e, "manual")) + "</div>";
+  });
+}
+function renderManualList(){
+  var wrap = $("manualList");
+  var list = ordState.manual;
+  if (!list.length) {
+    wrap.innerHTML = '<div class="sub" style="color:var(--muted)">مفيش مهام يدوية مفتوحة.</div>';
+    return;
+  }
+  var rows = "";
+  list.forEach(function(t, i){
+    var age = relTime(t.created_at);
+    rows += '<div class="topup-row">' +
+      '<div class="amt">' + esc(t.product_label || "مهمة يدوية") + ' <small style="color:var(--muted); font-size:13px;">' + esc(t.supplier_label || "يدوي") + "</small></div>" +
+      '<div class="sub">' + statusTxt(MANUAL_STATUS, t.status) +
+      (t.customer_ref ? ' · العميل: <b class="num">' + esc(t.customer_ref) + "</b>" : "") +
+      (age ? " · " + esc(age) : "") + "</div>" +
+      (t.amount_note ? '<div class="sub">' + esc(t.amount_note) + "</div>" : "") +
+      (t.stars_ref ? '<div class="sub">مرجع الدفع: <b class="num">' + esc(t.stars_ref) + "</b></div>" : "");
+    var acts = "";
+    if (t.status === "waiting_payment")
+      acts += '<button class="btn go small" type="button" data-mt-pay="' + i + '">تسجيل الدفع</button>';
+    if (t.status === "waiting_execution")
+      acts += '<button class="btn go small" type="button" data-mt-deliver="' + i + '">تسليم للعميل</button>';
+    if (t.status !== "delivered" && t.status !== "cancelled")
+      acts += '<button class="btn danger small" type="button" data-mt-cancel="' + i + '">إلغاء المهمة</button>';
+    if (acts) rows += '<div class="row-actions">' + acts + "</div>";
+    rows += "</div>";
+  });
+  wrap.innerHTML = rows;
+  wrap.querySelectorAll("[data-mt-pay]").forEach(function(b){
+    b.addEventListener("click", function(){ openManualPaySheet(ordState.manual[Number(b.getAttribute("data-mt-pay"))]); });
+  });
+  wrap.querySelectorAll("[data-mt-deliver]").forEach(function(b){
+    b.addEventListener("click", function(){ openManualDeliverSheet(ordState.manual[Number(b.getAttribute("data-mt-deliver"))]); });
+  });
+  wrap.querySelectorAll("[data-mt-cancel]").forEach(function(b){
+    b.addEventListener("click", function(){ openManualCancelSheet(ordState.manual[Number(b.getAttribute("data-mt-cancel"))]); });
+  });
+}
+$("manualNewBtn").addEventListener("click", function(){
+  var body = '<div class="field"><label>رقم عميل البوت</label><input id="mtRef" type="text"></div>' +
+    '<div class="field"><label>المنتج أو الخدمة</label><input id="mtProduct" type="text"></div>' +
+    '<div class="field"><label>مين هينفذها (اسم المورد)</label><input id="mtSupplier" type="text" value="يدوي"></div>' +
+    '<div class="field"><label>ملحوظة المبلغ (اختياري)</label><input id="mtAmount" type="text"></div>';
+  openActSheet("مهمة يدوية جديدة", body, "اعمل المهمة", function(){
+    var ref = $("mtRef").value.trim();
+    var prod = $("mtProduct").value.trim();
+    if (!ref) failValidation("اكتب رقم عميل البوت.");
+    if (!prod) failValidation("اكتب المنتج أو الخدمة.");
+    return api("/control/bot-manual-task", { method: "POST", body: {
+      op: "create", customer_ref: ref, product_label: prod,
+      supplier_label: $("mtSupplier").value.trim() || "يدوي",
+      amount_note: $("mtAmount").value.trim() } })
+      .then(function(){ showOrdMsg("ok", "اتعملت المهمة اليدوية."); loadManualTasks(); });
+  }, "manual");
+});
+function openManualPaySheet(t){
+  if (!t) return;
+  var body = '<div class="preview">تسجيل دفع مهمة «' + esc(t.product_label || "") + '» للعميل <b class="num">' + esc(t.customer_ref || "") + '</b>.<br>مرجع الدفع الواحد ما ينفعش يتسجل على مهمتين — لو اتسجل قبل كده النظام هيرفض.</div>' +
+    '<div class="field"><label>مرجع دفع النجوم</label><input id="mtStars" type="text"></div>';
+  openActSheet("تسجيل الدفع", body, "سجّل الدفع", function(){
+    var sref = $("mtStars").value.trim();
+    if (!sref) failValidation("اكتب مرجع الدفع.");
+    return api("/control/bot-manual-task", { method: "POST", body: {
+      op: "pay", task_id: t.id, stars_ref: sref } })
+      .then(function(){ showOrdMsg("ok", "اتسجل الدفع. المهمة جاهزة للتنفيذ."); loadManualTasks(); });
+  }, "manual");
+}
+function openManualDeliverSheet(t){
+  if (!t) return;
+  var body = '<div class="preview">التسليم هيتبعت للعميل <b class="num">' + esc(t.customer_ref || "") + '</b> برسالة من البوت زي ما تكتبه بالظبط، والمهمة هتتقفل كمُسلّمة.</div>' +
+    '<div class="field"><label>بيانات التسليم (كود/رابط/حساب)</label><textarea id="mtPayload" rows="3"></textarea></div>';
+  openActSheet("تسليم المهمة", body, "سلّم للعميل", function(){
+    var payload = $("mtPayload").value.trim();
+    if (!payload) failValidation("اكتب بيانات التسليم الأول.");
+    return api("/control/bot-manual-task", { method: "POST", body: {
+      op: "deliver", task_id: t.id, delivery_payload: payload } })
+      .then(function(){ showOrdMsg("ok", "اتسلّمت المهمة واتبعتت للعميل."); loadManualTasks(); });
+  }, "manual");
+}
+function openManualCancelSheet(t){
+  if (!t) return;
+  var body = '<div class="preview">إلغاء مهمة «' + esc(t.product_label || "") + '»؟ المهمة هتتقفل كملغية.</div>' +
+    '<div class="field"><label>السبب (اختياري)</label><input id="mtCancelReason" type="text"></div>';
+  openActSheet("إلغاء المهمة", body, "أكّد الإلغاء", function(){
+    return api("/control/bot-manual-task", { method: "POST", body: {
+      op: "cancel", task_id: t.id, reason: $("mtCancelReason").value.trim() } })
+      .then(function(){ showOrdMsg("ok", "اتلغت المهمة."); loadManualTasks(); });
+  }, "manual");
+}
+
+// ---------------- طلبات الموقع ----------------
+function loadStoreOrders(){
+  api("/control/store-orders?limit=50").then(function(d){
+    ordState.storeOrders = Array.isArray(d.orders) ? d.orders : [];
+    renderStoreOrdList();
+  }).catch(function(e){
+    if (e && e.noKey) return;
+    $("storeOrdList").innerHTML = '<div class="sub" style="color:var(--red)">' + esc(errText(e, "order")) + "</div>";
+  });
+}
+function renderStoreOrdList(){
+  var wrap = $("storeOrdList");
+  var list = ordState.storeOrders;
+  if (!list.length) {
+    wrap.innerHTML = '<div class="sub" style="color:var(--muted)">مفيش طلبات موقع.</div>';
+    return;
+  }
+  var rows = "";
+  list.forEach(function(o, i){
+    var age = relTime(o.created_at);
+    var total = o.total_text || (fmtNum(o.server_total) + " ج.م");
+    var firstItem = (Array.isArray(o.items) && o.items[0]) ? (o.items[0].name || "") : "";
+    rows += '<div class="topup-row">' +
+      '<div class="amt num">' + esc(total) + ' <small>' + esc(o.order_ref || "") + "</small></div>" +
+      '<div class="sub">' + statusTxt(STORE_ORD_STATUS, o.status) +
+      (o.customer_email ? ' · <b>' + esc(o.customer_email) + "</b>" : "") +
+      (firstItem ? ' · ' + esc(firstItem) : "") +
+      (o.payment ? ' · الدفع: ' + esc(o.payment) : "") +
+      (age ? " · " + esc(age) : "") + "</div>" +
+      '<div class="row-actions"><button class="btn ghost small" type="button" data-so-status="' + i + '">تغيير الحالة</button></div></div>';
+  });
+  wrap.innerHTML = rows;
+  wrap.querySelectorAll("[data-so-status]").forEach(function(b){
+    b.addEventListener("click", function(){
+      openStoreOrderStatusSheet(ordState.storeOrders[Number(b.getAttribute("data-so-status"))]);
+    });
+  });
+}
+$("storeOrdReloadBtn").addEventListener("click", loadStoreOrders);
+function openStoreOrderStatusSheet(o){
+  if (!o) return;
+  var opts = STORE_ORD_STATUS_KEYS.map(function(s){
+    return '<option value="' + s + '"' + (o.status === s ? " selected" : "") + ">" +
+      esc((STORE_ORD_STATUS[s] || [s])[0]) + "</option>";
+  }).join("");
+  var body = '<div class="preview">طلب <b class="num">' + esc(o.order_ref || "") + '</b> — حالته الحالية: ' + esc((STORE_ORD_STATUS[o.status] || [o.status])[0]) + '.<br>' +
+    'لو الطلب مدفوع من محفظة الموقع واخترت «ملغي» أو «مسترد»، مبلغ الطلب بيرجع لمحفظة العميل تلقائيًا مع تغيير الحالة.</div>' +
+    '<div class="field"><label>الحالة الجديدة</label><select id="soStatus">' + opts + "</select></div>" +
+    '<div class="field"><label>السبب (مطلوب عند الإلغاء أو الاسترداد)</label><input id="soReason" type="text"></div>';
+  openActSheet("تغيير حالة طلب موقع", body, "غيّر الحالة", function(){
+    var newStatus = $("soStatus").value;
+    var reason = $("soReason").value.trim();
+    if ((newStatus === "cancelled" || newStatus === "refunded") &&
+        newStatus !== o.status && !reason) {
+      failValidation("اكتب سبب الإلغاء أو الاسترداد الأول.");
+    }
+    return api("/control/store-orders", { method: "POST", body: {
+      order_id: o.id, status: newStatus, reason: reason } })
+      .then(function(r){
+        if (r && r.audit_failed) {
+          showOrdMsg("err", "الحالة اتغيرت بس تسجيلها في سجل التدقيق فشل — خد بالك.");
+        } else if (r && r.refund && r.refund.applied) {
+          showOrdMsg("ok", "اتغيرت حالة الطلب، ومبلغه رجع لمحفظة العميل.");
+        } else {
+          showOrdMsg("ok", "اتغيرت حالة الطلب.");
+        }
+        loadStoreOrders();
+      });
+  }, "order");
+}
+
+// ---------------- تفاصيل الطلب ----------------
+function openOrderDetail(kind, id){
+  ordState.detail = { kind: kind, id: String(id), data: null };
+  $("ordLists").classList.add("hidden");
+  var wrap = $("ordDetail");
+  wrap.classList.remove("hidden");
+  wrap.innerHTML = '<button class="btn secondary back" type="button" id="ordBack">رجوع لقائمة الطلبات</button>' +
+    '<section class="card"><div class="sub">بيحمّل تفاصيل الطلب…</div></section>';
+  $("ordBack").addEventListener("click", closeOrderDetail);
+  window.scrollTo({ top: 0 });
+  api("/control/bot-order?id=" + encodeURIComponent(id) + "&kind=" + encodeURIComponent(kind))
+    .then(function(d){ if (ordState.detail) { ordState.detail.data = d; renderOrdDetail(); } })
+    .catch(function(e){
+      if (ordState.detail) { ordState.detail.data = { error: true, errObj: e }; renderOrdDetail(); }
+    });
+  // قفل بسيط: فتح التفاصيل بيعلن إن الشاشة دي شغالة على الطلب،
+  // وفشل القفل ما بيوقفش الشغل (القفل تنبيهي بس).
+  api("/control/bot-order-lock", { method: "POST", body: {
+    op: "acquire", entity_ref: kind + ":" + id } }).catch(function(){});
+}
+function closeOrderDetail(){
+  var d = ordState.detail;
+  if (d) {
+    api("/control/bot-order-lock", { method: "POST", body: {
+      op: "release", entity_ref: d.kind + ":" + d.id } }).catch(function(){});
+  }
+  ordState.detail = null;
+  var wrap = $("ordDetail");
+  wrap.classList.add("hidden");
+  wrap.innerHTML = "";
+  $("ordLists").classList.remove("hidden");
+  loadOrders();
+}
+function refreshOrdDetail(){
+  var d = ordState.detail;
+  if (!d) return;
+  api("/control/bot-order?id=" + encodeURIComponent(d.id) + "&kind=" + encodeURIComponent(d.kind))
+    .then(function(data){ if (ordState.detail) { ordState.detail.data = data; renderOrdDetail(); } })
+    .catch(function(){});
+}
+function ordConfirm(title, previewHtml, confirmLabel, path, makeBody){
+  var body = '<div class="preview">' + previewHtml + '</div>' +
+    '<div class="field"><label>السبب (اختياري)</label><input id="ordReason" type="text"></div>';
+  openActSheet(title, body, confirmLabel, function(){
+    var payload = makeBody();
+    payload.reason = $("ordReason").value.trim();
+    return api(path, { method: "POST", body: payload }).then(function(){
+      refreshOrdDetail();
+      showOrdMsg("ok", "اتنفذ: " + title + ".");
+    });
+  }, "order");
+}
+function renderOrdDetail(){
+  var wrap = $("ordDetail");
+  var d = ordState.detail;
+  if (!d) return;
+  var html = '<button class="btn secondary back" type="button" id="ordBack">رجوع لقائمة الطلبات</button>';
+  if (!d.data) {
+    html += '<section class="card"><div class="sub">بيحمّل تفاصيل الطلب…</div></section>';
+    wrap.innerHTML = html;
+    $("ordBack").addEventListener("click", closeOrderDetail);
+    return;
+  }
+  if (d.data.error) {
+    html += '<section class="card"><h2>تفاصيل الطلب</h2><div class="sub" style="color:var(--red)">' +
+      esc(errText(d.data.errObj, "order")) + "</div></section>";
+    wrap.innerHTML = html;
+    $("ordBack").addEventListener("click", closeOrderDetail);
+    return;
+  }
+  var o = d.data.order || d.data;
+  var kind = d.kind || ordKindOf(o);
+  var err = ordErrorOf(o);
+  html += '<section class="card"><h2>' + esc(ordProductOf(o)) + ' <span class="badge kind">' + esc(ORD_KIND[kind] || "طلب") + "</span></h2>" +
+    '<div class="kv"><span class="k">الحالة</span><span class="v">' + statusTxt(ORD_STATUS, o.status) + "</span></div>" +
+    '<div class="kv"><span class="k">السعر وقت الطلب</span><span class="v num">' + fmtNum(ordAmountOf(o)) + " ج.م</span></div>" +
+    (ordCustomerOf(o) ? '<div class="kv"><span class="k">العميل</span><span class="v num">' + esc(ordCustomerOf(o)) + "</span></div>" : "") +
+    (o.created_at ? '<div class="kv"><span class="k">اتعمل</span><span class="v">' + esc(relTime(o.created_at) || "") + "</span></div>" : "") +
+    ((o.operation_ref || o.external_ref) ? '<div class="kv"><span class="k">رقم عملية المورد</span><span class="v num">' + esc(o.operation_ref || o.external_ref) + "</span></div>" : "") +
+    ((o.provider_name || o.provider) ? '<div class="kv"><span class="k">المورد</span><span class="v">' + esc(o.provider_name || o.provider) + "</span></div>" : "") +
+    (err ? '<div class="kv"><span class="k">خطأ المورد</span><span class="v" style="color:var(--red)">' + esc(err) + "</span></div>" : "") +
+    "</section>";
+
+  var execObj = o.execution || o.inputs || o.delivery_input || null;
+  if (execObj) {
+    html += '<section class="card"><h2>بيانات التنفيذ</h2>';
+    if (typeof execObj === "object") {
+      Object.keys(execObj).forEach(function(k){
+        var v = execObj[k];
+        html += '<div class="kv"><span class="k">' + esc(k) + '</span><span class="v">' +
+          esc(typeof v === "object" ? JSON.stringify(v) : String(v)) + "</span></div>";
+      });
+    } else {
+      html += '<div class="sub">' + esc(String(execObj)) + "</div>";
+    }
+    html += "</section>";
+  }
+
+  var timeline = pickArr(d.data, ["timeline", "attempts"]);
+  if (!timeline.length && Array.isArray(o.timeline)) timeline = o.timeline;
+  if (!timeline.length && Array.isArray(o.attempts)) timeline = o.attempts;
+  if (timeline.length) {
+    html += '<section class="card"><h2>اللي حصل بالترتيب</h2>';
+    timeline.forEach(function(t){
+      var when = relTime(t.at || t.created_at);
+      html += '<div class="sub">• ' + esc(t.text || t.label || t.status || t.action || "") +
+        (when ? ' <span style="color:var(--muted)">(' + esc(when) + ")</span>" : "") + "</div>";
+    });
+    html += "</section>";
+  }
+
+  // شريط الإجراءات الأساسي حسب نوع الطلب
+  var bar = "";
+  if (kind === "shop") {
+    bar = '<button class="btn go" type="button" data-oa="shop-done">تم التسليم</button>' +
+      '<button class="btn secondary" type="button" data-oa="shop-proc">قيد التنفيذ</button>';
+  } else if (kind === "provider") {
+    bar = '<button class="btn go" type="button" data-oa="prov-exec">أعد المحاولة</button>' +
+      '<button class="btn secondary" type="button" data-oa="to-manual">مورد آخر</button>';
+  } else if (kind === "sheerid") {
+    bar = '<button class="btn go" type="button" data-oa="sh-settle">أعد فحص التسوية</button>' +
+      '<button class="btn secondary" type="button" data-oa="sh-resend">أعد إرسال التسليم</button>';
+  }
+  bar += '<button class="btn ghost" type="button" id="ordMenuBtn" style="flex:0 0 64px;">⋯</button>';
+  html += '<div class="actbar">' + bar + "</div>";
+  html += '<div class="card hidden" id="ordMenu"><h2>إجراءات تانية</h2><div class="menu-list">' +
+    (kind === "provider" ? '<button class="btn secondary" type="button" data-oa="prov-refresh">تحديث الحالة من المورد</button>' : "") +
+    '<button class="btn secondary" type="button" data-oa="to-manual">تحويل ليدوي</button>' +
+    '<button class="btn secondary" type="button" data-oa="cancel-refund">إلغاء باسترداد</button>' +
+    '<button class="btn secondary" type="button" data-oa="force">إجبار حالة بسبب</button>' +
+    (ordCustomerOf(o) ? '<button class="btn secondary" type="button" data-oa="open-chat">افتح محادثة العميل</button>' : "") +
+    "</div></div>";
+
+  wrap.innerHTML = html;
+  $("ordBack").addEventListener("click", closeOrderDetail);
+  var mb = $("ordMenuBtn");
+  if (mb) mb.addEventListener("click", function(){ $("ordMenu").classList.toggle("hidden"); });
+  wrap.querySelectorAll("[data-oa]").forEach(function(b){
+    b.addEventListener("click", function(){ ordDetailAction(b.getAttribute("data-oa")); });
+  });
+}
+function ordDetailAction(act){
+  var d = ordState.detail;
+  if (!d) return;
+  var o = (d.data && (d.data.order || d.data)) || {};
+  var prod = esc(ordProductOf(o));
+  if (act === "shop-done") {
+    ordConfirm("تأكيد تسليم الطلب", "تعليم طلب «" + prod + "» كمُسلّم — القرار ده هو نفس قرار أزرار البوت.", "تم التسليم",
+      "/control/bot-order-shop-decide", function(){ return { order_id: d.id, action: "done" }; });
+  } else if (act === "shop-proc") {
+    ordConfirm("تعليم الطلب قيد التنفيذ", "تعليم طلب «" + prod + "» إنه بيتنفذ دلوقتي.", "قيد التنفيذ",
+      "/control/bot-order-shop-decide", function(){ return { order_id: d.id, action: "processing" }; });
+  } else if (act === "prov-exec") {
+    ordConfirm("إعادة محاولة التنفيذ", "إعادة تنفيذ طلب «" + prod + "» عند المورد. النظام بيفحص حالة العملية الأصلية الأول — مش هيشتري مرتين.", "أعد المحاولة",
+      "/control/bot-order-provider-action", function(){ return { order_id: d.id, action: "execute" }; });
+  } else if (act === "prov-refresh") {
+    ordConfirm("تحديث الحالة من المورد", "سؤال المورد عن حالة طلب «" + prod + "» دلوقتي وتحديث حالته هنا.", "حدّث الحالة",
+      "/control/bot-order-provider-action", function(){ return { order_id: d.id, action: "refresh" }; });
+  } else if (act === "sh-settle") {
+    ordConfirm("إعادة فحص التسوية", "سؤال المورد عن نتيجة عملية التحقق دي دلوقتي — لو اكتملت هيتسلّم العميل، ولو رجّع الفلوس هيتسترد للعميل.", "افحص التسوية",
+      "/control/bot-order-sheerid-resolve", function(){ return { job_id: d.id, action: "settle_check" }; });
+  } else if (act === "sh-resend") {
+    ordConfirm("إعادة إرسال التسليم", "إعادة إرسال رابط التفعيل للعميل زي ما هو بالظبط — الرابط مش بيتفتح ولا بيتغير هنا.", "أعد الإرسال",
+      "/control/bot-order-sheerid-resolve", function(){ return { job_id: d.id, action: "resend_delivery" }; });
+  } else if (act === "to-manual") {
+    openToManualSheet();
+  } else if (act === "cancel-refund") {
+    var preview = 'إلغاء طلب «' + prod + '» واسترداد فلوس العميل.<br><span class="warn">الاسترداد بيتم بس بعد تأكيد المورد إن العملية فشلت ورجّع الفلوس</span> — لو المورد نفّذ واخد المقابل، الاسترداد هيترفض.';
+    if (d.kind === "shop") {
+      ordConfirm("إلغاء باسترداد", preview, "أكّد الإلغاء",
+        "/control/bot-order-shop-decide", function(){ return { order_id: d.id, action: "cancel" }; });
+    } else if (d.kind === "provider") {
+      ordConfirm("إلغاء باسترداد", preview, "أكّد الإلغاء",
+        "/control/bot-order-provider-action", function(){ return { order_id: d.id, action: "refund" }; });
+    } else {
+      ordConfirm("إلغاء باسترداد", preview + "<br>الحالة هتتأكد من المورد الأول: الاسترداد بيتم بس لو المورد رجّع الفلوس فعلًا.", "أكّد الإلغاء",
+        "/control/bot-order-sheerid-resolve", function(){ return { job_id: d.id, action: "mark_refunded" }; });
+    }
+  } else if (act === "force") {
+    openForceStatusSheet();
+  } else if (act === "open-chat") {
+    var ref = ordCustomerOf(o);
+    if (ref) { showView("chats"); openChat(ref); }
+  }
+}
+function openToManualSheet(){
+  var d = ordState.detail;
+  if (!d) return;
+  var body = '<div class="preview">تحويل الطلب لمهمة يدوية: هتتعمل مهمة في قائمة المهام اليدوية مرتبطة بالطلب ده، وتنفيذها (الدفع والتسليم) بيتم من هناك.</div>' +
+    '<div class="field"><label>مين هينفذها (اسم المورد)</label><input id="tmSupplier" type="text" value="يدوي"></div>' +
+    '<div class="field"><label>السبب (اختياري)</label><input id="tmReason" type="text"></div>';
+  openActSheet("تحويل ليدوي", body, "حوّل ليدوي", function(){
+    return api("/control/bot-order-to-manual", { method: "POST", body: {
+      kind: d.kind, id: d.id,
+      supplier_label: $("tmSupplier").value.trim() || "يدوي",
+      reason: $("tmReason").value.trim() } })
+      .then(function(){
+        showOrdMsg("ok", "اتحولت لمهمة يدوية — كمّل الدفع والتسليم من قائمة المهام اليدوية.");
+        loadManualTasks();
+        refreshOrdDetail();
+      });
+  }, "order");
+}
+function openForceStatusSheet(){
+  var d = ordState.detail;
+  if (!d) return;
+  var optsByKind = {
+    shop: ["pending", "processing", "fulfilled", "cancelled"],
+    provider: ["queued", "canceled"],
+    sheerid: ["needs_review", "failed"]
+  };
+  var opts = (optsByKind[d.kind] || []).map(function(s){
+    return '<option value="' + s + '">' + esc((ORD_STATUS[s] || [s])[0]) + " (" + s + ")</option>";
+  }).join("");
+  var body = '<div class="preview"><span class="warn">تغيير الحالة بالإجبار بيعدّي خطوات النظام العادية.</span> استخدمه بس لو متأكد من حالة الطلب الحقيقية بره النظام — والسبب مطلوب وهيتسجل.</div>' +
+    '<div class="field"><label>الحالة الجديدة</label><select id="forceStatus">' + opts + "</select></div>" +
+    '<div class="field"><label>السبب (مطلوب)</label><input id="forceReason" type="text"></div>';
+  openActSheet("إجبار حالة الطلب", body, "غيّر الحالة", function(){
+    var reason = $("forceReason").value.trim();
+    if (!reason) failValidation("لازم تكتب سبب إجبار الحالة.");
+    return api("/control/bot-order-force-status", { method: "POST", body: {
+      kind: d.kind, id: d.id, status: $("forceStatus").value, reason: reason } })
+      .then(function(){ refreshOrdDetail(); showOrdMsg("ok", "اتغيرت حالة الطلب."); });
+  }, "order");
+}
+
+// ============================================================
+// قسم المحادثات (م٢): قائمة المحادثات الشغالة واللي من غير رد،
+// وشاشة محادثة حية: سجل كامل + إرسال حر + استلام/إرجاع/إنهاء +
+// ردود جاهزة + إرسال بطاقة منتج. الشاشة بتتحدث بالسؤال المتكرر
+// كل خمس ثواني وهي مفتوحة (مفيش بث لحظي).
+// ============================================================
+
+function showChatMsg(kind, html, withKeyBtn){
+  var box = $("chatMsg");
+  box.className = "msg " + kind;
+  box.innerHTML = html + (withKeyBtn
+    ? '<button class="btn" id="chatKeyBtn" type="button">كتابة المفتاح</button>' : "");
+  if (withKeyBtn) $("chatKeyBtn").addEventListener("click", askKey);
+}
+function hideChatMsg(){ $("chatMsg").className = "msg"; $("chatMsg").innerHTML = ""; }
+
+var CHAT_SENDER = { customer: "العميل", bot: "البوت", admin: "الأدمن", panel: "اللوحة" };
+var chatState = {
+  loaded: false, active: [], unanswered: [],
+  openRef: "", history: [], mode: "", pollTimer: null, saved: null
+};
+function ensureChatsLoaded(){ if (!chatState.loaded) loadChats(); }
+function chatRefOf(c){ return String(c.customer_ref || c.ref || c.chat_id || ""); }
+function chatLastOf(c){
+  if (c.last_body) return c.last_body;
+  if (c.last_text) return c.last_text;
+  if (c.last_message) {
+    return typeof c.last_message === "string" ? c.last_message : (c.last_message.body || "");
+  }
+  return "";
+}
+function loadChats(){
+  chatState.loaded = true;
+  hideChatMsg();
+  $("chatList").innerHTML = '<div class="sub" style="color:var(--muted)">بيحمّل المحادثات…</div>';
+  api("/control/bot-chats").then(function(d){
+    chatState.active = pickArr(d, ["active", "chats", "conversations"]);
+    chatState.unanswered = pickArr(d, ["unanswered"]);
+    renderChatList();
+  }).catch(function(e){
+    if (e && e.noKey) { $("chatList").innerHTML = ""; return; }
+    $("chatList").innerHTML = '<div class="sub" style="color:var(--red)">' + esc(errText(e, "chat")) + "</div>";
+  });
+}
+function chatRowHtml(c, unanswered){
+  var ref = chatRefOf(c);
+  var age = relTime(c.last_at || c.updated_at || c.created_at);
+  var last = chatLastOf(c);
+  return '<div class="result-row"><div class="who"><b class="num">' + esc(ref) + "</b>" +
+    '<small>' + (last ? esc(last) : "—") + "</small>" +
+    '<small>' + (c.last_sender ? "آخر رسالة من " + esc(CHAT_SENDER[c.last_sender] || c.last_sender) : "") +
+    (age ? " · " + esc(age) : "") + "</small></div>" +
+    (unanswered ? '<span class="badge unans">من غير رد</span>' : "") +
+    (c.mode === "human" ? '<span class="badge store">الأدمن بيرد</span>' : "") +
+    '<button class="btn small" type="button" data-chat-open="' + esc(ref) + '">افتح</button></div>';
+}
+function renderChatList(){
+  var wrap = $("chatList");
+  var seen = {};
+  var html = "";
+  if (chatState.unanswered.length) {
+    html += '<div class="group-title">محادثات من غير رد (' + chatState.unanswered.length + ")</div>";
+    chatState.unanswered.forEach(function(c){
+      seen[chatRefOf(c)] = true;
+      html += chatRowHtml(c, true);
+    });
+  }
+  var rest = chatState.active.filter(function(c){ return !seen[chatRefOf(c)]; });
+  if (rest.length) {
+    html += '<div class="group-title">محادثات شغالة</div>';
+    rest.forEach(function(c){ html += chatRowHtml(c, false); });
+  }
+  if (!html) html = '<div class="empty"><b>مفيش محادثات</b>مفيش محادثات شغالة أو مستنية رد دلوقتي.</div>';
+  wrap.innerHTML = html;
+  wrap.querySelectorAll("[data-chat-open]").forEach(function(b){
+    b.addEventListener("click", function(){ openChat(b.getAttribute("data-chat-open")); });
+  });
+}
+$("chatReloadBtn").addEventListener("click", loadChats);
+
+function openChat(ref){
+  if (!ref) return;
+  chatState.openRef = String(ref);
+  chatState.history = [];
+  chatState.mode = "";
+  chatState.saved = null;
+  $("chatListCard").classList.add("hidden");
+  var scr = $("chatScreen");
+  scr.classList.remove("hidden");
+  window.scrollTo({ top: 0 });
+  renderChatScreen();
+  refreshChatHistory();
+  startChatPolling();
+}
+function closeChat(){
+  stopChatPolling();
+  chatState.openRef = "";
+  var scr = $("chatScreen");
+  scr.classList.add("hidden");
+  scr.innerHTML = "";
+  $("chatListCard").classList.remove("hidden");
+  loadChats();
+}
+function startChatPolling(){
+  stopChatPolling();
+  chatState.pollTimer = setInterval(function(){
+    if (!chatState.openRef) { stopChatPolling(); return; }
+    if ($("chatsMain").classList.contains("hidden")) { stopChatPolling(); return; }
+    refreshChatHistory();
+  }, 5000);
+}
+function stopChatPolling(){
+  if (chatState.pollTimer) { clearInterval(chatState.pollTimer); chatState.pollTimer = null; }
+}
+function refreshChatHistory(){
+  var ref = chatState.openRef;
+  if (!ref) return Promise.resolve();
+  return api("/control/bot-chat-history?chat_id=" + encodeURIComponent(ref) + "&limit=100")
+    .then(function(d){
+      if (chatState.openRef !== ref) return;
+      chatState.history = pickArr(d, ["messages", "history"]);
+      var mode = d.mode || (d.conversation && d.conversation.mode) || "";
+      if (mode) chatState.mode = mode;
+      var box = $("chatHistory");
+      if (box) box.innerHTML = chatHistoryHtml();
+      var line = $("chatModeLine");
+      if (line) line.innerHTML = chatModeText();
+    })
+    .catch(function(){ /* تحديث صامت: الفشل المؤقت ما يزعجش الكتابة */ });
+}
+function chatModeText(){
+  return chatState.mode === "human"
+    ? 'وضع الرد: <b>الأدمن بيرد</b> — البوت ساكت في المحادثة دي.'
+    : 'وضع الرد: <b>البوت بيرد</b> تلقائيًا.';
+}
+function chatHistoryHtml(){
+  var list = chatState.history;
+  if (!list.length) return '<div class="sub" style="color:var(--muted)">مفيش رسائل مسجلة.</div>';
+  var html = "";
+  list.forEach(function(m){
+    var sender = m.sender || (m.direction === "in" ? "customer" : "bot");
+    var cls = sender === "customer" ? "cust" : (sender === "bot" ? "botm" : "ours");
+    var when = relTime(m.created_at);
+    html += '<div class="bubble ' + cls + '"><span class="who">' +
+      esc(CHAT_SENDER[sender] || sender) + (when ? " · " + esc(when) : "") + "</span>" +
+      esc(m.body || m.text || "") + "</div>";
+  });
+  return html;
+}
+function renderChatScreen(){
+  var scr = $("chatScreen");
+  var ref = chatState.openRef;
+  var html = '<button class="btn secondary back" type="button" id="chatBack">رجوع لقائمة المحادثات</button>';
+  html += '<section class="card"><h2>محادثة عميل <b class="num">' + esc(ref) + "</b></h2>" +
+    '<div class="sub" id="chatModeLine">' + chatModeText() + "</div>" +
+    '<div class="row-actions">' +
+    '<button class="btn small" type="button" id="chatFileBtn">ملف العميل</button>' +
+    (chatState.mode === "human"
+      ? '<button class="btn ghost small" type="button" data-chat-mode="release">إرجاع الرد للبوت</button>'
+      : '<button class="btn small" type="button" data-chat-mode="takeover">استلام المحادثة</button>') +
+    '<button class="btn danger small" type="button" data-chat-mode="end">إنهاء المحادثة</button>' +
+    "</div></section>";
+  html += '<section class="card"><h2>الرسائل</h2><div id="chatHistory">' + chatHistoryHtml() + "</div></section>";
+  html += '<section class="card"><h2>ابعت رسالة</h2>' +
+    '<div class="field"><textarea id="chatSendBody" rows="3" placeholder="اكتب ردك للعميل"></textarea></div>' +
+    '<button class="btn" type="button" id="chatSendBtn">إرسال</button>' +
+    '<div class="row-actions"><button class="btn ghost small" type="button" id="chatSavedBtn">ردود جاهزة</button></div>' +
+    '<div id="savedWrap"></div>' +
+    '<div class="field" style="margin-top:12px"><label>أو ابعت بطاقة منتج — رقم المنتج في البوت</label><input id="chatGiveId" type="text"></div>' +
+    '<button class="btn secondary" type="button" id="chatGiveBtn">ابعت بطاقة المنتج</button>' +
+    '<div class="sub" style="color:var(--muted); margin-top:10px; font-size:13px;">المحادثة بتتحدث تلقائيًا كل كام ثانية — الرسائل الجديدة هتظهر هنا لوحدها.</div>' +
+    "</section>";
+  scr.innerHTML = html;
+  $("chatBack").addEventListener("click", closeChat);
+  $("chatFileBtn").addEventListener("click", function(){
+    stopChatPolling();
+    showView("customers");
+    openCustomer("bot", { ref: ref });
+  });
+  scr.querySelectorAll("[data-chat-mode]").forEach(function(b){
+    b.addEventListener("click", function(){ chatModeAction(b.getAttribute("data-chat-mode")); });
+  });
+  $("chatSendBtn").addEventListener("click", sendChatMessage);
+  $("chatSavedBtn").addEventListener("click", toggleSavedReplies);
+  $("chatGiveBtn").addEventListener("click", sendChatGive);
+}
+function sendChatMessage(){
+  var ta = $("chatSendBody");
+  var text = ta.value.trim();
+  if (!text) { showChatMsg("err", "اكتب الرسالة الأول."); return; }
+  var btn = $("chatSendBtn");
+  btn.disabled = true;
+  api("/control/bot-chat-send", { method: "POST", body: {
+    chat_id: chatState.openRef, text: text } })
+    .then(function(){
+      ta.value = "";
+      showChatMsg("ok", "اتبعتت الرسالة للعميل.");
+      return refreshChatHistory();
+    })
+    .catch(function(e){ showChatMsg("err", errText(e, "chat")); })
+    .finally(function(){ btn.disabled = false; });
+}
+function chatModeAction(action){
+  var ref = chatState.openRef;
+  if (action === "end") {
+    var body = '<div class="preview">إنهاء المحادثة مع العميل <b class="num">' + esc(ref) + '</b>؟ المحادثة هتتقفل، والعميل لو بعت تاني هيبدأ محادثة جديدة والبوت هيرد عليه.</div>';
+    openActSheet("إنهاء المحادثة", body, "أنهي المحادثة", function(){
+      return api("/control/bot-chat-mode", { method: "POST", body: {
+        chat_id: ref, action: "end" } })
+        .then(function(){ showChatMsg("ok", "انتهت المحادثة."); closeChat(); });
+    }, "chat");
+    return;
+  }
+  api("/control/bot-chat-mode", { method: "POST", body: {
+    chat_id: ref, action: action } })
+    .then(function(){
+      chatState.mode = action === "takeover" ? "human" : "bot";
+      showChatMsg("ok", action === "takeover"
+        ? "استلمت المحادثة — البوت هيسكت وانت اللي هترد."
+        : "رجع الرد للبوت.");
+      var draftEl = $("chatSendBody");
+      var draft = draftEl ? draftEl.value : "";
+      renderChatScreen();
+      if ($("chatSendBody")) $("chatSendBody").value = draft;
+      refreshChatHistory();
+    })
+    .catch(function(e){ showChatMsg("err", errText(e, "chat")); });
+}
+function toggleSavedReplies(){
+  var wrap = $("savedWrap");
+  if (wrap.innerHTML) { wrap.innerHTML = ""; return; }
+  if (chatState.saved) { renderSavedReplies(); return; }
+  wrap.innerHTML = '<div class="sub" style="color:var(--muted)">بيحمّل الردود الجاهزة…</div>';
+  api("/control/bot-saved-replies").then(function(d){
+    chatState.saved = pickArr(d, ["replies", "saved_replies", "items"]);
+    renderSavedReplies();
+  }).catch(function(e){
+    wrap.innerHTML = '<div class="sub" style="color:var(--red)">' + esc(errText(e, "chat")) + "</div>";
+  });
+}
+function savedReplyText(r){
+  if (typeof r === "string") return r;
+  return r.text || r.body || r.title || "";
+}
+function renderSavedReplies(){
+  var wrap = $("savedWrap");
+  var list = chatState.saved || [];
+  if (!list.length) {
+    wrap.innerHTML = '<div class="sub" style="color:var(--muted)">مفيش ردود جاهزة.</div>';
+    return;
+  }
+  var html = '<div class="menu-list">';
+  list.forEach(function(r, i){
+    html += '<button class="btn secondary" type="button" data-saved="' + i + '" style="text-align:right;">' +
+      esc(savedReplyText(r)) + "</button>";
+  });
+  html += "</div>";
+  wrap.innerHTML = html;
+  wrap.querySelectorAll("[data-saved]").forEach(function(b){
+    b.addEventListener("click", function(){
+      sendSavedReply(Number(b.getAttribute("data-saved")));
+    });
+  });
+}
+function sendSavedReply(index){
+  var r = (chatState.saved || [])[index];
+  var text = savedReplyText(r);
+  var body = '<div class="preview">إرسال الرد الجاهز ده للعميل <b class="num">' + esc(chatState.openRef) + '</b>؟<br>' + esc(text) + "</div>";
+  openActSheet("إرسال رد جاهز", body, "ابعت الرد", function(){
+    return api("/control/bot-chat-send-saved", { method: "POST", body: {
+      chat_id: chatState.openRef, index: index } })
+      .then(function(){
+        showChatMsg("ok", "اتبعت الرد الجاهز.");
+        return refreshChatHistory();
+      });
+  }, "chat");
+}
+function sendChatGive(){
+  var pid = $("chatGiveId").value.trim();
+  if (!pid) { showChatMsg("err", "اكتب رقم المنتج الأول."); return; }
+  api("/control/bot-chat-give", { method: "POST", body: {
+    chat_id: chatState.openRef, product_id: pid } })
+    .then(function(){
+      $("chatGiveId").value = "";
+      showChatMsg("ok", "اتبعتت بطاقة المنتج للعميل.");
+      return refreshChatHistory();
+    })
+    .catch(function(e){ showChatMsg("err", errText(e, "chat")); });
+}
 
 load();
 </script>

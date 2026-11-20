@@ -58,6 +58,11 @@ import {
   GoTrueAdminClient,
   handleControlCustomerControlRequest,
 } from "./control/customer-control.ts";
+import {
+  type ControlOrdersDeps,
+  handleControlOrdersRequest,
+  PostgrestControlOrdersClient,
+} from "./control/orders.ts";
 import { bridgeBaseUrl } from "./sheerid/config.ts";
 import { makeAdminChecker, tokenEquals } from "./admin_auth.ts";
 
@@ -329,6 +334,50 @@ function getControlCustomerControlDeps(): ControlCustomerControlDeps {
     logError,
   };
   return _controlCustomerControlDeps;
+}
+
+// ---------------------------------------------------------------------------
+// لوحة التحكم (المرحلة م٢): الطلبات + الطابور اليدوي + المحادثة
+// الحية — طلبات/مهام/محادثات البوت بتمرير خادمي لنقاطه الداخلية،
+// وطلبات الموقع من قاعدة المتجر نفسها مع تغيير حالة مضبوط ومتدقق
+// في سجل البوت. اعتماد الجسر والمصادقة زي م١-أ/ب/ج بالظبط.
+// ---------------------------------------------------------------------------
+let _controlOrdersDeps: ControlOrdersDeps | null = null;
+function getControlOrdersDeps(): ControlOrdersDeps {
+  if (_controlOrdersDeps) return _controlOrdersDeps;
+  const env = (n: string) => Deno.env.get(n) || "";
+  const bridgeTokenOf = async (): Promise<string> => {
+    const fromEnv = env("SHEERID_BRIDGE_TOKEN");
+    if (fromEnv) return fromEnv;
+    try {
+      const key = env("SUPABASE_SERVICE_ROLE_KEY");
+      const res = await fetch(
+        `${SB_URL}/rest/v1/backend_config?key=eq.sheerid_bridge_token&select=value`,
+        { headers: { apikey: key, Authorization: `Bearer ${key}` } },
+      );
+      if (!res.ok) return "";
+      const rows = await res.json();
+      return (Array.isArray(rows) && rows[0]?.value)
+        ? String(rows[0].value)
+        : "";
+    } catch {
+      return "";
+    }
+  };
+  _controlOrdersDeps = {
+    client: new PostgrestControlOrdersClient({
+      baseUrl: SB_URL,
+      keyOf: () => env("SUPABASE_SERVICE_ROLE_KEY"),
+    }),
+    botClient: new BridgeBotControlProxyClient({
+      baseUrlOf: () => bridgeBaseUrl((n) => Deno.env.get(n)),
+      bridgeTokenOf,
+    }),
+    isAdmin,
+    corsOf: (r: Request) => corsHeaders(r),
+    logError,
+  };
+  return _controlOrdersDeps;
 }
 
 // ---------------------------------------------------------------------------
@@ -1849,6 +1898,11 @@ Deno.serve(async (req: Request) => {
         getControlCustomerControlDeps(),
       );
       if (flagsRes) return flagsRes;
+      const ordersRes = await handleControlOrdersRequest(
+        req,
+        getControlOrdersDeps(),
+      );
+      if (ordersRes) return ordersRes;
     } catch (e) {
       logError("control.customers.route", "unhandled customers route error", e);
     }
