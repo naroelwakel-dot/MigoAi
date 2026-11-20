@@ -708,11 +708,11 @@ $("custQ").addEventListener("keydown", function(ev){
 });
 
 // ---------------- ملف العميل ----------------
-var custFile = { bot: null, store: null, botRef: "", storeId: "", storeEmail: "" };
+var custFile = { bot: null, store: null, botRef: "", storeId: "", storeEmail: "", control: null, storeBan: null };
 
 function openCustomer(surface, item){
   if (!item) return;
-  custFile = { bot: null, store: null, botRef: "", storeId: "", storeEmail: "" };
+  custFile = { bot: null, store: null, botRef: "", storeId: "", storeEmail: "", control: null, storeBan: null };
   hideCustMsg();
   var wrap = $("custFile");
   wrap.classList.remove("hidden");
@@ -721,7 +721,13 @@ function openCustomer(surface, item){
   if (surface === "bot") {
     custFile.botRef = String(item.ref || "");
     api("/control/bot-customer?ref=" + encodeURIComponent(custFile.botRef))
-      .then(function(d){ custFile.bot = d; renderFile(); })
+      .then(function(d){
+        custFile.bot = d;
+        return api("/control/bot-customer-control?ref=" + encodeURIComponent(custFile.botRef))
+          .then(function(c){ custFile.control = c; })
+          .catch(function(){ custFile.control = { error: true }; });
+      })
+      .then(function(){ renderFile(); })
       .catch(function(e){ fileLoadError(e); });
   } else {
     custFile.storeId = String(item.id || item.customer_id || "");
@@ -734,8 +740,12 @@ function openCustomer(surface, item){
         custFile.store = d;
         if (d.customer && d.customer.id) custFile.storeId = String(d.customer.id);
         if (d.customer && d.customer.email) custFile.storeEmail = String(d.customer.email);
-        renderFile();
+        if (!custFile.storeId) return null;
+        return api("/control/store-customer-ban?customer_id=" + encodeURIComponent(custFile.storeId))
+          .then(function(b){ custFile.storeBan = b; })
+          .catch(function(){ custFile.storeBan = { error: true }; });
       })
+      .then(function(){ renderFile(); })
       .catch(function(e){ fileLoadError(e); });
   }
 }
@@ -972,7 +982,9 @@ function renderFile(){
   html += "</section>";
 
   html += walletCardHtml("bot");
+  html += customerControlHtml();
   html += walletCardHtml("store");
+  html += storeBanHtml();
   html += botTopupsHtml();
   html += storeTopupsHtml();
   html += botLedgerHtml();
@@ -987,7 +999,7 @@ function renderFile(){
   $("fileBack").addEventListener("click", function(){
     wrap.classList.add("hidden");
     wrap.innerHTML = "";
-    custFile = { bot: null, store: null, botRef: "", storeId: "", storeEmail: "" };
+    custFile = { bot: null, store: null, botRef: "", storeId: "", storeEmail: "", control: null, storeBan: null };
     $("custSearchCard").scrollIntoView({ behavior: "smooth", block: "start" });
   });
   wrap.querySelectorAll("[data-adjust]").forEach(function(b){
@@ -1017,6 +1029,214 @@ function renderFile(){
       openStoreReverse(custFile.store.transactions[Number(b.getAttribute("data-sreverse"))]);
     });
   });
+  wrap.querySelectorAll("[data-flag]").forEach(function(b){
+    b.addEventListener("click", function(){
+      openFlagSheet(b.getAttribute("data-flag"), b.getAttribute("data-flag-value") === "1");
+    });
+  });
+  var hb = wrap.querySelector("[data-hold-new]");
+  if (hb) hb.addEventListener("click", openHoldSheet);
+  wrap.querySelectorAll("[data-hold-release]").forEach(function(b){
+    b.addEventListener("click", function(){
+      openHoldRelease(custFile.control.holds[Number(b.getAttribute("data-hold-release"))]);
+    });
+  });
+  var nb = wrap.querySelector("[data-note-new]");
+  if (nb) nb.addEventListener("click", openNoteSheet);
+  var tb = wrap.querySelector("[data-tag-new]");
+  if (tb) tb.addEventListener("click", openTagSheet);
+  wrap.querySelectorAll("[data-tag-del]").forEach(function(b){
+    b.addEventListener("click", function(){
+      api("/control/bot-customer-tag", { method: "POST", body: {
+        customer_ref: custFile.botRef, tag: b.getAttribute("data-tag-del"), op: "remove" } })
+        .then(reloadControl)
+        .then(function(){ showCustMsg("ok", "اتشال الوسم."); })
+        .catch(function(e){ showCustMsg("err", errText(e, "file")); });
+    });
+  });
+  var lb = wrap.querySelector("[data-link-new]");
+  if (lb) lb.addEventListener("click", openLinkSheet);
+  var ub = wrap.querySelector("[data-link-del]");
+  if (ub) ub.addEventListener("click", openUnlinkSheet);
+  var sb = wrap.querySelector("[data-store-ban]");
+  if (sb) sb.addEventListener("click", function(){
+    openStoreBanSheet(sb.getAttribute("data-store-ban") === "1");
+  });
+}
+
+// ---------------- التحكم في العميل (م١-ج) ----------------
+function reloadControl(){
+  if (!custFile.botRef) return Promise.resolve();
+  return api("/control/bot-customer-control?ref=" + encodeURIComponent(custFile.botRef))
+    .then(function(c){ custFile.control = c; renderFile(); });
+}
+function reloadStoreBan(){
+  if (!custFile.storeId) return Promise.resolve();
+  return api("/control/store-customer-ban?customer_id=" + encodeURIComponent(custFile.storeId))
+    .then(function(b){ custFile.storeBan = b; renderFile(); })
+    .catch(function(){ custFile.storeBan = { error: true }; renderFile(); });
+}
+var FLAG_DEFS = [
+  ["wallet_frozen", "تجميد المحفظة", "العميل مش هيقدر يصرف ولا يشتري، بس الفلوس اللي توصله بتتضاف عادي."],
+  ["purchase_blocked", "منع الشراء", "المحفظة شغالة شحن وتحويل، والشراء بس هو اللي واقف."],
+  ["bot_banned", "حظر البوت", "البوت مش هيرد على العميل خالص غير برسالة الحظر."]
+];
+function customerControlHtml(){
+  if (!custFile.bot) return "";
+  var c = custFile.control;
+  var html = '<section class="card"><h2>التحكم في العميل</h2>';
+  if (!c) { html += '<div class="sub">بيحمّل بيانات التحكم…</div></section>'; return html; }
+  if (c.error) { html += '<div class="sub">تعذّر تحميل بيانات التحكم. حدّث الصفحة وحاول تاني.</div></section>'; return html; }
+  var f = c.flags || {};
+  FLAG_DEFS.forEach(function(def){
+    var on = !!f[def[0]];
+    html += '<div class="sub" style="display:flex;justify-content:space-between;align-items:center;gap:8px">' +
+      '<span><b>' + esc(def[1]) + '</b>' + (on ? ' <span class="status-txt st-bad">مفعّل</span>' : '') +
+      '<br><span style="color:var(--muted)">' + esc(def[2]) + '</span></span>' +
+      '<button class="btn ' + (on ? 'secondary' : 'danger') + '" type="button" data-flag="' + def[0] + '" data-flag-value="' + (on ? '0' : '1') + '">' + (on ? 'إيقاف' : 'تفعيل') + '</button></div>';
+  });
+  html += '<div class="sub">الرصيد: <b class="num">' + fmtNum(egpFromMinor(c.balance_minor)) + ' ج.م</b>' +
+    ' · المعلّق: <b class="num">' + fmtNum(egpFromMinor(c.held_minor)) + ' ج.م</b>' +
+    ' · المتاح للصرف: <b class="num">' + fmtNum(egpFromMinor(c.available_minor)) + ' ج.م</b></div>';
+  html += '<button class="btn secondary" type="button" data-hold-new>علّق مبلغ من الرصيد</button>';
+  (c.holds || []).forEach(function(h, i){
+    html += '<div class="sub" style="display:flex;justify-content:space-between;align-items:center;gap:8px">' +
+      '<span>معلّق <b class="num">' + fmtNum(egpFromMinor(h.amount_minor)) + ' ج.م</b> — ' + esc(h.reason || '') + '</span>' +
+      '<button class="btn secondary" type="button" data-hold-release="' + i + '">فكّ التعليق</button></div>';
+  });
+  html += '<div class="sub" style="margin-top:10px"><b>الوسوم:</b> ' +
+    ((c.tags && c.tags.length) ? c.tags.map(function(t){
+      return '<span class="badge bot">' + esc(t) + ' <a href="#" data-tag-del="' + esc(t) + '" style="color:inherit">✕</a></span>';
+    }).join(' ') : 'مفيش وسوم') +
+    ' <button class="btn secondary" type="button" data-tag-new>أضف وسم</button></div>';
+  html += '<div class="sub"><b>حساب الموقع المرتبط:</b> ' +
+    (c.link ? '<span class="num">' + esc(c.link.store_customer_id) + '</span> <button class="btn secondary" type="button" data-link-del>فكّ الربط</button>'
+            : 'مش مربوط <button class="btn secondary" type="button" data-link-new>اربط حساب موقع</button>') + '</div>';
+  html += '<div class="sub" style="margin-top:10px"><b>ملاحظات:</b></div>';
+  (c.notes || []).forEach(function(n){
+    html += '<div class="sub">• ' + esc(n.body) + ' <span style="color:var(--muted)">(' + esc(relTime(n.created_at) || '') + ')</span></div>';
+  });
+  html += '<button class="btn secondary" type="button" data-note-new>أضف ملاحظة</button>';
+  html += "</section>";
+  return html;
+}
+function storeBanHtml(){
+  if (!custFile.store) return "";
+  var b = custFile.storeBan;
+  var html = '<section class="card"><h2>حظر حساب الموقع</h2>';
+  if (!b) { html += '<div class="sub">بيحمّل حالة الحظر…</div></section>'; return html; }
+  if (b.error) { html += '<div class="sub">تعذّر قراءة حالة الحظر.</div></section>'; return html; }
+  if (b.banned) {
+    html += '<div class="sub">الحساب <b>محظور</b> من تسجيل الدخول للموقع (لحد ' + esc(String(b.banned_until || '').slice(0, 10)) + ').</div>' +
+      '<button class="btn secondary" type="button" data-store-ban="0">فكّ حظر الموقع</button>';
+  } else {
+    html += '<div class="sub">الحساب مش محظور.</div>' +
+      '<button class="btn danger" type="button" data-store-ban="1">احظر حساب الموقع</button>';
+  }
+  html += "</section>";
+  return html;
+}
+function openFlagSheet(flag, turnOn){
+  var def = FLAG_DEFS.filter(function(d){ return d[0] === flag; })[0];
+  if (!def) return;
+  var body = '<div class="preview">' + (turnOn ? 'تفعيل' : 'إيقاف') + ' «' + esc(def[1]) + '» لعميل البوت <b class="num">' + esc(custFile.botRef) + '</b><br>' + esc(def[2]) + '</div>' +
+    '<div class="field"><label>السبب (اختياري)</label><input id="flagReason" type="text"></div>';
+  openActSheet((turnOn ? 'تفعيل ' : 'إيقاف ') + def[1], body, 'تنفيذ', function(){
+    return api("/control/bot-customer-flag-set", { method: "POST", body: {
+      customer_ref: custFile.botRef, flag: flag, value: turnOn,
+      reason: $("flagReason").value.trim() } })
+      .then(reloadControl)
+      .then(function(){ showCustMsg("ok", "اتنفذ: " + def[1] + (turnOn ? " اتفعّل." : " اتوقف.")); });
+  }, "file");
+}
+function openHoldSheet(){
+  var c = custFile.control || {};
+  var body = '<div class="preview">التعليق بيقلّل «المتاح للصرف» بس — الرصيد نفسه ما بيتحركش.<br>الرصيد الحالي: <b class="num">' + fmtNum(egpFromMinor(c.balance_minor)) + ' ج.م</b></div>' +
+    '<div class="field"><label>المبلغ (ج.م)</label><input id="holdAmt" type="number" min="0" step="0.01"></div>' +
+    '<div class="field"><label>السبب (مطلوب)</label><input id="holdReason" type="text"></div>';
+  var ctx = openActSheet("تعليق مبلغ", body, "علّق المبلغ", function(){
+    var amt = Number($("holdAmt").value);
+    var reason = $("holdReason").value.trim();
+    if (!(amt > 0)) failValidation("اكتب مبلغ صح أكبر من صفر.");
+    if (!reason) failValidation("لازم تكتب سبب التعليق.");
+    return api("/control/bot-wallet-hold", { method: "POST", body: {
+      customer_ref: custFile.botRef, amount_egp: amt, reason: reason,
+      idempotency_key: ctx.idem } })
+      .then(reloadControl)
+      .then(function(){ showCustMsg("ok", "اتعلّق المبلغ. المتاح للصرف قلّ بنفس القيمة."); });
+  }, "file");
+}
+function openHoldRelease(hold){
+  if (!hold) return;
+  var body = '<div class="preview">فكّ تعليق <b class="num">' + fmtNum(egpFromMinor(hold.amount_minor)) + ' ج.م</b>؟ المبلغ هيرجع متاح للصرف فورًا.</div>' +
+    '<div class="field"><label>ملحوظة (اختياري)</label><input id="relReason" type="text"></div>';
+  openActSheet("فكّ التعليق", body, "فكّ التعليق", function(){
+    return api("/control/bot-wallet-hold-release", { method: "POST", body: {
+      customer_ref: custFile.botRef, hold_id: hold.id,
+      reason: $("relReason").value.trim() } })
+      .then(reloadControl)
+      .then(function(){ showCustMsg("ok", "اتفكّ التعليق."); });
+  }, "file");
+}
+function openNoteSheet(){
+  var body = '<div class="field"><label>الملاحظة</label><input id="noteBody" type="text"></div>' +
+    '<div class="preview">الملاحظات بتتضاف بس ومش بتتمسح — دي سجل داخلي عن العميل.</div>';
+  openActSheet("إضافة ملاحظة", body, "أضف", function(){
+    var text = $("noteBody").value.trim();
+    if (!text) failValidation("اكتب الملاحظة الأول.");
+    return api("/control/bot-customer-note-add", { method: "POST", body: {
+      customer_ref: custFile.botRef, body: text } })
+      .then(reloadControl)
+      .then(function(){ showCustMsg("ok", "اتضافت الملاحظة."); });
+  }, "file");
+}
+function openTagSheet(){
+  var body = '<div class="field"><label>الوسم</label><input id="tagBody" type="text"></div>';
+  openActSheet("إضافة وسم", body, "أضف", function(){
+    var tag = $("tagBody").value.trim();
+    if (!tag) failValidation("اكتب الوسم الأول.");
+    return api("/control/bot-customer-tag", { method: "POST", body: {
+      customer_ref: custFile.botRef, tag: tag, op: "add" } })
+      .then(reloadControl)
+      .then(function(){ showCustMsg("ok", "اتضاف الوسم."); });
+  }, "file");
+}
+function openLinkSheet(){
+  var body = '<div class="field"><label>رقم حساب الموقع (UUID)</label><input id="linkId" type="text"></div>' +
+    '<div class="preview">الربط بيخلي ملف العميل يعرض حساب الموقع المرتبط جنب حساب البوت. الرقم بيظهر في ملف عميل الموقع نفسه.</div>';
+  openActSheet("ربط حساب موقع", body, "اربط", function(){
+    var id = $("linkId").value.trim();
+    if (!id) failValidation("اكتب رقم حساب الموقع.");
+    return api("/control/bot-customer-link", { method: "POST", body: {
+      customer_ref: custFile.botRef, op: "link", store_customer_id: id } })
+      .then(reloadControl)
+      .then(function(){ showCustMsg("ok", "اتربط حساب الموقع."); });
+  }, "file");
+}
+function openUnlinkSheet(){
+  var body = '<div class="preview">فكّ ربط حساب الموقع من عميل البوت ده؟ الفلوس والحسابات نفسها مش هتتأثر — ده فكّ عرض موحّد بس.</div>';
+  openActSheet("فكّ الربط", body, "فكّ الربط", function(){
+    return api("/control/bot-customer-link", { method: "POST", body: {
+      customer_ref: custFile.botRef, op: "unlink" } })
+      .then(reloadControl)
+      .then(function(){ showCustMsg("ok", "اتفكّ الربط."); });
+  }, "file");
+}
+function openStoreBanSheet(ban){
+  var body = '<div class="preview">' + (ban
+    ? 'حظر حساب الموقع <b>' + esc(custFile.storeEmail || custFile.storeId) + '</b>؟ العميل مش هيقدر يسجّل دخول للموقع خالص لحد ما تفكّ الحظر.'
+    : 'فكّ حظر حساب الموقع <b>' + esc(custFile.storeEmail || custFile.storeId) + '</b>؟ العميل هيرجع يقدر يسجّل دخول.') + '</div>' +
+    '<div class="field"><label>السبب (اختياري)</label><input id="banReason" type="text"></div>';
+  openActSheet(ban ? "حظر حساب الموقع" : "فكّ حظر الموقع", body, ban ? "احظر" : "فكّ الحظر", function(){
+    return api("/control/store-customer-ban", { method: "POST", body: {
+      customer_id: custFile.storeId, banned: ban,
+      reason: $("banReason").value.trim() } })
+      .then(function(r){
+        if (r && r.audit_failed) showCustMsg("err", "الحظر اتنفذ بس تسجيله في سجل التدقيق فشل — خد بالك.");
+        return reloadStoreBan();
+      })
+      .then(function(){ showCustMsg("ok", ban ? "اتحظر حساب الموقع." : "اتفكّ حظر الموقع."); });
+  }, "file");
 }
 
 // ---------------- قرار شحنة ----------------
