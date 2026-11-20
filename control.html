@@ -194,6 +194,13 @@
   .cnt-chips{display:flex; gap:8px; flex-wrap:wrap;}
   .cnt-chips .chip{background:var(--surface2); border:1px solid var(--border); border-radius:999px; padding:5px 12px; font-size:13px; font-weight:600;}
   .cnt-chips .chip b{font-weight:700;}
+  .cnt-chips button.chip{cursor:pointer; font:inherit; color:inherit;}
+  .cnt-chips button.chip.on{border-color:var(--gold); background:#3A2E10;}
+  .badge{display:inline-block; border:1px solid var(--border); border-radius:999px; padding:2px 10px; font-size:12px; font-weight:700;}
+  .badge.gold{border-color:var(--gold); color:var(--gold);}
+  .badge.ok{border-color:#2E7D4F; color:#7BD88F;}
+  .badge.warn{border-color:#8A6D1F; color:var(--amber);}
+  .badge.mut{color:var(--muted);}
 </style>
 </head>
 <body>
@@ -387,6 +394,61 @@
     <div class="sub" style="color:var(--muted); font-size:13px;">مفاتيح موردين ظاهرة في سجل مصدر الأسعار ومفيش مورد في المحرك بنفس المفتاح.</div>
     <div id="registryKeysBody" style="margin-top:8px;"></div>
   </section>
+</main>
+
+<main id="eventsMain" class="hidden">
+  <div class="msg" id="eventsMsg"></div>
+
+  <section class="card">
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
+      <h2 style="margin:0;">الأحداث والمكونات</h2>
+      <span class="badge gold">تسجيل فقط</span>
+    </div>
+    <div class="sub" id="eventsPeriodLine" style="color:var(--muted); font-size:13px; margin-top:6px;">في فترة التسجيل دي الأحداث بتتجمع وبتتعرض هنا، والشحن التلقائي شغال بمساراته الحالية زي ما هو — أي اعتماد من هنا بيتم يدويًا وبقرارك.</div>
+    <div class="seg" id="eventsTabs" style="margin-top:12px;">
+      <button type="button" data-evtab="events" class="on">الأحداث</button>
+      <button type="button" data-evtab="components">المكونات</button>
+    </div>
+  </section>
+
+  <div id="eventsTabEvents">
+    <section class="card">
+      <h2>صندوق الأحداث</h2>
+      <div class="sub" style="color:var(--muted); font-size:13px;">أحداث فلوس الموقع (رسائل وإشعارات وإيداعات منصات) وشحنات البوت المعلّقة والمقررة، في خط زمني واحد من الأحدث للأقدم.</div>
+      <div class="cnt-chips" id="evSourceChips" style="margin-top:10px;"></div>
+      <div class="seg" id="evStatusSeg" style="margin-top:10px;">
+        <button type="button" data-evstatus="" class="on">الكل</button>
+        <button type="button" data-evstatus="pending">ينتظر</button>
+        <button type="button" data-evstatus="done">تم</button>
+        <button type="button" data-evstatus="ignored">متجاهل</button>
+      </div>
+      <div class="search-row" style="margin-top:10px;">
+        <input id="evQ" type="text" placeholder="ابحث برقم العملية أو نص الرسالة">
+        <button class="btn secondary" id="evSearchBtn" type="button">ابحث</button>
+      </div>
+      <div id="evTimeline" style="margin-top:6px;"></div>
+      <div class="row-actions" style="margin-top:10px;">
+        <button class="btn secondary" id="evReloadBtn" type="button">تحديث</button>
+        <button class="btn ghost" id="evPasteBtn" type="button">ألصق رسالة</button>
+        <button class="btn ghost" id="evExclusionsBtn" type="button">الكلمات المستبعدة</button>
+      </div>
+    </section>
+  </div>
+
+  <div id="eventsTabComponents" class="hidden">
+    <section class="card">
+      <h2>المكونات</h2>
+      <div class="sub" style="color:var(--muted); font-size:13px;">حالة كل مكوّن بيستقبل فلوس أو رسائل: آخر مرة اشتغل، ومفاتيح تشغيل ممرات البوت.</div>
+      <div id="evComponents" style="margin-top:6px;"></div>
+      <button class="btn secondary" id="evCompReloadBtn" type="button" style="margin-top:10px;">تحديث المكونات</button>
+    </section>
+
+    <section class="card">
+      <h2>تقرير المطابقة</h2>
+      <div class="sub" style="color:var(--muted); font-size:13px;">عدّادات المطابقة في فترة التسجيل: قد إيه اتطابق واتشحن، وقد إيه لسه بينتظر — دي الأرقام اللي هيتقرر على أساسها تشغيل المطابقة التلقائية بعد الفترة.</div>
+      <div id="evMatchReport" style="margin-top:6px;"></div>
+    </section>
+  </div>
 </main>
 
 <div class="sheet-veil" id="sheetVeil"></div>
@@ -620,11 +682,11 @@ function load(){
 $("refreshBtn").addEventListener("click", load);
 $("storePill").addEventListener("click", load);
 
-// التنقل السفلي: الرئيسية والعملاء والطلبات والمحادثات شغالين،
-// و«المزيد» فيها أسعار الموقع (م٣) والكتالوج والموردون (م٣-ب) —
-// والأحداث لسه في مرحلة جاية، من غير شاشات وهمية.
+// التنقل السفلي: الرئيسية والعملاء والطلبات والمحادثات والأحداث
+// شغالين، و«المزيد» فيها أسعار الموقع (م٣) والكتالوج والموردون
+// (م٣-ب) والأحداث والمكونات (م٤).
 var navNames = { events: "الأحداث", more: "المزيد" };
-var viewTitles = { home: "مهامي الآن", customers: "العملاء", orders: "الطلبات", chats: "المحادثات", prices: "أسعار الموقع", catalog: "الكتالوج", suppliers: "الموردون" };
+var viewTitles = { home: "مهامي الآن", customers: "العملاء", orders: "الطلبات", chats: "المحادثات", prices: "أسعار الموقع", catalog: "الكتالوج", suppliers: "الموردون", events: "الأحداث والمكونات" };
 function showView(name){
   $("homeMain").classList.toggle("hidden", name !== "home");
   $("customersMain").classList.toggle("hidden", name !== "customers");
@@ -633,6 +695,7 @@ function showView(name){
   $("pricesMain").classList.toggle("hidden", name !== "prices");
   $("catalogMain").classList.toggle("hidden", name !== "catalog");
   $("suppliersMain").classList.toggle("hidden", name !== "suppliers");
+  $("eventsMain").classList.toggle("hidden", name !== "events");
   $("pageTitle").textContent = viewTitles[name] || "";
   document.querySelectorAll("#bottomNav button").forEach(function(b){
     var nav = b.getAttribute("data-nav");
@@ -649,6 +712,7 @@ document.querySelectorAll("#bottomNav button").forEach(function(b){
     if (nav === "customers") { showView("customers"); ensureMoneyLoaded(); return; }
     if (nav === "orders") { showView("orders"); ensureOrdersLoaded(); return; }
     if (nav === "chats") { showView("chats"); ensureChatsLoaded(); return; }
+    if (nav === "events") { showView("events"); ensureEventsLoaded(); return; }
     if (nav === "more") {
       $("sheetTitle").textContent = "المزيد";
       $("sheetBody").innerHTML =
@@ -656,8 +720,8 @@ document.querySelectorAll("#bottomNav button").forEach(function(b){
         '<button class="btn" id="morePricesBtn" type="button">أسعار الموقع</button>' +
         '<button class="btn" id="moreCatalogBtn" type="button">الكتالوج</button>' +
         '<button class="btn" id="moreSuppliersBtn" type="button">الموردون</button>' +
-        "</div>" +
-        "<small>قسم الأحداث هيتبني في مرحلته الجاية من خطة اللوحة.</small>";
+        '<button class="btn" id="moreEventsBtn" type="button">الأحداث والمكونات</button>' +
+        "</div>";
       $("sheet").classList.add("open");
       $("sheetVeil").classList.add("open");
       $("morePricesBtn").addEventListener("click", function(){
@@ -674,6 +738,11 @@ document.querySelectorAll("#bottomNav button").forEach(function(b){
         closeSheet();
         showView("suppliers");
         ensureSuppliersLoaded();
+      });
+      $("moreEventsBtn").addEventListener("click", function(){
+        closeSheet();
+        showView("events");
+        ensureEventsLoaded();
       });
       return;
     }
@@ -783,6 +852,17 @@ function errText(e, ctx){
   if (code === "bad_reason") return "سبب التعديل طويل أو مش صحيح.";
   if (code === "setting_write_failed") return "الحفظ ما كملش — ما اتكتبش صف واحد زي ما هو مطلوب. حاول تاني.";
   if (code === "bad_query") return "بيانات البحث مش صحيحة.";
+  if (code === "event_consumed") return "الحدث ده اتستهلك خلاص — اتربط أو اتشحن بيه قبل كده، فمش هيتقبل عليه فعل تاني.";
+  if (code === "needs_target") return "الاعتماد محتاج هدف: اكتب معرّف مطالبة إيداع أو معرّف نية شحن في ورقة الاعتماد، وإلا الاعتماد مش هيتم.";
+  if (code === "bad_target") return "حدّد هدف واحد بس للاعتماد: معرّف مطالبة أو معرّف نية — مش الاتنين مع بعض.";
+  if (code === "bad_rail") return "منصة الإيداع دي مش معروفة — الحدث مش Binance ولا Bybit.";
+  if (code === "bad_event") return "الحدث مش موجود أو معرّفه مش صحيح.";
+  if (code === "bad_action") return "الفعل ده مش متاح للحدث ده بحالته الحالية.";
+  if (code === "bad_exclusions") return "قائمة الكلمات المستبعدة مش صحيحة — كلمة فاضية، أو أكتر من ٥٠ كلمة، أو كلمة أطول من ١٠٠ حرف.";
+  if (code === "bad_source") return "مصدر الحدث ده مش معروف.";
+  if (code === "bad_status") return "حالة الحدث دي مش معروفة.";
+  if (code === "bad_body") return "النص فاضي أو أطول من المسموح.";
+  if (code === "store_failed") return "قاعدة بيانات الموقع ما ردتش — ما اتغيّرش حاجة. حاول تاني بعد شوية.";
   if (code === "bot_unavailable" || (e && e.data && e.data.bot_unavailable))
     return "البوت مش بيرد دلوقتي — حاول تاني بعد شوية.";
   if (code === "not_found" || (e && e.status === 404))
@@ -4080,6 +4160,686 @@ function runSupplierLink(rowId, op, btn){
 
 $("supReloadBtn").addEventListener("click", loadSuppliers);
 $("registryNewBtn").addEventListener("click", function(){ openRegistrySheet(null); });
+
+// ============================================================
+// الأحداث والمكونات (م٤): صندوق موحّد فوق جداول أحداث الموقع
+// الحالية (رسائل/إشعارات/إيداعات) + شحنات البوت في خط زمني
+// واحد، وحالة المكونات ومفاتيح ممرات البوت، وتقرير مطابقة
+// فترة «تسجيل فقط». الأفعال بتتنفذ على الخادم فعلًا (اعتماد
+// عبر دوال القاعدة القائمة، تجاهل محروس، ربط عند البوت)،
+// ونجاحها بيظهر بس بعد رد سليم منه.
+// ============================================================
+
+var EV_SOURCE_LABELS = { sms: "رسالة بنك", app_notification: "إشعار تطبيق", binance: "Binance", bybit: "Bybit" };
+var EV_STATUS_LABELS = { pending: "ينتظر", done: "تم", ignored: "متجاهل", closed: "منتهي" };
+var EV_CONF_LABELS = { high: "ثقة عالية", medium: "ثقة متوسطة", low: "ثقة قليلة" };
+var EV_REPORT_LABELS = {
+  matched: "اتطابق واتشحن", auto_credited: "اتشحن تلقائي",
+  manually_approved: "اتعمد يدوي", linked: "اتربط يدوي",
+  unmatched: "لسه من غير مطابقة", pending: "بينتظر",
+  sms_matched: "رسائل اتطابقت", deposits_matched: "إيداعات اتطابقت",
+  total: "الإجمالي"
+};
+
+var evState = {
+  loaded: false, loading: false, tab: "events",
+  source: "", status: "", q: "",
+  items: [], counts: null, total: 0, storeFailed: false,
+  smsLast: null, depLast: {},
+  topups: [], topupsFailed: false, topupCounts: null, reloadQueued: false,
+  components: null, componentsFailed: false,
+  report: null, reportFailed: false,
+  exclusions: []
+};
+
+function showEventsMsg(kind, text){
+  var m = $("eventsMsg");
+  m.className = "msg " + kind;
+  m.textContent = text || "";
+}
+
+function loadEvents(){
+  if (evState.loading) { evState.reloadQueued = true; return Promise.resolve(); }
+  evState.loading = true;
+  var unauthorized = false;
+  var qs = "?limit=100" +
+    (evState.source && evState.source !== "bot_topups"
+      ? "&source=" + encodeURIComponent(evState.source) : "") +
+    (evState.status ? "&status=" + encodeURIComponent(evState.status) : "") +
+    (evState.q ? "&q=" + encodeURIComponent(evState.q) : "");
+  var pStore = api("/control/store-events" + qs).then(function(d){
+    evState.items = Array.isArray(d.items) ? d.items : [];
+    evState.counts = d.counts || null;
+    evState.total = Number(d.total) || 0;
+    evState.smsLast = d.sms_last_ingested_at || null;
+    evState.depLast = d.deposit_last || {};
+    evState.storeFailed = false;
+  }).catch(function(e){
+    if (e && e.status === 401) { unauthorized = true; return; }
+    if (e && e.noKey) return;
+    evState.storeFailed = true;
+    evState.items = [];
+  });
+  var pTop = api("/control/bot-events-topups?limit=100" +
+    (evState.q ? "&q=" + encodeURIComponent(evState.q) : "")).then(function(d){
+    var arr = [d.topups, d.results, d.items, d.requests]
+      .find(function(v){ return Array.isArray(v); });
+    evState.topups = arr || [];
+    evState.topupCounts = d.counts || null;
+    evState.topupsFailed = false;
+  }).catch(function(e){
+    if (e && e.status === 401) { unauthorized = true; return; }
+    if (e && e.noKey) return;
+    evState.topups = [];
+    evState.topupsFailed = true;
+  });
+  var pComp = api("/control/bot-events-components").then(function(d){
+    evState.components = d;
+    evState.componentsFailed = false;
+  }).catch(function(e){
+    if (e && e.status === 401) { unauthorized = true; return; }
+    if (e && e.noKey) return;
+    evState.components = null;
+    evState.componentsFailed = true;
+  });
+  var pRep = api("/control/bot-events-match-report").then(function(d){
+    evState.report = d;
+    evState.reportFailed = false;
+  }).catch(function(e){
+    if (e && e.status === 401) { unauthorized = true; return; }
+    if (e && e.noKey) return;
+    evState.report = null;
+    evState.reportFailed = true;
+  });
+  return Promise.all([pStore, pTop, pComp, pRep]).then(function(){
+    evState.loading = false;
+    evState.loaded = true;
+    renderEventsHead();
+    renderSourceChips();
+    renderTimeline();
+    renderComponents();
+    renderMatchReport();
+    if (evState.reloadQueued) {
+      // فلتر اتغيّر أثناء التحميل: إعادة تحميل واحدة بالأحدث
+      // بدل ما العرض يفضل على الفلتر القديم.
+      evState.reloadQueued = false;
+      loadEvents();
+    }
+    if (unauthorized) {
+      showEventsMsg("err", "مفتاح الأدمن غلط أو مش مكتوب. اكتبه تاني عشان تكمل.");
+    }
+  });
+}
+function ensureEventsLoaded(){ if (!evState.loaded) loadEvents(); }
+
+function renderEventsHead(){
+  var d = evState.components;
+  if (!d) return;
+  var started = d.events_merge_started_at || d.merge_started_at ||
+    (d.merge && d.merge.started_at) ||
+    (d.period && d.period.started_at);
+  var ends = d.events_merge_ends_at || (d.period && d.period.ends_at) ||
+    (started
+      ? new Date(new Date(started).getTime() + 14 * 86400000).toISOString()
+      : null);
+  if (!started) return;
+  var line = "فترة التسجيل بدأت " +
+    new Date(started).toLocaleString("en-GB") + ".";
+  if (ends) {
+    var days = Math.ceil((new Date(ends).getTime() - Date.now()) / 86400000);
+    if (isFinite(days)) {
+      line += days > 0
+        ? " فاضل " + days + (days === 1 ? " يوم" : " يوم") + " على نهايتها."
+        : " الفترة خلصت — التقرير جاهز للمراجعة.";
+    }
+  }
+  $("eventsPeriodLine").textContent = line +
+    " الشحن التلقائي شغال بمساراته الحالية زي ما هو — أي اعتماد من هنا يدوي وبقرارك.";
+}
+
+function renderSourceChips(){
+  var box = $("evSourceChips");
+  var by = (evState.counts && evState.counts.by_source) || {};
+  var botTotal = evState.topupCounts
+    ? Object.keys(evState.topupCounts).reduce(function(s, k){
+        return s + (Number(evState.topupCounts[k]) || 0); }, 0)
+    : evState.topups.length;
+  var defs = [
+    ["", "الكل", (Number(evState.total) || 0) + botTotal],
+    ["sms", "رسائل", by.sms],
+    ["app_notification", "إشعارات", by.app_notification],
+    ["binance", "Binance", by.binance],
+    ["bybit", "Bybit", by.bybit],
+    ["bot_topups", "شحنات البوت", botTotal]
+  ];
+  box.innerHTML = defs.map(function(df){
+    return '<button type="button" class="chip' +
+      (evState.source === df[0] ? " on" : "") +
+      '" data-evsrc="' + df[0] + '">' + esc(df[1]) +
+      (df[2] === undefined || df[2] === null
+        ? "" : ' <b class="num">' + df[2] + "</b>") + "</button>";
+  }).join("");
+  box.querySelectorAll("[data-evsrc]").forEach(function(b){
+    b.addEventListener("click", function(){
+      evState.source = b.getAttribute("data-evsrc");
+      loadEvents();
+    });
+  });
+}
+
+function evStatusBadge(st){
+  var cls = st === "done" ? "ok" : st === "pending" ? "warn" : "mut";
+  return '<span class="badge ' + cls + '">' +
+    esc(EV_STATUS_LABELS[st] || st) + "</span>";
+}
+function evConfBadge(c){
+  var cls = c === "high" ? "ok" : c === "medium" ? "warn" : "mut";
+  return '<span class="badge ' + cls + '">' +
+    esc(EV_CONF_LABELS[c] || c) + "</span>";
+}
+function evAmountText(it){
+  if (it.source === "binance" || it.source === "bybit") {
+    var usd = Number(it.amount_usdt);
+    var rate = storeRate();
+    var egp = isFinite(usd) && rate
+      ? Math.round(usd * rate * 100) / 100 : null;
+    return fmtNum(usd) + " دولار" +
+      (egp !== null ? " (≈ " + fmtNum(egp) + " ج.م)" : "");
+  }
+  return fmtNum(it.amount_egp) + " ج.م";
+}
+
+function storeEventCard(it){
+  var isDep = it.source === "binance" || it.source === "bybit";
+  var age = relTime(it.created_at);
+  var html = '<div class="result-row" style="cursor:default"><div class="who">' +
+    '<b class="num">' + esc(evAmountText(it)) + "</b> " +
+    evStatusBadge(it.status) + " " + evConfBadge(it.confidence) +
+    "<small>" + esc(EV_SOURCE_LABELS[it.source] || it.source) +
+    (age ? " · " + esc(age) : "");
+  if (!isDep && it.sender_masked) {
+    html += '<br>المُرسل: <span class="num">' + esc(it.sender_masked) + "</span>";
+  }
+  if (it.body) {
+    html += "<br>" + esc(String(it.body).slice(0, 300));
+  }
+  if (it.ref) {
+    html += '<br>رقم العملية: <span class="num">' + esc(it.ref) + "</span>";
+  }
+  var matchedKeys = it.matched ? Object.keys(it.matched) : [];
+  if (matchedKeys.length) {
+    html += "<br>اتربط بـ: " + matchedKeys.map(function(k){
+      return esc(k) + ' <span class="num">' + esc(it.matched[k]) + "</span>";
+    }).join(" · ");
+  }
+  html += "</small></div>";
+  var acts = "";
+  if (it.status === "pending") {
+    acts += '<button class="btn small" type="button" data-ev-act="approve" data-ev-id="' +
+      esc(it.id) + '" data-ev-source="' + esc(it.source) + '">اعتماد</button>';
+    if (!isDep) {
+      acts += '<button class="btn ghost small" type="button" data-ev-act="ignore" data-ev-id="' +
+        esc(it.id) + '" data-ev-source="' + esc(it.source) + '">تجاهل</button>';
+    }
+    acts += '<button class="btn ghost small" type="button" data-ev-act="rematch" data-ev-id="' +
+      esc(it.id) + '" data-ev-source="' + esc(it.source) + '">إعادة معالجة</button>';
+  } else if (it.status === "ignored" && !isDep) {
+    acts += '<button class="btn ghost small" type="button" data-ev-act="unignore" data-ev-id="' +
+      esc(it.id) + '" data-ev-source="' + esc(it.source) + '">إلغاء التجاهل</button>';
+  }
+  if (acts) html += '<div class="row-actions">' + acts + "</div>";
+  html += "</div>";
+  return html;
+}
+
+function topupStatusCat(t){
+  // فئة العرض الواحدة لشحنات البوت — بتغذّي الفلتر والشارة معًا:
+  // معلّقة/منتهية باعتماد/منتهية بغير اعتماد (مرفوضة أو محتاجة
+  // معلومة أو فاتورة نجوم لسه ما اتدفعتش).
+  if (t.status === "pending") return "pending";
+  if (t.status === "approved") return "done";
+  return "closed";
+}
+function topupStatusOk(t){
+  if (!evState.status) return true;
+  var cat = topupStatusCat(t);
+  if (evState.status === "ignored") return cat === "closed";
+  return cat === evState.status;
+}
+
+function botTopupCard(t, idx){
+  var age = relTime(t.created_at);
+  var amt = egpFromMinor(t.amount_minor !== undefined && t.amount_minor !== null
+    ? t.amount_minor : t.amount);
+  var html = '<div class="result-row" style="cursor:default"><div class="who">' +
+    '<b class="num">' + fmtNum(amt) + " ج.م</b> " +
+    evStatusBadge(topupStatusCat(t)) +
+    "<small>شحنة بوت" +
+    (t.method_label ? " · " + esc(t.method_label) : "") +
+    " · " + esc(statusTxt(BOT_TOPUP_STATUS, t.status)) +
+    (age ? " · " + esc(age) : "") +
+    '<br>العميل: <span class="num">' + esc(t.customer_ref || "—") + "</span>" +
+    (t.operation_ref
+      ? ' · رقم العملية: <span class="num">' + esc(t.operation_ref) + "</span>" : "") +
+    "</small></div>";
+  if (t.status === "pending") {
+    html += '<div class="row-actions">' +
+      '<button class="btn ghost small" type="button" data-ev-link-toggle="' + idx + '">اربط بحدث</button></div>' +
+      '<div class="hidden" id="evLinkForm' + idx + '" style="margin-top:8px;">' +
+      '<div class="row-actions">' +
+      '<div class="field" style="flex:1; margin-bottom:0;"><label>مصدر الحدث</label>' +
+      '<select id="evLinkSrc' + idx + '"><option value="sms">رسالة بنك</option>' +
+      '<option value="exchange">إيداع منصة</option></select></div>' +
+      '<div class="field" style="flex:2; margin-bottom:0;"><label>معرّف الحدث</label>' +
+      '<input id="evLinkId' + idx + '" type="text" placeholder="معرّف حدث الموقع"></div>' +
+      "</div>" +
+      '<button class="btn small" type="button" data-ev-link-go="' + idx +
+      '" data-ev-topup="' + esc(t.id) + '" style="margin-top:8px;">اربط</button>' +
+      "</div>";
+  }
+  html += "</div>";
+  return html;
+}
+
+function renderTimeline(){
+  var box = $("evTimeline");
+  var rows = [];
+  if (evState.source !== "bot_topups") {
+    evState.items.forEach(function(it){
+      rows.push({ t: it.created_at, kind: "store", it: it });
+    });
+  }
+  if (!evState.source || evState.source === "bot_topups") {
+    evState.topups.forEach(function(t, i){
+      if (topupStatusOk(t)) rows.push({ t: t.created_at, kind: "topup", it: t, idx: i });
+    });
+  }
+  rows.sort(function(a, b){
+    var ta = a.t ? new Date(a.t).getTime() : 0;
+    var tb = b.t ? new Date(b.t).getTime() : 0;
+    return tb - ta;
+  });
+  var html = "";
+  if (evState.storeFailed && evState.source !== "bot_topups") {
+    html += '<div class="sub" style="color:var(--red)">مش عارف أقرا أحداث الموقع دلوقتي.</div>';
+  }
+  if (evState.topupsFailed && (!evState.source || evState.source === "bot_topups")) {
+    html += '<div class="sub" style="color:var(--amber)">البوت مش بيرد دلوقتي — شحناته مش ظاهرة بدل ما تتخترع.</div>';
+  }
+  if (!rows.length && !html) {
+    html = '<div class="empty">مفيش أحداث مطابقة للفلاتر دي.</div>';
+  }
+  html += rows.map(function(r){
+    return r.kind === "store" ? storeEventCard(r.it) : botTopupCard(r.it, r.idx);
+  }).join("");
+  box.innerHTML = html;
+  box.querySelectorAll("[data-ev-act]").forEach(function(b){
+    b.addEventListener("click", function(){
+      runStoreEventAction(
+        b.getAttribute("data-ev-source"),
+        b.getAttribute("data-ev-id"),
+        b.getAttribute("data-ev-act"),
+        b
+      );
+    });
+  });
+  box.querySelectorAll("[data-ev-link-toggle]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var f = $("evLinkForm" + b.getAttribute("data-ev-link-toggle"));
+      if (f) f.classList.toggle("hidden");
+    });
+  });
+  box.querySelectorAll("[data-ev-link-go]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var idx = b.getAttribute("data-ev-link-go");
+      var src = $("evLinkSrc" + idx).value;
+      var evid = $("evLinkId" + idx).value.trim();
+      if (!evid) {
+        showEventsMsg("err", "اكتب معرّف الحدث اللي هتربط بيه الشحنة الأول.");
+        return;
+      }
+      b.disabled = true;
+      api("/control/bot-events-link", { method: "POST", body: {
+        request_id: b.getAttribute("data-ev-topup"),
+        source: src,
+        event_id: evid
+      } }).then(function(){
+        showEventsMsg("ok", "الشحنة اتربطت بالحدث عند البوت.");
+        loadEvents();
+      }).catch(function(e){
+        showEventsMsg("err", errText(e, "events"));
+      }).finally(function(){ b.disabled = false; });
+    });
+  });
+}
+
+function runStoreEventAction(source, id, action, btn){
+  var it = evState.items.find(function(x){ return x.id === id; });
+  if (action === "approve" && (source === "binance" || source === "bybit")) {
+    openEvApproveSheet(it);
+    return;
+  }
+  if (action === "approve") {
+    openActSheet("اعتماد حدث رسالة",
+      '<div class="preview">الاعتماد هنا بيشغّل إعادة مطابقة الرسائل على الحدث ده وباقي المعلّق المستحق، بنفس قواعد المطابقة الحالية. لو الرسالة اتطابقت مع شحنة أو طلب، الشحن بيتم بقواعد القاعدة نفسها.</div>',
+      "شغّل المطابقة", function(){
+        return api("/control/store-event-action", { method: "POST", body: {
+          source: source, event_id: id, action: "approve"
+        } }).then(function(d){
+          showEventsMsg("ok", d.event && d.event.status === "done"
+            ? "الحدث اتطابق واتنفذ."
+            : "إعادة المطابقة اتشغّلت — الحدث لسه بينتظر لو ما اتطابقش.");
+          loadEvents();
+        });
+      }, "events");
+    return;
+  }
+  if (btn) btn.disabled = true;
+  api("/control/store-event-action", { method: "POST", body: {
+    source: source, event_id: id, action: action
+  } }).then(function(){
+    showEventsMsg("ok", action === "ignore" ? "الحدث اتحط في المتجاهل."
+      : action === "unignore" ? "التجاهل اتشال — الحدث رجع بينتظر."
+      : "إعادة المعالجة اتشغّلت.");
+    loadEvents();
+  }).catch(function(e){
+    showEventsMsg("err", errText(e, "events"));
+  }).finally(function(){ if (btn) btn.disabled = false; });
+}
+
+function openEvApproveSheet(it){
+  if (!it) return;
+  var body =
+    '<div class="preview">إيداع <b class="num">' + esc(evAmountText(it)) + "</b>" +
+    " على " + esc(EV_SOURCE_LABELS[it.source] || it.source) +
+    (it.ref ? '<br>رقم العملية: <b class="num">' + esc(it.ref) + "</b>" : "") +
+    "</div>" +
+    '<div class="field"><label>معرّف مطالبة إيداع (لو العميل قدّم مطالبة)</label>' +
+    '<input id="evClaimId" type="text" placeholder="معرّف المطالبة"></div>' +
+    '<div class="field"><label>أو معرّف نية شحن مفتوحة</label>' +
+    '<input id="evIntentId" type="text" placeholder="معرّف النية"></div>' +
+    '<div class="preview">لازم هدف واحد على الأقل: الاعتماد بيعدّي على دوال القاعدة الحالية وحراسها، ومفيش اعتماد من غير مطالبة أو نية.</div>';
+  openActSheet("اعتماد إيداع", body, "اعتمد الإيداع", function(){
+    var claim = $("evClaimId").value.trim();
+    var intent = $("evIntentId").value.trim();
+    if (!claim && !intent) {
+      failValidation("اكتب معرّف مطالبة أو معرّف نية الأول — الاعتماد من غير هدف مش هيتم.");
+    }
+    var payload = { source: it.source, event_id: it.id, action: "approve" };
+    if (claim) payload.claim_id = claim;
+    if (intent) payload.intent_id = intent;
+    return api("/control/store-event-action", { method: "POST", body: payload })
+      .then(function(d){
+        showEventsMsg("ok", d.event && d.event.status === "done"
+          ? "الإيداع اتعمد واتنفذ."
+          : "الاعتماد اتنفذ — راجع حالة الحدث بعد التحديث.");
+        loadEvents();
+      });
+  }, "events");
+}
+
+function openEvPaste(){
+  var body =
+    '<div class="field"><label>نص الرسالة</label>' +
+    '<textarea id="evPasteBody" rows="5" placeholder="الصق نص رسالة البنك أو المحفظة هنا"></textarea></div>' +
+    '<div class="preview">الرسالة هتتحلل وتتدخل بنفس قواعد رسائل الموبايل بالظبط، وهتتسجل إنها جاية من اللوحة نفسها — مش باسم أي مرسل تاني. لو فيها كلمة مستبعدة هتتخطى قبل الإدخال ومش هتتدخل أصلًا.</div>';
+  openActSheet("ألصق رسالة", body, "حلّل وادخل", function(){
+    var text = $("evPasteBody").value.trim();
+    if (!text) failValidation("الصق نص الرسالة الأول.");
+    var payload = { body: text };
+    return api("/control/store-event-paste", { method: "POST", body: payload })
+      .then(function(d){
+        if (d.skipped === "excluded_word") {
+          showEventsMsg("warn", "الرسالة اتخطّت عشان فيها كلمة مستبعدة — ما اتدخلتش.");
+        } else {
+          showEventsMsg("ok", "الرسالة اتدخلت واتحللت، وإعادة المطابقة اتشغّلت.");
+        }
+        loadEvents();
+      });
+  }, "events");
+}
+
+function renderExclSheetBody(){
+  var chips = evState.exclusions.map(function(w, i){
+    return '<span class="chip">' + esc(w) +
+      ' <button type="button" data-excl-del="' + i +
+      '" style="background:none;border:none;color:inherit;cursor:pointer;font:inherit;">✕</button></span>';
+  }).join(" ");
+  $("actBody").innerHTML =
+    '<div class="preview">أي رسالة بتوصل أو بتتلصق وفيها كلمة من دول بتتخطى ومش بتتدخل صندوق الأحداث أصلًا.</div>' +
+    '<div class="cnt-chips" style="margin:10px 0;">' +
+    (chips || '<span class="sub" style="color:var(--muted)">القائمة فاضية.</span>') + "</div>" +
+    '<div class="row-actions"><div class="field" style="flex:1; margin-bottom:0;">' +
+    '<input id="evExclNew" type="text" placeholder="كلمة جديدة"></div>' +
+    '<button class="btn ghost" id="evExclAdd" type="button">أضف</button></div>';
+  $("actBody").querySelectorAll("[data-excl-del]").forEach(function(b){
+    b.addEventListener("click", function(){
+      evState.exclusions.splice(Number(b.getAttribute("data-excl-del")), 1);
+      renderExclSheetBody();
+    });
+  });
+  $("evExclAdd").addEventListener("click", function(){
+    var v = $("evExclNew").value.trim();
+    if (!v) return;
+    if (evState.exclusions.indexOf(v) < 0) evState.exclusions.push(v);
+    renderExclSheetBody();
+  });
+}
+
+function openEvExclusions(){
+  api("/control/store-event-exclusions").then(function(d){
+    evState.exclusions = Array.isArray(d.words) ? d.words.slice() : [];
+    openActSheet("الكلمات المستبعدة", "", "احفظ القائمة", function(){
+      return api("/control/store-event-exclusions", { method: "POST", body: {
+        words: evState.exclusions
+      } }).then(function(){
+        showEventsMsg("ok", "قائمة الكلمات المستبعدة اتحفظت.");
+      });
+    }, "events");
+    renderExclSheetBody();
+  }).catch(function(e){
+    showEventsMsg("err", errText(e, "events"));
+  });
+}
+
+// حالة مفتاح ممر عند البوت من حمولة المكونات — القراءة متسامحة
+// مع شكل الرد (خريطة ممرات أو قائمة مكونات)، والقيمة الغايبة
+// بترجع null فالمفتاح بيظهر «مش معروف» بدل ما يتخترع.
+function evLaneOn(lane){
+  var d = evState.components;
+  if (!d) return null;
+  var lanes = d.lanes || d.rails || {};
+  var v = lanes[lane];
+  if (v === undefined) v = d[lane];
+  if (v && typeof v === "object") {
+    v = v.on !== undefined ? v.on : v.enabled;
+  }
+  if (typeof v === "boolean") return v;
+  if (Array.isArray(d.components)) {
+    for (var i = 0; i < d.components.length; i++) {
+      var c = d.components[i];
+      if (c && (c.key === lane || c.lane === lane || c.id === lane)) {
+        var w = c.on !== undefined ? c.on
+          : c.enabled !== undefined ? c.enabled : c.active;
+        if (typeof w === "boolean") return w;
+      }
+    }
+  }
+  return null;
+}
+
+function evComponentRow(title, detailHtml, lane){
+  var html = '<div class="result-row" style="cursor:default"><div class="who"><b>' +
+    esc(title) + "</b><small>" + detailHtml + "</small></div>";
+  if (lane) {
+    var on = evLaneOn(lane);
+    html += '<label class="switch"><input type="checkbox" data-ev-lane="' +
+      esc(lane) + '"' + (on ? " checked" : "") +
+      (on === null || evState.componentsFailed ? " disabled" : "") +
+      '><span class="track"></span></label>';
+  }
+  html += "</div>";
+  return html;
+}
+
+function renderComponents(){
+  var box = $("evComponents");
+  var html = "";
+  // تطبيق الرسائل: آخر إدخال من قاعدة الموقع نفسها.
+  var smsDetail;
+  if (evState.smsLast) {
+    var hrs = (Date.now() - new Date(evState.smsLast).getTime()) / 3600000;
+    smsDetail = "آخر رسالة وصلت " + esc(relTime(evState.smsLast) || "") + ".";
+    if (isFinite(hrs) && hrs > 6) {
+      smsDetail += '<br><span style="color:var(--amber)">تنبيه: آخر رسالة من أكتر من ٦ ساعات — راجع تطبيق الرسائل على الموبايل، ممكن يكون وقف أو اتقفل.</span>';
+    }
+  } else {
+    smsDetail = "مفيش رسائل دخلت لسه.";
+  }
+  html += evComponentRow("تطبيق الرسائل", smsDetail, null);
+  var bLast = evState.depLast && evState.depLast.binance;
+  html += evComponentRow("Binance",
+    bLast ? "آخر إيداع اتسجل " + esc(relTime(bLast) || "") + "."
+      : "مفيش إيداعات مسجلة لسه.", null);
+  var yLast = evState.depLast && evState.depLast.bybit;
+  html += evComponentRow("Bybit",
+    yLast ? "آخر إيداع اتسجل " + esc(relTime(yLast) || "") + "."
+      : "مفيش إيداعات مسجلة لسه.", null);
+  if (evState.componentsFailed) {
+    html += '<div class="sub" style="color:var(--amber)">البوت مش بيرد دلوقتي — مفاتيح ممراته مش ظاهرة بدل ما تتخترع.</div>';
+  }
+  html += evComponentRow("ممر رسائل البوت",
+    "شحنات البوت من رسائل البنك: " +
+    (evLaneOn("sms_auto") === null ? "مش معروف" : evLaneOn("sms_auto") ? "شغال" : "مقفول") + ".",
+    "sms_auto");
+  html += evComponentRow("ممر منصات البوت",
+    "شحنات البوت من إيداعات المنصات: " +
+    (evLaneOn("exchange_auto") === null ? "مش معروف" : evLaneOn("exchange_auto") ? "شغال" : "مقفول") + ".",
+    "exchange_auto");
+  html += evComponentRow("النجوم",
+    "شحن البوت بالنجوم: " +
+    (evLaneOn("stars") === null ? "مش معروف" : evLaneOn("stars") ? "شغال" : "مقفول") + ".",
+    "stars");
+  // العناوين عرض فقط من إعدادات الفلوس (قسم العملاء) — تعديلها من هناك.
+  var addrB = moneyState.store.find(function(r){ return r.key === "deposit_address_binance"; });
+  var addrY = moneyState.store.find(function(r){ return r.key === "deposit_address_bybit"; });
+  var addrDetail;
+  if (!moneyState.loaded) {
+    addrDetail = "بتتحمّل من إعدادات الفلوس…";
+    if (!moneyState.loading) {
+      loadMoneySettings().then(function(){ renderComponents(); });
+    }
+  } else {
+    addrDetail = "Binance: " +
+      (addrB && addrB.value ? '<span class="num">' + esc(addrB.value) + "</span>" : "مش متظبط") +
+      "<br>Bybit: " +
+      (addrY && addrY.value ? '<span class="num">' + esc(addrY.value) + "</span>" : "مش متظبط") +
+      "<br>التعديل من إعدادات الفلوس في قسم العملاء.";
+  }
+  html += evComponentRow("عناوين استقبال الإيداعات", addrDetail, null);
+  box.innerHTML = html;
+  box.querySelectorAll("[data-ev-lane]").forEach(function(inp){
+    inp.addEventListener("change", function(){
+      var lane = inp.getAttribute("data-ev-lane");
+      var on = inp.checked;
+      inp.disabled = true;
+      api("/control/bot-events-rail-toggle", { method: "POST", body: {
+        rail: lane, enabled: on
+      } }).then(function(){
+        showEventsMsg("ok", "المفتاح اتحدّث عند البوت.");
+        loadEvents();
+      }).catch(function(e){
+        inp.checked = !on;
+        showEventsMsg("err", errText(e, "events"));
+      }).finally(function(){ inp.disabled = false; });
+    });
+  });
+}
+
+function renderMatchReport(){
+  var box = $("evMatchReport");
+  var html = '<div class="group-title">أحداث الموقع (حسب البحث والفلاتر الحالية)</div>';
+  if (evState.counts && evState.counts.by_status) {
+    var bs = evState.counts.by_status;
+    html += '<div class="cnt-chips">' +
+      '<span class="chip">ينتظر <b class="num">' + (bs.pending || 0) + "</b></span>" +
+      '<span class="chip">تم <b class="num">' + (bs.done || 0) + "</b></span>" +
+      '<span class="chip">متجاهل <b class="num">' + (bs.ignored || 0) + "</b></span>" +
+      '<span class="chip">الإجمالي <b class="num">' + evState.total + "</b></span></div>";
+  } else {
+    html += '<div class="sub" style="color:var(--muted)">عدّادات الموقع مش متاحة دلوقتي.</div>';
+  }
+  html += '<div class="group-title">مطابقة البوت في فترة التسجيل</div>';
+  if (evState.reportFailed) {
+    html += '<div class="sub" style="color:var(--amber)">البوت مش بيرد دلوقتي — تقريره مش ظاهر بدل ما يتخترع.</div>';
+  } else if (evState.report) {
+    var rep = evState.report;
+    var rails = rep.rails || {};
+    [["sms_auto", "رسائل البنوك والمحافظ"],
+     ["exchange_auto", "إيداعات المنصات"]].forEach(function(pair){
+      var r = rails[pair[0]];
+      if (!r) return;
+      html += '<div class="kv"><span class="k">' + pair[1] +
+        ' — اتشحن تلقائي</span><span class="v num">' +
+        (r.auto_credited || 0) + "</span></div>";
+      html += '<div class="kv"><span class="k">' + pair[1] +
+        ' — آخر شحنة تلقائية</span><span class="v">' +
+        (r.last_auto_at ? esc(relTime(r.last_auto_at)) : "مفيش لسه") +
+        "</span></div>";
+      html += '<div class="kv"><span class="k">' + pair[1] +
+        ' — مرات فشل الدورات</span><span class="v">' +
+        (r.failures === null || r.failures === undefined
+          ? "غير مسجّل"
+          : '<span class="num">' + r.failures + "</span>") + "</span></div>";
+      html += '<div class="kv"><span class="k">' + pair[1] +
+        ' — فكّ حجز تعويضي</span><span class="v">' +
+        (r.unclaims === null || r.unclaims === undefined
+          ? "غير مسجّل"
+          : '<span class="num">' + r.unclaims + "</span>") + "</span></div>";
+    });
+    html += '<div class="kv"><span class="k">مطابقات من اللوحة</span>' +
+      '<span class="v num">' + (rep.panel_matches || 0) + "</span></div>";
+    html += '<div class="kv"><span class="k">آخر مطابقة من اللوحة</span>' +
+      '<span class="v">' +
+      (rep.last_panel_match_at
+        ? esc(relTime(rep.last_panel_match_at)) : "مفيش لسه") +
+      "</span></div>";
+  } else {
+    html += '<div class="sub" style="color:var(--muted)">تقرير البوت مش متاح دلوقتي.</div>';
+  }
+  box.innerHTML = html;
+}
+
+$("eventsTabs").querySelectorAll("[data-evtab]").forEach(function(b){
+  b.addEventListener("click", function(){
+    evState.tab = b.getAttribute("data-evtab");
+    $("eventsTabs").querySelectorAll("[data-evtab]").forEach(function(x){
+      x.classList.toggle("on", x === b);
+    });
+    $("eventsTabEvents").classList.toggle("hidden", evState.tab !== "events");
+    $("eventsTabComponents").classList.toggle("hidden", evState.tab !== "components");
+  });
+});
+$("evStatusSeg").querySelectorAll("[data-evstatus]").forEach(function(b){
+  b.addEventListener("click", function(){
+    evState.status = b.getAttribute("data-evstatus");
+    $("evStatusSeg").querySelectorAll("[data-evstatus]").forEach(function(x){
+      x.classList.toggle("on", x === b);
+    });
+    loadEvents();
+  });
+});
+$("evSearchBtn").addEventListener("click", function(){
+  evState.q = $("evQ").value.trim();
+  loadEvents();
+});
+$("evQ").addEventListener("keydown", function(e){
+  if (e.key === "Enter") { evState.q = $("evQ").value.trim(); loadEvents(); }
+});
+$("evReloadBtn").addEventListener("click", loadEvents);
+$("evCompReloadBtn").addEventListener("click", loadEvents);
+$("evPasteBtn").addEventListener("click", openEvPaste);
+$("evExclusionsBtn").addEventListener("click", openEvExclusions);
 
 load();
 </script>

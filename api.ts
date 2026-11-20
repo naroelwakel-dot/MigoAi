@@ -77,6 +77,11 @@ import {
   type ControlSuppliersDeps,
   handleControlSuppliersRequest,
 } from "./control/suppliers.ts";
+import {
+  type ControlEventsDeps,
+  handleControlEventsRequest,
+  PostgrestControlEventsClient,
+} from "./control/events.ts";
 import { bridgeBaseUrl } from "./sheerid/config.ts";
 import { makeAdminChecker, tokenEquals } from "./admin_auth.ts";
 
@@ -510,6 +515,32 @@ function getControlSuppliersDeps(): ControlSuppliersDeps {
     logError,
   };
   return _controlSuppliersDeps;
+}
+
+// ---------------------------------------------------------------------------
+// لوحة التحكم (المرحلة م٤): صندوق الأحداث الموحّد والمكونات — قراءة
+// مطبّعة وأفعال فوق جداول أحداث الموقع الحالية (الاعتماد عبر دوال
+// القاعدة القائمة بعقودها، واللصق بنفس عقد جسر الرسائل)، وتمرير
+// خادمي لنقاط أحداث البوت. اعتماد الجسر والمصادقة زي م٣-ب بالظبط.
+// ---------------------------------------------------------------------------
+let _controlEventsDeps: ControlEventsDeps | null = null;
+function getControlEventsDeps(): ControlEventsDeps {
+  if (_controlEventsDeps) return _controlEventsDeps;
+  const env = (n: string) => Deno.env.get(n) || "";
+  _controlEventsDeps = {
+    client: new PostgrestControlEventsClient({
+      baseUrl: SB_URL,
+      keyOf: () => env("SUPABASE_SERVICE_ROLE_KEY"),
+    }),
+    botClient: new BridgeBotControlProxyClient({
+      baseUrlOf: () => bridgeBaseUrl((n) => Deno.env.get(n)),
+      bridgeTokenOf: controlBridgeTokenOf(),
+    }),
+    isAdmin,
+    corsOf: (r: Request) => corsHeaders(r),
+    logError,
+  };
+  return _controlEventsDeps;
 }
 
 // ---------------------------------------------------------------------------
@@ -2088,6 +2119,11 @@ Deno.serve(async (req: Request) => {
         getControlSuppliersDeps(),
       );
       if (suppliersRes) return suppliersRes;
+      const eventsRes = await handleControlEventsRequest(
+        req,
+        getControlEventsDeps(),
+      );
+      if (eventsRes) return eventsRes;
     } catch (e) {
       logError("control.customers.route", "unhandled customers route error", e);
     }
