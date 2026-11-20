@@ -334,6 +334,61 @@
   </section>
 </main>
 
+<main id="catalogMain" class="hidden">
+  <div class="msg" id="catalogMsg"></div>
+
+  <section class="card">
+    <h2>منتجات البوت</h2>
+    <div class="sub" style="color:var(--muted); font-size:13px;">كل منتج بيتباع في البوت: فئته وحالته وسعر بيعه وحالة هامشه. اضغط على أي منتج عشان تعدّل بياناته أو سعره أو تشوف مورديه وتنقله لمورد تاني.</div>
+    <div class="search-row" style="margin-top:10px;">
+      <input id="catQ" type="text" placeholder="ابحث باسم المنتج">
+    </div>
+    <div class="row-actions">
+      <div class="field" style="flex:1; margin-bottom:0;"><label>الفئة</label><select id="catCategoryFilter"></select></div>
+      <div class="field" style="flex:1; margin-bottom:0;"><label>الحالة</label><select id="catStatusFilter"></select></div>
+    </div>
+    <div id="catMeta" style="margin-top:8px;"></div>
+    <div id="catList" style="margin-top:4px;"></div>
+    <div class="row-actions">
+      <button class="btn secondary" id="catReloadBtn" type="button">تحديث القائمة</button>
+      <button class="btn ghost" id="catNewBtn" type="button">منتج جديد</button>
+      <button class="btn ghost" id="catCategoryBtn" type="button">فئة جديدة / تعديل فئة</button>
+      <button class="btn ghost" id="catBatchBtn" type="button">دفعة أسعار</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>ربط الهوية</h2>
+    <div class="sub" style="color:var(--muted); font-size:13px;">ربط مفاتيح مصدر الأسعار بمنتجات البوت وأسماء منتجات الموقع، عشان التسعير والنقل بين الموردين يوصلوا للمنتج الصح.</div>
+    <div id="identityBody" style="margin-top:8px;"><div class="sub" style="color:var(--muted)">بيحمّل الربط…</div></div>
+    <button class="btn secondary" id="identityLinkBtn" type="button" style="margin-top:10px;">ربط جديد</button>
+  </section>
+</main>
+
+<main id="suppliersMain" class="hidden">
+  <div class="msg" id="supMsg"></div>
+
+  <section class="card">
+    <h2>موردو المحرك</h2>
+    <div class="sub" style="color:var(--muted); font-size:13px;">الموردون المربوطون بالبوت فعليًا: حالتهم وآخر مزامنة وأرصدتهم وروابط منتجاتهم. أسماء المفاتيح المحفوظة بتظهر بس — قيمتها ما بتظهرش أبدًا.</div>
+    <div id="engineList" style="margin-top:6px;"></div>
+    <button class="btn secondary" id="supReloadBtn" type="button" style="margin-top:10px;">تحديث القائمة</button>
+  </section>
+
+  <section class="card">
+    <h2>سجل الموردين</h2>
+    <div class="sub" style="color:var(--muted); font-size:13px;">سجل كل الموردين اللي بنتعامل معاهم أو بنجرّبهم أو بنفكر فيهم، سواء مربوطين بالمحرك أو لأ. الإغلاق بيتم بضبط حالة المورد لـ«مغلق» — مفيش حذف من السجل.</div>
+    <div id="registryList" style="margin-top:6px;"></div>
+    <button class="btn secondary" id="registryNewBtn" type="button" style="margin-top:10px;">مورد جديد في السجل</button>
+  </section>
+
+  <section class="card">
+    <h2>مفاتيح سجل من غير محرك</h2>
+    <div class="sub" style="color:var(--muted); font-size:13px;">مفاتيح موردين ظاهرة في سجل مصدر الأسعار ومفيش مورد في المحرك بنفس المفتاح.</div>
+    <div id="registryKeysBody" style="margin-top:8px;"></div>
+  </section>
+</main>
+
 <div class="sheet-veil" id="sheetVeil"></div>
 <div class="sheet" id="sheet">
   <p id="sheetTitle"></p>
@@ -566,21 +621,23 @@ $("refreshBtn").addEventListener("click", load);
 $("storePill").addEventListener("click", load);
 
 // التنقل السفلي: الرئيسية والعملاء والطلبات والمحادثات شغالين،
-// و«المزيد» فيها أسعار الموقع (م٣) — والأحداث لسه في مرحلة جاية،
-// من غير شاشات وهمية.
+// و«المزيد» فيها أسعار الموقع (م٣) والكتالوج والموردون (م٣-ب) —
+// والأحداث لسه في مرحلة جاية، من غير شاشات وهمية.
 var navNames = { events: "الأحداث", more: "المزيد" };
-var viewTitles = { home: "مهامي الآن", customers: "العملاء", orders: "الطلبات", chats: "المحادثات", prices: "أسعار الموقع" };
+var viewTitles = { home: "مهامي الآن", customers: "العملاء", orders: "الطلبات", chats: "المحادثات", prices: "أسعار الموقع", catalog: "الكتالوج", suppliers: "الموردون" };
 function showView(name){
   $("homeMain").classList.toggle("hidden", name !== "home");
   $("customersMain").classList.toggle("hidden", name !== "customers");
   $("ordersMain").classList.toggle("hidden", name !== "orders");
   $("chatsMain").classList.toggle("hidden", name !== "chats");
   $("pricesMain").classList.toggle("hidden", name !== "prices");
+  $("catalogMain").classList.toggle("hidden", name !== "catalog");
+  $("suppliersMain").classList.toggle("hidden", name !== "suppliers");
   $("pageTitle").textContent = viewTitles[name] || "";
   document.querySelectorAll("#bottomNav button").forEach(function(b){
     var nav = b.getAttribute("data-nav");
-    // أسعار الموقع بتتفتح من «المزيد» فزرها هو اللي بيتلوّن وهي مفتوحة.
-    b.classList.toggle("active", nav === name || (name === "prices" && nav === "more"));
+    // أسعار الموقع والكتالوج والموردون بيتفتحوا من «المزيد» فزرها هو اللي بيتلوّن وهم مفتوحين.
+    b.classList.toggle("active", nav === name || ((name === "prices" || name === "catalog" || name === "suppliers") && nav === "more"));
   });
   if (name !== "chats" && typeof stopChatPolling === "function") stopChatPolling();
   window.scrollTo({ top: 0 });
@@ -597,6 +654,8 @@ document.querySelectorAll("#bottomNav button").forEach(function(b){
       $("sheetBody").innerHTML =
         '<div class="menu-list">' +
         '<button class="btn" id="morePricesBtn" type="button">أسعار الموقع</button>' +
+        '<button class="btn" id="moreCatalogBtn" type="button">الكتالوج</button>' +
+        '<button class="btn" id="moreSuppliersBtn" type="button">الموردون</button>' +
         "</div>" +
         "<small>قسم الأحداث هيتبني في مرحلته الجاية من خطة اللوحة.</small>";
       $("sheet").classList.add("open");
@@ -605,6 +664,16 @@ document.querySelectorAll("#bottomNav button").forEach(function(b){
         closeSheet();
         showView("prices");
         ensurePricesLoaded();
+      });
+      $("moreCatalogBtn").addEventListener("click", function(){
+        closeSheet();
+        showView("catalog");
+        ensureCatalogLoaded();
+      });
+      $("moreSuppliersBtn").addEventListener("click", function(){
+        closeSheet();
+        showView("suppliers");
+        ensureSuppliersLoaded();
       });
       return;
     }
@@ -675,6 +744,34 @@ function errText(e, ctx){
   if (code === "invalid_transition") return "تغيير الحالة ده مش مسموح من حالة الطلب الحالية.";
   if (code === "reason_required") return "اكتب سبب الإلغاء أو الاسترداد الأول.";
   if (code === "feed_unavailable") return "بيانات تكاليف الموردين مش متاحة دلوقتي — ما اتطبقش أي تغيير على أي سعر.";
+  if (code === "below_floor") return "السعر أو التكلفة دي أقل من الحد الآمن المحسوب من تكلفة المورد المنفّذ — ما اتكتبش حاجة عشان مايتباعش بخسارة.";
+  if (code === "no_executing_link") return "المنتج ده مالوش مورد منفّذ مربوط بيه، فتكلفته مش هتتكتب في أي حتة. اربطه بمورد من روابط المورد الأول.";
+  if (code === "already_undone") return "الدفعة دي اتراجع عنها قبل كده.";
+  if (code === "executing_link_changed") return "المورد المنفّذ لمنتج في الدفعة اتغيّر من ساعة ما اتعملت — التراجع اترفض عشان ما يكتبش تكلفة قديمة عند المورد الجديد.";
+  if (code === "modified_since_batch") return "تكلفة منتج في الدفعة اتغيّرت بعد ما اتعملت — التراجع اترفض عشان ما يمسحش التعديل الأحدث.";
+  if (code === "undo_incomplete") return "التراجع كمل جزئيًا بس — فيه منتجات ما اتراجعش عنها. حدّث القائمة وراجع اللي باقي.";
+  if (code === "batch_write_failed") return "الدفعة وقفت في النص: اللي اتطبق اتسجل في التدقيق وقابل للتراجع، والباقي ما اتلمسش.";
+  if (code === "pricing_write_failed") return "كتابة التكلفة ما كملتش — المنتج زي ما هو وما اتغيّرش فيه حاجة.";
+  if (code === "pricing_write_partial") return "كتابة التكلفة وقفت في النص وحالة رابط المورد محتاجة مراجعة قبل أي تعديل تاني.";
+  if (code === "target_link_in_use") return "صف المورد الهدف مربوط بمنتج تاني أصلًا — النقل ما كملش.";
+  if (code === "not_mapped") return "المنتج ده مش مربوط في خريطة الهوية — اربطه الأول من قسم ربط الهوية في شاشة الكتالوج.";
+  if (code === "target_not_in_engine") return "المورد الهدف مش موجود في المحرك أو صف منتجه مش موجود فيه — النقل ما بدأش.";
+  if (code === "target_not_assigned") return "المورد الهدف مش مسند للمنتج ده في سجل الموردين.";
+  if (code === "failover_incomplete") return "النقل بدأ بس ما كملش — السجل اتقفل والسعر محتاج مراجعة قبل أي بيع.";
+  if (code === "failover_partial") return "النقل اتنفذ في السجل بس خطوة الربط أو تحديث الكتالوج وقفت — راجع المنتج قبل أي بيع.";
+  if (code === "failover_blocked") return "النقل اترفض من السجل — ممكن يكون فيه نقل تاني شغال أو سعر المنتج مقفول.";
+  if (code === "product_not_found") return "المنتج مش موجود.";
+  if (code === "supplier_not_found") return "المورد مش موجود.";
+  if (code === "link_not_found") return "الرابط ده مش موجود عند المورد.";
+  if (code === "category_not_found") return "الفئة مش موجودة.";
+  if (code === "audit_not_found") return "سجل الدفعة دي مش موجود في التدقيق.";
+  if (code === "not_a_price_batch") return "السجل ده مش دفعة أسعار — التراجع متاح لدفعات الأسعار بس.";
+  if (code === "identity_link_required") return "الربط لازم يكون فيه منتج بوت أو اسم منتج موقع على الأقل.";
+  if (code === "bad_product_key") return "مفتاح المنتج مش صحيح — من غير مسافات وبحد أقصى ٨٠ حرف.";
+  if (code === "bad_product_id") return "معرّف المنتج مش صحيح.";
+  if (code === "upstream_failed") return "المورد نفسه ما ردش أو رد بخطأ — حاول تاني بعد شوية.";
+  if (code === "providers_unavailable") return "بيانات الموردين مش متاحة دلوقتي — ما اتغيّرش حاجة.";
+  if (code === "catalog_unavailable") return "بيانات الكتالوج مش متاحة دلوقتي — ما اتغيّرش حاجة.";
   if (code === "state_changed") return "حالة الطلب اتغيرت قبل ما العملية تكمل. حدّث الشاشة وشوف حالته دلوقتي.";
   if (code === "order_not_found") return "الطلب مش موجود.";
   if (code === "not_refunded") return "المورد لسه ما أكدش رجوع الفلوس — الاسترداد مش هيتم قبل تأكيده.";
@@ -3011,6 +3108,978 @@ function openApplyFloorsSheet(){
 }
 $("pricesReloadBtn").addEventListener("click", loadPrices);
 $("pricesApplyBtn").addEventListener("click", openApplyFloorsSheet);
+
+// ============================================================
+// قسم الكتالوج (م٣-ب): منتجات البوت وفئاتها وتسعيرها وربط
+// الهوية — كل قراءة وكتابة بتعدّي على البوت من مسارات
+// /control/bot-catalog-*، والنجاح بيظهر بس بعد رد سليم منه.
+// ============================================================
+
+function showCatalogMsg(kind, html, withKeyBtn){
+  var box = $("catalogMsg");
+  box.className = "msg " + kind;
+  box.innerHTML = html + (withKeyBtn
+    ? '<button class="btn" id="catalogKeyBtn" type="button">كتابة المفتاح</button>' : "");
+  if (withKeyBtn) $("catalogKeyBtn").addEventListener("click", askKey);
+}
+function hideCatalogMsg(){ $("catalogMsg").className = "msg"; $("catalogMsg").innerHTML = ""; }
+
+var catalogState = { loaded: false, items: [], categories: [], lastBatchAuditId: null };
+var identityState = { items: [], unmappedKeys: [], unmappedProducts: [] };
+var productSheetState = { mode: "none", productId: null };
+
+var FULFILLMENT_LABEL = { provider: "مورد تلقائي", sheerid: "تحقق طلابي", manual: "تنفيذ يدوي" };
+var MARGIN_LABEL = {
+  safe: ["آمن", "st-ok"],
+  weak: ["ضعيف", "st-pending"],
+  below: ["تحت التكلفة", "st-bad"],
+  unknown: ["غير معروف", "st-mut"]
+};
+var PRODUCT_STATUS_LABEL = { published: "منشور", draft: "مسودة", archived: "مؤرشف" };
+function productStatusLabel(s){ return PRODUCT_STATUS_LABEL[s] || (s || "—"); }
+
+function ensureCatalogLoaded(){
+  if (catalogState.loaded) return;
+  catalogState.loaded = true;
+  loadCatalog();
+  loadIdentity();
+}
+
+function sellTextOf(p){
+  var egp = egpFromMinor(p.sell_egp_minor);
+  if (egp !== null) return fmtNum(egp) + " ج.م";
+  if (p.sell_egp !== null && p.sell_egp !== undefined && isFinite(Number(p.sell_egp)))
+    return fmtNum(Number(p.sell_egp)) + " ج.م";
+  if (p.sell_minor !== null && p.sell_minor !== undefined)
+    return fmtNum(Number(p.sell_minor) / 100) + " " + (p.currency || "");
+  return "—";
+}
+function costTextOf(p){
+  var c = (p.executing && p.executing.cost_minor !== null && p.executing.cost_minor !== undefined)
+    ? p.executing.cost_minor : p.cost_minor;
+  if (c === null || c === undefined) return "—";
+  return fmtNum(Number(c) / 100) + " " +
+    ((p.executing && p.executing.currency) || p.currency || "");
+}
+
+function loadCatalog(){
+  hideCatalogMsg();
+  $("catList").innerHTML = '<div class="sub" style="color:var(--muted)">بيحمّل المنتجات…</div>';
+  api("/control/bot-catalog-products").then(function(d){
+    catalogState.items = d.items || [];
+    catalogState.categories = d.categories || [];
+    renderCatFilters();
+    renderCatalogList();
+    var meta = [];
+    if (d.markup_percent !== null && d.markup_percent !== undefined)
+      meta.push("هامش الربح العام: " + fmtNum(Number(d.markup_percent)) + "٪");
+    if (d.fx_rate !== null && d.fx_rate !== undefined)
+      meta.push("سعر الدولار: " + fmtNum(Number(d.fx_rate)) + " ج.م");
+    $("catMeta").innerHTML = meta.length
+      ? '<div class="sub" style="color:var(--muted); font-size:13px;">' + esc(meta.join(" · ")) + "</div>"
+      : "";
+  }).catch(function(e){
+    $("catList").innerHTML = "";
+    if (e && e.noKey) showCatalogMsg("err", "لازم تكتب مفتاح الأدمن الأول.", true);
+    else showCatalogMsg("err", esc(errText(e, "catalog")));
+  });
+}
+function renderCatFilters(){
+  var catSel = $("catCategoryFilter");
+  var cur = catSel.value;
+  var html = '<option value="">كل الفئات</option>';
+  catalogState.categories.forEach(function(c){
+    html += '<option value="' + esc(c.id) + '">' + esc(c.name || c.slug || "") +
+      " (" + fmtNum(c.product_count || 0) + ")</option>";
+  });
+  catSel.innerHTML = html;
+  catSel.value = cur;
+  var stSel = $("catStatusFilter");
+  var curS = stSel.value;
+  var seen = { published: true, draft: true, archived: true };
+  catalogState.items.forEach(function(p){ if (p.status) seen[p.status] = true; });
+  var sh = '<option value="">كل الحالات</option>';
+  Object.keys(seen).forEach(function(s){
+    sh += '<option value="' + esc(s) + '">' + esc(productStatusLabel(s)) + "</option>";
+  });
+  stSel.innerHTML = sh;
+  stSel.value = curS;
+}
+function renderCatalogList(){
+  var q = ($("catQ").value || "").trim().toLowerCase();
+  var cat = $("catCategoryFilter").value;
+  var st = $("catStatusFilter").value;
+  var items = catalogState.items.filter(function(p){
+    if (q && String(p.name || "").toLowerCase().indexOf(q) < 0 &&
+        String(p.slug || "").toLowerCase().indexOf(q) < 0) return false;
+    if (cat && String(p.category_id || "") !== cat) return false;
+    if (st && p.status !== st) return false;
+    return true;
+  });
+  if (!items.length){
+    $("catList").innerHTML = '<div class="empty">مفيش منتجات مطابقة.</div>';
+    return;
+  }
+  var html = "";
+  items.forEach(function(p){
+    var m = MARGIN_LABEL[p.margin_state] || MARGIN_LABEL.unknown;
+    html += '<div class="result-row" data-cat-product="' + esc(p.id) + '">' +
+      '<div class="who"><b>' + esc(p.name || "") + "</b>" +
+      "<small>" + esc(p.category_name || "من غير فئة") + " · " + esc(productStatusLabel(p.status)) +
+      " · " + esc(FULFILLMENT_LABEL[p.fulfillment] || p.fulfillment || "") + "</small></div>" +
+      '<div class="bal">' + esc(sellTextOf(p)) +
+      '<small>التكلفة: ' + esc(costTextOf(p)) + "</small>" +
+      '<small>الهامش: <span class="status-txt ' + m[1] + '">' + m[0] + "</span></small></div></div>";
+  });
+  $("catList").innerHTML = html;
+  $("catList").querySelectorAll("[data-cat-product]").forEach(function(row){
+    row.addEventListener("click", function(){
+      var p = catalogState.items.filter(function(x){
+        return String(x.id) === row.getAttribute("data-cat-product");
+      })[0];
+      if (p) openProductSheet(p);
+    });
+  });
+}
+
+// ---------------- ورقة المنتج: تعديل + تسعير + موردون + نقل ----------------
+function productCategoryOptions(selectedId){
+  var html = '<option value="">من غير فئة</option>';
+  catalogState.categories.forEach(function(c){
+    html += '<option value="' + esc(c.id) + '"' +
+      (String(c.id) === String(selectedId || "") ? " selected" : "") + ">" +
+      esc(c.name || c.slug || "") + "</option>";
+  });
+  return html;
+}
+function productStatusOptions(selected){
+  var seen = { published: true, draft: true, archived: true };
+  if (selected) seen[selected] = true;
+  var html = "";
+  Object.keys(seen).forEach(function(s){
+    html += '<option value="' + esc(s) + '"' + (s === selected ? " selected" : "") + ">" +
+      esc(productStatusLabel(s)) + "</option>";
+  });
+  return html;
+}
+function openProductSheet(p){
+  var isNew = !p;
+  p = p || { name: "", description: "", category_id: "", status: "published", sort_order: 0 };
+  productSheetState = { mode: "none", productId: p.id || null };
+  var costUsd = "";
+  if (p.executing && p.executing.cost_minor !== null && p.executing.cost_minor !== undefined)
+    costUsd = String(Number(p.executing.cost_minor) / 100);
+  else if (p.cost_minor !== null && p.cost_minor !== undefined)
+    costUsd = String(Number(p.cost_minor) / 100);
+  var egpNow = egpFromMinor(p.sell_egp_minor);
+  var priceEgp = egpNow !== null ? String(egpNow) : "";
+  var body =
+    '<div class="field"><label>اسم المنتج</label><input id="pfName" type="text" value="' + esc(p.name || "") + '"></div>' +
+    '<div class="field"><label>الوصف</label><textarea id="pfDesc" rows="2">' + esc(p.description || "") + "</textarea></div>" +
+    '<div class="field"><label>الفئة</label><select id="pfCategory">' + productCategoryOptions(p.category_id) + "</select></div>" +
+    '<div class="field"><label>الحالة</label><select id="pfStatus">' + productStatusOptions(p.status || "published") + "</select></div>" +
+    '<div class="field"><label>ترتيب العرض</label><input id="pfSort" type="number" step="1" value="' + esc(p.sort_order !== null && p.sort_order !== undefined ? p.sort_order : 0) + '"></div>' +
+    '<div class="field"><label>التسعير</label><div class="seg" id="pfModeSeg">' +
+    '<button type="button" data-mode="none" class="on">من غير تغيير</button>' +
+    '<button type="button" data-mode="formula">بالمعادلة</button>' +
+    '<button type="button" data-mode="fixed">سعر ثابت بالجنيه</button>' +
+    "</div></div>" +
+    '<div class="field hidden" id="pfCostWrap"><label>تكلفة الشراء بالدولار (هتتكتب عند المورد المنفّذ)</label><input id="pfCostUsd" type="number" step="0.01" min="0" value="' + esc(costUsd) + '"></div>' +
+    '<div class="field hidden" id="pfPriceWrap"><label>سعر البيع الثابت بالجنيه</label><input id="pfPriceEgp" type="number" step="0.01" min="0" value="' + esc(priceEgp) + '"></div>' +
+    (isNew ? '<div class="preview">منتج جديد لسه مالوش مورد منفّذ: التسعير «بالمعادلة» مش هيشتغل قبل ما يتربط بمورد من روابط المورد — احفظه بسعر ثابت أو من غير تغيير سعر وبعدين اربطه.</div>' : "") +
+    '<div class="field"><label>سبب التعديل (اختياري)</label><input id="pfReason" type="text"></div>' +
+    (isNew ? "" : '<div id="pfSuppliers"><div class="sub" style="color:var(--muted)">بيحمّل موردي المنتج…</div></div>');
+  openActSheet(isNew ? "منتج جديد" : "تعديل المنتج", body,
+    isNew ? "إنشاء المنتج" : "حفظ التعديلات", function(){
+    var name = $("pfName").value.trim();
+    if (!name) failValidation("اكتب اسم المنتج الأول.");
+    var payload = {
+      name: name,
+      description: $("pfDesc").value,
+      category_id: $("pfCategory").value || null,
+      status: $("pfStatus").value,
+      sort_order: parseInt($("pfSort").value, 10) || 0
+    };
+    if (productSheetState.productId) payload.product_id = productSheetState.productId;
+    var reason = $("pfReason").value.trim();
+    if (reason) payload.reason = reason;
+    if (productSheetState.mode === "formula"){
+      var usd = Number($("pfCostUsd").value);
+      if (!isFinite(usd) || usd <= 0) failValidation("اكتب تكلفة صحيحة بالدولار أكبر من صفر.");
+      payload.pricing = { mode: "formula", cost_cents: Math.round(usd * 100) };
+    } else if (productSheetState.mode === "fixed"){
+      var egp = Number($("pfPriceEgp").value);
+      if (!isFinite(egp) || egp <= 0) failValidation("اكتب سعر بيع صحيح بالجنيه أكبر من صفر.");
+      payload.pricing = { mode: "fixed_egp", price_minor: Math.round(egp * 100) };
+    }
+    return api("/control/bot-catalog-product-save", { method: "POST", body: payload }).then(function(){
+      showCatalogMsg("ok", isNew ? "المنتج اتعمل واتحفظ عند البوت." : "التعديلات اتحفظت عند البوت.");
+      loadCatalog();
+    });
+  }, "catalog");
+  $("pfModeSeg").querySelectorAll("button").forEach(function(b){
+    b.addEventListener("click", function(){
+      productSheetState.mode = b.getAttribute("data-mode");
+      $("pfModeSeg").querySelectorAll("button").forEach(function(x){
+        x.classList.toggle("on", x === b);
+      });
+      $("pfCostWrap").classList.toggle("hidden", productSheetState.mode !== "formula");
+      $("pfPriceWrap").classList.toggle("hidden", productSheetState.mode !== "fixed");
+    });
+  });
+  if (!isNew) loadProductSuppliers(p.id);
+}
+
+function loadProductSuppliers(productId){
+  var box = $("pfSuppliers");
+  if (!box) return;
+  api("/control/bot-catalog-product-suppliers?product_id=" + encodeURIComponent(productId)).then(function(d){
+    if (!$("pfSuppliers") || String(productSheetState.productId) !== String(productId)) return;
+    var html = '<div class="group-title">موردو المنتج</div>';
+    var links = d.links || [];
+    if (links.length){
+      links.forEach(function(l){
+        html += '<div class="kv"><span>' + esc(l.provider_slug || "") +
+          (l.is_executing ? ' <span class="badge bot">المنفّذ</span>' : "") +
+          (l.sync_watch ? ' <span class="badge kind">مراقب</span>' : "") +
+          '<br><small style="color:var(--muted)">' + esc(l.name || "") + " · " + esc(l.external_id || "") + "</small></span>" +
+          "<span>" + esc(l.cost_minor !== null && l.cost_minor !== undefined
+            ? fmtNum(Number(l.cost_minor) / 100) + " " + (l.currency || "") : "—") +
+          '<br><small style="color:var(--muted)">مخزون: ' +
+          esc(l.stock === null || l.stock === undefined ? "—" : fmtNum(Number(l.stock))) +
+          "</small></span></div>";
+      });
+    } else {
+      html += '<div class="sub" style="color:var(--muted)">مفيش روابط موردين للمنتج ده.</div>';
+    }
+    var assigns = d.assignments;
+    if (d.assignments_unavailable){
+      html += '<div class="sub" style="color:var(--muted); margin-top:6px;">إسناد سجل الموردين مش متاح دلوقتي.</div>';
+    } else if (assigns && assigns.length){
+      html += '<div class="group-title">إسناد سجل الموردين</div>';
+      assigns.forEach(function(a){
+        html += '<div class="kv"><span>' + esc(a.supplier_key || "") +
+          ' <span class="badge kind">' + esc(a.state || "") + "</span>" +
+          (a.listing_ref ? '<br><small style="color:var(--muted)">' + esc(a.listing_ref) + "</small>" : "") +
+          "</span><span>" +
+          esc(a.cost_usd !== null && a.cost_usd !== undefined ? fmtNum(Number(a.cost_usd)) + " $" : "—") +
+          "</span></div>";
+      });
+    }
+    if (!d.product_key){
+      html += '<div class="preview" style="margin-top:10px;"><span class="warn">النقل لمورد آخر مش متاح:</span> المنتج ده مش مربوط في خريطة الهوية. اربطه الأول من قسم ربط الهوية تحت.</div>';
+    } else {
+      var targets = (assigns || []).filter(function(a){ return a.state !== "constant"; });
+      if (targets.length){
+        var opts = "";
+        targets.forEach(function(a){
+          opts += '<option value="' + esc(a.supplier_key) + '">' + esc(a.supplier_key) +
+            " (" + esc(a.state || "") + ")</option>";
+        });
+        html += '<div class="group-title">انقل لمورد آخر</div>' +
+          '<div class="field"><label>المورد الهدف</label><select id="pfFailoverTarget">' + opts + "</select></div>" +
+          '<div class="field"><label>سبب النقل (مطلوب)</label><input id="pfFailoverReason" type="text"></div>' +
+          '<div class="msg" id="pfFailoverMsg"></div>' +
+          '<button class="btn danger" id="pfFailoverBtn" type="button">انقل لمورد آخر</button>';
+      } else {
+        html += '<div class="sub" style="color:var(--muted); margin-top:6px;">النقل محتاج مورد تاني مسند للمنتج في سجل الموردين.</div>';
+      }
+    }
+    box.innerHTML = html;
+    var fb = $("pfFailoverBtn");
+    if (fb){
+      fb.addEventListener("click", function(){
+        var target = $("pfFailoverTarget").value;
+        var reason = $("pfFailoverReason").value.trim();
+        var fm = $("pfFailoverMsg");
+        if (!reason){
+          fm.className = "msg err";
+          fm.textContent = "اكتب سبب النقل الأول.";
+          return;
+        }
+        fb.disabled = true;
+        fb.textContent = "بيتنقل…";
+        api("/control/bot-catalog-failover", { method: "POST", body: {
+          product_key: d.product_key, target_supplier_key: target, reason: reason
+        }}).then(function(){
+          fm.className = "msg ok";
+          fm.textContent = "النقل اتنفذ عند البوت.";
+          showCatalogMsg("ok", "المنتج اتنقل للمورد «" + esc(target) + "» عند البوت.");
+          loadCatalog();
+          loadProductSuppliers(productId);
+        }).catch(function(e){
+          fm.className = "msg err";
+          fm.textContent = errText(e, "failover");
+        }).finally(function(){
+          fb.disabled = false;
+          fb.textContent = "انقل لمورد آخر";
+        });
+      });
+    }
+  }).catch(function(e){
+    if ($("pfSuppliers") && String(productSheetState.productId) === String(productId))
+      $("pfSuppliers").innerHTML = '<div class="sub" style="color:var(--red)">' +
+        esc(errText(e, "catalog")) + "</div>";
+  });
+}
+
+// ---------------- فئات الكتالوج ----------------
+function openCategorySheet(){
+  var selectedId = "";
+  var body =
+    '<div class="field"><label>الفئة</label><select id="cfPick"><option value="">فئة جديدة</option>' +
+    catalogState.categories.map(function(c){
+      return '<option value="' + esc(c.id) + '">' + esc(c.name || c.slug || "") + "</option>";
+    }).join("") + "</select></div>" +
+    '<div class="field"><label>اسم الفئة</label><input id="cfName" type="text"></div>' +
+    '<div class="field"><label>الاسم المختصر في الرابط (اختياري لفئة جديدة)</label><input id="cfSlug" type="text"></div>' +
+    '<div class="field"><label>مفعّلة</label><select id="cfEnabled"><option value="1">أيوه</option><option value="0">لأ</option></select></div>' +
+    '<div class="field"><label>ترتيب العرض</label><input id="cfSort" type="number" step="1" value="0"></div>' +
+    '<div class="field"><label>سبب التعديل (اختياري)</label><input id="cfReason" type="text"></div>';
+  openActSheet("فئة جديدة / تعديل فئة", body, "حفظ الفئة", function(){
+    var name = $("cfName").value.trim();
+    if (!name) failValidation("اكتب اسم الفئة الأول.");
+    var payload = {
+      name: name,
+      enabled: $("cfEnabled").value === "1",
+      sort_order: parseInt($("cfSort").value, 10) || 0
+    };
+    var slug = $("cfSlug").value.trim();
+    if (slug) payload.slug = slug;
+    if (selectedId) payload.category_id = selectedId;
+    var reason = $("cfReason").value.trim();
+    if (reason) payload.reason = reason;
+    return api("/control/bot-catalog-category-save", { method: "POST", body: payload }).then(function(){
+      showCatalogMsg("ok", "الفئة اتحفظت عند البوت.");
+      loadCatalog();
+    });
+  }, "catalog");
+  $("cfPick").addEventListener("change", function(){
+    selectedId = $("cfPick").value;
+    var c = catalogState.categories.filter(function(x){
+      return String(x.id) === selectedId;
+    })[0];
+    if (c){
+      $("cfName").value = c.name || "";
+      $("cfSlug").value = c.slug || "";
+      $("cfEnabled").value = c.enabled ? "1" : "0";
+      $("cfSort").value = c.sort_order !== null && c.sort_order !== undefined ? c.sort_order : 0;
+    } else {
+      $("cfName").value = "";
+      $("cfSlug").value = "";
+      $("cfEnabled").value = "1";
+      $("cfSort").value = 0;
+    }
+  });
+}
+
+// ---------------- دفعة أسعار: معاينة ثم تطبيق ثم تراجع ----------------
+function collectBatchItems(){
+  var items = [];
+  document.querySelectorAll("[data-batch-cost]").forEach(function(inp){
+    var v = inp.value.trim();
+    if (v === "") return;
+    var usd = Number(v);
+    if (isFinite(usd) && usd > 0)
+      items.push({ product_id: inp.getAttribute("data-batch-cost"), cost_cents: Math.round(usd * 100) });
+  });
+  return items;
+}
+function renderBatchPreview(d){
+  var nameOf = function(id){
+    var p = catalogState.items.filter(function(x){ return String(x.id) === String(id); })[0];
+    return p ? (p.name || id) : id;
+  };
+  var skipLabel = {
+    bad_item: "بيانات مش صحيحة",
+    product_not_found: "المنتج مش موجود",
+    fixed_price: "سعره ثابت بالجنيه — ما بيتبعش المعادلة",
+    no_executing_link: "مالوش مورد منفّذ"
+  };
+  var egpTxt = function(v){
+    return v === null || v === undefined ? "—" : fmtNum(Number(v) / 100) + " ج.م";
+  };
+  var html = "";
+  (d.items || []).forEach(function(it){
+    html += '<div class="kv"><span>' + esc(nameOf(it.product_id)) + "</span><span>" +
+      fmtNum(Number(it.old_cost) / 100) + " $ ← " + fmtNum(Number(it.new_cost) / 100) + " $" +
+      '<br><small style="color:var(--muted)">البيع: ' + egpTxt(it.old_sell_egp) +
+      " ← " + egpTxt(it.new_sell_egp) + "</small></span></div>";
+  });
+  (d.skipped || []).forEach(function(s){
+    html += '<div class="kv"><span>' + esc(nameOf(s.product_id)) +
+      '</span><span class="status-txt st-mut">اتخطى: ' +
+      esc(skipLabel[s.reason] || s.reason || "") + "</span></div>";
+  });
+  (d.below_floor || []).forEach(function(id){
+    html += '<div class="kv"><span>' + esc(nameOf(id)) +
+      '</span><span class="status-txt st-bad">أقل من الحد الآمن — التطبيق هيترفض</span></div>';
+  });
+  if (!html) html = '<div class="sub" style="color:var(--muted)">المعاينة فاضية.</div>';
+  $("bfPreview").innerHTML = html;
+}
+function openBatchSheet(){
+  var usdProducts = catalogState.items.filter(function(p){
+    return (p.currency || "USD") !== "EGP";
+  });
+  if (!usdProducts.length){
+    showCatalogMsg("warn", "مفيش منتجات دولارية في الكتالوج عشان تعمل دفعة أسعار.");
+    return;
+  }
+  var rows = usdProducts.map(function(p){
+    var cur = (p.executing && p.executing.cost_minor !== null && p.executing.cost_minor !== undefined)
+      ? Number(p.executing.cost_minor) / 100
+      : (p.cost_minor !== null && p.cost_minor !== undefined ? Number(p.cost_minor) / 100 : null);
+    return '<div class="result-row" style="cursor:default;"><div class="who"><b>' + esc(p.name || "") + "</b>" +
+      "<small>التكلفة الحالية: " + esc(cur === null ? "—" : fmtNum(cur) + " $") + "</small></div>" +
+      '<input type="number" step="0.01" min="0" placeholder="تكلفة جديدة $" data-batch-cost="' + esc(p.id) +
+      '" style="width:130px; flex:none; background:var(--surface2); border:1px solid var(--border); border-radius:10px; color:var(--text); font-family:inherit; font-size:15px; padding:10px; min-height:48px;"></div>';
+  }).join("");
+  var body =
+    (catalogState.lastBatchAuditId
+      ? '<div class="preview">فيه دفعة مطبقة برقم تدقيق ' + esc(catalogState.lastBatchAuditId) +
+        ' لسه ممكن تتراجع عنها.<br><button class="btn danger small" id="bfUndoBtn" type="button" style="margin-top:8px;">تراجع عن الدفعة</button></div>'
+      : "") +
+    '<div class="sub" style="color:var(--muted); margin-bottom:8px;">اكتب التكلفة الجديدة بالدولار للمنتجات اللي عايز تغيّرها وسيب الباقي فاضي. المعاينة الأول وبعدين التطبيق.</div>' +
+    rows +
+    '<div class="field" style="margin-top:10px;"><label>سبب الدفعة (مطلوب عند التطبيق)</label><input id="bfReason" type="text"></div>' +
+    '<div class="msg" id="bfMsg"></div>' +
+    '<div id="bfPreview"></div>' +
+    '<div class="row-actions"><button class="btn secondary" id="bfDryBtn" type="button">معاينة الدفعة</button>' +
+    '<button class="btn" id="bfApplyBtn" type="button" disabled>تطبيق الدفعة</button></div>';
+  openActSheet("دفعة أسعار", body, "تمام", function(){}, "catalog");
+  var undoBtn = $("bfUndoBtn");
+  if (undoBtn) undoBtn.addEventListener("click", function(){
+    closeActSheet();
+    openBatchUndoSheet();
+  });
+  document.querySelectorAll("[data-batch-cost]").forEach(function(inp){
+    inp.addEventListener("input", function(){ $("bfApplyBtn").disabled = true; });
+  });
+  $("bfDryBtn").addEventListener("click", function(){
+    var items = collectBatchItems();
+    var m = $("bfMsg");
+    if (!items.length){
+      m.className = "msg err";
+      m.textContent = "اكتب تكلفة جديدة لمنتج واحد على الأقل الأول.";
+      return;
+    }
+    var btn = $("bfDryBtn");
+    btn.disabled = true;
+    api("/control/bot-catalog-price-batch", { method: "POST", body: { items: items, dry_run: true } }).then(function(d){
+      m.className = "msg";
+      m.textContent = "";
+      renderBatchPreview(d);
+      $("bfApplyBtn").disabled = !!(d.below_floor && d.below_floor.length) || !(d.items && d.items.length);
+    }).catch(function(e){
+      m.className = "msg err";
+      m.textContent = errText(e, "catalog");
+    }).finally(function(){ btn.disabled = false; });
+  });
+  $("bfApplyBtn").addEventListener("click", function(){
+    var items = collectBatchItems();
+    var reason = $("bfReason").value.trim();
+    var m = $("bfMsg");
+    if (!items.length){
+      m.className = "msg err";
+      m.textContent = "اكتب تكلفة جديدة لمنتج واحد على الأقل الأول.";
+      return;
+    }
+    if (!reason){
+      m.className = "msg err";
+      m.textContent = "اكتب سبب الدفعة الأول — التطبيق لازم يكون ليه سبب متسجل.";
+      return;
+    }
+    var btn = $("bfApplyBtn");
+    btn.disabled = true;
+    api("/control/bot-catalog-price-batch", { method: "POST", body: {
+      items: items, dry_run: false, reason: reason
+    }}).then(function(d){
+      if (d.audit_id !== null && d.audit_id !== undefined)
+        catalogState.lastBatchAuditId = d.audit_id;
+      closeActSheet();
+      showCatalogMsg("ok", "الدفعة اتطبقت عند البوت." +
+        (catalogState.lastBatchAuditId
+          ? ' <button class="btn danger" id="catUndoBtn" type="button" style="margin-top:8px;">تراجع عن الدفعة</button>'
+          : ""));
+      var ub = $("catUndoBtn");
+      if (ub) ub.addEventListener("click", openBatchUndoSheet);
+      loadCatalog();
+    }).catch(function(e){
+      var partialAuditId = (e && e.data && e.data.audit_id !== null &&
+        e.data.audit_id !== undefined) ? e.data.audit_id : null;
+      if (partialAuditId !== null){
+        catalogState.lastBatchAuditId = partialAuditId;
+        loadCatalog();
+        closeActSheet();
+        showCatalogMsg("err", esc(errText(e, "catalog")) +
+          ' <button class="btn danger" id="catUndoBtn" type="button" style="margin-top:8px;">تراجع عن الدفعة</button>');
+        var ub2 = $("catUndoBtn");
+        if (ub2) ub2.addEventListener("click", openBatchUndoSheet);
+        return;
+      }
+      m.className = "msg err";
+      m.textContent = errText(e, "catalog");
+    }).finally(function(){ btn.disabled = false; });
+  });
+}
+function openBatchUndoSheet(){
+  if (!catalogState.lastBatchAuditId){
+    showCatalogMsg("warn", "مفيش دفعة مطبقة في الجلسة دي عشان تتراجع عنها.");
+    return;
+  }
+  var auditId = catalogState.lastBatchAuditId;
+  var body =
+    '<div class="preview">التراجع هيرجّع تكاليف منتجات الدفعة (رقم تدقيق ' + esc(auditId) +
+    ") للي كانت عليه قبلها، بشرط إن التكلفة ما تكونش اتغيّرت بعد الدفعة ولا المورد المنفّذ اتغيّر.</div>" +
+    '<div class="field"><label>سبب التراجع (اختياري)</label><input id="buReason" type="text"></div>';
+  openActSheet("تراجع عن دفعة أسعار", body, "تنفيذ التراجع", function(){
+    var payload = { audit_id: auditId };
+    var reason = $("buReason").value.trim();
+    if (reason) payload.reason = reason;
+    return api("/control/bot-catalog-price-batch-undo", { method: "POST", body: payload }).then(function(d){
+      catalogState.lastBatchAuditId = null;
+      showCatalogMsg("ok", "التراجع اتنفذ عند البوت — اترجع عن " +
+        fmtNum((d.undone || []).length) + " منتج.");
+      loadCatalog();
+    });
+  }, "catalog");
+}
+
+// ---------------- ربط الهوية ----------------
+function loadIdentity(){
+  api("/control/bot-catalog-identity").then(function(d){
+    identityState = {
+      items: d.items || [],
+      unmappedKeys: d.unmapped_provenance_keys || [],
+      unmappedProducts: d.unmapped_bot_products || []
+    };
+    renderIdentity();
+  }).catch(function(e){
+    $("identityBody").innerHTML = '<div class="sub" style="color:var(--red)">' +
+      esc(errText(e, "catalog")) + "</div>";
+  });
+}
+function renderIdentity(){
+  var html = "";
+  if (identityState.items.length){
+    identityState.items.forEach(function(it){
+      html += '<div class="kv"><span><b>' + esc(it.product_key) + "</b></span>" +
+        '<span style="text-align:left;">' +
+        (it.bot_product_id ? "بوت: " + esc(String(it.bot_product_id).slice(0, 8)) + "…" : "بوت: —") +
+        "<br>" + (it.store_sku ? "موقع: " + esc(it.store_sku) : "موقع: —") + "</span></div>";
+    });
+  } else {
+    html += '<div class="sub" style="color:var(--muted)">مفيش روابط هوية لسه.</div>';
+  }
+  if (identityState.unmappedKeys.length){
+    html += '<div class="group-title">مفاتيح مصدر مش مربوطة</div><div class="cnt-chips">' +
+      identityState.unmappedKeys.map(function(k){
+        return '<span class="chip">' + esc(k) + "</span>";
+      }).join("") + "</div>";
+  }
+  if (identityState.unmappedProducts.length){
+    html += '<div class="group-title">منتجات بوت مش مربوطة</div>' +
+      identityState.unmappedProducts.map(function(p){
+        return '<div class="kv"><span>' + esc(p.name || "") + "</span><span>" +
+          esc(p.slug || "") + "</span></div>";
+      }).join("");
+  }
+  $("identityBody").innerHTML = html;
+}
+function openIdentitySheet(){
+  var keyOptions = identityState.unmappedKeys.map(function(k){
+    return '<option value="' + esc(k) + '"></option>';
+  }).join("");
+  var seenIds = {};
+  var productOptions = '<option value="">من غير منتج بوت</option>';
+  identityState.unmappedProducts.concat(catalogState.items).forEach(function(p){
+    if (!p.id || seenIds[p.id]) return;
+    seenIds[p.id] = true;
+    productOptions += '<option value="' + esc(p.id) + '">' + esc(p.name || p.slug || "") + "</option>";
+  });
+  var body =
+    '<div class="field"><label>مفتاح المنتج في المصدر</label><input id="idKey" type="text" list="idKeyList" placeholder="اكتب المفتاح أو اختار من المش مربوط"><datalist id="idKeyList">' + keyOptions + "</datalist></div>" +
+    '<div class="field"><label>منتج البوت</label><select id="idProduct">' + productOptions + "</select></div>" +
+    '<div class="field"><label>اسم منتج الموقع (اختياري)</label><input id="idSku" type="text"></div>' +
+    '<div class="field"><label>سبب الربط (اختياري)</label><input id="idReason" type="text"></div>';
+  openActSheet("ربط هوية جديد", body, "حفظ الربط", function(){
+    var key = $("idKey").value.trim();
+    if (!key) failValidation("اكتب مفتاح المنتج الأول.");
+    var pid = $("idProduct").value;
+    var sku = $("idSku").value.trim();
+    if (!pid && !sku)
+      failValidation("الربط لازم يكون فيه منتج بوت أو اسم منتج موقع على الأقل.");
+    var payload = { product_key: key };
+    if (pid) payload.bot_product_id = pid;
+    if (sku) payload.store_sku = sku;
+    var reason = $("idReason").value.trim();
+    if (reason) payload.reason = reason;
+    return api("/control/bot-catalog-identity-save", { method: "POST", body: payload }).then(function(){
+      showCatalogMsg("ok", "الربط اتحفظ عند البوت.");
+      loadIdentity();
+      loadCatalog();
+    });
+  }, "catalog");
+}
+
+$("catQ").addEventListener("input", renderCatalogList);
+$("catCategoryFilter").addEventListener("change", renderCatalogList);
+$("catStatusFilter").addEventListener("change", renderCatalogList);
+$("catReloadBtn").addEventListener("click", function(){ loadCatalog(); loadIdentity(); });
+$("catNewBtn").addEventListener("click", function(){ openProductSheet(null); });
+$("catCategoryBtn").addEventListener("click", openCategorySheet);
+$("catBatchBtn").addEventListener("click", openBatchSheet);
+$("identityLinkBtn").addEventListener("click", openIdentitySheet);
+
+// ============================================================
+// قسم الموردين (م٣-ب): موردو المحرك وسجل الموردين وروابطهم —
+// كل قراءة وكتابة بتعدّي على البوت من مسارات
+// /control/bot-supplier-*، والنجاح بيظهر بس بعد رد سليم منه.
+// أسماء المفاتيح المحفوظة بتظهر بس — قيمتها ما بتظهرش أبدًا.
+// مفيش أي حذف في القسم ده: إغلاق سجل مورد بيتم بحالته «مغلق».
+// ============================================================
+
+function showSupMsg(kind, html, withKeyBtn){
+  var box = $("supMsg");
+  box.className = "msg " + kind;
+  box.innerHTML = html + (withKeyBtn
+    ? '<button class="btn" id="supKeyBtn" type="button">كتابة المفتاح</button>' : "");
+  if (withKeyBtn) $("supKeyBtn").addEventListener("click", askKey);
+}
+function hideSupMsg(){ $("supMsg").className = "msg"; $("supMsg").innerHTML = ""; }
+
+var suppliersState = { loaded: false, engine: [], registry: [], registryOnlyKeys: [] };
+var supplierProductsState = { slug: null, offset: 0, total: 0, limit: 50 };
+var REGISTRY_KIND_LABEL = { api: "ربط برمجي", manual: "يدوي", mixed: "مختلط" };
+var REGISTRY_STATUS_LABEL = { active: "نشط", prospective: "مرتقب", trial: "تجربة", closed: "مغلق" };
+var ENGINE_OP_LABEL = {
+  activate: "تشغيل المورد", disable: "إيقاف المورد",
+  dry_run_on: "تشغيل وضع التجربة", dry_run_off: "إيقاف وضع التجربة",
+  sync: "المزامنة", test: "اختبار الاتصال", balance: "قراءة الرصيد"
+};
+
+function ensureSuppliersLoaded(){
+  if (suppliersState.loaded) return;
+  suppliersState.loaded = true;
+  loadSuppliers();
+}
+
+function loadSuppliers(){
+  hideSupMsg();
+  $("engineList").innerHTML = '<div class="sub" style="color:var(--muted)">بيحمّل الموردين…</div>';
+  api("/control/bot-suppliers").then(function(d){
+    suppliersState.engine = d.engine || [];
+    suppliersState.registry = d.registry || [];
+    suppliersState.registryOnlyKeys = d.registry_only_keys || [];
+    renderEngineList();
+    renderRegistryList();
+    renderRegistryKeys();
+  }).catch(function(e){
+    $("engineList").innerHTML = "";
+    $("registryList").innerHTML = "";
+    if (e && e.noKey) showSupMsg("err", "لازم تكتب مفتاح الأدمن الأول.", true);
+    else showSupMsg("err", esc(errText(e, "suppliers")));
+  });
+}
+
+function renderEngineList(){
+  if (!suppliersState.engine.length){
+    $("engineList").innerHTML = '<div class="empty">مفيش موردين في المحرك.</div>';
+    return;
+  }
+  var html = "";
+  suppliersState.engine.forEach(function(s){
+    var active = s.status === "active";
+    html += '<div class="result-row" data-engine="' + esc(s.slug) + '">' +
+      '<div class="who"><b>' + esc(s.name || s.slug || "") + "</b>" +
+      "<small>" + esc(s.slug || "") + (s.adapter ? " · " + esc(s.adapter) : "") + "</small>" +
+      "<small>آخر مزامنة: " + esc(s.last_sync_at ? relTime(s.last_sync_at) : "لسه") +
+      (s.last_sync_at ? (s.last_sync_ok ? " (تمام)" : " (فشلت)") : "") + "</small>" +
+      "<small>" + (s.has_secrets
+        ? "مفاتيح محفوظة (الأسماء بس): " + esc((s.secrets_set || []).join("، ") || "—")
+        : "مفيش مفاتيح محفوظة") + "</small></div>" +
+      '<div class="bal"><span class="status-txt ' + (active ? "st-ok" : "st-mut") + '">' +
+      (active ? "شغال" : "موقوف") + "</span>" +
+      (s.dry_run ? '<small class="status-txt st-pending">وضع التجربة شغال</small>' : "") +
+      "</div></div>";
+  });
+  $("engineList").innerHTML = html;
+  $("engineList").querySelectorAll("[data-engine]").forEach(function(row){
+    row.addEventListener("click", function(){
+      var s = suppliersState.engine.filter(function(x){
+        return x.slug === row.getAttribute("data-engine");
+      })[0];
+      if (s) openEngineSheet(s);
+    });
+  });
+}
+
+function engineResultText(result){
+  if (result === null || result === undefined) return "—";
+  if (typeof result === "object"){
+    var parts = [];
+    Object.keys(result).forEach(function(k){
+      var v = result[k];
+      if (v !== null && typeof v === "object") v = JSON.stringify(v);
+      parts.push(k + ": " + v);
+    });
+    return parts.join("\n") || "—";
+  }
+  return String(result);
+}
+function runEngineOp(s, op, btn){
+  var box = $("engResult");
+  btn.disabled = true;
+  api("/control/bot-supplier-engine", { method: "POST", body: { slug: s.slug, op: op } }).then(function(d){
+    if (op === "test" || op === "balance" || op === "sync"){
+      box.innerHTML = '<div class="preview" style="white-space:pre-wrap;">' +
+        esc(ENGINE_OP_LABEL[op] + " — النتيجة زي ما رجعت من المورد:\n") +
+        esc(engineResultText(d.result)) + "</div>";
+      if (op === "sync") loadSuppliers();
+    } else {
+      closeActSheet();
+      showSupMsg("ok", "عملية «" + esc(ENGINE_OP_LABEL[op] || op) + "» على المورد «" +
+        esc(s.name || s.slug) + "» اتنفذت عند البوت.");
+      loadSuppliers();
+    }
+  }).catch(function(e){
+    box.innerHTML = '<div class="msg err">' + esc(errText(e, "suppliers")) + "</div>";
+  }).finally(function(){ btn.disabled = false; });
+}
+function openEngineSheet(s){
+  var body =
+    '<div class="kv"><span>الحالة</span><span class="status-txt ' +
+    (s.status === "active" ? "st-ok" : "st-mut") + '">' +
+    (s.status === "active" ? "شغال" : "موقوف") + "</span></div>" +
+    '<div class="kv"><span>وضع التجربة (الشراء بيتحاكى بس)</span><span>' +
+    (s.dry_run ? "شغال" : "مقفل") + "</span></div>" +
+    '<div class="kv"><span>آخر مزامنة</span><span>' +
+    esc(s.last_sync_at ? relTime(s.last_sync_at) : "لسه") + "</span></div>" +
+    '<div class="kv"><span>المفاتيح المحفوظة (الأسماء بس)</span><span>' +
+    esc(s.has_secrets ? ((s.secrets_set || []).join("، ") || "—") : "مفيش") + "</span></div>" +
+    '<div class="row-actions" style="margin-top:12px;">' +
+    (s.status === "active"
+      ? '<button class="btn danger small" type="button" data-eng-op="disable">إيقاف المورد</button>'
+      : '<button class="btn go small" type="button" data-eng-op="activate">تشغيل المورد</button>') +
+    (s.dry_run
+      ? '<button class="btn secondary small" type="button" data-eng-op="dry_run_off">إيقاف وضع التجربة</button>'
+      : '<button class="btn secondary small" type="button" data-eng-op="dry_run_on">تشغيل وضع التجربة</button>') +
+    '<button class="btn secondary small" type="button" data-eng-op="sync">مزامنة دلوقتي</button>' +
+    '<button class="btn secondary small" type="button" data-eng-op="test">اختبار الاتصال</button>' +
+    '<button class="btn secondary small" type="button" data-eng-op="balance">قراءة الرصيد</button>' +
+    '<button class="btn ghost small" type="button" id="engLinksBtn">روابط المورد</button>' +
+    "</div>" +
+    '<div id="engResult" style="margin-top:10px;"></div>';
+  openActSheet("مورد: " + (s.name || s.slug), body, "تمام", function(){}, "suppliers");
+  document.querySelectorAll("[data-eng-op]").forEach(function(b){
+    b.addEventListener("click", function(){
+      runEngineOp(s, b.getAttribute("data-eng-op"), b);
+    });
+  });
+  $("engLinksBtn").addEventListener("click", function(){
+    closeActSheet();
+    openSupplierProductsSheet(s);
+  });
+}
+
+// ---------------- سجل الموردين ----------------
+function renderRegistryList(){
+  if (!suppliersState.registry.length){
+    $("registryList").innerHTML = '<div class="empty">السجل فاضي.</div>';
+    return;
+  }
+  var html = "";
+  suppliersState.registry.forEach(function(r){
+    html += '<div class="result-row" data-registry="' + esc(r.id) + '">' +
+      '<div class="who"><b>' + esc(r.name || "") + "</b>" +
+      "<small>" + esc(REGISTRY_KIND_LABEL[r.kind] || r.kind || "") +
+      (r.account ? " · " + esc(r.account) : "") + "</small>" +
+      (r.contact ? "<small>" + esc(r.contact) + "</small>" : "") + "</div>" +
+      '<div class="bal"><span class="status-txt ' +
+      (r.status === "active" ? "st-ok" : r.status === "closed" ? "st-bad" : "st-pending") + '">' +
+      esc(REGISTRY_STATUS_LABEL[r.status] || r.status || "") + "</span></div></div>";
+  });
+  $("registryList").innerHTML = html;
+  $("registryList").querySelectorAll("[data-registry]").forEach(function(row){
+    row.addEventListener("click", function(){
+      var r = suppliersState.registry.filter(function(x){
+        return String(x.id) === row.getAttribute("data-registry");
+      })[0];
+      if (r) openRegistrySheet(r);
+    });
+  });
+}
+function renderRegistryKeys(){
+  var keys = suppliersState.registryOnlyKeys;
+  $("registryKeysBody").innerHTML = keys.length
+    ? '<div class="cnt-chips">' + keys.map(function(k){
+        return '<span class="chip">' + esc(k) + "</span>";
+      }).join("") + "</div>"
+    : '<div class="sub" style="color:var(--muted)">مفيش مفاتيح زيادة — كل مفاتيح السجل مربوطة بمورد في المحرك.</div>';
+}
+function registryOptions(map, selected){
+  var html = "";
+  Object.keys(map).forEach(function(k){
+    html += '<option value="' + esc(k) + '"' + (k === selected ? " selected" : "") + ">" +
+      esc(map[k]) + "</option>";
+  });
+  return html;
+}
+function openRegistrySheet(r){
+  var isNew = !r;
+  r = r || { name: "", kind: "manual", status: "prospective", account: "", contact: "", notes: "" };
+  var body =
+    (isNew
+      ? '<div class="field"><label>اسم المورد</label><input id="rgName" type="text"></div>'
+      : '<div class="kv" style="margin-bottom:10px;"><span>اسم المورد</span><span><b>' +
+        esc(r.name) + "</b></span></div>") +
+    '<div class="field"><label>نوع المورد</label><select id="rgKind">' +
+    registryOptions(REGISTRY_KIND_LABEL, r.kind) + "</select></div>" +
+    '<div class="field"><label>الحالة</label><select id="rgStatus">' +
+    registryOptions(REGISTRY_STATUS_LABEL, r.status) + "</select></div>" +
+    '<div class="field"><label>الحساب عند المورد</label><input id="rgAccount" type="text" value="' + esc(r.account || "") + '"></div>' +
+    '<div class="field"><label>وسيلة التواصل</label><input id="rgContact" type="text" value="' + esc(r.contact || "") + '"></div>' +
+    '<div class="field"><label>ملاحظات</label><textarea id="rgNotes" rows="3">' + esc(r.notes || "") + "</textarea></div>" +
+    '<div class="field"><label>سبب التعديل (اختياري)</label><input id="rgReason" type="text"></div>' +
+    (isNew ? "" : '<div class="preview">الإغلاق بيتم بضبط الحالة لـ«مغلق» — صف السجل نفسه ما بيتمسحش أبدًا.</div>');
+  openActSheet(isNew ? "مورد جديد في السجل" : "تعديل سجل المورد", body, "حفظ السجل", function(){
+    var payload = {
+      name: isNew ? $("rgName").value.trim() : r.name,
+      kind: $("rgKind").value,
+      status: $("rgStatus").value,
+      account: $("rgAccount").value.trim(),
+      contact: $("rgContact").value.trim(),
+      notes: $("rgNotes").value
+    };
+    if (!payload.name) failValidation("اكتب اسم المورد الأول.");
+    var reason = $("rgReason").value.trim();
+    if (reason) payload.reason = reason;
+    return api("/control/bot-supplier-registry-save", { method: "POST", body: payload }).then(function(){
+      showSupMsg("ok", "سجل المورد اتحفظ عند البوت.");
+      loadSuppliers();
+    });
+  }, "suppliers");
+}
+
+// ---------------- روابط المورد: بحث وربط ومراقبة ----------------
+function supplierProductOptionsHtml(){
+  var html = '<option value="">اختار منتج الكتالوج للربط</option>';
+  catalogState.items.forEach(function(p){
+    html += '<option value="' + esc(p.id) + '">' + esc(p.name || p.slug || "") + "</option>";
+  });
+  return html;
+}
+function openSupplierProductsSheet(s){
+  supplierProductsState = { slug: s.slug, offset: 0, total: 0, limit: 50 };
+  var body =
+    '<div class="search-row"><input id="spQ" type="text" placeholder="ابحث في منتجات المورد">' +
+    '<button class="btn" id="spSearchBtn" type="button">بحث</button></div>' +
+    '<div class="field" style="margin-top:10px;"><label>منتج الكتالوج اللي الصف هيتربط بيه</label>' +
+    '<select id="spProduct">' + supplierProductOptionsHtml() + "</select></div>" +
+    '<div class="msg" id="spMsg"></div>' +
+    '<div id="spList"><div class="sub" style="color:var(--muted)">بيحمّل منتجات المورد…</div></div>' +
+    '<div class="row-actions"><button class="btn secondary small" id="spMoreBtn" type="button" style="display:none;">عرض المزيد</button></div>';
+  openActSheet("روابط مورد: " + (s.name || s.slug), body, "تمام", function(){}, "suppliers");
+  if (!catalogState.items.length){
+    api("/control/bot-catalog-products").then(function(d){
+      catalogState.items = d.items || [];
+      catalogState.categories = d.categories || [];
+      var sel = $("spProduct");
+      if (sel) sel.innerHTML = supplierProductOptionsHtml();
+    }).catch(function(){});
+  }
+  $("spSearchBtn").addEventListener("click", function(){ loadSupplierProducts(false); });
+  $("spMoreBtn").addEventListener("click", function(){ loadSupplierProducts(true); });
+  loadSupplierProducts(false);
+}
+function loadSupplierProducts(append){
+  var offset = append ? supplierProductsState.offset : 0;
+  var q = ($("spQ") ? $("spQ").value.trim() : "");
+  var path = "/control/bot-supplier-products?provider=" + encodeURIComponent(supplierProductsState.slug) +
+    "&limit=" + supplierProductsState.limit + "&offset=" + offset +
+    (q ? "&q=" + encodeURIComponent(q) : "");
+  api(path).then(function(d){
+    supplierProductsState.total = d.total || 0;
+    supplierProductsState.offset = offset + (d.items || []).length;
+    renderSupplierProducts(d.items || [], append);
+    var more = $("spMoreBtn");
+    if (more) more.style.display = supplierProductsState.offset < supplierProductsState.total ? "" : "none";
+  }).catch(function(e){
+    if ($("spList"))
+      $("spList").innerHTML = '<div class="sub" style="color:var(--red)">' +
+        esc(errText(e, "suppliers")) + "</div>";
+  });
+}
+function supplierProductRowHtml(row){
+  var linked = row.linked !== undefined && row.linked !== null
+    ? !!row.linked : !!(row.product_id);
+  var linkedName = "";
+  if (row.product_id){
+    var p = catalogState.items.filter(function(x){
+      return String(x.id) === String(row.product_id);
+    })[0];
+    linkedName = p ? (p.name || "") : String(row.product_id).slice(0, 8) + "…";
+  }
+  var cost = row.cost_price !== null && row.cost_price !== undefined
+    ? fmtNum(Number(row.cost_price) / 100) + " " + (row.currency || "") : "—";
+  return '<div class="result-row" style="cursor:default;"><div class="who"><b>' +
+    esc(row.name || "") + "</b>" +
+    "<small>" + esc(row.external_id || "") + " · التكلفة: " + esc(cost) + " · مخزون: " +
+    esc(row.stock === null || row.stock === undefined ? "—" : fmtNum(Number(row.stock))) + "</small>" +
+    "<small>" + (linked ? "مربوط بمنتج: " + esc(linkedName) : "مش مربوط بأي منتج") +
+    (row.sync_watch ? " · مراقب" : "") + "</small>" +
+    '<div class="row-actions">' +
+    (linked
+      ? '<button class="btn danger small" type="button" data-link-op="unlink" data-row="' + esc(row.id) + '">فك الربط</button>'
+      : '<button class="btn go small" type="button" data-link-op="link" data-row="' + esc(row.id) + '">اربط بالمنتج المختار</button>') +
+    (row.sync_watch
+      ? '<button class="btn ghost small" type="button" data-link-op="unwatch" data-row="' + esc(row.id) + '">أوقف المراقبة</button>'
+      : '<button class="btn ghost small" type="button" data-link-op="watch" data-row="' + esc(row.id) + '">راقب السعر والمخزون</button>') +
+    "</div></div></div>";
+}
+function renderSupplierProducts(items, append){
+  var box = $("spList");
+  if (!box) return;
+  var html = items.map(supplierProductRowHtml).join("");
+  if (append) box.insertAdjacentHTML("beforeend", html);
+  else box.innerHTML = html || '<div class="empty">مفيش منتجات مطابقة عند المورد.</div>';
+  box.querySelectorAll("[data-link-op]").forEach(function(b){
+    if (b.getAttribute("data-bound")) return;
+    b.setAttribute("data-bound", "1");
+    b.addEventListener("click", function(){
+      runSupplierLink(b.getAttribute("data-row"), b.getAttribute("data-link-op"), b);
+    });
+  });
+}
+function runSupplierLink(rowId, op, btn){
+  var m = $("spMsg");
+  var payload = { provider_product_id: rowId, op: op };
+  if (op === "link"){
+    var pid = $("spProduct").value;
+    if (!pid){
+      m.className = "msg err";
+      m.textContent = "اختار منتج الكتالوج اللي هتربط بيه الأول.";
+      return;
+    }
+    payload.product_id = pid;
+  }
+  btn.disabled = true;
+  api("/control/bot-supplier-link", { method: "POST", body: payload }).then(function(){
+    m.className = "msg ok";
+    m.textContent = op === "link" ? "الصف اتربط بالمنتج عند البوت."
+      : op === "unlink" ? "الربط اتفك عند البوت."
+      : op === "watch" ? "المراقبة اشتغلت على الصف."
+      : "المراقبة وقفت على الصف.";
+    loadSupplierProducts(false);
+  }).catch(function(e){
+    m.className = "msg err";
+    m.textContent = errText(e, "suppliers");
+  }).finally(function(){ btn.disabled = false; });
+}
+
+$("supReloadBtn").addEventListener("click", loadSuppliers);
+$("registryNewBtn").addEventListener("click", function(){ openRegistrySheet(null); });
 
 load();
 </script>
