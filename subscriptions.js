@@ -222,7 +222,7 @@ const subscriptionsData = [
     description: "استماع وتحميل بلا اتصال بالإنترنت وتخطي لا محدود للمسارات.",
     packages: [
       { id: "spotify_1m", name: "Spotify premium 1M — 94 ج.م", duration: "شهر واحد", price: 94 },
-      { id: "spotify_3m_link", name: "3 أشهر (رابط) — 82.5 ج.م", duration: "3 أشهر (رابط)", price: 82.5 },
+      { id: "spotify_3m_link", name: "3 أشهر (رابط) — 83 ج.م", duration: "3 أشهر (رابط)", price: 83 },
       { id: "spotify_1m_acc", name: "شهر واحد (حساب) — 125 ج.م", duration: "شهر واحد (حساب)", price: 125 }
     ]
   },

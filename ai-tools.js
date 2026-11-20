@@ -61,7 +61,7 @@ const aiProducts = [
         tag: 'إيلون ماسك الذكي',
         packages: [
             { id: 'ai_super_grok_main', name: 'Super Grok — 980 ج.م', duration: 'إيلون ماسك الذكي', price: 980 },
-            { id: 'ai_super_grok_plus', name: 'Grok Plus — شهر واحد — 349 ج.م', duration: 'Grok Plus — شهر واحد', price: 349 }
+            { id: 'ai_super_grok_plus', name: 'Grok Plus — شهر واحد — 384 ج.م', duration: 'Grok Plus — شهر واحد', price: 384 }
         ],
         desc: 'اشتراك رسمي في أقوى نماذج Grok غير المقيدة',
         banner: 'images/ai/ai_super_grok.webp', bannerAnim: 'images/ai/ai_super_grok-anim.webp'
@@ -112,7 +112,7 @@ const aiProducts = [
         banner: 'images/ai/gemini_pro.webp', bannerAnim: 'images/ai/gemini_pro-anim.webp',
         desc: 'اشتراك رسمي متكامل مع وصول دائم لأحدث النماذج المتقدمة.',
         packages: [
-            { id: 'gemini_18m', name: 'Gemini AI Pro — 18 شهر — 281 ج.م', duration: '18 شهر', price: 281 },
+            { id: 'gemini_18m', name: 'Gemini AI Pro — 18 شهر — 1032 ج.م', duration: '18 شهر', price: 1032 },
             { id: 'gemini_ai_pro_12m', name: 'Google AI Pro — 12 شهر (FW) — 63 ج.م', duration: '12 شهر (FW)', price: 63 },
             { id: 'gemini_ai_plus_3m', name: 'Google AI Plus — 3 شهور (FW) — 41 ج.م', duration: '3 شهور (FW)', price: 41 }
         ]
