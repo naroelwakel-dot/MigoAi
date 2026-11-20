@@ -451,6 +451,218 @@
   </div>
 </main>
 
+<main id="settingsMain" class="hidden">
+  <div class="msg" id="settingsMsg"></div>
+
+  <section class="card">
+    <h2>وسائل شحن البوت</h2>
+    <div class="sub" style="color:var(--muted); font-size:13px;">الوسائل اللي العميل بيشوفها لما ييجي يشحن رصيده في البوت: اسمها ورقمها أو حسابها والتعليمات اللي بتظهر له. الترتيب هنا هو نفس ترتيب ظهورها للعميل.</div>
+    <div class="sub" id="setPaySource" style="margin-top:8px;"></div>
+    <div id="setPayList" style="margin-top:6px;"></div>
+    <div class="row-actions" style="margin-top:10px;">
+      <button class="btn" id="setPaySaveBtn" type="button">حفظ وسائل الشحن</button>
+      <button class="btn secondary" id="setPayAddBtn" type="button">إضافة وسيلة</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>محتوى البوت</h2>
+    <div class="sub" style="color:var(--muted); font-size:13px;">النصوص اللي العميل بيشوفها وبيتعامل معاها في البوت نفسه: طريقة التواصل مع الدعم، ونصوص الترحيب والشاشات، والردود الجاهزة اللي الأدمن بيستخدمها في الرد على العملاء. كل تعديل هنا بيتحفظ لوحده وبيتسجل في سجل التغييرات.</div>
+    <div id="setContentSupport" style="margin-top:10px;"></div>
+    <div id="setContentTexts" style="margin-top:10px;"></div>
+    <div id="setContentReplies" style="margin-top:10px;"></div>
+  </section>
+
+  <section class="card">
+    <h2>إعدادات البوت</h2>
+    <div class="sub" style="color:var(--muted); font-size:13px;">كل إعدادات البوت اللي اللوحة تقدر تعدّلها، وكل تعديل بيتحفظ لوحده وبيتسجل في سجل التغييرات. المفاتيح السرية بتظهر «محفوظة» بس — قيمتها ما بتظهرش ولا بتتعدل من هنا.</div>
+    <div id="setRows" style="margin-top:6px;"></div>
+    <button class="btn secondary" id="setReloadBtn" type="button" style="margin-top:10px;">تحديث الإعدادات</button>
+  </section>
+
+  <section class="card">
+    <h2>سجل التغييرات</h2>
+    <div class="sub" style="color:var(--muted); font-size:13px;">آخر تغييرات اتعملت على الإعدادات من اللوحة: إيه اتغيّر ومن كام لكام وإمتى. قيم المفاتيح السرية بتظهر مقنّعة.</div>
+    <div id="setHistory" style="margin-top:6px;"></div>
+  </section>
+
+  <section class="card">
+    <h2>النسخة الاحتياطية</h2>
+    <div class="sub" style="color:var(--muted); font-size:13px;">التصدير بيحفظ كل الإعدادات في ملف واحد، والاستيراد بيرجّعها من ملف اتصدّر قبل كده وبيكتب فوق القيم الحالية للمفاتيح اللي فيه.</div>
+    <div class="row-actions" style="margin-top:10px;">
+      <button class="btn secondary" id="setExportBtn" type="button">تصدير النسخة</button>
+      <button class="btn secondary" id="setImportBtn" type="button">استيراد نسخة</button>
+      <input id="setImportFile" type="file" accept=".json,application/json" class="hidden">
+    </div>
+    <div class="sub" id="setImportResult" style="margin-top:8px;"></div>
+  </section>
+</main>
+
+<main id="channelMain" class="hidden">
+  <div class="msg" id="chnMsg"></div>
+
+  <section class="card">
+    <h2>منشور جديد</h2>
+    <div class="sub" style="color:var(--muted); font-size:13px;">اكتب المنشور واحفظه — بيتنشر في القناة على طول، أو حدّد وقت نشر وبيتنشر لما ييجي وقته. لو سبت الأزرار فاضية بتظهر شبكة الأزرار الافتراضية بتاعة القناة.</div>
+    <div class="field" style="margin-top:10px;"><label>نص المنشور</label><textarea id="chnText" rows="5"></textarea></div>
+    <div class="field"><label>رابط صورة (اختياري)</label><input id="chnPhoto" type="url" dir="ltr" placeholder="https://…"></div>
+    <div class="field"><label>أزرار (اختياري) — كل زر في سطر لوحده: نص الزر | الرابط</label><textarea id="chnButtons" rows="3" placeholder="اشترك دلوقتي | https://t.me/example"></textarea></div>
+    <div class="field"><label>وقت النشر (اختياري — فاضي يعني يتنشر على طول)</label><input id="chnSchedule" type="datetime-local"></div>
+    <div class="field"><label><input id="chnPin" type="checkbox"> تثبيت المنشور في القناة بعد نشره</label></div>
+    <div class="field"><label>منشور عرض من منتج</label>
+      <div class="row-actions">
+        <select id="chnProductSel" style="flex:1;"><option value="">اختر منتجًا…</option></select>
+        <button class="btn secondary" id="chnOfferBtn" type="button">املأ النص من المنتج</button>
+      </div>
+      <div class="sub" style="color:var(--muted); font-size:12px;">بيملأ نص المنشور من اسم المنتج وسعره — راجعه وعدّله قبل الحفظ. أزرار المنشور بتفضل الافتراضية بتاعة القناة.</div>
+    </div>
+    <div class="row-actions" style="margin-top:10px;">
+      <button class="btn" id="chnSaveBtn" type="button">حفظ المنشور</button>
+      <button class="btn secondary hidden" id="chnCancelEditBtn" type="button">إلغاء التعديل</button>
+    </div>
+    <div class="sub" id="chnEditingNote" style="margin-top:8px;"></div>
+  </section>
+
+  <section class="card">
+    <h2>منشورات القناة</h2>
+    <div class="sub" style="color:var(--muted); font-size:13px;">المسودات والمجدولات تقدر تعدّلها أو تحذفها قبل ما تتنشر. المنشور اللي اتنشر فعلًا تقدر تعدّل نصه، أو تحذفه من القناة نفسها.</div>
+    <div id="chnList" style="margin-top:6px;"></div>
+    <button class="btn secondary" id="chnReloadBtn" type="button" style="margin-top:10px;">تحديث القائمة</button>
+  </section>
+</main>
+
+<main id="couponsMain" class="hidden">
+  <div class="msg" id="cpnMsg"></div>
+
+  <section class="card">
+    <h2 id="cpnFormTitle">كوبون جديد</h2>
+    <div class="sub" style="color:var(--muted); font-size:13px;">الكوبون بيشتغل في المتجر على طول بعد حفظه وهو مفعّل. كود الكوبون ما بيتبدّلش بعد إنشائه — اللي عاوز كود تاني بيعمل كوبون جديد وبيوقّف القديم.</div>
+    <div class="field" style="margin-top:10px;"><label>كود الكوبون</label><input id="cpnCode" type="text" dir="ltr" placeholder="SAVE10"></div>
+    <div class="field"><label>نسبة الخصم (٪)</label><input id="cpnDiscount" type="number" min="0" max="100" step="any"></div>
+    <div class="field"><label>تاريخ الانتهاء (اختياري — فاضي يعني ملوش انتهاء)</label><input id="cpnExpires" type="datetime-local"></div>
+    <div class="field"><label>أقصى عدد استخدامات (اختياري — فاضي يعني ملوش حد)</label><input id="cpnMaxUses" type="number" min="1" step="1"></div>
+    <div class="field"><label>أقل إجمالي طلب بالجنيه (اختياري — فاضي يعني ملوش حد أدنى)</label><input id="cpnMinOrder" type="number" min="0" step="any"></div>
+    <div class="field"><label><input id="cpnActive" type="checkbox" checked> الكوبون مفعّل</label></div>
+    <div class="row-actions" style="margin-top:10px;">
+      <button class="btn" id="cpnSaveBtn" type="button">حفظ الكوبون</button>
+      <button class="btn secondary hidden" id="cpnCancelEditBtn" type="button">إلغاء التعديل</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>الكوبونات</h2>
+    <div class="sub" style="color:var(--muted); font-size:13px;">الكوبون اللي اتستخدم قبل كده ما بيتحذفش عشان سجل استخدامه ما يتمسحش — وقّفه وخلاص. الحذف متاح للي ما اتستخدمش خالص.</div>
+    <div id="cpnList" style="margin-top:6px;"></div>
+    <button class="btn secondary" id="cpnReloadBtn" type="button" style="margin-top:10px;">تحديث القائمة</button>
+  </section>
+</main>
+
+<main id="merchantsMain" class="hidden">
+  <div class="msg" id="mchMsg"></div>
+
+  <section class="card">
+    <h2>التجار</h2>
+    <div class="sub" style="color:var(--muted); font-size:13px;">التجار المسجلين عند البوت ومفاتيح دخولهم وطلباتهم. اختر تاجرًا عشان تشوف مفاتيحه وآخر طلباته وتدير حالته.</div>
+    <div id="mchList" style="margin-top:6px;"></div>
+    <button class="btn secondary" id="mchReloadBtn" type="button" style="margin-top:10px;">تحديث القائمة</button>
+  </section>
+
+  <section class="card hidden" id="mchDetailCard">
+    <h2 id="mchDetailTitle">تفاصيل التاجر</h2>
+    <div id="mchNewSecretBox" class="hidden" style="border:1px solid var(--gold, #c9a227); border-radius:8px; padding:10px; margin-top:8px;">
+      <b>مفتاح الدخول الجديد — انسخه دلوقتي، مش هيظهر تاني.</b>
+      <div class="sub" style="color:var(--muted); font-size:12px; margin-top:4px;">المفتاح القديم اتوقف خلاص. ادّي المفتاح الجديد للتاجر في قناة آمنة، وبعدين اخفي الصندوق ده.</div>
+      <div class="row-actions" style="margin-top:8px;">
+        <input id="mchNewSecret" type="text" readonly dir="ltr" style="flex:1;">
+        <button class="btn secondary" id="mchCopySecretBtn" type="button">نسخ المفتاح</button>
+        <button class="btn ghost" id="mchHideSecretBtn" type="button">أخفيته — تمام</button>
+      </div>
+    </div>
+    <div id="mchDetailBody" style="margin-top:6px;"></div>
+  </section>
+</main>
+
+<main id="siteMain" class="hidden">
+  <div class="msg" id="siteMsg"></div>
+
+  <section class="card">
+    <h2>طرق الدفع في الموقع</h2>
+    <div class="sub" style="color:var(--muted); font-size:13px;">دي وسائل الدفع اللي الموقع بيقبل الشراء بيها. إيقاف وسيلة بيوقف الشراء بيها فورًا، وتفعيلها بيرجّعه. تغيير اسم وسيلة لازم يقابله نفس الاسم على زر الدفع في الموقع، وإلا الشراء بيها هيقف — عشان كده الحفظ بيعدّي على معاينة الأول.</div>
+    <div id="siteMethodsList" style="margin-top:6px;"></div>
+    <button class="btn secondary" id="siteMethodsReloadBtn" type="button" style="margin-top:10px;">تحديث القائمة</button>
+  </section>
+
+  <section class="card hidden" id="siteMethodFormCard">
+    <h2 id="siteMethodFormTitle">تعديل وسيلة دفع</h2>
+    <div class="field" style="margin-top:10px;"><label>اسم الوسيلة (زي ما بيظهر للعميل)</label><input id="siteMethodName" type="text"></div>
+    <div class="field"><label>ملحوظة داخلية (مش بتظهر للعملاء)</label><input id="siteMethodNote" type="text"></div>
+    <div class="field"><label><input id="siteMethodActive" type="checkbox" checked> الوسيلة شغالة ويتقبل الشراء بيها</label></div>
+    <div class="row-actions" style="margin-top:10px;">
+      <button class="btn" id="siteMethodSaveBtn" type="button">معاينة وحفظ</button>
+      <button class="btn secondary" id="siteMethodCancelBtn" type="button">إلغاء</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>شريط الإعلان</h2>
+    <div class="sub" style="color:var(--muted); font-size:13px;">شريط بيظهر أعلى الصفحة الرئيسية للموقع. وهو مطفي أو نصه فاضي مش هيظهر حاجة.</div>
+    <div class="field" style="margin-top:10px;"><label>نص الإعلان</label><input id="siteAnnText" type="text"></div>
+    <div class="field"><label>رابط عند الضغط (اختياري)</label><input id="siteAnnUrl" type="text" dir="ltr" placeholder="https://..."></div>
+    <div class="field"><label><input id="siteAnnEnabled" type="checkbox"> الشريط ظاهر للعملاء</label></div>
+    <div class="row-actions" style="margin-top:10px;">
+      <button class="btn" id="siteAnnSaveBtn" type="button">حفظ شريط الإعلان</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>الأسئلة الشائعة في الصفحة الرئيسية</h2>
+    <div class="sub" style="color:var(--muted); font-size:13px;">الأسئلة والإجابات اللي بتظهر في قسم الأسئلة في الصفحة الرئيسية، بنفس الترتيب اللي بتكتبها بيه هنا.</div>
+    <div id="siteFaqList" style="margin-top:10px;"></div>
+    <div class="row-actions" style="margin-top:10px;">
+      <button class="btn secondary" id="siteFaqAddBtn" type="button">إضافة سؤال</button>
+      <button class="btn" id="siteFaqSaveBtn" type="button">حفظ الأسئلة</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>أقسام الصفحة الرئيسية</h2>
+    <div class="sub" style="color:var(--muted); font-size:13px;">إخفاء قسم بيخفيه من الصفحة الرئيسية من غير ما يمسح محتواه — تقدر ترجّعه في أي وقت.</div>
+    <div id="siteSectionsList" style="margin-top:10px;"></div>
+    <div class="row-actions" style="margin-top:10px;">
+      <button class="btn" id="siteSectionsSaveBtn" type="button">حفظ الأقسام</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>نص الشروط البديل</h2>
+    <div class="sub" style="color:var(--muted); font-size:13px;">صفحة الشروط الحالية مكتوبة ومنسّقة في الموقع نفسه وبتظهر زي ما هي. لو كتبت نصًا هنا وحفظته، هو اللي هيظهر في صفحة الشروط بدل النص المنسّق (بيظهر كنص عادي، فقرة لكل سطر فاضي بينها). سيبه فاضي عشان الصفحة الحالية تفضل هي اللي ظاهرة.</div>
+    <div class="field" style="margin-top:10px;"><label>نص الشروط</label><textarea id="siteTermsText" rows="8"></textarea></div>
+    <div class="row-actions" style="margin-top:10px;">
+      <button class="btn" id="siteTermsSaveBtn" type="button">حفظ نص الشروط</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>وضع الصيانة</h2>
+    <div class="sub" style="color:var(--muted); font-size:13px;">لما الصيانة شغالة، العملاء بيشوفوا رسالة الصيانة بدل المتجر في الصفحة الرئيسية وصفحة الشروط. اللوحة دي وكل شغل الإدارة بيضلوا شغالين عادي — الصيانة بتقفل واجهة المتجر بس.</div>
+    <div class="field" style="margin-top:10px;"><label>رسالة الصيانة اللي العميل هيشوفها</label><textarea id="siteMaintMsg" rows="3"></textarea></div>
+    <div class="field"><label><input id="siteMaintEnabled" type="checkbox"> الصيانة شغالة دلوقتي</label></div>
+    <div class="row-actions" style="margin-top:10px;">
+      <button class="btn" id="siteMaintSaveBtn" type="button">حفظ وضع الصيانة</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>حاجات بتتعدّل من الكود نفسه</h2>
+    <div class="sub" style="color:var(--muted); font-size:13px;">الحاجات دي مكانها الطبيعي هو كود الموقع نفسه، فمش بتتعدّل من اللوحة — أي تغيير فيها بيتم بتعديل الموقع ونشره:
+      <br>• صورة وحركة الواجهة الرئيسية الكبيرة (التنين) في أول الصفحة الرئيسية.
+      <br>• ترتيب أقسام الصفحة الرئيسية (اللي فوق واللي تحت) — اللوحة بتظهرهم وبتخفيهم بس.
+      <br>• أرقام الحسابات وتعليمات الدفع اللي العميل بيشوفها جوّه نافذة إتمام الشراء (رقم المحفظة، معرّف باينانس، وهكذا) — اللوحة بتدير اسم كل وسيلة وحالتها هنا، والرقم نفسه بيتغيّر من الكود.
+      <br>• صفحات الأدلة والمقالات وصفحات المنتجات المنفصلة (نصوص ثابتة للبحث والقراءة).
+      <br>• تنسيق صفحة الشروط الأصلي (عناوين وجداول) — اللوحة بتستبدله بنص عادي بس لو كتبت نصًا بديلًا.</div>
+  </section>
+</main>
+
 <div class="sheet-veil" id="sheetVeil"></div>
 <div class="sheet" id="sheet">
   <p id="sheetTitle"></p>
@@ -686,7 +898,7 @@ $("storePill").addEventListener("click", load);
 // شغالين، و«المزيد» فيها أسعار الموقع (م٣) والكتالوج والموردون
 // (م٣-ب) والأحداث والمكونات (م٤).
 var navNames = { events: "الأحداث", more: "المزيد" };
-var viewTitles = { home: "مهامي الآن", customers: "العملاء", orders: "الطلبات", chats: "المحادثات", prices: "أسعار الموقع", catalog: "الكتالوج", suppliers: "الموردون", events: "الأحداث والمكونات" };
+var viewTitles = { home: "مهامي الآن", customers: "العملاء", orders: "الطلبات", chats: "المحادثات", prices: "أسعار الموقع", catalog: "الكتالوج", suppliers: "الموردون", events: "الأحداث والمكونات", settings: "إعدادات البوت", channel: "قناة التليجرام", coupons: "الكوبونات", merchants: "التجار", site: "الموقع" };
 function showView(name){
   $("homeMain").classList.toggle("hidden", name !== "home");
   $("customersMain").classList.toggle("hidden", name !== "customers");
@@ -696,11 +908,16 @@ function showView(name){
   $("catalogMain").classList.toggle("hidden", name !== "catalog");
   $("suppliersMain").classList.toggle("hidden", name !== "suppliers");
   $("eventsMain").classList.toggle("hidden", name !== "events");
+  $("settingsMain").classList.toggle("hidden", name !== "settings");
+  $("channelMain").classList.toggle("hidden", name !== "channel");
+  $("couponsMain").classList.toggle("hidden", name !== "coupons");
+  $("merchantsMain").classList.toggle("hidden", name !== "merchants");
+  $("siteMain").classList.toggle("hidden", name !== "site");
   $("pageTitle").textContent = viewTitles[name] || "";
   document.querySelectorAll("#bottomNav button").forEach(function(b){
     var nav = b.getAttribute("data-nav");
-    // أسعار الموقع والكتالوج والموردون بيتفتحوا من «المزيد» فزرها هو اللي بيتلوّن وهم مفتوحين.
-    b.classList.toggle("active", nav === name || ((name === "prices" || name === "catalog" || name === "suppliers") && nav === "more"));
+    // أسعار الموقع والكتالوج والموردون والإعدادات والقناة والكوبونات والتجار بيتفتحوا من «المزيد» فزرها هو اللي بيتلوّن وهم مفتوحين.
+    b.classList.toggle("active", nav === name || ((name === "prices" || name === "catalog" || name === "suppliers" || name === "settings" || name === "channel" || name === "coupons" || name === "merchants" || name === "site") && nav === "more"));
   });
   if (name !== "chats" && typeof stopChatPolling === "function") stopChatPolling();
   window.scrollTo({ top: 0 });
@@ -721,6 +938,11 @@ document.querySelectorAll("#bottomNav button").forEach(function(b){
         '<button class="btn" id="moreCatalogBtn" type="button">الكتالوج</button>' +
         '<button class="btn" id="moreSuppliersBtn" type="button">الموردون</button>' +
         '<button class="btn" id="moreEventsBtn" type="button">الأحداث والمكونات</button>' +
+        '<button class="btn" id="moreSettingsBtn" type="button">إعدادات البوت</button>' +
+        '<button class="btn" id="moreChannelBtn" type="button">قناة التليجرام</button>' +
+        '<button class="btn" id="moreCouponsBtn" type="button">الكوبونات</button>' +
+        '<button class="btn" id="moreMerchantsBtn" type="button">التجار</button>' +
+        '<button class="btn" id="moreSiteBtn" type="button">الموقع</button>' +
         "</div>";
       $("sheet").classList.add("open");
       $("sheetVeil").classList.add("open");
@@ -743,6 +965,31 @@ document.querySelectorAll("#bottomNav button").forEach(function(b){
         closeSheet();
         showView("events");
         ensureEventsLoaded();
+      });
+      $("moreSettingsBtn").addEventListener("click", function(){
+        closeSheet();
+        showView("settings");
+        ensureSettingsLoaded();
+      });
+      $("moreChannelBtn").addEventListener("click", function(){
+        closeSheet();
+        showView("channel");
+        ensureChannelLoaded();
+      });
+      $("moreCouponsBtn").addEventListener("click", function(){
+        closeSheet();
+        showView("coupons");
+        ensureCouponsLoaded();
+      });
+      $("moreMerchantsBtn").addEventListener("click", function(){
+        closeSheet();
+        showView("merchants");
+        ensureMerchantsLoaded();
+      });
+      $("moreSiteBtn").addEventListener("click", function(){
+        closeSheet();
+        showView("site");
+        ensureSiteLoaded();
       });
       return;
     }
@@ -845,6 +1092,13 @@ function errText(e, ctx){
   if (code === "order_not_found") return "الطلب مش موجود.";
   if (code === "not_refunded") return "المورد لسه ما أكدش رجوع الفلوس — الاسترداد مش هيتم قبل تأكيده.";
   if (code === "unknown_key") return "الإعداد ده مش معروف.";
+  if (code === "bad_key" && ctx === "site") return "جزء المحتوى ده مش معروف — حدّث الشاشة وحاول تاني.";
+  if (code === "bad_key") return "المفتاح ده مش معروف في سجل إعدادات البوت.";
+  if (code === "not_editable") return "الإعداد ده مش قابل للتعديل من اللوحة.";
+  if (code === "bad_value" && ctx === "channel") return "بيانات المنشور مش صحيحة — راجع النص والأزرار ووقت النشر وحاول تاني.";
+  if (code === "bad_value" && ctx === "merchants") return "فيه عنوان مش مكتوب بصيغة صحيحة في قائمة العناوين المسموحة — كل سطر لازم يكون عنوان أو نطاق بصيغة CIDR زي 203.0.113.0/24.";
+  if (code === "bad_value" && ctx === "site") return "البيانات دي مش صحيحة — راجع النصوص والأطوال (نص الإعلان لحد ٣٠٠ حرف، والرابط لازم يبدأ بـ http)، وحاول تاني.";
+  if (code === "bad_value") return "القيمة دي مش صحيحة للإعداد ده — راجعها وحاول تاني.";
   if (code === "bad_rate") return "سعر الدولار لازم يكون رقم صحيح أكبر من صفر.";
   if (code === "bad_address") return "العنوان مش صح — راجعه حرف حرف.";
   if (code === "bad_package_list") return "قائمة التطبيقات فيها اسم مش صح.";
@@ -862,9 +1116,23 @@ function errText(e, ctx){
   if (code === "bad_source") return "مصدر الحدث ده مش معروف.";
   if (code === "bad_status") return "حالة الحدث دي مش معروفة.";
   if (code === "bad_body") return "النص فاضي أو أطول من المسموح.";
+  if (code === "already_published") return "المنشور ده اتنشر خلاص، فتعديل المسودة مش متاح له — عدّل نص المنشور نفسه أو احذفه من القناة.";
+  if (code === "coupon_exists") return "الكوبون ده موجود أصلًا — عدّله من القائمة بدل ما تنشئه من جديد.";
+  if (code === "coupon_in_use") return "الكوبون ده اتستخدم قبل كده، فحذفه هيمسح سجل استخدامه — وقّفه بدل ما تحذفه.";
+  if (code === "code_immutable") return "كود الكوبون ما بيتغيّرش بعد إنشائه — اعمل كوبون جديد بالكود اللي عاوزه ووقّف القديم.";
+  if (code === "bad_code") return "كود الكوبون لازم يكون من ٣ لـ ٤٠ حرف: حروف إنجليزي وأرقام وشرطة بس.";
+  if (code === "bad_discount") return "نسبة الخصم لازم تكون رقم أكبر من صفر ولحد ١٠٠٪.";
+  if (code === "bad_expires") return "تاريخ الانتهاء مش صحيح — راجعه وحاول تاني.";
+  if (code === "bad_max_uses") return "أقصى عدد استخدامات لازم يكون رقم صحيح أكبر من صفر، أو فاضي لو مفيش حد.";
+  if (code === "bad_min_order") return "أقل إجمالي طلب لازم يكون رقم صفر أو أكبر، أو فاضي لو مفيش حد أدنى.";
+  if (code === "method_exists") return "فيه وسيلة دفع تانية بنفس الاسم ده — اختر اسمًا مختلفًا.";
+  if (code === "not_found" && ctx === "site") return "العنصر ده مش موجود — يمكن اتغيّر. حدّث الشاشة.";
   if (code === "store_failed") return "قاعدة بيانات الموقع ما ردتش — ما اتغيّرش حاجة. حاول تاني بعد شوية.";
   if (code === "bot_unavailable" || (e && e.data && e.data.bot_unavailable))
     return "البوت مش بيرد دلوقتي — حاول تاني بعد شوية.";
+  if (code === "not_found" && ctx === "channel") return "المنشور ده مش موجود — يمكن اتحذف. حدّث القائمة.";
+  if (code === "not_found" && ctx === "coupons") return "الكوبون ده مش موجود — يمكن اتحذف. حدّث القائمة.";
+  if (code === "not_found" && ctx === "merchants") return "التاجر أو مفتاح الدخول ده مش موجود — يمكن اتحذف. حدّث القائمة.";
   if (code === "not_found" || (e && e.status === 404))
     return ctx === "reverse" ? "القيد ده مش موجود." : "العميل مش موجود.";
   if (e && e.status === 409 && ctx === "manual")
@@ -4840,6 +5108,1968 @@ $("evReloadBtn").addEventListener("click", loadEvents);
 $("evCompReloadBtn").addEventListener("click", loadEvents);
 $("evPasteBtn").addEventListener("click", openEvPaste);
 $("evExclusionsBtn").addEventListener("click", openEvExclusions);
+
+// ============================================================
+// إعدادات البوت (م٥-أ): سجل إعدادات البوت عند البوت نفسه —
+// وسائل الشحن بمحرر بنيوي، وباقي الإعدادات صفوف حسب نوعها
+// (مفتاح/رقم/نص/JSON)، والمفاتيح السرية «محفوظة» بس بلا قيمة
+// وبلا تحرير، وسجل تغييرات، ونسخة احتياطية تصدير/استيراد.
+// الحفظ بيتنفذ على الخادم فعلًا ونجاحه بيظهر بس بعد رد سليم.
+// ============================================================
+
+var setState = {
+  loaded: false, loading: false,
+  entries: [], listFailed: false,
+  payMethods: [], paySource: null, payKnown: false,
+  history: [], historyFailed: false,
+  supportEntry: null, supportSeen: false,
+  textEntries: [],
+  replies: [], repliesSeen: false
+};
+
+function showSettingsMsg(kind, text){
+  var m = $("settingsMsg");
+  m.className = "msg " + kind;
+  m.textContent = text || "";
+}
+
+function setEntriesOf(d){
+  var arr = [d.settings, d.items, d.entries, d.registry]
+    .find(function(v){ return Array.isArray(v); });
+  return arr || [];
+}
+function setPayValueOf(d, entries){
+  var e = entries.find(function(x){ return x && x.key === "payment_methods"; });
+  var v = e ? e.value : undefined;
+  if (v === undefined && Array.isArray(d.payment_methods)) v = d.payment_methods;
+  if (typeof v === "string") {
+    try { v = JSON.parse(v); } catch(_err){ v = null; }
+  }
+  return Array.isArray(v) ? v : null;
+}
+function payMethodOf(m){
+  m = (m && typeof m === "object") ? m : {};
+  var account = m.account != null ? m.account
+    : m.number != null ? m.number
+    : m.address != null ? m.address
+    : m.details != null ? m.details : "";
+  var instructions = m.instructions != null ? m.instructions
+    : m.note != null ? m.note : "";
+  return {
+    raw: m,
+    name: m.name != null ? String(m.name) : "",
+    account: String(account),
+    instructions: String(instructions),
+    enabled: m.enabled !== false
+  };
+}
+
+/*PURE-CONTENT-BEGIN*/
+// منطق محتوى البوت النقي (م٥-ب): دوال من غير أي لمس للصفحة،
+// والاختبارات (control/content.test.ts) بتقراها من هنا حرفيًا.
+// مفتاح نصّي = نوعه text في سجل البوت ومش سرّي — دي النصوص
+// الطويلة (ترحيب وشاشات) اللي بتتعدل من قسم «محتوى البوت».
+function isTextEntry(e){
+  if (!e || !e.key) return false;
+  if (e.secret === true || e.kind === "secret" || e.type === "secret") return false;
+  return e.kind === "text" || e.type === "text";
+}
+// قيمة الردود الجاهزة من رد القائمة: من صف المفتاح نفسه،
+// وبعده الحقل العلوي لو جه — ونص JSON بيتحلّل دفاعيًا.
+function setRepliesValueOf(d, entries){
+  var e = entries.find(function(x){ return x && x.key === "saved_replies"; });
+  var v = e ? e.value : undefined;
+  if (v === undefined && d.saved_replies !== undefined) v = d.saved_replies;
+  if (typeof v === "string") {
+    try { v = JSON.parse(v); } catch(_err){ v = null; }
+  }
+  return Array.isArray(v) ? v : null;
+}
+// تطبيع الردود الجاهزة لشكل واحد {id, title, text}: العنوان من
+// title أو name، والنص من text أو body أو message، والـ id
+// بيتحفظ زي ما هو (نصًا) واللي من غير id أو مكرر بياخد id
+// جديد من عدّاد فوق أكبر رقم موجود (r1، r2، ...).
+function normalizeSavedReplies(raw){
+  var v = raw;
+  if (typeof v === "string") {
+    try { v = JSON.parse(v); } catch(_err){ v = null; }
+  }
+  if (!Array.isArray(v)) return [];
+  var used = {};
+  var maxR = 0;
+  v.forEach(function(it){
+    if (it && typeof it === "object" && it.id != null && String(it.id) !== "") {
+      used[String(it.id)] = true;
+      var m = /^r(\d+)$/.exec(String(it.id));
+      if (m) maxR = Math.max(maxR, Number(m[1]));
+    }
+  });
+  var seq = maxR + 1;
+  function freshId(){
+    var id;
+    do { id = "r" + seq; seq += 1; } while (used[id]);
+    used[id] = true;
+    return id;
+  }
+  var emitted = {};
+  return v.map(function(it){
+    it = (it && typeof it === "object") ? it : {};
+    var title = it.title != null ? it.title
+      : it.label != null ? it.label
+      : it.name != null ? it.name : "";
+    var text = it.text != null ? it.text
+      : it.body != null ? it.body
+      : it.message != null ? it.message : "";
+    var id = (it.id != null && String(it.id) !== "") ? String(it.id) : null;
+    if (id === null || emitted[id]) id = freshId();
+    emitted[id] = true;
+    return { id: id, title: String(title), text: String(text) };
+  });
+}
+function nextReplyId(list){
+  var maxR = 0;
+  var used = {};
+  (list || []).forEach(function(it){
+    if (it && it.id != null && String(it.id) !== "") {
+      used[String(it.id)] = true;
+      var m = /^r(\d+)$/.exec(String(it.id));
+      if (m) maxR = Math.max(maxR, Number(m[1]));
+    }
+  });
+  var seq = maxR + 1;
+  var id = "r" + seq;
+  while (used[id]) { seq += 1; id = "r" + seq; }
+  return id;
+}
+// رسالة المشكلة اللي تمنع حفظ الردود، أو "" لو القائمة سليمة.
+function savedRepliesProblem(list){
+  var bad = (list || []).find(function(r){
+    return !r || r.text == null || String(r.text).trim() === "";
+  });
+  return bad ? "فيه رد جاهز من غير نص — اكتب نصه أو امسحه قبل الحفظ." : "";
+}
+/*PURE-CONTENT-END*/
+
+function loadSettings(){
+  if (setState.loading) return Promise.resolve();
+  setState.loading = true;
+  var unauthorized = false;
+  var pList = api("/control/bot-settings").then(function(d){
+    var entries = setEntriesOf(d);
+    setState.entries = entries;
+    setState.paySource = d.payments_source != null
+      ? String(d.payments_source.source != null ? d.payments_source.source : d.payments_source)
+      : null;
+    var methods = setPayValueOf(d, entries);
+    setState.payMethods = methods ? methods.map(payMethodOf) : [];
+    setState.payKnown = methods !== null;
+    var sup = entries.find(function(x){ return x && x.key === "support_whatsapp"; });
+    setState.supportEntry = sup || null;
+    setState.supportSeen = !!sup;
+    setState.textEntries = entries.filter(function(x){
+      return isTextEntry(x) && x.key !== "support_whatsapp";
+    });
+    var repliesRaw = setRepliesValueOf(d, entries);
+    setState.replies = repliesRaw ? normalizeSavedReplies(repliesRaw) : [];
+    setState.repliesSeen = entries.some(function(x){
+      return x && x.key === "saved_replies";
+    }) || d.saved_replies !== undefined;
+    setState.listFailed = false;
+  }).catch(function(e){
+    if (e && e.status === 401) { unauthorized = true; return; }
+    if (e && e.noKey) return;
+    setState.listFailed = true;
+    setState.entries = [];
+    setState.payMethods = [];
+    setState.payKnown = false;
+    setState.supportEntry = null;
+    setState.supportSeen = false;
+    setState.textEntries = [];
+    setState.replies = [];
+    setState.repliesSeen = false;
+  });
+  var pHist = api("/control/bot-settings-history?limit=50").then(function(d){
+    var arr = [d.history, d.items, d.changes, d.entries]
+      .find(function(v){ return Array.isArray(v); });
+    setState.history = arr || [];
+    setState.historyFailed = false;
+  }).catch(function(e){
+    if (e && e.status === 401) { unauthorized = true; return; }
+    if (e && e.noKey) return;
+    setState.history = [];
+    setState.historyFailed = true;
+  });
+  return Promise.all([pList, pHist]).then(function(){
+    setState.loading = false;
+    setState.loaded = true;
+    renderPaySource();
+    renderPayMethods();
+    renderBotContent();
+    renderSettingRows();
+    renderHistory();
+    if (unauthorized) {
+      showSettingsMsg("err", "مفتاح الأدمن غلط أو مش مكتوب. اكتبه تاني عشان تكمل.");
+    }
+  });
+}
+function ensureSettingsLoaded(){ if (!setState.loaded) loadSettings(); }
+
+function renderPaySource(){
+  var box = $("setPaySource");
+  if (setState.listFailed) { box.innerHTML = ""; return; }
+  if (setState.paySource === "settings") {
+    box.innerHTML = 'القائمة الشغالة دلوقتي جاية <b>من الإعدادات</b> — أي تعديل هنا بيغيّر اللي العميل بيشوفه.';
+  } else if (setState.paySource === "env") {
+    box.innerHTML = 'القائمة الشغالة دلوقتي جاية <b>من البيئة</b> (دي النسخة الاحتياطية) — أول حفظ من هنا هينقلها للإعدادات وتبقى هي الشغالة.';
+  } else if (setState.paySource === "none") {
+    box.innerHTML = 'مفيش وسائل شحن معرّفة دلوقتي — أضف وسيلة واحفظ عشان العملاء يقدروا يشحنوا.';
+  } else if (setState.paySource) {
+    box.textContent = "مصدر القائمة الشغالة: " + setState.paySource;
+  } else {
+    box.innerHTML = "";
+  }
+}
+
+function renderPayMethods(){
+  var box = $("setPayList");
+  if (setState.listFailed) {
+    box.innerHTML = '<div class="sub" style="color:var(--amber)">البوت مش بيرد دلوقتي — وسائل الشحن مش ظاهرة بدل ما تتخترع.</div>';
+    return;
+  }
+  if (!setState.payMethods.length) {
+    box.innerHTML = '<div class="empty">مفيش وسائل شحن في القائمة دي — ضيف أول وسيلة من زرار «إضافة وسيلة».</div>';
+    return;
+  }
+  box.innerHTML = setState.payMethods.map(function(pm, i){
+    return '<div class="result-row" style="cursor:default"><div style="flex:1;">' +
+      '<div class="field"><label>اسم الوسيلة</label>' +
+      '<input type="text" data-pay-field="name" data-pay-idx="' + i + '" value="' + esc(pm.name) + '"></div>' +
+      '<div class="field"><label>الرقم أو الحساب</label>' +
+      '<input type="text" data-pay-field="account" data-pay-idx="' + i + '" value="' + esc(pm.account) + '"></div>' +
+      '<div class="field"><label>التعليمات اللي بتظهر للعميل</label>' +
+      '<textarea rows="2" data-pay-field="instructions" data-pay-idx="' + i + '">' + esc(pm.instructions) + "</textarea></div>" +
+      '<div style="display:flex; align-items:center; gap:10px;">' +
+      '<label class="switch"><input type="checkbox" data-pay-field="enabled" data-pay-idx="' + i + '"' +
+      (pm.enabled ? " checked" : "") + '><span class="track"></span></label><span>مفعّلة</span></div>' +
+      '<div class="row-actions" style="margin-top:8px;">' +
+      '<button class="btn ghost small" type="button" data-pay-up="' + i + '">أعلى</button>' +
+      '<button class="btn ghost small" type="button" data-pay-down="' + i + '">أسفل</button>' +
+      '<button class="btn ghost small" type="button" data-pay-del="' + i + '">حذف</button>' +
+      "</div></div></div>";
+  }).join("");
+}
+
+$("setPayList").addEventListener("input", function(e){
+  var t = e.target;
+  var field = t.getAttribute && t.getAttribute("data-pay-field");
+  if (!field) return;
+  var idx = Number(t.getAttribute("data-pay-idx"));
+  var pm = setState.payMethods[idx];
+  if (!pm) return;
+  pm[field] = field === "enabled" ? t.checked : t.value;
+});
+$("setPayList").addEventListener("change", function(e){
+  // الـ checkbox بيحدّث من change مش input في متصفحات كتير.
+  var t = e.target;
+  var field = t.getAttribute && t.getAttribute("data-pay-field");
+  if (field !== "enabled") return;
+  var pm = setState.payMethods[Number(t.getAttribute("data-pay-idx"))];
+  if (pm) pm.enabled = t.checked;
+});
+$("setPayList").addEventListener("click", function(e){
+  var t = e.target;
+  if (!t.getAttribute) return;
+  var up = t.getAttribute("data-pay-up");
+  var down = t.getAttribute("data-pay-down");
+  var del = t.getAttribute("data-pay-del");
+  var arr = setState.payMethods;
+  if (up !== null && up !== undefined) {
+    var i = Number(up);
+    if (i > 0) { var tmp = arr[i - 1]; arr[i - 1] = arr[i]; arr[i] = tmp; renderPayMethods(); }
+  } else if (down !== null && down !== undefined) {
+    var j = Number(down);
+    if (j < arr.length - 1) { var tmp2 = arr[j + 1]; arr[j + 1] = arr[j]; arr[j] = tmp2; renderPayMethods(); }
+  } else if (del !== null && del !== undefined) {
+    arr.splice(Number(del), 1);
+    renderPayMethods();
+  }
+});
+$("setPayAddBtn").addEventListener("click", function(){
+  setState.payMethods.push({ raw: {}, name: "", account: "", instructions: "", enabled: true });
+  renderPayMethods();
+});
+$("setPaySaveBtn").addEventListener("click", function(){
+  var bad = setState.payMethods.find(function(pm){ return !pm.name.trim(); });
+  if (bad) { showSettingsMsg("err", "كل وسيلة لازم يكون ليها اسم قبل الحفظ."); return; }
+  var value = setState.payMethods.map(function(pm){
+    var out = {};
+    Object.keys(pm.raw).forEach(function(k){ out[k] = pm.raw[k]; });
+    out.name = pm.name.trim();
+    out.account = pm.account.trim();
+    out.instructions = pm.instructions;
+    out.enabled = pm.enabled;
+    return out;
+  });
+  var btn = $("setPaySaveBtn");
+  btn.disabled = true;
+  api("/control/bot-settings-set", { method: "POST", body: {
+    key: "payment_methods", value: value
+  } }).then(function(d){
+    if (d && d.audit_failed) {
+      showSettingsMsg("warn", "اتحفظت وسائل الشحن والقائمة الجديدة شغالة، بس تسجيل التغيير في سجل التغييرات ما كملش.");
+    } else {
+      showSettingsMsg("ok", "اتحفظت وسائل الشحن — القائمة اللي تحت دي من الخادم بعد الحفظ.");
+    }
+    loadSettings();
+  }).catch(function(e){
+    showSettingsMsg("err", errText(e, "settings"));
+  }).finally(function(){ btn.disabled = false; });
+});
+
+// ============================================================
+// محتوى البوت (م٥-ب): دعم واتساب + نصوص الترحيب والشاشات +
+// الردود الجاهزة — كلها بتتحرك عبر نفس حفظ الإعدادات
+// (bot-settings-set) ونفس سجل التغييرات، من غير وكلاء جداد.
+// ============================================================
+
+function renderBotContent(){
+  renderContentSupport();
+  renderContentTexts();
+  renderContentReplies();
+}
+
+function renderContentSupport(){
+  var box = $("setContentSupport");
+  if (setState.listFailed) {
+    box.innerHTML = '<div class="sub" style="color:var(--amber)">البوت مش بيرد دلوقتي — محتوى البوت مش ظاهر بدل ما يتخترع.</div>';
+    return;
+  }
+  var e = setState.supportEntry;
+  var label = e && e.label ? String(e.label) : "دعم واتساب — الرقم أو الرابط";
+  var head = "<b>" + esc(label) + "</b>" +
+    '<div class="sub" style="color:var(--muted); font-size:13px;">اللي العميل بيلاقيه في البوت لما يحتاج يكلم الدعم.</div>';
+  if (e && e.editable === false) {
+    box.innerHTML = head + '<div style="margin-top:6px;">القيمة دلوقتي: <b>' +
+      esc(setValueText(e.value)) + '</b> <span class="sub">(عرض بس)</span></div>';
+    return;
+  }
+  var val = e && e.value != null ? String(e.value) : "";
+  box.innerHTML = head +
+    '<div class="field" style="margin-top:6px;"><label>الرقم أو الرابط</label>' +
+    '<input type="text" id="setSupportIn" value="' + esc(val) + '"></div>' +
+    (setState.supportSeen ? "" :
+      '<div class="sub" style="color:var(--amber); margin-top:4px;">غير مضبوط — البوت بيستخدم القيمة الاحتياطية لحد ما تحفظ قيمة هنا.</div>') +
+    '<div class="row-actions"><button class="btn small" type="button" id="setSupportSaveBtn">حفظ</button></div>';
+  $("setSupportSaveBtn").addEventListener("click", function(){
+    var input = $("setSupportIn");
+    if (!input) return;
+    var btn = $("setSupportSaveBtn");
+    btn.disabled = true;
+    saveSettingValue("support_whatsapp", input.value.trim()).then(function(d){
+      setSavedMsg(d);
+      loadSettings();
+    }).catch(function(err){
+      showSettingsMsg("err", errText(err, "settings"));
+    }).finally(function(){ btn.disabled = false; });
+  });
+}
+
+function renderContentTexts(){
+  var box = $("setContentTexts");
+  if (setState.listFailed) { box.innerHTML = ""; return; }
+  var head = '<b>نصوص الترحيب والشاشات</b>' +
+    '<div class="sub" style="color:var(--muted); font-size:13px;">النصوص الطويلة اللي بتظهر للعميل جوه البوت.</div>';
+  var rows = setState.textEntries;
+  if (!rows.length) {
+    box.innerHTML = head + '<div class="empty" style="margin-top:6px;">مفيش نصوص قابلة للتحرير في البوت دلوقتي.</div>';
+    return;
+  }
+  box.innerHTML = head + rows.map(function(e, i){
+    var val = e.value == null ? "" : String(e.value);
+    var body = '<div style="margin-top:10px;"><b>' + esc(setLabelOf(e)) + "</b>" +
+      '<br><small class="num">' + esc(e.key) + "</small>";
+    if (e.editable === false) {
+      return body + '<div style="margin-top:6px;">' + esc(val) +
+        ' <span class="sub">(عرض بس)</span></div></div>';
+    }
+    return body + '<div class="field" style="margin-top:6px;"><label>النص</label>' +
+      '<textarea rows="5" id="setTextIn' + i + '">' + esc(val) + "</textarea></div>" +
+      '<div class="row-actions"><button class="btn small" type="button" data-text-save="' + i + '">حفظ</button></div></div>';
+  }).join("");
+  box.querySelectorAll("[data-text-save]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var idx = Number(b.getAttribute("data-text-save"));
+      var row = rows[idx];
+      var input = $("setTextIn" + idx);
+      if (!row || !input) return;
+      b.disabled = true;
+      saveSettingValue(row.key, input.value).then(function(d){
+        setSavedMsg(d);
+        loadSettings();
+      }).catch(function(err){
+        showSettingsMsg("err", errText(err, "settings"));
+      }).finally(function(){ b.disabled = false; });
+    });
+  });
+}
+
+function renderContentReplies(){
+  var box = $("setContentReplies");
+  if (setState.listFailed) { box.innerHTML = ""; return; }
+  var head = '<b>الردود الجاهزة</b>' +
+    '<div class="sub" style="color:var(--muted); font-size:13px;">ردود معتمدة يقدر الأدمن يبعتها للعميل زي ما هي بدل ما يكتبها كل مرة. الترتيب هنا هو ترتيب ظهورها.</div>' +
+    (setState.repliesSeen ? "" :
+      '<div class="sub" style="color:var(--amber); margin-top:4px;">الردود الجاهزة لسه مش مضبوطة في البوت — أول حفظ من هنا هيظبطها.</div>');
+  var list = setState.replies.length ? setState.replies.map(function(r, i){
+    return '<div class="result-row" style="cursor:default"><div style="flex:1;">' +
+      '<div class="field"><label>عنوان الرد</label>' +
+      '<input type="text" data-reply-field="title" data-reply-idx="' + i + '" value="' + esc(r.title) + '"></div>' +
+      '<div class="field"><label>نص الرد</label>' +
+      '<textarea rows="3" data-reply-field="text" data-reply-idx="' + i + '">' + esc(r.text) + "</textarea></div>" +
+      '<div class="row-actions" style="margin-top:8px;">' +
+      '<button class="btn ghost small" type="button" data-reply-up="' + i + '">أعلى</button>' +
+      '<button class="btn ghost small" type="button" data-reply-down="' + i + '">أسفل</button>' +
+      '<button class="btn ghost small" type="button" data-reply-del="' + i + '">حذف</button>' +
+      "</div></div></div>";
+  }).join("") : '<div class="empty" style="margin-top:6px;">مفيش ردود جاهزة لسه — ضيف أول رد من زرار «إضافة رد».</div>';
+  box.innerHTML = head + '<div style="margin-top:6px;">' + list + "</div>" +
+    '<div class="row-actions" style="margin-top:10px;">' +
+    '<button class="btn" type="button" data-reply-save="1">حفظ الردود الجاهزة</button>' +
+    '<button class="btn secondary" type="button" data-reply-add="1">إضافة رد</button></div>';
+}
+
+$("setContentReplies").addEventListener("input", function(e){
+  var t = e.target;
+  var field = t.getAttribute && t.getAttribute("data-reply-field");
+  if (!field) return;
+  var r = setState.replies[Number(t.getAttribute("data-reply-idx"))];
+  if (r) r[field] = t.value;
+});
+$("setContentReplies").addEventListener("click", function(e){
+  var t = e.target;
+  if (!t.getAttribute) return;
+  var arr = setState.replies;
+  var add = t.getAttribute("data-reply-add");
+  var save = t.getAttribute("data-reply-save");
+  var up = t.getAttribute("data-reply-up");
+  var down = t.getAttribute("data-reply-down");
+  var del = t.getAttribute("data-reply-del");
+  if (add !== null && add !== undefined) {
+    arr.push({ id: nextReplyId(arr), title: "", text: "" });
+    renderContentReplies();
+  } else if (up !== null && up !== undefined) {
+    var i = Number(up);
+    if (i > 0) { var tmp = arr[i - 1]; arr[i - 1] = arr[i]; arr[i] = tmp; renderContentReplies(); }
+  } else if (down !== null && down !== undefined) {
+    var j = Number(down);
+    if (j < arr.length - 1) { var tmp2 = arr[j + 1]; arr[j + 1] = arr[j]; arr[j] = tmp2; renderContentReplies(); }
+  } else if (del !== null && del !== undefined) {
+    arr.splice(Number(del), 1);
+    renderContentReplies();
+  } else if (save !== null && save !== undefined) {
+    var problem = savedRepliesProblem(arr);
+    if (problem) { showSettingsMsg("err", problem); return; }
+    var value = arr.map(function(r){
+      return { id: r.id, title: String(r.title).trim(), text: r.text };
+    });
+    t.disabled = true;
+    api("/control/bot-settings-set", { method: "POST", body: {
+      key: "saved_replies", value: value
+    } }).then(function(d){
+      setSavedMsg(d);
+      loadSettings();
+    }).catch(function(err){
+      showSettingsMsg("err", errText(err, "settings"));
+    }).finally(function(){ t.disabled = false; });
+  }
+});
+
+function setKindOf(e){
+  if (e.secret === true || e.kind === "secret" || e.type === "secret") return "secret";
+  var k = e.kind || e.type || "";
+  if (k === "bool" || k === "boolean") return "bool";
+  if (k === "number" || k === "int" || k === "integer" || k === "decimal") return "number";
+  if (k === "string" || k === "text") return "string";
+  if (k === "json") return "json";
+  if (typeof e.value === "boolean") return "bool";
+  if (typeof e.value === "number") return "number";
+  if (typeof e.value === "string") return "string";
+  return "json";
+}
+function setLabelOf(e){
+  return e.label ? String(e.label) : String(e.key || "");
+}
+function setValueText(v){
+  if (v === null || v === undefined) return "—";
+  if (typeof v === "object") return JSON.stringify(v);
+  return String(v);
+}
+
+function renderSettingRows(){
+  var box = $("setRows");
+  if (setState.listFailed) {
+    box.innerHTML = '<div class="sub" style="color:var(--amber)">البوت مش بيرد دلوقتي — الإعدادات مش ظاهرة بدل ما تتخترع.</div>';
+    return;
+  }
+  var rows = setState.entries.filter(function(e){
+    // وسائل الشحن ليها محررها، ومحتوى البوت (دعم واتساب والنصوص
+    // الطويلة والردود الجاهزة) بيظهر في قسم «محتوى البوت» فوق —
+    // القسم العام لباقي الإعدادات بس، والحفظ واحد في الحالتين.
+    return e && e.key && e.key !== "payment_methods" &&
+      e.key !== "support_whatsapp" && e.key !== "saved_replies" &&
+      !isTextEntry(e);
+  });
+  if (!rows.length) {
+    box.innerHTML = '<div class="empty">مفيش إعدادات تانية في السجل.</div>';
+    return;
+  }
+  box.innerHTML = rows.map(function(e, i){
+    var kind = setKindOf(e);
+    var label = esc(setLabelOf(e));
+    var head = '<div class="result-row" style="cursor:default"><div style="flex:1;"><b>' +
+      label + '</b><br><small class="num">' + esc(e.key) + "</small>";
+    if (kind === "secret") {
+      return head + '<div style="margin-top:6px;"><span class="badge gold">محفوظ</span>' +
+        ' <span class="sub">القيمة ما بتظهرش ولا بتتعدل من اللوحة.</span></div></div></div>';
+    }
+    if (e.editable === false) {
+      return head + '<div style="margin-top:6px;">القيمة دلوقتي: <b>' +
+        esc(setValueText(e.value)) + '</b> <span class="sub">(عرض بس)</span></div></div></div>';
+    }
+    if (kind === "bool") {
+      var on = e.value === true || e.value === "true";
+      return head + '<div style="display:flex; align-items:center; gap:10px; margin-top:6px;">' +
+        '<label class="switch"><input type="checkbox" data-set-bool="' + i + '"' +
+        (on ? " checked" : "") + '><span class="track"></span></label>' +
+        "<span>" + (on ? "شغال" : "مقفول") + "</span></div></div></div>";
+    }
+    if (kind === "json") {
+      var txt = typeof e.value === "string" ? e.value
+        : JSON.stringify(e.value, null, 2);
+      return head + '<div class="field" style="margin-top:6px;"><label>القيمة (JSON)</label>' +
+        '<textarea rows="4" id="setIn' + i + '">' + esc(txt == null ? "" : txt) + "</textarea></div>" +
+        '<div class="row-actions"><button class="btn small" type="button" data-set-save="' + i + '">حفظ</button></div></div></div>';
+    }
+    var inputType = kind === "number" ? "number" : "text";
+    var step = kind === "number" ? ' step="any"' : "";
+    return head + '<div class="field" style="margin-top:6px;"><label>القيمة</label>' +
+      '<input type="' + inputType + '"' + step + ' id="setIn' + i + '" value="' +
+      esc(e.value == null ? "" : e.value) + '"></div>' +
+      '<div class="row-actions"><button class="btn small" type="button" data-set-save="' + i + '">حفظ</button></div></div></div>';
+  }).join("");
+  // الفهارس في data-set-* على الصفوف المعروضة بس — نرجّعها
+  // لصفوف السجل الأصلية وقت الحفظ عبر نفس الفلتر.
+  box.querySelectorAll("[data-set-bool]").forEach(function(inp){
+    inp.addEventListener("change", function(){
+      var row = rows[Number(inp.getAttribute("data-set-bool"))];
+      if (!row) return;
+      var on = inp.checked;
+      inp.disabled = true;
+      saveSettingValue(row.key, on).then(function(d){
+        setSavedMsg(d);
+        loadSettings();
+      }).catch(function(e){
+        inp.checked = !on;
+        showSettingsMsg("err", errText(e, "settings"));
+      }).finally(function(){ inp.disabled = false; });
+    });
+  });
+  box.querySelectorAll("[data-set-save]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var idx = Number(b.getAttribute("data-set-save"));
+      var row = rows[idx];
+      var input = $("setIn" + idx);
+      if (!row || !input) return;
+      var kind = setKindOf(row);
+      var value;
+      if (kind === "number") {
+        value = Number(input.value);
+        if (!isFinite(value)) {
+          showSettingsMsg("err", "اكتب رقم صحيح للإعداد ده قبل الحفظ.");
+          return;
+        }
+      } else if (kind === "json") {
+        try { value = JSON.parse(input.value); }
+        catch(_err){
+          showSettingsMsg("err", "النص اللي في خانة الإعداد ده مش JSON سليم — راجعه قبل الحفظ.");
+          return;
+        }
+      } else {
+        value = input.value.trim();
+      }
+      b.disabled = true;
+      saveSettingValue(row.key, value).then(function(d){
+        setSavedMsg(d);
+        loadSettings();
+      }).catch(function(e){
+        showSettingsMsg("err", errText(e, "settings"));
+      }).finally(function(){ b.disabled = false; });
+    });
+  });
+}
+
+function saveSettingValue(key, value){
+  return api("/control/bot-settings-set", { method: "POST", body: {
+    key: key, value: value
+  } });
+}
+function setSavedMsg(d){
+  if (d && d.audit_failed) {
+    showSettingsMsg("warn", "اتحفظ التعديل والقيمة الجديدة شغالة، بس تسجيله في سجل التغييرات ما كملش.");
+  } else {
+    showSettingsMsg("ok", "اتحفظ التعديل — القيم اللي تحت دي من الخادم بعد الحفظ.");
+  }
+}
+
+function setHistVal(v, secret){
+  if (secret) return "••••••";
+  if (v === null || v === undefined) return "—";
+  var s = typeof v === "object" ? JSON.stringify(v) : String(v);
+  if (s.length > 90) s = s.slice(0, 90) + "…";
+  return s;
+}
+function renderHistory(){
+  var box = $("setHistory");
+  if (setState.historyFailed) {
+    box.innerHTML = '<div class="sub" style="color:var(--amber)">البوت مش بيرد دلوقتي — سجل التغييرات مش ظاهر بدل ما يتخترع.</div>';
+    return;
+  }
+  if (!setState.history.length) {
+    box.innerHTML = '<div class="empty">مفيش تغييرات مسجلة لسه.</div>';
+    return;
+  }
+  box.innerHTML = setState.history.map(function(h){
+    var before = h.before !== undefined ? h.before
+      : h.from !== undefined ? h.from : h.old_value;
+    var after = h.after !== undefined ? h.after
+      : h.to !== undefined ? h.to : h.new_value;
+    var at = h.created_at || h.at || h.time || h.ts;
+    var when = at ? (relTime(at) || "") : "";
+    var full = at ? new Date(at).toLocaleString("en-GB") : "";
+    return '<div class="result-row" style="cursor:default"><div class="who"><b>' +
+      esc(h.label ? String(h.label) : String(h.key || "")) + "</b><small>" +
+      '<span class="num">' + esc(h.key || "") + "</span><br>" +
+      "قبل: " + esc(setHistVal(before, h.secret === true)) +
+      " ← بعد: " + esc(setHistVal(after, h.secret === true)) +
+      (when ? "<br>" + esc(when) + (full ? ' (<span class="num">' + esc(full) + "</span>)" : "") : "") +
+      "</small></div></div>";
+  }).join("");
+}
+
+$("setReloadBtn").addEventListener("click", loadSettings);
+$("setExportBtn").addEventListener("click", function(){
+  var btn = $("setExportBtn");
+  btn.disabled = true;
+  api("/control/bot-settings-backup").then(function(d){
+    var blob = new Blob([JSON.stringify(d, null, 2)], { type: "application/json" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = "migo-settings-backup.json";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); }, 4000);
+    showSettingsMsg("ok", "اتنزّلت النسخة الاحتياطية في ملف.");
+  }).catch(function(e){
+    showSettingsMsg("err", errText(e, "settings"));
+  }).finally(function(){ btn.disabled = false; });
+});
+$("setImportBtn").addEventListener("click", function(){
+  $("setImportFile").click();
+});
+$("setImportFile").addEventListener("change", function(){
+  var file = $("setImportFile").files && $("setImportFile").files[0];
+  $("setImportFile").value = "";
+  if (!file) return;
+  file.text().then(function(text){
+    var parsed;
+    try { parsed = JSON.parse(text); }
+    catch(_err){
+      $("setImportResult").textContent = "الملف ده مش ملف نسخة سليم — الاستيراد ما بدأش.";
+      return null;
+    }
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+      $("setImportResult").textContent = "الملف ده مش ملف نسخة سليم — الاستيراد ما بدأش.";
+      return null;
+    }
+    return api("/control/bot-settings-import", { method: "POST", body: parsed })
+      .then(function(d){
+        var restored = d.restored != null ? d.restored
+          : d.imported != null ? d.imported
+          : d.applied != null ? d.applied : d.count;
+        var skipped = d.skipped != null ? d.skipped
+          : d.skipped_count != null ? d.skipped_count : 0;
+        $("setImportResult").textContent = "الاستيراد كمّل: اتاستعاد " +
+          (restored != null ? restored : "—") + " إعداد، واتتخطى " + skipped + ".";
+        showSettingsMsg("ok", "اتاستوردت النسخة — القيم اللي تحت دي من الخادم بعد الاستيراد.");
+        loadSettings();
+      });
+  }).catch(function(e){
+    showSettingsMsg("err", errText(e, "settings"));
+  });
+});
+
+
+// ============================================================
+// قسم قناة التليجرام والكوبونات (م٥-ج): منشورات القناة بحالاتها
+// (مسودة/مجدول/منشور) مع منشور جديد وتعديل وحذف — الأفعال عند
+// البوت عبر وكلاء القناة والنجاح بيظهر بس بعد رد سليم منه —
+// وكوبونات الموقع من قاعدة الموقع نفسها عبر نقاط الكوبونات.
+// ============================================================
+
+function fmtDT(iso){
+  if (!iso) return "—";
+  var d = new Date(iso);
+  return isNaN(d.getTime()) ? "—" : d.toLocaleString("en-GB");
+}
+function toLocalInputValue(iso){
+  if (!iso) return "";
+  var d = new Date(iso);
+  if (isNaN(d.getTime())) return "";
+  function p(n){ return String(n).padStart(2, "0"); }
+  return d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate()) +
+    "T" + p(d.getHours()) + ":" + p(d.getMinutes());
+}
+
+/*PURE-CHANNEL-BEGIN*/
+function parseChannelButtons(text){
+  var lines = String(text || "").split(/\r?\n/);
+  var buttons = [];
+  for (var i = 0; i < lines.length; i++){
+    var line = lines[i].trim();
+    if (!line) continue;
+    var cut = line.indexOf("|");
+    if (cut < 0) return { buttons: null, problem: "سطر الأزرار رقم " + (i + 1) + " ناقص علامة | بين نص الزر والرابط." };
+    var t = line.slice(0, cut).trim();
+    var u = line.slice(cut + 1).trim();
+    if (!t || !u) return { buttons: null, problem: "سطر الأزرار رقم " + (i + 1) + " ناقص النص أو الرابط." };
+    if (!/^https?:\/\//i.test(u)) return { buttons: null, problem: "رابط الزر رقم " + (i + 1) + " لازم يبدأ بـ https:// أو http://" };
+    buttons.push({ text: t, url: u });
+  }
+  return { buttons: buttons, problem: "" };
+}
+function channelButtonsText(raw){
+  // الأزرار عند البوت: مصفوفة صفوف، وكل صف مصفوفة {text, url}.
+  // النموذج بيحرر زرًا في كل سطر، فالصفوف بتتفكك لأسطر عند فتح
+  // التعديل، وإعادة الحفظ بتخلي كل زر في صف لوحده.
+  var flat = [];
+  var rows = Array.isArray(raw) ? raw : (raw ? [raw] : []);
+  rows.forEach(function(r){
+    var cells = Array.isArray(r) ? r : [r];
+    cells.forEach(function(c){
+      if (c && typeof c === "object" && (c.text || c.url))
+        flat.push(String(c.text || "") + " | " + String(c.url || ""));
+      else if (typeof c === "string" && c) flat.push(c);
+    });
+  });
+  return flat.join("\n");
+}
+function channelStatusOf(item){
+  var s = item && item.status;
+  if (s === "posted") return { key: "published", label: "منشور" };
+  if (s === "posting") return { key: "posting", label: "بيتنشر دلوقتي" };
+  if (s === "failed") return { key: "failed", label: "فشل النشر" };
+  if (item && item.scheduled_at &&
+      new Date(item.scheduled_at).getTime() > Date.now())
+    return { key: "scheduled", label: "مجدول" };
+  return { key: "draft", label: "مسودة" };
+}
+function channelItemsOf(d){
+  var arr = [d && d.items, d && d.queue, d && d.posts, d && d.rows]
+    .find(function(v){ return Array.isArray(v); });
+  return arr || [];
+}
+/*PURE-CHANNEL-END*/
+
+var channelState = { items: [], loaded: false, listFailed: false, editingId: null };
+var channelProducts = null;
+
+function showChannelMsg(kind, html, withKeyBtn){
+  var box = $("chnMsg");
+  box.className = "msg " + kind;
+  box.innerHTML = html + (withKeyBtn
+    ? '<button class="btn" id="chnKeyBtn" type="button">كتابة المفتاح</button>' : "");
+  if (withKeyBtn) $("chnKeyBtn").addEventListener("click", askKey);
+}
+function hideChannelMsg(){ $("chnMsg").className = "msg"; $("chnMsg").innerHTML = ""; }
+
+function channelActionsHtml(it, st){
+  if (st.key === "posting") return '<span class="sub" style="color:var(--muted);">النشر شغال دلوقتي — حدّث القائمة بعد شوية.</span>';
+  if (st.key === "published")
+    return '<button class="btn ghost small" type="button" data-chn-editpub="' + esc(it.id) + '">تعديل النص</button>' +
+      '<button class="btn ghost small" type="button" data-chn-delpub="' + esc(it.id) + '">حذف المنشور</button>';
+  return '<button class="btn ghost small" type="button" data-chn-edit="' + esc(it.id) + '">تعديل</button>' +
+    '<button class="btn ghost small" type="button" data-chn-del="' + esc(it.id) + '">حذف</button>';
+}
+function renderChannelList(){
+  var box = $("chnList");
+  if (channelState.listFailed){
+    box.innerHTML = '<div class="empty">مش عارف أجيب منشورات القناة دلوقتي.</div>';
+    return;
+  }
+  if (!channelState.items.length){
+    box.innerHTML = '<div class="empty">مفيش منشورات لسه.</div>';
+    return;
+  }
+  var html = "";
+  channelState.items.forEach(function(it){
+    var st = channelStatusOf(it);
+    var when = "";
+    if (st.key === "published" && it.posted_at) when = "اتنشر " + fmtDT(it.posted_at);
+    else if (st.key === "scheduled" && it.scheduled_at) when = "هيتنشر " + fmtDT(it.scheduled_at);
+    else if (it.created_at) when = "اتعمل " + fmtDT(it.created_at);
+    html += '<div class="result-row" style="flex-direction:column; align-items:stretch;">' +
+      '<div style="display:flex; justify-content:space-between; gap:8px;">' +
+        "<b>" + esc(st.label) + "</b>" +
+        '<small style="color:var(--muted);">' + esc(when) + "</small>" +
+      "</div>" +
+      '<div style="white-space:pre-wrap; margin-top:6px;">' + esc(it.text || "") + "</div>" +
+      (it.photo_url ? '<div class="sub" dir="ltr" style="color:var(--muted); font-size:12px; margin-top:4px;">' + esc(it.photo_url) + "</div>" : "") +
+      (it.pin ? '<div class="sub" style="margin-top:4px;">هيتثبّت في القناة بعد النشر</div>' : "") +
+      (st.key === "failed" && it.error ? '<div class="sub" style="margin-top:4px;">سبب الفشل: ' + esc(it.error) + "</div>" : "") +
+      '<div class="row-actions" style="margin-top:8px;">' + channelActionsHtml(it, st) + "</div>" +
+    "</div>";
+  });
+  box.innerHTML = html;
+  function findItem(id){
+    return channelState.items.filter(function(x){ return String(x.id) === String(id); })[0];
+  }
+  box.querySelectorAll("[data-chn-edit]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var it = findItem(b.getAttribute("data-chn-edit"));
+      if (it) startChannelEdit(it);
+    });
+  });
+  box.querySelectorAll("[data-chn-del]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var it = findItem(b.getAttribute("data-chn-del"));
+      if (it) askDeleteChannelDraft(it);
+    });
+  });
+  box.querySelectorAll("[data-chn-editpub]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var it = findItem(b.getAttribute("data-chn-editpub"));
+      if (it) askEditPublished(it);
+    });
+  });
+  box.querySelectorAll("[data-chn-delpub]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var it = findItem(b.getAttribute("data-chn-delpub"));
+      if (it) askDeletePublished(it);
+    });
+  });
+}
+function loadChannel(){
+  hideChannelMsg();
+  ensureChannelProducts();
+  api("/control/bot-channel-queue").then(function(d){
+    channelState.items = channelItemsOf(d);
+    channelState.listFailed = false;
+    channelState.loaded = true;
+    renderChannelList();
+  }).catch(function(e){
+    channelState.items = [];
+    channelState.listFailed = true;
+    channelState.loaded = true;
+    renderChannelList();
+    if (e && e.noKey) showChannelMsg("err", "لازم تكتب مفتاح الأدمن الأول.", true);
+    else showChannelMsg("err", esc(errText(e, "channel")));
+  });
+}
+function ensureChannelLoaded(){ if (!channelState.loaded) loadChannel(); }
+$("chnReloadBtn").addEventListener("click", loadChannel);
+
+function ensureChannelProducts(){
+  if (channelProducts) return;
+  channelProducts = [];
+  api("/control/bot-catalog-products").then(function(d){
+    channelProducts = d.items || [];
+    var html = '<option value="">اختر منتجًا…</option>';
+    channelProducts.forEach(function(p){
+      html += '<option value="' + esc(p.id) + '">' + esc(p.name || "") + "</option>";
+    });
+    $("chnProductSel").innerHTML = html;
+  }).catch(function(){
+    // اختيار المنتج مساعد اختياري — فشله ما يعطّلش شاشة القناة.
+    channelProducts = null;
+  });
+}
+$("chnOfferBtn").addEventListener("click", function(){
+  var id = $("chnProductSel").value;
+  if (!id){ showChannelMsg("err", "اختر المنتج الأول."); return; }
+  var p = (channelProducts || []).filter(function(x){
+    return String(x.id) === String(id);
+  })[0];
+  if (!p) return;
+  var price = egpFromMinor(p.sell_egp_minor);
+  $("chnText").value = (p.name || "") +
+    (price !== null ? "\nالسعر: " + fmtNum(price) + " ج.م" : "") +
+    "\nاطلبه دلوقتي من البوت 👇";
+  showChannelMsg("ok", "اتملأ النص من المنتج — راجعه وعدّله قبل الحفظ.");
+});
+
+function channelFormBody(){
+  var text = $("chnText").value.trim();
+  if (!text) return { problem: "اكتب نص المنشور الأول." };
+  var parsed = parseChannelButtons($("chnButtons").value);
+  if (parsed.problem) return { problem: parsed.problem };
+  var sched = $("chnSchedule").value;
+  return { body: {
+    text: text,
+    photo_url: $("chnPhoto").value.trim() || null,
+    buttons: parsed.buttons.length ? parsed.buttons : null,
+    scheduled_at: sched ? new Date(sched).toISOString() : null,
+    pin: $("chnPin").checked === true,
+  } };
+}
+function resetChannelForm(){
+  channelState.editingId = null;
+  $("chnText").value = "";
+  $("chnPhoto").value = "";
+  $("chnButtons").value = "";
+  $("chnSchedule").value = "";
+  $("chnPin").checked = false;
+  $("chnSaveBtn").textContent = "حفظ المنشور";
+  $("chnCancelEditBtn").classList.add("hidden");
+  $("chnEditingNote").textContent = "";
+}
+function startChannelEdit(it){
+  channelState.editingId = it.id;
+  $("chnText").value = it.text || "";
+  $("chnPhoto").value = it.photo_url || "";
+  $("chnButtons").value = channelButtonsText(it.buttons);
+  $("chnSchedule").value = it.scheduled_at ? toLocalInputValue(it.scheduled_at) : "";
+  $("chnPin").checked = it.pin === true;
+  $("chnSaveBtn").textContent = "حفظ التعديل";
+  $("chnCancelEditBtn").classList.remove("hidden");
+  $("chnEditingNote").textContent = "بتعدّل منشور " + channelStatusOf(it).label + " — الحفظ بيبدّل النسخة دي.";
+  window.scrollTo({ top: 0 });
+}
+$("chnCancelEditBtn").addEventListener("click", resetChannelForm);
+$("chnSaveBtn").addEventListener("click", function(){
+  var built = channelFormBody();
+  if (built.problem){ showChannelMsg("err", esc(built.problem)); return; }
+  var isEdit = channelState.editingId !== null && channelState.editingId !== undefined;
+  var body = built.body;
+  if (isEdit) body.id = channelState.editingId;
+  var btn = $("chnSaveBtn");
+  btn.disabled = true;
+  api(isEdit ? "/control/bot-channel-update" : "/control/bot-channel-post",
+    { method: "POST", body: body }).then(function(){
+    showChannelMsg("ok", isEdit ? "اتحفظ التعديل." : "اتحفظ المنشور — هيتنشر حسب وقته.");
+    resetChannelForm();
+    loadChannel();
+  }).catch(function(e){
+    if (e && e.noKey) showChannelMsg("err", "لازم تكتب مفتاح الأدمن الأول.", true);
+    else showChannelMsg("err", esc(errText(e, "channel")));
+  }).finally(function(){ btn.disabled = false; });
+});
+function askDeleteChannelDraft(it){
+  openActSheet("حذف المنشور",
+    "<p>المنشور ده " + esc(channelStatusOf(it).label) + " ولسه ما اتنشرش. حذفه هيشيله من القائمة نهائيًا.</p>",
+    "احذف", function(){
+      return api("/control/bot-channel-delete", { method: "POST", body: { id: it.id } })
+        .then(function(){
+          showChannelMsg("ok", "اتحذف المنشور.");
+          if (String(channelState.editingId) === String(it.id)) resetChannelForm();
+          loadChannel();
+        });
+    }, "channel");
+}
+function askDeletePublished(it){
+  openActSheet("حذف منشور من القناة",
+    "<p><b>المنشور ده اتنشر في القناة فعلًا.</b> حذفه من هنا هيشيله من القناة نفسها من قدام كل المشتركين، ومفيش تراجع بعدها.</p>",
+    "احذف من القناة", function(){
+      return api("/control/bot-channel-delete", { method: "POST", body: { id: it.id } })
+        .then(function(){
+          showChannelMsg("ok", "اتحذف المنشور من القناة.");
+          loadChannel();
+        });
+    }, "channel");
+}
+function askEditPublished(it){
+  var body = '<div class="field"><label>نص المنشور الجديد</label>' +
+    '<textarea id="actChnText" rows="5">' + esc(it.text || "") + "</textarea></div>" +
+    '<div class="sub" style="color:var(--muted); font-size:12px;">التعديل بيبدّل نص المنشور في القناة نفسها — الصورة والأزرار بيفضلوا زي ما هم.</div>';
+  openActSheet("تعديل نص المنشور", body, "حفظ التعديل", function(){
+    var text = $("actChnText").value.trim();
+    if (!text){
+      var e = new Error("empty text");
+      e.userText = "اكتب نص المنشور الأول.";
+      throw e;
+    }
+    return api("/control/bot-channel-edit-published",
+      { method: "POST", body: { id: it.id, text: text } }).then(function(){
+      showChannelMsg("ok", "اتعدّل نص المنشور في القناة.");
+      loadChannel();
+    });
+  }, "channel");
+}
+
+/*PURE-COUPONS-BEGIN*/
+function couponUsesText(c){
+  var used = Number(c && c.uses_count);
+  if (!isFinite(used) || used < 0) used = 0;
+  used = Math.floor(used);
+  var rawMax = c ? c.max_uses : null;
+  if (rawMax !== null && rawMax !== undefined && rawMax !== ""){
+    var max = Number(rawMax);
+    if (isFinite(max)) return used + " من " + Math.floor(max);
+  }
+  return String(used);
+}
+function couponExpiresText(c){
+  if (!c || !c.expires_at) return "ملوش انتهاء";
+  var t = new Date(c.expires_at);
+  if (isNaN(t.getTime())) return "—";
+  return (t.getTime() <= Date.now() ? "انتهى " : "ينتهي ") + t.toLocaleString("en-GB");
+}
+/*PURE-COUPONS-END*/
+
+var couponsState = { items: [], loaded: false, listFailed: false, editingCode: null };
+
+function showCouponsMsg(kind, html, withKeyBtn){
+  var box = $("cpnMsg");
+  box.className = "msg " + kind;
+  box.innerHTML = html + (withKeyBtn
+    ? '<button class="btn" id="cpnKeyBtn" type="button">كتابة المفتاح</button>' : "");
+  if (withKeyBtn) $("cpnKeyBtn").addEventListener("click", askKey);
+}
+function hideCouponsMsg(){ $("cpnMsg").className = "msg"; $("cpnMsg").innerHTML = ""; }
+
+function renderCouponsList(){
+  var box = $("cpnList");
+  if (couponsState.listFailed){
+    box.innerHTML = '<div class="empty">مش عارف أجيب الكوبونات دلوقتي.</div>';
+    return;
+  }
+  if (!couponsState.items.length){
+    box.innerHTML = '<div class="empty">مفيش كوبونات لسه.</div>';
+    return;
+  }
+  var html = "";
+  couponsState.items.forEach(function(c){
+    var uses = Number(c.uses_count);
+    if (!isFinite(uses) || uses < 0) uses = 0;
+    html += '<div class="result-row" style="flex-direction:column; align-items:stretch;">' +
+      '<div style="display:flex; justify-content:space-between; gap:8px;">' +
+        '<b dir="ltr">' + esc(c.code) + "</b>" +
+        "<span>" + (c.active ? "مفعّل" : "موقوف") + "</span>" +
+      "</div>" +
+      '<div class="sub" style="color:var(--muted); font-size:13px; margin-top:4px;">' +
+        "خصم " + esc(fmtNum(c.discount)) + "٪ · الاستخدام: " + esc(couponUsesText(c)) +
+        " · " + esc(couponExpiresText(c)) +
+        (c.min_order_egp !== null && c.min_order_egp !== undefined && c.min_order_egp !== ""
+          ? " · أقل طلب " + esc(fmtNum(c.min_order_egp)) + " ج.م" : "") +
+      "</div>" +
+      '<div class="row-actions" style="margin-top:8px;">' +
+        '<button class="btn ghost small" type="button" data-cpn-edit="' + esc(c.code) + '">تعديل</button>' +
+        '<button class="btn ghost small" type="button" data-cpn-toggle="' + esc(c.code) + '">' + (c.active ? "إيقاف" : "تفعيل") + "</button>" +
+        (uses <= 0 ? '<button class="btn ghost small" type="button" data-cpn-del="' + esc(c.code) + '">حذف</button>' : "") +
+      "</div>" +
+    "</div>";
+  });
+  box.innerHTML = html;
+  function findCoupon(code){
+    return couponsState.items.filter(function(x){ return x.code === code; })[0];
+  }
+  box.querySelectorAll("[data-cpn-edit]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var c = findCoupon(b.getAttribute("data-cpn-edit"));
+      if (c) startCouponEdit(c);
+    });
+  });
+  box.querySelectorAll("[data-cpn-toggle]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var c = findCoupon(b.getAttribute("data-cpn-toggle"));
+      if (c) toggleCoupon(c);
+    });
+  });
+  box.querySelectorAll("[data-cpn-del]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var c = findCoupon(b.getAttribute("data-cpn-del"));
+      if (c) askDeleteCoupon(c);
+    });
+  });
+}
+function loadCoupons(){
+  hideCouponsMsg();
+  api("/control/store-coupons").then(function(d){
+    couponsState.items = Array.isArray(d.coupons) ? d.coupons : [];
+    couponsState.listFailed = false;
+    couponsState.loaded = true;
+    renderCouponsList();
+  }).catch(function(e){
+    couponsState.items = [];
+    couponsState.listFailed = true;
+    couponsState.loaded = true;
+    renderCouponsList();
+    if (e && e.noKey) showCouponsMsg("err", "لازم تكتب مفتاح الأدمن الأول.", true);
+    else showCouponsMsg("err", esc(errText(e, "coupons")));
+  });
+}
+function ensureCouponsLoaded(){ if (!couponsState.loaded) loadCoupons(); }
+$("cpnReloadBtn").addEventListener("click", loadCoupons);
+
+function couponBodyFromRow(c, active){
+  return {
+    code: c.code,
+    discount: Number(c.discount),
+    active: active,
+    expires_at: c.expires_at || null,
+    max_uses: c.max_uses === null || c.max_uses === undefined || c.max_uses === ""
+      ? null : Number(c.max_uses),
+    min_order_egp: c.min_order_egp === null || c.min_order_egp === undefined || c.min_order_egp === ""
+      ? null : Number(c.min_order_egp),
+    original_code: c.code,
+  };
+}
+function toggleCoupon(c){
+  api("/control/store-coupons-save", { method: "POST", body: couponBodyFromRow(c, !c.active) })
+    .then(function(d){
+      if (d.audit_failed)
+        showCouponsMsg("warn", "اتغيّرت حالة الكوبون، بس تسجيلها في سجل التدقيق فشل.");
+      else
+        showCouponsMsg("ok", c.active ? "اتوقّف الكوبون." : "اتفعّل الكوبون.");
+      loadCoupons();
+    }).catch(function(e){
+      if (e && e.noKey) showCouponsMsg("err", "لازم تكتب مفتاح الأدمن الأول.", true);
+      else showCouponsMsg("err", esc(errText(e, "coupons")));
+    });
+}
+function resetCouponForm(){
+  couponsState.editingCode = null;
+  $("cpnFormTitle").textContent = "كوبون جديد";
+  $("cpnCode").value = "";
+  $("cpnCode").disabled = false;
+  $("cpnDiscount").value = "";
+  $("cpnExpires").value = "";
+  $("cpnMaxUses").value = "";
+  $("cpnMinOrder").value = "";
+  $("cpnActive").checked = true;
+  $("cpnCancelEditBtn").classList.add("hidden");
+}
+function startCouponEdit(c){
+  couponsState.editingCode = c.code;
+  $("cpnFormTitle").textContent = "تعديل كوبون";
+  $("cpnCode").value = c.code;
+  $("cpnCode").disabled = true;
+  $("cpnDiscount").value = c.discount === null || c.discount === undefined ? "" : String(c.discount);
+  $("cpnExpires").value = c.expires_at ? toLocalInputValue(c.expires_at) : "";
+  $("cpnMaxUses").value = c.max_uses === null || c.max_uses === undefined ? "" : String(c.max_uses);
+  $("cpnMinOrder").value = c.min_order_egp === null || c.min_order_egp === undefined ? "" : String(c.min_order_egp);
+  $("cpnActive").checked = c.active === true;
+  $("cpnCancelEditBtn").classList.remove("hidden");
+  window.scrollTo({ top: 0 });
+}
+$("cpnCancelEditBtn").addEventListener("click", resetCouponForm);
+$("cpnSaveBtn").addEventListener("click", function(){
+  var code = $("cpnCode").value.trim().toUpperCase();
+  if (!code){ showCouponsMsg("err", "اكتب كود الكوبون الأول."); return; }
+  var discount = $("cpnDiscount").value === "" ? NaN : Number($("cpnDiscount").value);
+  if (!isFinite(discount) || discount <= 0 || discount > 100){
+    showCouponsMsg("err", "نسبة الخصم لازم تكون رقم أكبر من صفر ولحد ١٠٠٪.");
+    return;
+  }
+  var body = {
+    code: code,
+    discount: discount,
+    active: $("cpnActive").checked === true,
+    expires_at: $("cpnExpires").value ? new Date($("cpnExpires").value).toISOString() : null,
+    max_uses: $("cpnMaxUses").value === "" ? null : Number($("cpnMaxUses").value),
+    min_order_egp: $("cpnMinOrder").value === "" ? null : Number($("cpnMinOrder").value),
+  };
+  if (couponsState.editingCode) body.original_code = couponsState.editingCode;
+  var btn = $("cpnSaveBtn");
+  btn.disabled = true;
+  api("/control/store-coupons-save", { method: "POST", body: body }).then(function(d){
+    if (d.audit_failed)
+      showCouponsMsg("warn", "اتحفظ الكوبون، بس تسجيله في سجل التدقيق فشل.");
+    else
+      showCouponsMsg("ok", "اتحفظ الكوبون.");
+    resetCouponForm();
+    loadCoupons();
+  }).catch(function(e){
+    if (e && e.noKey) showCouponsMsg("err", "لازم تكتب مفتاح الأدمن الأول.", true);
+    else showCouponsMsg("err", esc(errText(e, "coupons")));
+  }).finally(function(){ btn.disabled = false; });
+});
+function askDeleteCoupon(c){
+  openActSheet("حذف الكوبون",
+    "<p>الكوبون <b dir=\"ltr\">" + esc(c.code) + "</b> ما اتستخدمش ولا مرة. حذفه هيشيله من المتجر نهائيًا.</p>",
+    "احذف", function(){
+      return api("/control/store-coupons-delete", { method: "POST", body: { code: c.code } })
+        .then(function(d){
+          if (d.audit_failed)
+            showCouponsMsg("warn", "اتحذف الكوبون، بس تسجيله في سجل التدقيق فشل.");
+          else
+            showCouponsMsg("ok", "اتحذف الكوبون.");
+          if (couponsState.editingCode === c.code) resetCouponForm();
+          loadCoupons();
+        });
+    }, "coupons");
+}
+
+// ============================================================
+// قسم التجار (م٥-د): التجار المسجلون عند البوت ومفاتيح دخولهم
+// وطلباتهم — القائمة والتفاصيل والأفعال عند البوت عبر وكلاء
+// التجار، والنجاح بيظهر بس بعد رد سليم منه. سرّ أي مفتاح كامل
+// ما بيظهرش أبدًا: القوائم بتعرض البادئة وآخر ٤ أرقام بس،
+// والمفتاح الجديد بعد التدوير بيظهر مرة واحدة في صندوق النسخ.
+// ============================================================
+
+/*PURE-MERCHANTS-BEGIN*/
+function merchantsItemsOf(d){
+  var arr = [d && d.merchants, d && d.items, d && d.rows, d && d.list]
+    .find(function(v){ return Array.isArray(v); });
+  return arr || [];
+}
+function merchantDetailOf(d){
+  if (!d || typeof d !== "object") return null;
+  var m = d.merchant || d.item || d.detail || d;
+  return (m && typeof m === "object" && !Array.isArray(m)) ? m : null;
+}
+function merchantKeysOf(d, m){
+  var arr = [d && d.keys, d && d.api_keys, m && m.keys, m && m.api_keys]
+    .find(function(v){ return Array.isArray(v); });
+  return arr || [];
+}
+function merchantOrdersOf(d, m){
+  var arr = [d && d.orders, d && d.recent_orders, m && m.orders,
+    m && m.recent_orders]
+    .find(function(v){ return Array.isArray(v); });
+  return arr || [];
+}
+function merchantNameOf(m){
+  if (!m || typeof m !== "object") return "تاجر";
+  return String(m.name || m.title || m.display_name || m.username ||
+    m.id || "تاجر");
+}
+function merchantActiveOf(m){
+  if (!m || typeof m !== "object") return false;
+  if (typeof m.active === "boolean") return m.active;
+  if (typeof m.enabled === "boolean") return m.enabled;
+  var s = String(m.status || "").toLowerCase();
+  if (s === "active" || s === "enabled" || s === "on") return true;
+  if (s === "disabled" || s === "suspended" || s === "inactive" ||
+      s === "off") return false;
+  return true;
+}
+function merchantCountOf(m, names, listName){
+  if (!m || typeof m !== "object") return null;
+  for (var i = 0; i < names.length; i++){
+    var v = m[names[i]];
+    if (v !== null && v !== undefined && v !== ""){
+      var n = Number(v);
+      if (isFinite(n) && n >= 0) return Math.floor(n);
+    }
+  }
+  if (Array.isArray(m[listName])) return m[listName].length;
+  return null;
+}
+function merchantKeysCountOf(m){
+  return merchantCountOf(m, ["keys_count", "key_count"], "keys");
+}
+function merchantOrdersCountOf(m){
+  return merchantCountOf(m, ["orders_count", "order_count"], "orders");
+}
+function maskedKeyText(k){
+  // عرض مقنّع لمفتاح الدخول: بادئة وآخر ٤ أرقام بس. لو البوت بعت
+  // قيمة خام كاملة في أي حقل، بتتقطع هنا ومستحيل تظهر كلها.
+  if (!k || typeof k !== "object") return "مفتاح دخول";
+  var prefix = k.prefix != null ? String(k.prefix)
+    : (k.key_prefix != null ? String(k.key_prefix) : "");
+  var last4 = k.last4 != null ? String(k.last4)
+    : (k.last_four != null ? String(k.last_four)
+    : (k.suffix != null ? String(k.suffix) : ""));
+  var raw = "";
+  [k.key, k.secret, k.api_key, k.value].forEach(function(v){
+    if (!raw && typeof v === "string" && v) raw = v;
+  });
+  if (raw && raw.length > 8){
+    if (!prefix) prefix = raw.slice(0, 4);
+    if (!last4) last4 = raw.slice(-4);
+  } else if (raw && !last4){
+    last4 = raw.slice(-2);
+  }
+  if (prefix.length > 16) prefix = prefix.slice(0, 8);
+  if (last4.length > 8) last4 = last4.slice(-4);
+  if (last4) return (prefix ? prefix : "") + "…" + last4;
+  if (prefix) return prefix + "…";
+  return "مفتاح دخول";
+}
+function keyAllowlistOf(k){
+  if (!k || typeof k !== "object") return [];
+  var raw = k.allowlist != null ? k.allowlist
+    : (k.ip_allowlist != null ? k.ip_allowlist
+    : (k.allowed_ips != null ? k.allowed_ips : k.allow_list));
+  if (Array.isArray(raw))
+    return raw.map(function(v){ return String(v); })
+      .filter(function(v){ return v.trim() !== ""; });
+  if (typeof raw === "string" && raw.trim())
+    return raw.split(/[\n,]+/).map(function(v){ return v.trim(); })
+      .filter(function(v){ return v !== ""; });
+  return [];
+}
+function allowlistText(raw){
+  // النموذج بيحرر العناوين سطرًا لكل عنوان.
+  if (Array.isArray(raw))
+    return raw.map(function(v){ return String(v); }).join("\n");
+  if (typeof raw === "string") return raw;
+  return "";
+}
+function validCidrLine(line){
+  var s = String(line || "").trim();
+  if (!s) return false;
+  var parts = s.split("/");
+  if (parts.length > 2) return false;
+  var addr = parts[0];
+  var prefix = parts.length === 2 ? parts[1] : null;
+  if (prefix !== null && !/^\d+$/.test(prefix)) return false;
+  if (addr.indexOf(":") >= 0){
+    // IPv6: حروف سداسية ونقطتان بس، و«::» مرة واحدة على الأكثر.
+    if (!/^[0-9a-fA-F:]+$/.test(addr)) return false;
+    if (addr.indexOf("::") !== addr.lastIndexOf("::")) return false;
+    if (prefix !== null && Number(prefix) > 128) return false;
+    return true;
+  }
+  var octets = addr.split(".");
+  if (octets.length !== 4) return false;
+  for (var i = 0; i < 4; i++){
+    if (!/^\d{1,3}$/.test(octets[i])) return false;
+    if (Number(octets[i]) > 255) return false;
+  }
+  if (prefix !== null && Number(prefix) > 32) return false;
+  return true;
+}
+function parseAllowlist(text){
+  var lines = String(text || "").split(/\r?\n/);
+  var list = [];
+  for (var i = 0; i < lines.length; i++){
+    var line = lines[i].trim();
+    if (!line) continue;
+    if (!validCidrLine(line))
+      return { list: null, problem: "السطر رقم " + (i + 1) +
+        " مش عنوان صحيح — اكتبه بصيغة CIDR زي 203.0.113.0/24 أو عنوان لوحده زي 203.0.113.7." };
+    if (list.indexOf(line) < 0) list.push(line);
+  }
+  return { list: list, problem: "" };
+}
+function rotatedSecretOf(d){
+  if (!d || typeof d !== "object") return "";
+  var cands = [d.new_key, d.new_secret, d.secret, d.key, d.api_key,
+    d.new_api_key];
+  for (var i = 0; i < cands.length; i++){
+    if (typeof cands[i] === "string" && cands[i]) return cands[i];
+  }
+  return "";
+}
+/*PURE-MERCHANTS-END*/
+
+var merchantsState = { items: [], loaded: false, listFailed: false,
+  selectedId: null, detail: null, keys: [], orders: [],
+  detailFailed: false };
+var merchantNewSecret = "";
+
+function showMerchantsMsg(kind, html, withKeyBtn){
+  var box = $("mchMsg");
+  box.className = "msg " + kind;
+  box.innerHTML = html + (withKeyBtn
+    ? '<button class="btn" id="mchKeyBtn" type="button">كتابة المفتاح</button>' : "");
+  if (withKeyBtn) $("mchKeyBtn").addEventListener("click", askKey);
+}
+function hideMerchantsMsg(){ $("mchMsg").className = "msg"; $("mchMsg").innerHTML = ""; }
+function merchantsErr(e){
+  if (e && e.noKey) showMerchantsMsg("err", "لازم تكتب مفتاح الأدمن الأول.", true);
+  else showMerchantsMsg("err", esc(errText(e, "merchants")));
+}
+
+function renderMerchantsList(){
+  var box = $("mchList");
+  if (merchantsState.listFailed){
+    box.innerHTML = '<div class="empty">مش عارف أجيب التجار دلوقتي.</div>';
+    return;
+  }
+  if (!merchantsState.items.length){
+    box.innerHTML = '<div class="empty">مفيش تجار مسجلين لسه.</div>';
+    return;
+  }
+  var html = "";
+  merchantsState.items.forEach(function(m){
+    var active = merchantActiveOf(m);
+    var kc = merchantKeysCountOf(m);
+    var oc = merchantOrdersCountOf(m);
+    var bits = [];
+    if (kc !== null) bits.push("مفاتيح الدخول: " + kc);
+    if (oc !== null) bits.push("الطلبات: " + oc);
+    html += '<div class="result-row" style="flex-direction:column; align-items:stretch;">' +
+      '<div style="display:flex; justify-content:space-between; gap:8px;">' +
+        "<b>" + esc(merchantNameOf(m)) + "</b>" +
+        "<span>" + (active ? "شغّال" : "موقوف") + "</span>" +
+      "</div>" +
+      (bits.length ? '<div class="sub" style="color:var(--muted); font-size:13px; margin-top:4px;">' + esc(bits.join(" · ")) + "</div>" : "") +
+      (m.id !== null && m.id !== undefined
+        ? '<div class="sub" dir="ltr" style="color:var(--muted); font-size:12px; margin-top:2px; text-align:left;">' + esc(m.id) + "</div>" : "") +
+      '<div class="row-actions" style="margin-top:8px;">' +
+        '<button class="btn ghost small" type="button" data-mch-open="' + esc(m.id) + '">التفاصيل والمفاتيح</button>' +
+      "</div>" +
+    "</div>";
+  });
+  box.innerHTML = html;
+  box.querySelectorAll("[data-mch-open]").forEach(function(b){
+    b.addEventListener("click", function(){
+      loadMerchantDetail(b.getAttribute("data-mch-open"));
+    });
+  });
+}
+function loadMerchants(){
+  hideMerchantsMsg();
+  api("/control/bot-merchants").then(function(d){
+    merchantsState.items = merchantsItemsOf(d);
+    merchantsState.listFailed = false;
+    merchantsState.loaded = true;
+    renderMerchantsList();
+  }).catch(function(e){
+    merchantsState.items = [];
+    merchantsState.listFailed = true;
+    merchantsState.loaded = true;
+    renderMerchantsList();
+    merchantsErr(e);
+  });
+}
+function ensureMerchantsLoaded(){ if (!merchantsState.loaded) loadMerchants(); }
+$("mchReloadBtn").addEventListener("click", loadMerchants);
+
+function keyIdOf(k){
+  if (!k || typeof k !== "object") return null;
+  return k.id != null ? k.id : (k.key_id != null ? k.key_id : null);
+}
+function renderMerchantDetail(){
+  var card = $("mchDetailCard");
+  var body = $("mchDetailBody");
+  var m = merchantsState.detail;
+  if (!m){
+    card.classList.add("hidden");
+    body.innerHTML = "";
+    return;
+  }
+  card.classList.remove("hidden");
+  $("mchDetailTitle").textContent = "تفاصيل التاجر — " + merchantNameOf(m);
+  if (merchantsState.detailFailed){
+    body.innerHTML = '<div class="empty">مش عارف أجيب تفاصيل التاجر ده دلوقتي.</div>';
+    return;
+  }
+  var active = merchantActiveOf(m);
+  var html = '<div style="display:flex; justify-content:space-between; gap:8px; align-items:center;">' +
+    "<span>الحالة: <b>" + (active ? "شغّال" : "موقوف") + "</b></span>" +
+    '<button class="btn ghost small" type="button" id="mchToggleBtn">' + (active ? "إيقاف التاجر" : "تفعيل التاجر") + "</button>" +
+  "</div>";
+
+  html += '<h3 style="margin-top:16px;">مفاتيح الدخول</h3>';
+  if (!merchantsState.keys.length){
+    html += '<div class="empty">التاجر ده ملوش مفاتيح دخول لسه.</div>';
+  }
+  merchantsState.keys.forEach(function(k, idx){
+    var kActive = merchantActiveOf(k);
+    var lastUsed = k.last_used_at || k.last_used || null;
+    html += '<div class="result-row" style="flex-direction:column; align-items:stretch;">' +
+      '<div style="display:flex; justify-content:space-between; gap:8px;">' +
+        '<b dir="ltr">' + esc(maskedKeyText(k)) + "</b>" +
+        "<span>" + (kActive ? "شغّال" : "موقوف") + "</span>" +
+      "</div>" +
+      '<div class="sub" style="color:var(--muted); font-size:12px; margin-top:4px;">' +
+        (lastUsed ? "آخر استخدام: " + esc(fmtDT(lastUsed)) : "لسه ما اتستخدمش") +
+      "</div>" +
+      '<div class="field" style="margin-top:8px;"><label>العناوين المسموحة — سطر لكل عنوان (CIDR). فاضي يعني المفتاح شغال من أي عنوان.</label>' +
+      '<textarea id="mchAllow-' + idx + '" rows="3" dir="ltr" placeholder="203.0.113.0/24">' +
+        esc(allowlistText(keyAllowlistOf(k))) + "</textarea></div>" +
+      '<div class="row-actions" style="margin-top:8px;">' +
+        '<button class="btn ghost small" type="button" data-mch-allowsave="' + idx + '">حفظ العناوين المسموحة</button>' +
+        '<button class="btn ghost small" type="button" data-mch-keytoggle="' + idx + '">' + (kActive ? "إيقاف المفتاح" : "تفعيل المفتاح") + "</button>" +
+        '<button class="btn ghost small" type="button" data-mch-rotate="' + idx + '">تدوير المفتاح</button>' +
+      "</div>" +
+    "</div>";
+  });
+
+  html += '<h3 style="margin-top:16px;">آخر الطلبات</h3>';
+  if (!merchantsState.orders.length){
+    html += '<div class="empty">مفيش طلبات لسه للتاجر ده.</div>';
+  }
+  merchantsState.orders.forEach(function(o){
+    var bits = [];
+    var prod = o.product_name || o.product || o.title || "";
+    if (prod) bits.push(String(prod));
+    var total = o.total_egp != null ? o.total_egp
+      : (o.total != null ? o.total : o.amount);
+    if (total !== null && total !== undefined && total !== "")
+      bits.push(fmtNum(total) + " ج.م");
+    if (o.status) bits.push(String(o.status));
+    if (o.created_at) bits.push(fmtDT(o.created_at));
+    html += '<div class="result-row" style="flex-direction:column; align-items:stretch;">' +
+      '<div style="display:flex; justify-content:space-between; gap:8px;">' +
+        '<b dir="ltr">' + esc(o.id != null ? o.id : "") + "</b>" +
+      "</div>" +
+      (bits.length ? '<div class="sub" style="color:var(--muted); font-size:13px; margin-top:4px;">' + esc(bits.join(" · ")) + "</div>" : "") +
+    "</div>";
+  });
+  body.innerHTML = html;
+
+  $("mchToggleBtn").addEventListener("click", function(){ toggleMerchant(); });
+  body.querySelectorAll("[data-mch-allowsave]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var idx = Number(b.getAttribute("data-mch-allowsave"));
+      saveKeyAllowlist(merchantsState.keys[idx], idx);
+    });
+  });
+  body.querySelectorAll("[data-mch-keytoggle]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var idx = Number(b.getAttribute("data-mch-keytoggle"));
+      toggleMerchantKey(merchantsState.keys[idx]);
+    });
+  });
+  body.querySelectorAll("[data-mch-rotate]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var idx = Number(b.getAttribute("data-mch-rotate"));
+      askRotateMerchantKey(merchantsState.keys[idx]);
+    });
+  });
+}
+function loadMerchantDetail(id){
+  merchantsState.selectedId = id;
+  hideMerchantSecret();
+  api("/control/bot-merchant?id=" + encodeURIComponent(String(id)))
+    .then(function(d){
+      merchantsState.detail = merchantDetailOf(d);
+      merchantsState.keys = merchantKeysOf(d, merchantsState.detail);
+      merchantsState.orders = merchantOrdersOf(d, merchantsState.detail);
+      merchantsState.detailFailed = false;
+      renderMerchantDetail();
+      window.scrollTo({ top: 0 });
+    }).catch(function(e){
+      merchantsState.detail = { id: id };
+      merchantsState.keys = [];
+      merchantsState.orders = [];
+      merchantsState.detailFailed = true;
+      renderMerchantDetail();
+      merchantsErr(e);
+    });
+}
+function reloadMerchantDetail(){
+  if (merchantsState.selectedId !== null &&
+      merchantsState.selectedId !== undefined)
+    loadMerchantDetail(merchantsState.selectedId);
+}
+function toggleMerchant(){
+  var m = merchantsState.detail;
+  if (!m) return;
+  var next = !merchantActiveOf(m);
+  api("/control/bot-merchant-set", { method: "POST",
+    body: { id: merchantsState.selectedId, active: next } })
+    .then(function(d){
+      if (d && d.audit_failed)
+        showMerchantsMsg("warn", "اتغيّرت حالة التاجر، بس تسجيلها في سجل التدقيق فشل.");
+      else
+        showMerchantsMsg("ok", next ? "اتفعّل التاجر." : "اتوقّف التاجر.");
+      loadMerchants();
+      reloadMerchantDetail();
+    }).catch(merchantsErr);
+}
+function toggleMerchantKey(k){
+  var kid = keyIdOf(k);
+  if (kid === null){ showMerchantsMsg("err", "المفتاح ده معرّفه مش باين — حدّث القائمة وحاول تاني."); return; }
+  var next = !merchantActiveOf(k);
+  api("/control/bot-merchant-key-set", { method: "POST",
+    body: { merchant_id: merchantsState.selectedId, key_id: kid,
+      id: kid, active: next } })
+    .then(function(d){
+      if (d && d.audit_failed)
+        showMerchantsMsg("warn", "اتغيّرت حالة المفتاح، بس تسجيلها في سجل التدقيق فشل.");
+      else
+        showMerchantsMsg("ok", next ? "اتفعّل مفتاح الدخول." : "اتوقّف مفتاح الدخول.");
+      reloadMerchantDetail();
+    }).catch(merchantsErr);
+}
+function saveKeyAllowlist(k, idx){
+  var kid = keyIdOf(k);
+  if (kid === null){ showMerchantsMsg("err", "المفتاح ده معرّفه مش باين — حدّث القائمة وحاول تاني."); return; }
+  var parsed = parseAllowlist($("mchAllow-" + idx).value);
+  if (parsed.problem){ showMerchantsMsg("err", esc(parsed.problem)); return; }
+  api("/control/bot-merchant-key-allowlist", { method: "POST",
+    body: { merchant_id: merchantsState.selectedId, key_id: kid,
+      id: kid, allowlist: parsed.list, cidrs: parsed.list } })
+    .then(function(d){
+      if (d && d.audit_failed)
+        showMerchantsMsg("warn", "اتحفظت العناوين المسموحة، بس تسجيلها في سجل التدقيق فشل.");
+      else
+        showMerchantsMsg("ok", parsed.list.length
+          ? "اتحفظت العناوين المسموحة للمفتاح."
+          : "اتمسحت قائمة العناوين — المفتاح بقى شغال من أي عنوان.");
+      reloadMerchantDetail();
+    }).catch(merchantsErr);
+}
+function showMerchantSecret(secret){
+  merchantNewSecret = secret;
+  $("mchNewSecret").value = secret;
+  $("mchNewSecretBox").classList.remove("hidden");
+}
+function hideMerchantSecret(){
+  merchantNewSecret = "";
+  var input = $("mchNewSecret");
+  if (input) input.value = "";
+  var box = $("mchNewSecretBox");
+  if (box) box.classList.add("hidden");
+}
+$("mchHideSecretBtn").addEventListener("click", function(){
+  hideMerchantSecret();
+  showMerchantsMsg("ok", "اتخفى المفتاح الجديد.");
+});
+$("mchCopySecretBtn").addEventListener("click", function(){
+  var secret = merchantNewSecret || $("mchNewSecret").value;
+  if (!secret) return;
+  function done(){ showMerchantsMsg("ok", "اتنسخ المفتاح الجديد."); }
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(secret).then(done, function(){
+      $("mchNewSecret").select();
+      showMerchantsMsg("err", "النسخ التلقائي ما نفعش — المفتاح متحدد، انسخه يدويًا.");
+    });
+  } else {
+    $("mchNewSecret").select();
+    showMerchantsMsg("err", "المفتاح متحدد — انسخه يدويًا.");
+  }
+});
+function askRotateMerchantKey(k){
+  var kid = keyIdOf(k);
+  if (kid === null){ showMerchantsMsg("err", "المفتاح ده معرّفه مش باين — حدّث القائمة وحاول تاني."); return; }
+  openActSheet("تدوير مفتاح الدخول",
+    "<p>هيتعمل مفتاح دخول جديد مكان <b dir=\"ltr\">" + esc(maskedKeyText(k)) + "</b>، و<b>المفتاح القديم هيتوقف فورًا</b> وأي نظام بيستخدمه هيقف لحد ما ياخد الجديد.</p>" +
+    "<p>المفتاح الجديد هيظهر <b>مرة واحدة بس</b> هنا في اللوحة بعد التنفيذ — انسخه وادّيه للتاجر في قناة آمنة.</p>",
+    "دوّر المفتاح", function(){
+      return api("/control/bot-merchant-key-rotate", { method: "POST",
+        body: { merchant_id: merchantsState.selectedId, key_id: kid,
+          id: kid } })
+        .then(function(d){
+          var secret = rotatedSecretOf(d);
+          if (d && d.audit_failed)
+            showMerchantsMsg("warn", "اتدوّر المفتاح، بس تسجيله في سجل التدقيق فشل.");
+          else
+            showMerchantsMsg("ok", "اتدوّر مفتاح الدخول — المفتاح القديم اتوقف.");
+          reloadMerchantDetail();
+          if (secret) showMerchantSecret(secret);
+          else showMerchantsMsg("warn", "اتدوّر المفتاح، بس البوت ما بعتش المفتاح الجديد في رده — راجع البوت قبل ما تقفل الشاشة.");
+        });
+    }, "merchants");
+}
+
+// ============================================================
+// قسم الموقع (م٥-هـ): طرق الدفع الحية (جدول payment_methods)
+// ومحتوى الموقع (شريط الإعلان والأسئلة والأقسام والشروط البديلة
+// ووضع الصيانة) — القراءة والكتابة على قاعدة الموقع عبر معالجات
+// قسم الموقع، والتدقيق عند البوت. حفظ وسيلة الدفع بيعدّي على
+// معاينة قبل/بعد في ورقة تأكيد، وتشغيل الصيانة بيتحذّر منه
+// صراحة قبل التنفيذ.
+// ============================================================
+
+/*PURE-SITE-BEGIN*/
+var SITE_SECTION_LABELS = [
+  ["sec-ai", "الذكاء الاصطناعي"],
+  ["sec-games", "شحن الألعاب"],
+  ["sec-coins", "عملات تيك توك ونجوم تليجرام"],
+  ["sec-live", "تطبيقات البث المباشر"],
+  ["sec-social", "تعزيز الحسابات والمتابعين"],
+  ["sec-entertainment", "اشتراكات الترفيه والبث"],
+  ["sec-productivity", "البرامج والاشتراكات والأصول الرقمية"],
+  ["sec-vcc", "البطاقات الافتراضية الدولية"],
+  ["reviews", "آراء العملاء"],
+  ["sec-faq", "الأسئلة الشائعة"]
+];
+function siteRowValue(rows, key){
+  if (!Array.isArray(rows)) return null;
+  for (var i = 0; i < rows.length; i++){
+    var r = rows[i];
+    if (r && r.key === key && r.value && typeof r.value === "object" &&
+        !Array.isArray(r.value)) return r.value;
+  }
+  return null;
+}
+function paymentMethodStatusText(r){
+  return (r && r.active === true) ? "شغالة" : "موقوفة";
+}
+function paymentMethodPreviewLines(before, after){
+  var lines = [];
+  if (!before || !after) return lines;
+  if (before.value !== after.value){
+    lines.push("الاسم: «" + before.value + "» ← «" + after.value + "»");
+    lines.push("تنبيه: تغيير الاسم لازم يقابله نفس الاسم على زر الدفع في الموقع، وإلا الشراء بالوسيلة دي هيقف.");
+  }
+  if ((before.active === true) !== (after.active === true)){
+    lines.push(after.active === true
+      ? "الحالة: موقوفة ← شغالة (الشراء بيها هيرجع يشتغل)"
+      : "الحالة: شغالة ← موقوفة (الشراء بيها هيقف فورًا)");
+  }
+  var bn = before.note || "", an = after.note || "";
+  if (bn !== an) lines.push("الملحوظة الداخلية: «" + (bn || "—") + "» ← «" + (an || "—") + "»");
+  if (!lines.length) lines.push("مفيش تغييرات عن المحفوظ.");
+  return lines;
+}
+function faqItemsClean(items){
+  var out = [];
+  if (!Array.isArray(items)) return out;
+  items.forEach(function(it){
+    if (!it) return;
+    var q = String(it.q == null ? "" : it.q).trim();
+    var a = String(it.a == null ? "" : it.a).trim();
+    if (q && a) out.push({ q: q, a: a });
+  });
+  return out;
+}
+/*PURE-SITE-END*/
+
+var siteState = { methods: [], contentRows: [], loaded: false,
+  methodsFailed: false, contentFailed: false, editingMethod: null };
+
+function showSiteMsg(kind, html, withKeyBtn){
+  var box = $("siteMsg");
+  box.className = "msg " + kind;
+  box.innerHTML = html + (withKeyBtn
+    ? '<button class="btn" id="siteKeyBtn" type="button">كتابة المفتاح</button>' : "");
+  if (withKeyBtn) $("siteKeyBtn").addEventListener("click", askKey);
+}
+function hideSiteMsg(){ $("siteMsg").className = "msg"; $("siteMsg").innerHTML = ""; }
+function siteErr(e){
+  if (e && e.noKey) showSiteMsg("err", "لازم تكتب مفتاح الأدمن الأول.", true);
+  else showSiteMsg("err", esc(errText(e, "site")));
+}
+
+// ---------------------------------------------------------- طرق الدفع
+function renderSiteMethods(){
+  var box = $("siteMethodsList");
+  if (siteState.methodsFailed){
+    box.innerHTML = '<div class="empty">مش عارف أجيب طرق الدفع دلوقتي.</div>';
+    return;
+  }
+  if (!siteState.methods.length){
+    box.innerHTML = '<div class="empty">مفيش طرق دفع مسجلة.</div>';
+    return;
+  }
+  box.innerHTML = siteState.methods.map(function(r, i){
+    return '<div class="row-item">' +
+      '<div class="grow"><b>' + esc(r.value) + "</b>" +
+      '<div class="sub" style="color:var(--muted); font-size:12px;">' +
+      esc(paymentMethodStatusText(r)) +
+      (r.note ? " · " + esc(r.note) : "") + "</div></div>" +
+      '<button class="btn secondary" type="button" data-site-method-edit="' + i + '">تعديل</button>' +
+      "</div>";
+  }).join("");
+  box.querySelectorAll("[data-site-method-edit]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var r = siteState.methods[Number(b.getAttribute("data-site-method-edit"))];
+      if (r) startSiteMethodEdit(r);
+    });
+  });
+}
+function startSiteMethodEdit(r){
+  siteState.editingMethod = r;
+  $("siteMethodFormTitle").textContent = "تعديل وسيلة دفع";
+  $("siteMethodName").value = r.value || "";
+  $("siteMethodNote").value = r.note || "";
+  $("siteMethodActive").checked = r.active === true;
+  $("siteMethodFormCard").classList.remove("hidden");
+  $("siteMethodFormCard").scrollIntoView({ behavior: "smooth" });
+}
+function cancelSiteMethodEdit(){
+  siteState.editingMethod = null;
+  $("siteMethodFormCard").classList.add("hidden");
+}
+$("siteMethodCancelBtn").addEventListener("click", cancelSiteMethodEdit);
+$("siteMethodSaveBtn").addEventListener("click", function(){
+  var before = siteState.editingMethod;
+  if (!before){ showSiteMsg("err", "اختر وسيلة دفع من القائمة الأول."); return; }
+  var after = {
+    value: $("siteMethodName").value.trim(),
+    active: $("siteMethodActive").checked === true,
+    note: $("siteMethodNote").value.trim()
+  };
+  if (!after.value){ showSiteMsg("err", "اسم الوسيلة ما ينفعش يكون فاضي."); return; }
+  var lines = paymentMethodPreviewLines(
+    { value: before.value, active: before.active === true, note: before.note || "" },
+    after);
+  openActSheet("معاينة تعديل وسيلة الدفع",
+    "<p>الوسيلة <b>" + esc(before.value) + "</b> هتتعدّل كده:</p><p>" +
+    lines.map(esc).join("<br>") + "</p>",
+    "حفظ التعديل", function(){
+      return api("/control/site-payment-method-save", { method: "POST",
+        body: { original_value: before.value, value: after.value,
+          active: after.active, note: after.note } })
+        .then(function(d){
+          if (d.audit_failed)
+            showSiteMsg("warn", "اتحفظ التعديل، بس تسجيله في سجل التدقيق فشل.");
+          else
+            showSiteMsg("ok", "اتحفظ تعديل وسيلة الدفع.");
+          cancelSiteMethodEdit();
+          loadSiteMethods();
+        });
+    }, "site");
+});
+$("siteMethodsReloadBtn").addEventListener("click", function(){
+  loadSiteMethods();
+  loadSiteContent();
+});
+function loadSiteMethods(){
+  api("/control/site-payment-methods").then(function(d){
+    siteState.methods = Array.isArray(d.methods) ? d.methods : [];
+    siteState.methodsFailed = false;
+    renderSiteMethods();
+  }).catch(function(e){
+    siteState.methods = [];
+    siteState.methodsFailed = true;
+    renderSiteMethods();
+    siteErr(e);
+  });
+}
+
+// --------------------------------------------------------- محتوى الموقع
+function fillSiteContentForms(){
+  var rows = siteState.contentRows;
+  var ann = siteRowValue(rows, "announcement") || {};
+  $("siteAnnText").value = typeof ann.text === "string" ? ann.text : "";
+  $("siteAnnUrl").value = typeof ann.url === "string" ? ann.url : "";
+  $("siteAnnEnabled").checked = ann.enabled === true;
+
+  var terms = siteRowValue(rows, "terms") || {};
+  $("siteTermsText").value = typeof terms.text === "string" ? terms.text : "";
+
+  var faq = siteRowValue(rows, "faq") || {};
+  renderSiteFaqEditor(Array.isArray(faq.items) ? faq.items : []);
+
+  var sec = siteRowValue(rows, "sections") || {};
+  $("siteSectionsList").innerHTML = SITE_SECTION_LABELS.map(function(pair){
+    var on = sec[pair[0]] !== false;
+    return '<div class="field"><label><input type="checkbox" data-site-section="' +
+      esc(pair[0]) + '"' + (on ? " checked" : "") + "> " + esc(pair[1]) + "</label></div>";
+  }).join("");
+
+  var maint = siteRowValue(rows, "maintenance") || {};
+  $("siteMaintMsg").value = typeof maint.message === "string" ? maint.message : "";
+  $("siteMaintEnabled").checked = maint.enabled === true;
+}
+function renderSiteFaqEditor(items){
+  var box = $("siteFaqList");
+  box.innerHTML = items.map(function(it, i){
+    return '<div class="faq-row" data-faq-row="' + i + '">' +
+      '<div class="field"><label>السؤال</label><input type="text" data-faq-q value="' + esc(it.q || "") + '"></div>' +
+      '<div class="field"><label>الإجابة</label><textarea rows="2" data-faq-a>' + esc(it.a || "") + "</textarea></div>" +
+      '<button class="btn secondary" type="button" data-faq-del="' + i + '">حذف السؤال</button>' +
+      "</div>";
+  }).join("") || '<div class="empty">مفيش أسئلة — أضف أول سؤال.</div>';
+  box.querySelectorAll("[data-faq-del]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var itemsNow = readSiteFaqEditor();
+      itemsNow.splice(Number(b.getAttribute("data-faq-del")), 1);
+      renderSiteFaqEditor(itemsNow);
+    });
+  });
+}
+function readSiteFaqEditor(){
+  var items = [];
+  $("siteFaqList").querySelectorAll("[data-faq-row]").forEach(function(row){
+    items.push({
+      q: row.querySelector("[data-faq-q]").value,
+      a: row.querySelector("[data-faq-a]").value
+    });
+  });
+  return faqItemsClean(items);
+}
+$("siteFaqAddBtn").addEventListener("click", function(){
+  var items = readSiteFaqEditor();
+  items.push({ q: "", a: "" });
+  renderSiteFaqEditor(items);
+});
+function saveSiteContent(key, value, okText){
+  return api("/control/site-content-save", { method: "POST",
+    body: { key: key, value: value } })
+    .then(function(d){
+      if (d.audit_failed)
+        showSiteMsg("warn", "اتحفظ، بس تسجيله في سجل التدقيق فشل.");
+      else
+        showSiteMsg("ok", okText);
+      loadSiteContent();
+    })
+    .catch(siteErr);
+}
+$("siteAnnSaveBtn").addEventListener("click", function(){
+  var value = {
+    text: $("siteAnnText").value.trim(),
+    url: $("siteAnnUrl").value.trim(),
+    enabled: $("siteAnnEnabled").checked === true
+  };
+  if (value.enabled && !value.text){
+    showSiteMsg("err", "الشريط وهو ظاهر لازم يكون له نص.");
+    return;
+  }
+  if (value.url && !/^https?:\/\//i.test(value.url)){
+    showSiteMsg("err", "الرابط لازم يبدأ بـ http:// أو https://");
+    return;
+  }
+  saveSiteContent("announcement", value, "اتحفظ شريط الإعلان.");
+});
+$("siteFaqSaveBtn").addEventListener("click", function(){
+  var items = readSiteFaqEditor();
+  if (!items.length){
+    showSiteMsg("err", "لازم سؤال واحد كامل على الأقل (سؤال وإجابة).");
+    return;
+  }
+  saveSiteContent("faq", { items: items }, "اتحفظت الأسئلة الشائعة.");
+});
+$("siteSectionsSaveBtn").addEventListener("click", function(){
+  var value = {};
+  $("siteSectionsList").querySelectorAll("[data-site-section]").forEach(function(cb){
+    value[cb.getAttribute("data-site-section")] = cb.checked === true;
+  });
+  saveSiteContent("sections", value, "اتحفظت أقسام الصفحة الرئيسية.");
+});
+$("siteTermsSaveBtn").addEventListener("click", function(){
+  saveSiteContent("terms", { text: $("siteTermsText").value },
+    "اتحفظ نص الشروط البديل.");
+});
+$("siteMaintSaveBtn").addEventListener("click", function(){
+  var value = {
+    enabled: $("siteMaintEnabled").checked === true,
+    message: $("siteMaintMsg").value.trim()
+  };
+  if (value.enabled && !value.message){
+    showSiteMsg("err", "الصيانة وهي شغالة لازم يكون لها رسالة.");
+    return;
+  }
+  if (!value.enabled){
+    saveSiteContent("maintenance", value, "اتحفظ وضع الصيانة.");
+    return;
+  }
+  openActSheet("تشغيل وضع الصيانة",
+    "<p><b>تحذير:</b> تشغيل الصيانة هيخلي العملاء يشوفوا رسالة الصيانة بدل المتجر في الصفحة الرئيسية وصفحة الشروط، ومش هيقدروا يتصفحوا أو يشتروا لحد ما توقّفها من هنا.</p>" +
+    "<p>اللوحة دي هتفضل شغالة عادي وانت تقدر توقّف الصيانة في أي وقت.</p>" +
+    "<p>الرسالة: «" + esc(value.message) + "»</p>",
+    "شغّل الصيانة", function(){
+      return saveSiteContent("maintenance", value, "الصيانة اشتغلت — المتجر مقفول للعملاء دلوقتي.");
+    }, "site");
+});
+function loadSiteContent(){
+  api("/control/site-content").then(function(d){
+    siteState.contentRows = Array.isArray(d.content) ? d.content : [];
+    siteState.contentFailed = false;
+    fillSiteContentForms();
+  }).catch(function(e){
+    siteState.contentRows = [];
+    siteState.contentFailed = true;
+    siteErr(e);
+  });
+}
+function ensureSiteLoaded(){
+  if (siteState.loaded) return;
+  siteState.loaded = true;
+  hideSiteMsg();
+  loadSiteMethods();
+  loadSiteContent();
+}
 
 load();
 </script>

@@ -89,5 +89,54 @@ footer{border-top:1px solid #1f2530;margin-top:44px;padding-top:18px;font-size:1
 
 <footer>متجر ميجو لشحن الألعاب والعملات الرقمية والاشتراكات — <a href="catalog.html">تصفح المتجر</a> · <a href="https://wa.me/201060934020">تواصل واتساب</a><br>آخر تحديث لهذه الصفحة: الاثنين 16 نوفمبر 2026</footer>
 </div>
+<script>
+// محتوى الموقع من اللوحة (م٥-هـ): الصفحة بتجيب GET /site/content
+// وبتطبّق حاجتين بس — وضع الصيانة (غطاء كامل) ونص الشروط البديل
+// لو الأدمن كتبه في اللوحة. أي فشل أو غياب نص بديل = الصفحة
+// الثابتة دي بتفضل زي ما هي بالظبط.
+(function () {
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+  try {
+    fetch('https://migoai-72.naroelwakel-dot.deno.net/site/content')
+      .then(function (res) { return res.ok ? res.json() : null; })
+      .then(function (data) {
+        if (!data || !data.ok || !data.content) return;
+        var c = data.content;
+        if (c.maintenance && c.maintenance.enabled === true) {
+          var msg = (typeof c.maintenance.message === 'string' && c.maintenance.message)
+            ? c.maintenance.message : 'الموقع متوقف مؤقتًا للصيانة.';
+          var overlay = document.createElement('div');
+          overlay.setAttribute('style', 'position:fixed;inset:0;z-index:300;background:#0B0D11;color:#E2E8F0;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;');
+          overlay.innerHTML = '<div style="max-width:32rem;"><div style="font-size:2rem;margin-bottom:12px;">🛠️</div>' +
+            '<div style="font-weight:bold;font-size:1.25rem;margin-bottom:8px;">متجر ميجو</div>' +
+            '<p style="color:#94A3B8;line-height:1.9;">' + esc(msg) + '</p></div>';
+          document.body.appendChild(overlay);
+          document.body.style.overflow = 'hidden';
+          return;
+        }
+        var text = (c.terms && typeof c.terms.text === 'string') ? c.terms.text : '';
+        if (!text.trim()) return;
+        var old = document.querySelectorAll('.sec, .alert');
+        if (!old.length) return;
+        var anchor = old[0];
+        var html = text.split(/\n\s*\n/).map(function (p) {
+          var t = p.trim();
+          if (!t) return '';
+          return '<div class="sec"><p>' + esc(t).replace(/\n/g, '<br>') + '</p></div>';
+        }).join('');
+        if (!html) return;
+        var holder = document.createElement('div');
+        holder.innerHTML = html;
+        anchor.parentNode.insertBefore(holder, anchor);
+        old.forEach(function (el) { el.remove(); });
+      })
+      .catch(function () {});
+  } catch (e) {}
+})();
+</script>
 </body>
 </html>

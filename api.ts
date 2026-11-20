@@ -82,6 +82,30 @@ import {
   handleControlEventsRequest,
   PostgrestControlEventsClient,
 } from "./control/events.ts";
+import {
+  type ControlSettingsDeps,
+  handleControlSettingsRequest,
+} from "./control/settings.ts";
+import {
+  type ControlChannelDeps,
+  handleControlChannelRequest,
+} from "./control/channel.ts";
+import {
+  type ControlMerchantsDeps,
+  handleControlMerchantsRequest,
+} from "./control/merchants.ts";
+import {
+  type ControlCouponsDeps,
+  handleControlCouponsRequest,
+  PostgrestControlCouponsClient,
+} from "./control/coupons.ts";
+import {
+  type ControlSiteDeps,
+  handleControlSiteRequest,
+  handleSiteContentPublicRequest,
+  PostgrestControlSiteClient,
+  type SiteContentPublicDeps,
+} from "./control/site.ts";
 import { bridgeBaseUrl } from "./sheerid/config.ts";
 import { makeAdminChecker, tokenEquals } from "./admin_auth.ts";
 
@@ -541,6 +565,131 @@ function getControlEventsDeps(): ControlEventsDeps {
     logError,
   };
   return _controlEventsDeps;
+}
+
+// ---------------------------------------------------------------------------
+// لوحة التحكم (المرحلة م٥-أ): سجل إعدادات البوت — تمرير خادمي لنقاط
+// إعدادات البوت (القائمة/الحفظ/سجل التغييرات/النسخة الاحتياطية/
+// الاستيراد). السجل والتحقق والتدقيق عند البوت؛ اللوحة بتمرّر بس.
+// اعتماد الجسر والمصادقة زي م٤ بالظبط.
+// ---------------------------------------------------------------------------
+let _controlSettingsDeps: ControlSettingsDeps | null = null;
+function getControlSettingsDeps(): ControlSettingsDeps {
+  if (_controlSettingsDeps) return _controlSettingsDeps;
+  _controlSettingsDeps = {
+    botClient: new BridgeBotControlProxyClient({
+      baseUrlOf: () => bridgeBaseUrl((n) => Deno.env.get(n)),
+      bridgeTokenOf: controlBridgeTokenOf(),
+    }),
+    isAdmin,
+    corsOf: (r: Request) => corsHeaders(r),
+    logError,
+  };
+  return _controlSettingsDeps;
+}
+
+// ---------------------------------------------------------------------------
+// لوحة التحكم (المرحلة م٥-ج): قناة التليجرام — تمرير خادمي لنقاط
+// قناة البوت (الطابور/النشر/التعديل/الحذف). الطابور والنشر عند
+// البوت؛ اللوحة بتمرّر بس. اعتماد الجسر والمصادقة زي م٥-أ بالظبط.
+// وكوبونات الموقع — قراءة/كتابة على جدول coupons في قاعدة الموقع
+// نفسها بمفتاح الخدمة (نمط طلبات الموقع م٢)، والتدقيق عند البوت.
+// ---------------------------------------------------------------------------
+let _controlChannelDeps: ControlChannelDeps | null = null;
+function getControlChannelDeps(): ControlChannelDeps {
+  if (_controlChannelDeps) return _controlChannelDeps;
+  _controlChannelDeps = {
+    botClient: new BridgeBotControlProxyClient({
+      baseUrlOf: () => bridgeBaseUrl((n) => Deno.env.get(n)),
+      bridgeTokenOf: controlBridgeTokenOf(),
+    }),
+    isAdmin,
+    corsOf: (r: Request) => corsHeaders(r),
+    logError,
+  };
+  return _controlChannelDeps;
+}
+
+// ---------------------------------------------------------------------------
+// لوحة التحكم (المرحلة م٥-د): التجار — تمرير خادمي لنقاط تجار
+// البوت (القائمة/التفاصيل/الحالة/المفاتيح/العناوين المسموحة/
+// التدوير). التجار ومفاتيحهم عند البوت؛ اللوحة بتمرّر بس، بنفس
+// اعتماد الجسر والمصادقة بتاعة م٥-ج.
+// ---------------------------------------------------------------------------
+let _controlMerchantsDeps: ControlMerchantsDeps | null = null;
+function getControlMerchantsDeps(): ControlMerchantsDeps {
+  if (_controlMerchantsDeps) return _controlMerchantsDeps;
+  _controlMerchantsDeps = {
+    botClient: new BridgeBotControlProxyClient({
+      baseUrlOf: () => bridgeBaseUrl((n) => Deno.env.get(n)),
+      bridgeTokenOf: controlBridgeTokenOf(),
+    }),
+    isAdmin,
+    corsOf: (r: Request) => corsHeaders(r),
+    logError,
+  };
+  return _controlMerchantsDeps;
+}
+
+let _controlCouponsDeps: ControlCouponsDeps | null = null;
+function getControlCouponsDeps(): ControlCouponsDeps {
+  if (_controlCouponsDeps) return _controlCouponsDeps;
+  const env = (n: string) => Deno.env.get(n) || "";
+  _controlCouponsDeps = {
+    client: new PostgrestControlCouponsClient({
+      baseUrl: SB_URL,
+      keyOf: () => env("SUPABASE_SERVICE_ROLE_KEY"),
+    }),
+    botClient: new BridgeBotControlProxyClient({
+      baseUrlOf: () => bridgeBaseUrl((n) => Deno.env.get(n)),
+      bridgeTokenOf: controlBridgeTokenOf(),
+    }),
+    isAdmin,
+    corsOf: (r: Request) => corsHeaders(r),
+    logError,
+  };
+  return _controlCouponsDeps;
+}
+
+// ---------------------------------------------------------------------------
+// لوحة التحكم (المرحلة م٥-هـ): قسم الموقع — طرق الدفع الحية
+// ومحتوى الموقع (site_content) قراءة/كتابة على قاعدة الموقع
+// بمفتاح الخدمة (نمط كوبونات م٥-ج)، والتدقيق عند البوت. والقراءة
+// العامة للمحتوى (GET /site/content) بنفس العميل من غير مصادقة.
+// ---------------------------------------------------------------------------
+let _controlSiteDeps: ControlSiteDeps | null = null;
+function getControlSiteDeps(): ControlSiteDeps {
+  if (_controlSiteDeps) return _controlSiteDeps;
+  const env = (n: string) => Deno.env.get(n) || "";
+  _controlSiteDeps = {
+    client: new PostgrestControlSiteClient({
+      baseUrl: SB_URL,
+      keyOf: () => env("SUPABASE_SERVICE_ROLE_KEY"),
+    }),
+    botClient: new BridgeBotControlProxyClient({
+      baseUrlOf: () => bridgeBaseUrl((n) => Deno.env.get(n)),
+      bridgeTokenOf: controlBridgeTokenOf(),
+    }),
+    isAdmin,
+    corsOf: (r: Request) => corsHeaders(r),
+    logError,
+  };
+  return _controlSiteDeps;
+}
+
+let _siteContentPublicDeps: SiteContentPublicDeps | null = null;
+function getSiteContentPublicDeps(): SiteContentPublicDeps {
+  if (_siteContentPublicDeps) return _siteContentPublicDeps;
+  const env = (n: string) => Deno.env.get(n) || "";
+  _siteContentPublicDeps = {
+    client: new PostgrestControlSiteClient({
+      baseUrl: SB_URL,
+      keyOf: () => env("SUPABASE_SERVICE_ROLE_KEY"),
+    }),
+    corsOf: (r: Request) => corsHeaders(r),
+    logError,
+  };
+  return _siteContentPublicDeps;
 }
 
 // ---------------------------------------------------------------------------
@@ -1999,6 +2148,23 @@ Deno.serve(async (req: Request) => {
       logError("wallet.route", "unhandled wallet route error", e);
     }
   }
+  // محتوى الموقع العام (المرحلة م٥-هـ): شريط الإعلان والشروط
+  // والأسئلة والأقسام والصيانة من جدول site_content — الواجهة
+  // بتجيبه وقت التحميل وبتطبّقه فوق الثوابت المكتوبة في الصفحات،
+  // وفشل القراءة بيرجع الثوابت المدمجة في المعالج نفسه (200)
+  // فالموقع ما بينكسرش أبدًا. المحتوى معروض للعملاء أصلًا
+  // فالمسار من غير مصادقة، وبنفس CORS باقي المسارات العامة.
+  if (url.pathname.replace(/\/+$/, "").endsWith("/site/content")) {
+    try {
+      const siteContentRes = await handleSiteContentPublicRequest(
+        req,
+        getSiteContentPublicDeps(),
+      );
+      if (siteContentRes) return siteContentRes;
+    } catch (e) {
+      logError("site.content.route", "unhandled site content route error", e);
+    }
+  }
   // أسعار الكتالوج العامة (المرحلة م٣): خريطة أسعار قاعدة البيانات
   // بأسماء عناصر السلة — الواجهة بتجيبها وقت التحميل وبتعرضها فوق
   // أسعار الملفات الثابتة، فالقاعدة تبقى مصدر السعر الوحيد. الخريطة
@@ -2124,6 +2290,31 @@ Deno.serve(async (req: Request) => {
         getControlEventsDeps(),
       );
       if (eventsRes) return eventsRes;
+      const settingsRes = await handleControlSettingsRequest(
+        req,
+        getControlSettingsDeps(),
+      );
+      if (settingsRes) return settingsRes;
+      const channelRes = await handleControlChannelRequest(
+        req,
+        getControlChannelDeps(),
+      );
+      if (channelRes) return channelRes;
+      const merchantsRes = await handleControlMerchantsRequest(
+        req,
+        getControlMerchantsDeps(),
+      );
+      if (merchantsRes) return merchantsRes;
+      const couponsRes = await handleControlCouponsRequest(
+        req,
+        getControlCouponsDeps(),
+      );
+      if (couponsRes) return couponsRes;
+      const siteRes = await handleControlSiteRequest(
+        req,
+        getControlSiteDeps(),
+      );
+      if (siteRes) return siteRes;
     } catch (e) {
       logError("control.customers.route", "unhandled customers route error", e);
     }
