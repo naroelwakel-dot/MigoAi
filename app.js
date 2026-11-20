@@ -325,6 +325,173 @@ const __catalogPricesReady = (function () {
     return Promise.race([load, cap]);
 })();
 
+// ==============================================================================
+// محتوى الموقع من اللوحة (م٥-هـ): شريط الإعلان والأسئلة الشائعة
+// وإظهار/إخفاء الأقسام ووضع الصيانة بييجوا من GET /site/content
+// (جدول site_content في قاعدة الموقع، بتحرّره لوحة التحكم).
+// الجلب ما بيوقّفش الرسم أبدًا: أي فشل أو بطء أو قيمة تالفة =
+// الصفحة بتفضل بثوابتها المكتوبة فيها زي ما هي بالظبط.
+// ==============================================================================
+
+/*PURE-SITE-CONSUME-BEGIN*/
+function siteDefaultContent() {
+    return {
+        announcement: { enabled: false, text: '', url: '' },
+        terms: { text: '' },
+        faq: { items: [
+            { q: 'كيف يصلني الشحن؟', a: 'إلى معرّف اللاعب (ID) خلال 2 إلى 5 دقائق دون كلمة مرور.' },
+            { q: 'هل الاشتراكات والأدوات رسمية؟', a: 'نعم، تفعيل رسمي على بريدك مع ضمان سلامة التفعيل والتسليم من طرفنا.' },
+            { q: 'ما طرق الدفع المتاحة؟', a: 'فودافون كاش، إنستاباي، باينانس، والبطاقات البنكية.' },
+            { q: 'هل أحتاج مشاركة كلمة مروري؟', a: 'لا، يكفي معرّف اللاعب أو تاج الحساب فقط.' },
+            { q: 'هل الأسعار بالجنيه المصري؟', a: 'نعم، كل الأسعار بالجنيه المصري (EGP).' },
+            { q: 'هل يوجد دعم فني؟', a: 'نعم، دعم مباشر عبر واتساب يومياً.' }
+        ] },
+        sections: { 'sec-ai': true, 'sec-games': true, 'sec-coins': true, 'sec-live': true, 'sec-social': true, 'sec-entertainment': true, 'sec-productivity': true, 'sec-vcc': true, 'reviews': true, 'sec-faq': true },
+        maintenance: { enabled: false, message: 'الموقع متوقف مؤقتًا للصيانة والتحديث — راجعين لكم قريبًا. لو عندك طلب شغال، تواصل معنا واتساب وهنكمله معاك.' }
+    };
+}
+function siteObj(v) {
+    return (v && typeof v === 'object' && !Array.isArray(v)) ? v : null;
+}
+function normalizePublicSiteContent(raw) {
+    var out = siteDefaultContent();
+    var c = siteObj(raw);
+    if (!c) return out;
+    var ann = siteObj(c.announcement);
+    if (ann) {
+        out.announcement = {
+            enabled: ann.enabled === true,
+            text: typeof ann.text === 'string' ? ann.text.slice(0, 300) : '',
+            url: typeof ann.url === 'string' ? ann.url.slice(0, 500) : ''
+        };
+        if (!out.announcement.text) out.announcement.enabled = false;
+    }
+    var terms = siteObj(c.terms);
+    if (terms) out.terms = { text: typeof terms.text === 'string' ? terms.text.slice(0, 20000) : '' };
+    var faq = siteObj(c.faq);
+    if (faq && Array.isArray(faq.items)) {
+        var items = [];
+        faq.items.forEach(function (raw2) {
+            var it = siteObj(raw2);
+            if (!it) return;
+            var q = typeof it.q === 'string' ? it.q.trim() : '';
+            var a = typeof it.a === 'string' ? it.a.trim() : '';
+            if (q && a) items.push({ q: q.slice(0, 200), a: a.slice(0, 1000) });
+        });
+        if (items.length) out.faq = { items: items.slice(0, 50) };
+    }
+    var sec = siteObj(c.sections);
+    if (sec) {
+        Object.keys(out.sections).forEach(function (id) {
+            if (typeof sec[id] === 'boolean') out.sections[id] = sec[id];
+        });
+    }
+    var maint = siteObj(c.maintenance);
+    if (maint) {
+        var msg = typeof maint.message === 'string' ? maint.message.trim() : '';
+        out.maintenance = {
+            enabled: maint.enabled === true,
+            message: msg || out.maintenance.message
+        };
+    }
+    return out;
+}
+function announcementOf(content) {
+    var c = siteObj(content);
+    var ann = c ? siteObj(c.announcement) : null;
+    if (!ann || ann.enabled !== true || !ann.text) return null;
+    return { text: String(ann.text), url: typeof ann.url === 'string' ? ann.url : '' };
+}
+function maintenanceOf(content) {
+    var c = siteObj(content);
+    var m = c ? siteObj(c.maintenance) : null;
+    if (!m || m.enabled !== true) return null;
+    return typeof m.message === 'string' && m.message ? m.message : 'الموقع متوقف مؤقتًا للصيانة.';
+}
+function hiddenSectionIds(content) {
+    var c = siteObj(content);
+    var sec = c ? siteObj(c.sections) : null;
+    if (!sec) return [];
+    return Object.keys(sec).filter(function (id) { return sec[id] === false; });
+}
+function faqItemsOf(content) {
+    var c = siteObj(content);
+    var faq = c ? siteObj(c.faq) : null;
+    if (!faq || !Array.isArray(faq.items)) return [];
+    return faq.items;
+}
+/*PURE-SITE-CONSUME-END*/
+
+function __siteEsc(s) {
+    return String(s == null ? '' : s)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+function applySiteContent(content) {
+    // وضع الصيانة الأول: غطاء كامل فوق المتجر برسالة اللوحة.
+    var maintMsg = maintenanceOf(content);
+    if (maintMsg) {
+        var overlay = document.createElement('div');
+        overlay.id = 'siteMaintenanceOverlay';
+        overlay.setAttribute('style', 'position:fixed;inset:0;z-index:300;background:#0B0D11;color:#E2E8F0;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;');
+        overlay.innerHTML = '<div style="max-width:32rem;">' +
+            '<div style="font-size:2rem;margin-bottom:12px;">🛠️</div>' +
+            '<div style="font-weight:bold;font-size:1.25rem;margin-bottom:8px;">متجر ميجو</div>' +
+            '<p style="color:#94A3B8;line-height:1.9;">' + __siteEsc(maintMsg) + '</p></div>';
+        document.body.appendChild(overlay);
+        document.body.style.overflow = 'hidden';
+        return;
+    }
+    // شريط الإعلان: شريط ذهبي أعلى الصفحة، ولو له رابط بيبقى كله رابط.
+    var ann = announcementOf(content);
+    if (ann) {
+        var bar = document.createElement(ann.url ? 'a' : 'div');
+        bar.id = 'siteAnnouncementBar';
+        if (ann.url) bar.href = ann.url;
+        bar.setAttribute('style', 'display:block;background:#F2B53D;color:#12151B;text-align:center;font-weight:bold;font-size:13px;padding:8px 12px;line-height:1.7;');
+        bar.textContent = ann.text;
+        document.body.insertBefore(bar, document.body.firstChild);
+    }
+    // إخفاء الأقسام المطلوب إخفاؤها (المحتوى نفسه ما بيتمسحش).
+    hiddenSectionIds(content).forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+    });
+    // الأسئلة الشائعة: إعادة بناء القائمة من محتوى اللوحة بنفس
+    // شكل البطاقات الحالي. أي اختلاف بنية = تخطي بصمت.
+    var items = faqItemsOf(content);
+    if (items.length) {
+        var faqSection = document.getElementById('sec-faq');
+        var list = faqSection ? faqSection.querySelector('.space-y-2') : null;
+        if (list) {
+            list.innerHTML = items.map(function (it) {
+                return '<details class="sky-card p-3"><summary class="font-bold text-sm text-white">' +
+                    __siteEsc(it.q) + '</summary><p class="text-xs text-slate-400 mt-2">' +
+                    __siteEsc(it.a) + '</p></details>';
+            }).join('');
+        }
+    }
+}
+
+const SITE_CONTENT_TIMEOUT_MS = 2500;
+(function loadSiteContent() {
+    try {
+        const ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+        const timer = setTimeout(function () {
+            if (ctrl) { try { ctrl.abort(); } catch (e) {} }
+        }, SITE_CONTENT_TIMEOUT_MS);
+        fetch(`${DENO_API_URL}/site/content`, ctrl ? { signal: ctrl.signal } : {})
+            .then(function (res) { return res.ok ? res.json() : null; })
+            .then(function (data) {
+                clearTimeout(timer);
+                if (!data || !data.ok || !data.content) return;
+                try { applySiteContent(normalizePublicSiteContent(data.content)); } catch (e) {}
+            })
+            .catch(function () { clearTimeout(timer); });
+    } catch (e) {}
+})();
+
 function showToast(msg, type = 'success') {
     const container = document.getElementById('toastContainer');
     if (!container) return;
@@ -530,7 +697,10 @@ async function applyCartCoupon() {
     let discount = null;
     try {
         const c = await __sbClient();
-        const res = await c.rpc('validate_coupon', { p_code: code });
+        // إجمالي السلة بيتبعت مع النداء: كوبون له حد أدنى للطلب
+        // بيترفض من الدالة لو الإجمالي ما وصلش أو أقل من الحد.
+        const subtotal = cart.reduce((sum, item) => sum + Number(item.price), 0);
+        const res = await c.rpc('validate_coupon', { p_code: code, p_subtotal: subtotal });
         if (!res.error && res.data != null) discount = Number(res.data);
     } catch (e) { discount = null; }
     if (discount == null || isNaN(discount) || discount <= 0) return showToast('كود غير صالح', 'error');
