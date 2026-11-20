@@ -69,6 +69,14 @@ import {
   handleControlPricesRequest,
   PostgrestControlPricesClient,
 } from "./control/prices.ts";
+import {
+  type ControlCatalogDeps,
+  handleControlCatalogRequest,
+} from "./control/catalog.ts";
+import {
+  type ControlSuppliersDeps,
+  handleControlSuppliersRequest,
+} from "./control/suppliers.ts";
 import { bridgeBaseUrl } from "./sheerid/config.ts";
 import { makeAdminChecker, tokenEquals } from "./admin_auth.ts";
 
@@ -444,6 +452,64 @@ function getControlPricesDeps(): ControlPricesDeps {
     siteBaseOf: () => "https://migoai.shop",
   };
   return _controlPricesDeps;
+}
+
+// ---------------------------------------------------------------------------
+// لوحة التحكم (المرحلة م٣-ب): كتالوج البوت وخريطة الهوية + الموردون
+// وسجلهم ونقل منتج لمورد آخر — تمرير خادمي لنقاط البوت الداخلية
+// (البوت بيكتب وبيتدقّق عنده)، فالتبعيات هنا هي عميل الجسر وبوابة
+// الأدمن المشتركة بس. اعتماد الجسر والمصادقة زي م١/م٢/م٣ بالظبط.
+// ---------------------------------------------------------------------------
+function controlBridgeTokenOf(): () => Promise<string> {
+  const env = (n: string) => Deno.env.get(n) || "";
+  return async (): Promise<string> => {
+    const fromEnv = env("SHEERID_BRIDGE_TOKEN");
+    if (fromEnv) return fromEnv;
+    try {
+      const key = env("SUPABASE_SERVICE_ROLE_KEY");
+      const res = await fetch(
+        `${SB_URL}/rest/v1/backend_config?key=eq.sheerid_bridge_token&select=value`,
+        { headers: { apikey: key, Authorization: `Bearer ${key}` } },
+      );
+      if (!res.ok) return "";
+      const rows = await res.json();
+      return (Array.isArray(rows) && rows[0]?.value)
+        ? String(rows[0].value)
+        : "";
+    } catch {
+      return "";
+    }
+  };
+}
+
+let _controlCatalogDeps: ControlCatalogDeps | null = null;
+function getControlCatalogDeps(): ControlCatalogDeps {
+  if (_controlCatalogDeps) return _controlCatalogDeps;
+  _controlCatalogDeps = {
+    botClient: new BridgeBotControlProxyClient({
+      baseUrlOf: () => bridgeBaseUrl((n) => Deno.env.get(n)),
+      bridgeTokenOf: controlBridgeTokenOf(),
+    }),
+    isAdmin,
+    corsOf: (r: Request) => corsHeaders(r),
+    logError,
+  };
+  return _controlCatalogDeps;
+}
+
+let _controlSuppliersDeps: ControlSuppliersDeps | null = null;
+function getControlSuppliersDeps(): ControlSuppliersDeps {
+  if (_controlSuppliersDeps) return _controlSuppliersDeps;
+  _controlSuppliersDeps = {
+    botClient: new BridgeBotControlProxyClient({
+      baseUrlOf: () => bridgeBaseUrl((n) => Deno.env.get(n)),
+      bridgeTokenOf: controlBridgeTokenOf(),
+    }),
+    isAdmin,
+    corsOf: (r: Request) => corsHeaders(r),
+    logError,
+  };
+  return _controlSuppliersDeps;
 }
 
 // ---------------------------------------------------------------------------
@@ -2012,6 +2078,16 @@ Deno.serve(async (req: Request) => {
         getControlPricesDeps(),
       );
       if (pricesRes) return pricesRes;
+      const catalogRes = await handleControlCatalogRequest(
+        req,
+        getControlCatalogDeps(),
+      );
+      if (catalogRes) return catalogRes;
+      const suppliersRes = await handleControlSuppliersRequest(
+        req,
+        getControlSuppliersDeps(),
+      );
+      if (suppliersRes) return suppliersRes;
     } catch (e) {
       logError("control.customers.route", "unhandled customers route error", e);
     }
