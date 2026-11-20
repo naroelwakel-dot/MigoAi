@@ -1350,8 +1350,14 @@ function markSent(key, orderRef) {
 // and the whole build THROWS (BRG-0016): bad data never becomes a
 // valid order for a different quantity. blocked=true if ANY entry
 // lacks a planId. entries/mappedEntries give per-entry conservation.
+// FC-030: an entry's customer-input `details` string (e.g. the game
+// player UID captured by the app.js modals) rides along on its
+// aggregated item so create_order can persist it (migration 030
+// sanitizes + caps it server-side). Aggregation semantics are
+// unchanged: details never affect counts, blocking, or the
+// {sku, qty} items the fingerprint and totals are built from.
 function buildItems(cart) {
-  var counts = {}, blocked = false, entries = 0, mappedEntries = 0;
+  var counts = {}, detailsByPlan = {}, blocked = false, entries = 0, mappedEntries = 0;
   (cart || []).forEach(function (x) {
     entries++;
     if (!x || !x.planId) { blocked = true; return; }
@@ -1369,11 +1375,23 @@ function buildItems(cart) {
       // server quantity bound once its entries are summed.
       throw new Error('aggregated qty for one plan exceeds the maximum — build refused');
     }
+    // FC-030: collect this entry's details for its planId —
+    // distinct values only, first-seen order (two entries for the
+    // same plan with different UIDs keep both, joined below).
+    var det = (typeof x.details === 'string') ? x.details.trim() : '';
+    if (det) {
+      var seen = detailsByPlan[x.planId] ||
+        (detailsByPlan[x.planId] = []);
+      if (seen.indexOf(det) === -1) seen.push(det);
+    }
     mappedEntries++;
   });
   return {
     items: Object.keys(counts).sort().map(function (k) {
-      return { sku: k, qty: counts[k] };
+      var it = { sku: k, qty: counts[k] };
+      var ds = detailsByPlan[k];
+      if (ds && ds.length) it.details = ds.join(' | ');
+      return it;
     }),
     blocked: blocked, entries: entries, mappedEntries: mappedEntries
   };
