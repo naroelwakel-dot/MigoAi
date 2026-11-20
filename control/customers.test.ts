@@ -496,6 +496,54 @@ Deno.test("store wallet adjust ref conflict is 409 on both paths", async () => {
   eq((await setRes!.json()).error, "ref_conflict", "set path error");
 });
 
+Deno.test("store wallet adjust unknown customer is 404 on both paths", async () => {
+  // إصلاح تجربة قبول م١-أ (هجرة 024): عميل مش موجود في auth.users
+  // كان بيتعمل له محفظة وبيتقيّد له رصيد — دلوقتي رفض 404.
+  const addClient = new FakeCustomersClient();
+  addClient.adjustError = new Error(
+    'rpc wallet_adjust_internal http 400: {"code":"P0001","message":"customer_not_found"}',
+  );
+  const addRes = await handleControlCustomersRequest(
+    req("/control/store-wallet-adjust", {
+      key: ADMIN_KEY,
+      method: "POST",
+      body: {
+        customer_id: CUSTOMER_ID,
+        mode: "add",
+        amount_egp: 50,
+        kind: "deposit",
+        reason: "شحن",
+        idempotency_key: "k-ghost",
+      },
+    }),
+    deps(addClient, new FakeBotProxy()),
+  );
+  eq(addRes?.status, 404, "add path status");
+  eq((await addRes!.json()).error, "customer_not_found", "add path error");
+
+  const setClient = new FakeCustomersClient();
+  setClient.setError = new Error(
+    'rpc wallet_set_balance_internal http 400: {"code":"P0001","message":"customer_not_found"}',
+  );
+  const setRes = await handleControlCustomersRequest(
+    req("/control/store-wallet-adjust", {
+      key: ADMIN_KEY,
+      method: "POST",
+      body: {
+        customer_id: CUSTOMER_ID,
+        mode: "set",
+        target_egp: 250,
+        kind: "correction",
+        reason: "تسوية",
+        idempotency_key: "k-ghost",
+      },
+    }),
+    deps(setClient, new FakeBotProxy()),
+  );
+  eq(setRes?.status, 404, "set path status");
+  eq((await setRes!.json()).error, "customer_not_found", "set path error");
+});
+
 Deno.test("store wallet adjust rejects non-number and sub-piaster amounts", async () => {
   // إصلاح مراجعة م١-أ: التحويل الضمني كان بيعدّي "" و null و false
   // كـ 0 و true كـ 1، وكسور أعمق من قرشين بتتقصّ بصمت في القاعدة.
