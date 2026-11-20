@@ -53,6 +53,11 @@ import {
   handleControlMoneyRequest,
   PostgrestControlMoneyClient,
 } from "./control/money.ts";
+import {
+  type ControlCustomerControlDeps,
+  GoTrueAdminClient,
+  handleControlCustomerControlRequest,
+} from "./control/customer-control.ts";
 import { bridgeBaseUrl } from "./sheerid/config.ts";
 import { makeAdminChecker, tokenEquals } from "./admin_auth.ts";
 
@@ -281,6 +286,49 @@ function getControlMoneyDeps(): ControlMoneyDeps {
     logError,
   };
   return _controlMoneyDeps;
+}
+
+// ---------------------------------------------------------------------------
+// لوحة التحكم (المرحلة م١-ج): تحكم العميل — أعلام/ملاحظات/وسوم/تعليق/
+// ربط بتمرير خادمي لنقاط البوت، وحظر الموقع عبر GoTrue admin بنفس
+// مفتاح service_role. اعتماد الجسر والمصادقة زي م١-أ/ب بالظبط.
+// ---------------------------------------------------------------------------
+let _controlCustomerControlDeps: ControlCustomerControlDeps | null = null;
+function getControlCustomerControlDeps(): ControlCustomerControlDeps {
+  if (_controlCustomerControlDeps) return _controlCustomerControlDeps;
+  const env = (n: string) => Deno.env.get(n) || "";
+  const bridgeTokenOf = async (): Promise<string> => {
+    const fromEnv = env("SHEERID_BRIDGE_TOKEN");
+    if (fromEnv) return fromEnv;
+    try {
+      const key = env("SUPABASE_SERVICE_ROLE_KEY");
+      const res = await fetch(
+        `${SB_URL}/rest/v1/backend_config?key=eq.sheerid_bridge_token&select=value`,
+        { headers: { apikey: key, Authorization: `Bearer ${key}` } },
+      );
+      if (!res.ok) return "";
+      const rows = await res.json();
+      return (Array.isArray(rows) && rows[0]?.value)
+        ? String(rows[0].value)
+        : "";
+    } catch {
+      return "";
+    }
+  };
+  _controlCustomerControlDeps = {
+    client: new GoTrueAdminClient({
+      baseUrl: SB_URL,
+      keyOf: () => env("SUPABASE_SERVICE_ROLE_KEY"),
+    }),
+    botClient: new BridgeBotControlProxyClient({
+      baseUrlOf: () => bridgeBaseUrl((n) => Deno.env.get(n)),
+      bridgeTokenOf,
+    }),
+    isAdmin,
+    corsOf: (r: Request) => corsHeaders(r),
+    logError,
+  };
+  return _controlCustomerControlDeps;
 }
 
 // ---------------------------------------------------------------------------
@@ -1796,6 +1844,11 @@ Deno.serve(async (req: Request) => {
         getControlMoneyDeps(),
       );
       if (moneyRes) return moneyRes;
+      const flagsRes = await handleControlCustomerControlRequest(
+        req,
+        getControlCustomerControlDeps(),
+      );
+      if (flagsRes) return flagsRes;
     } catch (e) {
       logError("control.customers.route", "unhandled customers route error", e);
     }
