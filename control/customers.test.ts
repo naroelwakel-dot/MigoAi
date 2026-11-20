@@ -5,9 +5,11 @@
  *
  * التغطية: بوابة الأدمن قبل أي نداء على كل المسارات، ملف عميل
  * الموقع (id + إيميل)، فشل حل الإيميل = 404 صادق، قرار شحنة
- * محسوم = 409، تعديل «اضبط على» بيحسب الفرق صح، خصم فوق الرصيد
- * = 422، تمرير أخطاء البوت بحالتها (409/422)، فشل اتصال البوت
- * = bot_unavailable، وأشكال البحث الموحد.
+ * محسوم = 409، «اضبط على» بيتنفّذ بدالة الضبط الذرّية (الهدف
+ * بيعدّي زي ما هو، ومفيش قراءة رصيد في طبقة Deno)، خصم فوق
+ * الرصيد = 422، تعارض ref = 409، مبالغ ملوّثة النوع أو أعمق من
+ * قرشين = 400، تمرير أخطاء البوت بحالتها (409/422)، فشل اتصال
+ * البوت = bot_unavailable، وأشكال البحث الموحد.
  */
 import {
   type AuthUser,
@@ -73,6 +75,12 @@ class FakeCustomersClient implements ControlCustomersClient {
   };
   adjustError: Error | null = null;
   lastAdjust: Record<string, unknown> | null = null;
+  setResult: Record<string, unknown> = {
+    adjusted: true,
+    balance_after: 250,
+  };
+  setError: Error | null = null;
+  lastSet: Record<string, unknown> | null = null;
   senderMatches: SenderAccountMatch[] = [];
 
   resolveEmail(_email: string): Promise<AuthUser | null> {
@@ -122,6 +130,18 @@ class FakeCustomersClient implements ControlCustomersClient {
     this.lastAdjust = { ...args };
     if (this.adjustError) return Promise.reject(this.adjustError);
     return Promise.resolve(this.adjustResult);
+  }
+  setBalanceInternal(args: {
+    customerId: string;
+    target: number;
+    kind: string;
+    ref: string;
+    note: string;
+  }): Promise<Record<string, unknown>> {
+    this.calls.push("setBalanceInternal");
+    this.lastSet = { ...args };
+    if (this.setError) return Promise.reject(this.setError);
+    return Promise.resolve(this.setResult);
   }
   searchBySenderAccount(_q: string): Promise<SenderAccountMatch[]> {
     this.calls.push("searchBySenderAccount");
@@ -322,9 +342,8 @@ Deno.test("store topup decide on a decided topup is 409", async () => {
   eq(body.status, "credited", "current status reported");
 });
 
-Deno.test("store wallet adjust set mode computes the delta", async () => {
+Deno.test("store wallet adjust set mode calls the atomic set rpc", async () => {
   const client = new FakeCustomersClient();
-  client.balance = 100;
   const res = await handleControlCustomersRequest(
     req("/control/store-wallet-adjust", {
       key: ADMIN_KEY,
@@ -341,18 +360,22 @@ Deno.test("store wallet adjust set mode computes the delta", async () => {
     deps(client, new FakeBotProxy()),
   );
   eq(res?.status, 200, "status");
-  eq(client.lastAdjust?.delta, 150, "delta = target - current");
-  eq(client.lastAdjust?.ref, "panel:k-set-1", "ref carries the panel key");
-  eq(client.lastAdjust?.note, "[correction] تسوية", "note carries kind+reason");
+  // الهدف بيعدّي زي ما هو — الفرق بيتحسب جوه القاعدة (هجرة 023)،
+  // فمفيش لا قراءة رصيد ولا نداء adjust من طبقة Deno.
+  eq(client.lastSet?.target, 250, "target passes through untouched");
+  eq(client.lastSet?.ref, "panel:k-set-1", "ref carries the panel key");
+  eq(client.lastSet?.note, "[correction] تسوية", "note carries kind+reason");
+  ok(!client.calls.includes("walletBalance"), "no TS-side balance read");
+  ok(!client.calls.includes("adjustInternal"), "adjust rpc not used for set");
   const body = await res!.json();
   eq(body.adjusted, true, "adjusted");
   eq(body.balance_after, 250, "balance after");
 });
 
-Deno.test("store wallet adjust set downwards computes a negative delta", async () => {
+Deno.test("store wallet adjust set downwards passes the lower target", async () => {
   const client = new FakeCustomersClient();
-  client.balance = 100;
-  await handleControlCustomersRequest(
+  client.setResult = { adjusted: true, balance_after: 40 };
+  const res = await handleControlCustomersRequest(
     req("/control/store-wallet-adjust", {
       key: ADMIN_KEY,
       method: "POST",
@@ -367,12 +390,16 @@ Deno.test("store wallet adjust set downwards computes a negative delta", async (
     }),
     deps(client, new FakeBotProxy()),
   );
-  eq(client.lastAdjust?.delta, -60, "negative delta");
+  eq(res?.status, 200, "status");
+  eq(client.lastSet?.target, 40, "lower target passes through");
+  const body = await res!.json();
+  eq(body.adjusted, true, "adjusted");
+  eq(body.balance_after, 40, "balance after");
 });
 
-Deno.test("store wallet adjust set to the current balance is a no-op", async () => {
+Deno.test("store wallet adjust set to the current balance still consumes the ref", async () => {
   const client = new FakeCustomersClient();
-  client.balance = 100;
+  client.setResult = { adjusted: false, balance_after: 100 };
   const res = await handleControlCustomersRequest(
     req("/control/store-wallet-adjust", {
       key: ADMIN_KEY,
@@ -391,7 +418,173 @@ Deno.test("store wallet adjust set to the current balance is a no-op", async () 
   eq(res?.status, 200, "status");
   const body = await res!.json();
   eq(body.adjusted, false, "no movement");
-  ok(!client.calls.includes("adjustInternal"), "rpc not called for a no-op");
+  eq(body.balance_after, 100, "balance after");
+  // الفرق عن نسخة 022: الدالة بتتنادى حتى لو الهدف = الرصيد، عشان
+  // الـ ref يستهلك في القاعدة (قيد [set-noop]) وإعادة الطلب ما
+  // تتحركش بعد أي حركة رصيد لاحقة.
+  ok(client.calls.includes("setBalanceInternal"), "set rpc consumes the ref");
+});
+
+Deno.test("store wallet adjust set replay returns already", async () => {
+  const client = new FakeCustomersClient();
+  client.setResult = { already: true, balance_after: 250 };
+  const res = await handleControlCustomersRequest(
+    req("/control/store-wallet-adjust", {
+      key: ADMIN_KEY,
+      method: "POST",
+      body: {
+        customer_id: CUSTOMER_ID,
+        mode: "set",
+        target_egp: 250,
+        kind: "correction",
+        reason: "تسوية",
+        idempotency_key: "k-set-1",
+      },
+    }),
+    deps(client, new FakeBotProxy()),
+  );
+  eq(res?.status, 200, "status");
+  const body = await res!.json();
+  eq(body.already, true, "already flag");
+  eq(body.balance_after, 250, "balance after");
+});
+
+Deno.test("store wallet adjust ref conflict is 409 on both paths", async () => {
+  const conflict = new Error(
+    'rpc wallet_adjust_internal http 400: {"code":"P0001","message":"ref_conflict"}',
+  );
+  const addClient = new FakeCustomersClient();
+  addClient.adjustError = conflict;
+  const addRes = await handleControlCustomersRequest(
+    req("/control/store-wallet-adjust", {
+      key: ADMIN_KEY,
+      method: "POST",
+      body: {
+        customer_id: CUSTOMER_ID,
+        mode: "add",
+        amount_egp: 50,
+        kind: "deposit",
+        reason: "شحن",
+        idempotency_key: "k-shared",
+      },
+    }),
+    deps(addClient, new FakeBotProxy()),
+  );
+  eq(addRes?.status, 409, "add path status");
+  eq((await addRes!.json()).error, "ref_conflict", "add path error");
+
+  const setClient = new FakeCustomersClient();
+  setClient.setError = new Error(
+    'rpc wallet_set_balance_internal http 400: {"code":"P0001","message":"ref_conflict"}',
+  );
+  const setRes = await handleControlCustomersRequest(
+    req("/control/store-wallet-adjust", {
+      key: ADMIN_KEY,
+      method: "POST",
+      body: {
+        customer_id: CUSTOMER_ID,
+        mode: "set",
+        target_egp: 250,
+        kind: "correction",
+        reason: "تسوية",
+        idempotency_key: "k-shared",
+      },
+    }),
+    deps(setClient, new FakeBotProxy()),
+  );
+  eq(setRes?.status, 409, "set path status");
+  eq((await setRes!.json()).error, "ref_conflict", "set path error");
+});
+
+Deno.test("store wallet adjust rejects non-number and sub-piaster amounts", async () => {
+  // إصلاح مراجعة م١-أ: التحويل الضمني كان بيعدّي "" و null و false
+  // كـ 0 و true كـ 1، وكسور أعمق من قرشين بتتقصّ بصمت في القاعدة.
+  const badAmounts: unknown[] = ["", null, true, false, "10", 0.004, 10.005];
+  for (const amount of badAmounts) {
+    const client = new FakeCustomersClient();
+    const res = await handleControlCustomersRequest(
+      req("/control/store-wallet-adjust", {
+        key: ADMIN_KEY,
+        method: "POST",
+        body: {
+          customer_id: CUSTOMER_ID,
+          mode: "add",
+          amount_egp: amount,
+          kind: "deposit",
+          reason: "شحن",
+          idempotency_key: "k-bad-amt",
+        },
+      }),
+      deps(client, new FakeBotProxy()),
+    );
+    eq(res?.status, 400, `amount ${JSON.stringify(amount)} rejected`);
+    eq((await res!.json()).error, "bad_amount", "error");
+    ok(!client.calls.includes("adjustInternal"), "rpc untouched");
+  }
+  const goodAmounts = [10, 10.5, 10.25];
+  for (const amount of goodAmounts) {
+    const client = new FakeCustomersClient();
+    const res = await handleControlCustomersRequest(
+      req("/control/store-wallet-adjust", {
+        key: ADMIN_KEY,
+        method: "POST",
+        body: {
+          customer_id: CUSTOMER_ID,
+          mode: "add",
+          amount_egp: amount,
+          kind: "deposit",
+          reason: "شحن",
+          idempotency_key: "k-good-amt",
+        },
+      }),
+      deps(client, new FakeBotProxy()),
+    );
+    eq(res?.status, 200, `amount ${amount} accepted`);
+    eq(client.lastAdjust?.delta, amount, "delta passes through");
+  }
+});
+
+Deno.test("store wallet adjust rejects non-number and sub-piaster targets", async () => {
+  // أخطر حالة: target_egp فاضي كان بيتحوّل 0 = «اضبط على صفر»
+  // (تصفير المحفظة كاملة) — دلوقتي 400 قبل أي نداء.
+  const badTargets: unknown[] = ["", null, true, false, "10", 0.004, 10.005];
+  for (const target of badTargets) {
+    const client = new FakeCustomersClient();
+    const res = await handleControlCustomersRequest(
+      req("/control/store-wallet-adjust", {
+        key: ADMIN_KEY,
+        method: "POST",
+        body: {
+          customer_id: CUSTOMER_ID,
+          mode: "set",
+          target_egp: target,
+          kind: "correction",
+          reason: "تسوية",
+          idempotency_key: "k-bad-target",
+        },
+      }),
+      deps(client, new FakeBotProxy()),
+    );
+    eq(res?.status, 400, `target ${JSON.stringify(target)} rejected`);
+    eq((await res!.json()).error, "bad_target", "error");
+    ok(!client.calls.includes("setBalanceInternal"), "rpc untouched");
+  }
+  const zeroRes = await handleControlCustomersRequest(
+    req("/control/store-wallet-adjust", {
+      key: ADMIN_KEY,
+      method: "POST",
+      body: {
+        customer_id: CUSTOMER_ID,
+        mode: "set",
+        target_egp: 0,
+        kind: "correction",
+        reason: "تصفير مقصود",
+        idempotency_key: "k-zero-target",
+      },
+    }),
+    deps(new FakeCustomersClient(), new FakeBotProxy()),
+  );
+  eq(zeroRes?.status, 200, "an explicit numeric zero target is legitimate");
 });
 
 Deno.test("store wallet adjust replay returns already without new movement", async () => {
