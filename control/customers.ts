@@ -655,6 +655,11 @@ export async function handleControlCustomersRequest(
       return json({ ok: true, adjusted: true, balance_after: r.balance_after ?? null });
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
+      // عميل مش موجود في auth.users (هجرة 024): رفض صادق 404 —
+      // مفيش محفظة بتتعمل لعميل وهمي ولا رصيد بيتحرك.
+      if (msg.includes("customer_not_found")) {
+        return json({ ok: false, error: "customer_not_found" }, 404);
+      }
       // نفس الـ ref مربوط بعميل تاني (هجرة 023): تعارض حقيقي مش
       // إعادة — 409 بدل ما يرجع نجاح وهمي برصيد عميل تاني.
       if (msg.includes("ref_conflict")) {
