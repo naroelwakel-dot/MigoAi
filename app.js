@@ -125,6 +125,206 @@ function smmUnitPrice(basePrice) {
     return Math.round(n * 100) / 100;
 }
 
+// ==============================================================================
+// أسعار قاعدة البيانات فوق أسعار الملفات (م٣): أسعار الملفات الثابتة
+// ممكن تفضل قديمة بعد أي تعديل سعر في القاعدة، والقاعدة هي اللي
+// الخادم بيحسب بيها إجمالي أي طلب فعلًا — فالواجهة بتجيب خريطة
+// أسعار القاعدة وقت التحميل وبتكتبها فوق أسعار الملفات في كائنات
+// البيانات نفسها قبل أول رسم، فكل قراءة بعد كده (البطاقات والسلة
+// والبحث ونموذج التأكيد) بتشوف سعر القاعدة. فشل الجلب أو بطؤه
+// (حد أقصى ~2.5 ثانية) = الأسعار بتفضل أسعار الملفات زي ما هي،
+// والرسم ما بيقفش عليها أبدًا.
+// ==============================================================================
+
+// ==== M3-PRICE-OVERLAY-BEGIN ====
+// دوال صافية قابلة للاختبار: بتاخد خريطة الأسعار وكائنات البيانات
+// وبتعدّل حقول السعر في مكانها. مفاتيح الخريطة هي أسماء عناصر
+// السلة نفسها اللي دوال الشراء تحت بتبنيها بالحرف:
+//   ذكاء/اشتراكات: «اسم المنتج (المدة أو اسم الباقة)»
+//   ألعاب/بث/بطاقات/سوشيال: «الاسم - اسم الباقة/الخدمة»
+//   عملات تيك توك: «تيك توك كوينز - <العدد> عملة»
+//   نجوم تليجرام: «نجوم تليجرام - <العدد> نجمة»
+// خدمات السوشيال أسعارها في خريطة منفصلة (smmPrices) ما بتتقراش
+// غير على خدمات السوشيال، وباقي الخريطة ما بتلمسش السوشيال.
+function buildParenSku(prodName, pkg) {
+    return `${prodName} (${pkg.duration || pkg.name})`;
+}
+function buildDashSku(prodName, pkgLabel) {
+    return `${prodName} - ${pkgLabel}`;
+}
+function buildTiktokSku(coins) {
+    return `تيك توك كوينز - ${coins} عملة`;
+}
+function buildTelegramSku(stars) {
+    return `نجوم تليجرام - ${stars} نجمة`;
+}
+function applyCatalogPriceOverrides(prices, data, smmPrices) {
+    if (!prices || typeof prices !== 'object' || !data) return 0;
+    let changed = 0;
+    const smmMap = (smmPrices && typeof smmPrices === 'object') ? smmPrices : {};
+    function applyTo(obj, field, sku) {
+        if (!obj) return;
+        if (!Object.prototype.hasOwnProperty.call(prices, sku)) return;
+        const p = Number(prices[sku]);
+        if (!isFinite(p)) return;
+        if (obj[field] !== p) { obj[field] = p; changed++; }
+    }
+    function applyToSmm(obj, field, sku) {
+        if (!obj) return;
+        if (!Object.prototype.hasOwnProperty.call(smmMap, sku)) return;
+        const p = Number(smmMap[sku]);
+        if (!isFinite(p)) return;
+        if (obj[field] !== p) { obj[field] = p; changed++; }
+    }
+    function parenList(list) {
+        if (!Array.isArray(list)) return;
+        list.forEach(function (prod) {
+            if (!prod) return;
+            if (Array.isArray(prod.packages) && prod.packages.length) {
+                prod.packages.forEach(function (pkg) {
+                    if (pkg) applyTo(pkg, 'price', buildParenSku(prod.name, pkg));
+                });
+            } else if (prod.price != null) {
+                // منتج من غير باقات: سعره المباشر هو سعر الباقة الضمنية
+                // اللي دالة الشراء بتبنيها من الـ tag (نفس الاحتياطي).
+                const tag = prod.tag || prod.name;
+                applyTo(prod, 'price', buildParenSku(prod.name, { name: tag, duration: tag }));
+            } else if (prod.priceEgp != null) {
+                // نفس المنتج المباشر بس سعره مكتوب في priceEgp بس
+                // (نفس احتياطي محلّل اللوحة للمنتجات المباشرة).
+                const tag = prod.tag || prod.name;
+                applyTo(prod, 'priceEgp', buildParenSku(prod.name, { name: tag, duration: tag }));
+            }
+        });
+    }
+    function dashList(list) {
+        if (!Array.isArray(list)) return;
+        list.forEach(function (prod) {
+            if (!prod) return;
+            if (Array.isArray(prod.packages) && prod.packages.length) {
+                prod.packages.forEach(function (pkg) {
+                    if (pkg) applyTo(pkg, 'price', buildDashSku(prod.name, pkg.name));
+                });
+            } else if (!Array.isArray(prod.packages)) {
+                // منتج من غير باقات أصلًا: سعره المباشر بصيغة
+                // «الاسم - الاسم» (نفس احتياطي محلّل اللوحة:
+                // priceEgp مقدّم على price).
+                if (prod.priceEgp != null) {
+                    applyTo(prod, 'priceEgp', buildDashSku(prod.name, prod.name));
+                } else if (prod.price != null) {
+                    applyTo(prod, 'price', buildDashSku(prod.name, prod.name));
+                }
+            }
+        });
+    }
+    parenList(data.aiProducts);
+    parenList(data.subscriptionsData);
+    dashList(data.gamesData);
+    dashList(data.liveCoinsData);
+    // قوائم العملات والنجوم المفردة: باقاتها من غير أسماء، واسم
+    // السلة بيتبني من الاسم الثابت وعدد العملات/النجوم.
+    if (data.tiktokCoinsList && Array.isArray(data.tiktokCoinsList.packages)) {
+        data.tiktokCoinsList.packages.forEach(function (pkg) {
+            if (pkg) applyTo(pkg, 'price', buildTiktokSku(pkg.coins));
+        });
+    }
+    if (data.telegramStarsList && Array.isArray(data.telegramStarsList.packages)) {
+        data.telegramStarsList.packages.forEach(function (pkg) {
+            if (pkg) applyTo(pkg, 'price', buildTelegramSku(pkg.stars));
+        });
+    }
+    // البطاقات الافتراضية: priceEgp هو سعر أول باقة وبيتقرأ لوحده
+    // في البحث — لو أول باقة اتعدّلت من القاعدة بنزامنه معاها.
+    if (Array.isArray(data.vccData)) {
+        data.vccData.forEach(function (v) {
+            if (!v) return;
+            if (Array.isArray(v.packages) && v.packages.length) {
+                const before = v.packages[0].price;
+                v.packages.forEach(function (pkg) {
+                    if (pkg) applyTo(pkg, 'price', buildDashSku(v.name, pkg.name));
+                });
+                if (v.packages[0].price !== before) v.priceEgp = v.packages[0].price;
+            } else if (v.priceEgp != null) {
+                applyTo(v, 'priceEgp', buildDashSku(v.name, v.name));
+            }
+        });
+    }
+    // خدمات السوشيال: السعر المخزون هو سعر الألف (pricePer1k)،
+    // وأسعارها بتتاخد من خريطة السوشيال المنفصلة بس — اسم خدمة
+    // شبه اسم منتج عادي ما يلخبطش الاتنين.
+    if (Array.isArray(data.smmPlatforms)) {
+        data.smmPlatforms.forEach(function (p) {
+            if (!p || !Array.isArray(p.services)) return;
+            p.services.forEach(function (srv) {
+                if (srv) applyToSmm(srv, 'pricePer1k', buildDashSku(p.name, srv.name));
+            });
+        });
+    }
+    return changed;
+}
+// ==== M3-PRICE-OVERLAY-END ====
+
+function storefrontDataCollections() {
+    return {
+        aiProducts: (typeof aiProducts !== 'undefined') ? aiProducts : [],
+        subscriptionsData: (typeof subscriptionsData !== 'undefined') ? subscriptionsData : [],
+        gamesData: (typeof gamesData !== 'undefined') ? gamesData : [],
+        liveCoinsData: (typeof liveCoinsData !== 'undefined') ? liveCoinsData : [],
+        tiktokCoinsList: (typeof tiktokCoinsList !== 'undefined') ? tiktokCoinsList : null,
+        telegramStarsList: (typeof telegramStarsList !== 'undefined') ? telegramStarsList : null,
+        vccData: (typeof vccData !== 'undefined') ? vccData : [],
+        smmPlatforms: (typeof smmPlatforms !== 'undefined') ? smmPlatforms : []
+    };
+}
+
+const CATALOG_PRICES_TIMEOUT_MS = 2500;
+function fetchCatalogPricesFromDb() {
+    return new Promise(function (resolve) {
+        let done = false;
+        function finish(v) { if (!done) { done = true; resolve(v); } }
+        try {
+            const ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+            const timer = setTimeout(function () {
+                if (ctrl) { try { ctrl.abort(); } catch (e) {} }
+                finish(null);
+            }, CATALOG_PRICES_TIMEOUT_MS);
+            fetch(`${DENO_API_URL}/catalog/prices`, ctrl ? { signal: ctrl.signal } : {})
+                .then(function (res) { return res.ok ? res.json() : null; })
+                .then(function (data) {
+                    clearTimeout(timer);
+                    if (data && data.ok && data.prices && typeof data.prices === 'object') {
+                        finish({
+                            prices: data.prices,
+                            smmPrices: (data.smm_prices && typeof data.smm_prices === 'object')
+                                ? data.smm_prices : {}
+                        });
+                    } else {
+                        finish(null);
+                    }
+                })
+                .catch(function () { clearTimeout(timer); finish(null); });
+        } catch (e) { finish(null); }
+    });
+}
+
+// وعد جاهزية أسعار القاعدة: بيتحلّ لما الأسعار تتطبق أو المهلة
+// تخلص، أيهما أسبق — وأول رسم بيستناه (بحد المهلة بس). ولو الأسعار
+// وصلت بعد ما الرسم حصل، التطبيق بيعيد الرسم مرة واحدة بالقيم
+// الجديدة (إعادة الرسم آمنة: innerHTML بيتبدل بالكامل).
+const __catalogPricesReady = (function () {
+    const load = fetchCatalogPricesFromDb().then(function (maps) {
+        if (!maps) return;
+        try {
+            const changed = applyCatalogPriceOverrides(maps.prices, storefrontDataCollections(), maps.smmPrices);
+            if (changed > 0 && typeof __migoStoreRendered !== 'undefined' && __migoStoreRendered) {
+                renderStoreSections(true);
+            }
+        } catch (e) {}
+    }).catch(function () {});
+    const cap = new Promise(function (resolve) { setTimeout(resolve, CATALOG_PRICES_TIMEOUT_MS); });
+    return Promise.race([load, cap]);
+})();
+
 function showToast(msg, type = 'success') {
     const container = document.getElementById('toastContainer');
     if (!container) return;
@@ -2230,10 +2430,15 @@ function renderStoreSections(force) {
     try { renderReviews(); } catch (e) {}
 }
 
+// أول رسم بيستنى وعد أسعار القاعدة (م٣) — بحد أقصى ~2.5 ثانية —
+// عشان الأسعار المعروضة من أول لحظة تكون أسعار القاعدة. لو الجلب
+// فشل أو اتأخر، الرسم بيتم بأسعار الملفات زي ما هي.
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', renderStoreSections);
+    document.addEventListener('DOMContentLoaded', function () {
+        __catalogPricesReady.then(function () { renderStoreSections(); });
+    });
 } else {
-    renderStoreSections();
+    __catalogPricesReady.then(function () { renderStoreSections(); });
 }
 
 window.addEventListener('load', function() {
