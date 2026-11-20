@@ -226,6 +226,12 @@
     <button class="btn" id="visitorsOpenBtn" type="button" style="margin-top:10px;">عرض الزوار</button>
   </section>
 
+  <section class="card hidden" id="salesCard">
+    <h2>البيع في البوت</h2>
+    <div class="sub" id="salesState" style="color:var(--muted); font-size:13px;"></div>
+    <button class="btn" id="salesToggleBtn" type="button" style="margin-top:10px;">إيقاف البيع</button>
+  </section>
+
   <section class="card hidden" id="topupCard">
     <h2>أحدث شحنات محفظة الموقع المنتظرة</h2>
     <div id="topupRows"></div>
@@ -484,6 +490,20 @@
     <div class="sub" style="color:var(--muted); font-size:13px;">كل إعدادات البوت اللي اللوحة تقدر تعدّلها، وكل تعديل بيتحفظ لوحده وبيتسجل في سجل التغييرات. المفاتيح السرية بتظهر «محفوظة» بس — قيمتها ما بتظهرش ولا بتتعدل من هنا.</div>
     <div id="setRows" style="margin-top:6px;"></div>
     <button class="btn secondary" id="setReloadBtn" type="button" style="margin-top:10px;">تحديث الإعدادات</button>
+  </section>
+
+  <section class="card">
+    <h2>الرقم السري للوحة</h2>
+    <div class="sub" style="color:var(--muted); font-size:13px;">رقم سري بيتحط على الأفعال الحساسة: إيقاف وتشغيل البيع في البوت، تعديل رصيد كبير أو ضبط رصيد محفظة بوت، وتدوير أو إيقاف مفاتيح التجار وإيقاف تاجر. خمس محاولات غلط ورا بعض بيقفلوا المحاولات 15 دقيقة.</div>
+    <div id="pinNotSetBox" style="margin-top:10px;">
+      <div class="field"><label>الرقم السري الجديد</label><input id="pinNew" type="password" inputmode="numeric" autocomplete="off"></div>
+      <button class="btn" id="pinSetBtn" type="button" style="margin-top:10px;">حفظ الرقم السري</button>
+    </div>
+    <div id="pinSetBox" class="hidden" style="margin-top:10px;">
+      <div class="field"><label>الرقم السري الحالي</label><input id="pinCurrent" type="password" inputmode="numeric" autocomplete="off"></div>
+      <div class="field"><label>الرقم السري الجديد</label><input id="pinChangeNew" type="password" inputmode="numeric" autocomplete="off"></div>
+      <button class="btn" id="pinChangeBtn" type="button" style="margin-top:10px;">تغيير الرقم السري</button>
+    </div>
   </section>
 
   <section class="card">
@@ -825,12 +845,31 @@ function render(data){
   cards += queueCard("إيداعات منصات لسه متربطتش", "وصلت ومتربطتش بشحنة ولا طلب", (typeof store.unmatched_exchange === "number") ? store.unmatched_exchange : null, "amber");
   cards += queueCard("طلبات موقع جديدة", "لسه ما اتنفذتش", (typeof store.new_orders === "number") ? store.new_orders : null, "blue");
 
+  // مهام التجار (م٦-د): بطاقات على نفس نمط الطوابير، وبتظهر
+  // بس لما العدّاد أكبر من صفر.
+  var mt = (bot && bot.merchant_tasks && typeof bot.merchant_tasks === "object") ? bot.merchant_tasks : {};
+  function mtCount(k){
+    var v = mt[k];
+    return (typeof v === "number" && isFinite(v) && v > 0) ? v : 0;
+  }
+  var failedMtCard = queueCard("توصيلات تجار فاشلة", "إشعارات تجار معرفناش نوصلها", mtCount("failed_deliveries"), "red");
+  if (failedMtCard) {
+    failedMtCard = failedMtCard.replace('<div class="queue-card',
+      '<div data-goto="merchants" style="cursor:pointer" class="queue-card');
+  }
+  cards += failedMtCard;
+  cards += queueCard("مفاتيح تجار لم تُستخدم بعد", "مفاتيح اتعملت ولسه محدش استخدمها", mtCount("unused_keys"), "amber");
+  cards += queueCard("تدويرات مفاتيح تجار هذا الأسبوع", "مفاتيح اتغيّرت في آخر ٧ أيام", mtCount("recent_rotations"), "blue");
+
   var wrap = $("queueWrap");
   if (cards) {
     wrap.innerHTML = cards;
   } else {
     wrap.innerHTML = '<div class="empty"><b>مفيش حاجة محتاجة تدخل</b>كل الطوابير فاضية دلوقتي.</div>';
   }
+  wrap.querySelectorAll("[data-goto]").forEach(function(el){
+    el.addEventListener("click", function(){ showView(el.getAttribute("data-goto")); });
+  });
   wrap.classList.remove("hidden");
 
   // أحدث شحنات المحفظة المنتظرة
@@ -866,6 +905,22 @@ function render(data){
     });
     $("botTopupRows").innerHTML = bHtml;
     $("botTopupCard").classList.remove("hidden");
+  }
+
+  // بطاقة البيع في البوت (م٦-د): الحالة من أعلام البوت في رد
+  // الرئيسية، والزرار بيبدّلها من ورقة تأكيد. البوت مش متاح =
+  // البطاقة بتختفي بدل ما تعرض حالة متخترعة.
+  var salesCard = $("salesCard");
+  if (bot && bot.flags && typeof bot.flags.sales_enabled === "boolean") {
+    salesEnabledNow = bot.flags.sales_enabled;
+    $("salesState").textContent = salesEnabledNow
+      ? "البيع شغال — العملاء يقدروا يشتروا من البوت."
+      : "البيع متوقف — محدش يقدر يشتري من البوت لحد ما تشغّله.";
+    $("salesToggleBtn").textContent = salesEnabledNow ? "إيقاف البيع" : "تشغيل البيع";
+    salesCard.classList.remove("hidden");
+  } else {
+    salesEnabledNow = null;
+    salesCard.classList.add("hidden");
   }
 
   // عدد زوار البوت على بطاقة الدخول في الرئيسية (تحميل هادي:
@@ -1931,10 +1986,25 @@ function openAdjust(surface, preset){
       payload = { customer_id: data.customer.id || custFile.storeId, mode: mode, kind: kind, reason: reason, idempotency_key: ctx.idem };
     }
     if (mode === "set") payload.target_egp = amt; else payload.amount_egp = amt;
-    return api(path, { method: "POST", body: payload }).then(function(){
-      return reloadSurface(surface);
-    }).then(function(){
-      showCustMsg("ok", "اتنفذ تعديل الرصيد — الرصيد اللي تحت ده من الخادم بعد التنفيذ.");
+    function doAdjust(){
+      return api(path, { method: "POST", body: payload }).then(function(){
+        return reloadSurface(surface);
+      }).then(function(){
+        showCustMsg("ok", "اتنفذ تعديل الرصيد — الرصيد اللي تحت ده من الخادم بعد التنفيذ.");
+      }).catch(throwPinGate);
+    }
+    if (!isBot) return doAdjust();
+    // بوابة الرقم السري (م٦-د): ضبط الرصيد دايمًا، والإضافة
+    // أو الخصم من حدّ البوابة وطالع — البوت بيفرضها كمان.
+    return ensurePinStatus().then(function(){
+      if (!walletAdjustNeedsPin(mode, amt, pinGateThreshold(), pinIsSet())) {
+        return doAdjust();
+      }
+      return askPinIfNeeded().then(function(pin){
+        if (!pin) failValidation("العملية دي محتاجة الرقم السري — اكتبه عشان تكمل.");
+        payload.pin = pin;
+        return doAdjust();
+      });
     });
   }, "adjust");
 
@@ -5321,7 +5391,16 @@ function loadSettings(){
     setState.history = [];
     setState.historyFailed = true;
   });
-  return Promise.all([pList, pHist]).then(function(){
+  var pPin = api("/control/bot-pin-status").then(function(d){
+    pinStatusCache = (d && typeof d === "object") ? d : null;
+    renderPinCard();
+  }).catch(function(e){
+    if (e && e.status === 401) { unauthorized = true; return; }
+    if (e && e.noKey) return;
+    pinStatusCache = null;
+    renderPinCard();
+  });
+  return Promise.all([pList, pHist, pPin]).then(function(){
     setState.loading = false;
     setState.loaded = true;
     renderPaySource();
@@ -5750,6 +5829,70 @@ function setHistVal(v, secret){
   if (s.length > 90) s = s.slice(0, 90) + "…";
   return s;
 }
+function renderPinCard(){
+  var isSet = pinIsSet();
+  $("pinNotSetBox").classList.toggle("hidden", isSet);
+  $("pinSetBox").classList.toggle("hidden", !isSet);
+}
+$("pinSetBtn").addEventListener("click", function(){
+  var pin = $("pinNew").value.trim();
+  if (!pin) { showSettingsMsg("err", "اكتب الرقم السري الأول."); return; }
+  var btn = $("pinSetBtn");
+  btn.disabled = true;
+  api("/control/bot-pin-set", { method: "POST", body: { pin: pin } })
+    .then(function(){
+      $("pinNew").value = "";
+      pinStatusCache = null;
+      return ensurePinStatus();
+    })
+    .then(function(){
+      renderPinCard();
+      showSettingsMsg("ok", "اتحفظ الرقم السري.");
+    })
+    .catch(function(e){
+      showSettingsMsg("err", pinGateText(e) || errText(e, "settings"));
+    })
+    .finally(function(){ btn.disabled = false; });
+});
+$("pinChangeBtn").addEventListener("click", function(){
+  var cur = $("pinCurrent").value.trim();
+  var pin = $("pinChangeNew").value.trim();
+  if (!cur || !pin) { showSettingsMsg("err", "اكتب الرقم السري الحالي والجديد."); return; }
+  var btn = $("pinChangeBtn");
+  btn.disabled = true;
+  api("/control/bot-pin-set", { method: "POST",
+    body: { pin: pin, current_pin: cur } })
+    .then(function(){
+      $("pinCurrent").value = "";
+      $("pinChangeNew").value = "";
+      showSettingsMsg("ok", "اتغيّر الرقم السري.");
+    })
+    .catch(function(e){
+      showSettingsMsg("err", pinGateText(e) || errText(e, "settings"));
+    })
+    .finally(function(){ btn.disabled = false; });
+});
+
+function askUndoHistory(id, key){
+  openActSheet("تراجع عن تغيير إعداد",
+    "<p>التراجع هيرجع الإعداد لقيمته قبل التغيير ده، وهيتكتب كتغيير جديد في السجل.</p>",
+    "تراجع", function(){
+      var body = { history_id: Number(id) };
+      // تراجع مفاتيح الإيقاف محروس بالرقم السري زي ضبطها
+      // (إصلاح جولة مراجعة م٦-د) — البوت بيفرضه كمان.
+      var ready = (key === "sales_enabled" || key === "merchant_api_enabled")
+        ? withPin(body) : Promise.resolve(body);
+      return ready.then(function(b){
+        return api("/control/bot-settings-undo", { method: "POST",
+          body: b });
+      })
+        .then(function(){ return loadSettings(); })
+        .then(function(){
+          showSettingsMsg("ok", "اتعمل التراجع — القيم اللي تحت دي من الخادم بعد التراجع.");
+        }).catch(throwPinGate);
+    }, "settings");
+}
+
 function renderHistory(){
   var box = $("setHistory");
   if (setState.historyFailed) {
@@ -5768,14 +5911,26 @@ function renderHistory(){
     var at = h.created_at || h.at || h.time || h.ts;
     var when = at ? (relTime(at) || "") : "";
     var full = at ? new Date(at).toLocaleString("en-GB") : "";
+    var undoBtn = (before !== null && before !== undefined &&
+        h.id !== null && h.id !== undefined)
+      ? '<button class="btn small" type="button" data-hist-id="' +
+        esc(String(h.id)) + '" data-hist-key="' +
+        esc(String(h.key || "")) + '">تراجع</button>'
+      : "";
     return '<div class="result-row" style="cursor:default"><div class="who"><b>' +
       esc(h.label ? String(h.label) : String(h.key || "")) + "</b><small>" +
       '<span class="num">' + esc(h.key || "") + "</span><br>" +
       "قبل: " + esc(setHistVal(before, h.secret === true)) +
       " ← بعد: " + esc(setHistVal(after, h.secret === true)) +
       (when ? "<br>" + esc(when) + (full ? ' (<span class="num">' + esc(full) + "</span>)" : "") : "") +
-      "</small></div></div>";
+      "</small></div>" + undoBtn + "</div>";
   }).join("");
+  box.querySelectorAll("[data-hist-id]").forEach(function(b){
+    b.addEventListener("click", function(){
+      askUndoHistory(b.getAttribute("data-hist-id"),
+        b.getAttribute("data-hist-key"));
+    });
+  });
 }
 
 $("setReloadBtn").addEventListener("click", loadSettings);
@@ -6127,6 +6282,90 @@ function askEditPublished(it){
     });
   }, "channel");
 }
+
+// ============================================================
+// حماية اللوحة (م٦-د): الرقم السري بيحرس الأفعال الحساسة —
+// إيقاف/تشغيل البيع في البوت، تعديل رصيد بوت كبير أو ضبط
+// الرصيد، تدوير أو إيقاف مفاتيح التجار، وإيقاف تاجر. التخزين
+// والتحقق وعدّاد المحاولات والقفل عند البوت؛ اللوحة بتسأل عن
+// الرقم وبتبعته مع الطلب بس، والبوت هو اللي بيفرض البوابة.
+/*PURE-SECURITY-BEGIN*/
+function walletAdjustNeedsPin(mode, amountEgp, thresholdEgp, pinSet){
+  if (!pinSet) return false;
+  if (mode === "set") return true;
+  return Number(amountEgp) >= Number(thresholdEgp);
+}
+/*PURE-SECURITY-END*/
+
+var pinStatusCache = null;
+function ensurePinStatus(){
+  if (pinStatusCache) return Promise.resolve(pinStatusCache);
+  return api("/control/bot-pin-status").then(function(d){
+    pinStatusCache = (d && typeof d === "object") ? d : null;
+    return pinStatusCache;
+  }).catch(function(){ return null; });
+}
+function pinIsSet(){
+  return !!(pinStatusCache && pinStatusCache.pin_set);
+}
+function pinGateThreshold(){
+  return (pinStatusCache && typeof pinStatusCache.gate_threshold_egp === "number")
+    ? pinStatusCache.gate_threshold_egp : 0;
+}
+function askPinIfNeeded(){
+  return ensurePinStatus().then(function(st){
+    if (!st || !st.pin_set) return null;
+    var pin = window.prompt("اكتب الرقم السري");
+    return pin ? pin : null;
+  });
+}
+// بيجهّز جسم الطلب بالرقم السري لو الرقم مضبوط — الإلغاء
+// بيوقف العملية برسالة واضحة بدل ما تبعت من غير رقم.
+function withPin(body){
+  return ensurePinStatus().then(function(st){
+    if (!st || !st.pin_set) return body;
+    return askPinIfNeeded().then(function(pin){
+      if (!pin) failValidation("العملية دي محتاجة الرقم السري — اكتبه عشان تكمل.");
+      body.pin = pin;
+      return body;
+    });
+  });
+}
+// نص عربي واضح لأخطاء بوابة الرقم السري — من كود الخطأ بس،
+// من غير ما نطبع الكود نفسه للمستخدم.
+function pinGateText(e){
+  var code = e && e.data && e.data.error;
+  if (code === "pin_required") return "العملية دي محتاجة الرقم السري.";
+  if (code === "pin_wrong") return "الرقم السري غلط.";
+  if (code === "pin_locked") return "المحاولات اتقفلت 15 دقيقة.";
+  if (code === "pin_not_set") return "الرقم السري لسه مش مضبوط.";
+  return null;
+}
+function throwPinGate(e){
+  var t = pinGateText(e);
+  if (t) { var err = new Error("pin gate"); err.userText = t; throw err; }
+  throw e;
+}
+
+// ---------------- البيع في البوت (الرئيسية) ----------------
+var salesEnabledNow = null;
+$("salesToggleBtn").addEventListener("click", function(){
+  if (salesEnabledNow === null) return;
+  var next = !salesEnabledNow;
+  openActSheet(next ? "تشغيل البيع في البوت" : "إيقاف البيع في البوت",
+    next
+      ? "<p>البيع هيرجع يشتغل، والعملاء هيقدروا يشتروا من البوت من جديد.</p>"
+      : "<p>البيع هيتوقف فورًا — محدش هيقدر يشتري من البوت لحد ما ترجع تشغّله من هنا.</p>",
+    next ? "تشغيل البيع" : "إيقاف البيع", function(){
+      return withPin({ key: "sales_enabled", value: next }).then(function(b){
+        return api("/control/bot-settings-set", { method: "POST", body: b });
+      }).then(function(){
+        return load();
+      }).then(function(){
+        showMsg("ok", next ? "البيع اشتغل في البوت." : "البيع اتوقف في البوت.");
+      }).catch(throwPinGate);
+    }, "sales");
+});
 
 // ============================================================
 // زوار البوت (متابعة م٦): ناس كلّموا البوت مرتبين بآخر نشاط —
@@ -6812,8 +7051,12 @@ function toggleMerchant(){
   var m = merchantsState.detail;
   if (!m) return;
   var next = !merchantActiveOf(m);
-  api("/control/bot-merchant-set", { method: "POST",
-    body: { id: merchantsState.selectedId, active: next } })
+  var body = { id: merchantsState.selectedId, active: next };
+  // إيقاف التاجر محروس بالرقم السري (م٦-د) — التفعيل لأ.
+  var ready = next ? Promise.resolve(body) : withPin(body);
+  ready.then(function(b){
+    return api("/control/bot-merchant-set", { method: "POST", body: b });
+  })
     .then(function(d){
       if (d && d.audit_failed)
         showMerchantsMsg("warn", "اتغيّرت حالة التاجر، بس تسجيلها في سجل التدقيق فشل.");
@@ -6821,22 +7064,34 @@ function toggleMerchant(){
         showMerchantsMsg("ok", next ? "اتفعّل التاجر." : "اتوقّف التاجر.");
       loadMerchants();
       reloadMerchantDetail();
-    }).catch(merchantsErr);
+    }).catch(function(e){
+      var t = pinGateText(e) || (e && e.userText);
+      if (t) { showMerchantsMsg("err", t); return; }
+      merchantsErr(e);
+    });
 }
 function toggleMerchantKey(k){
   var kid = keyIdOf(k);
   if (kid === null){ showMerchantsMsg("err", "المفتاح ده معرّفه مش باين — حدّث القائمة وحاول تاني."); return; }
   var next = !merchantActiveOf(k);
-  api("/control/bot-merchant-key-set", { method: "POST",
-    body: { merchant_id: merchantsState.selectedId, key_id: kid,
-      id: kid, active: next } })
+  var body = { merchant_id: merchantsState.selectedId, key_id: kid,
+    id: kid, active: next };
+  // إيقاف المفتاح محروس بالرقم السري (م٦-د) — التفعيل لأ.
+  var ready = next ? Promise.resolve(body) : withPin(body);
+  ready.then(function(b){
+    return api("/control/bot-merchant-key-set", { method: "POST", body: b });
+  })
     .then(function(d){
       if (d && d.audit_failed)
         showMerchantsMsg("warn", "اتغيّرت حالة المفتاح، بس تسجيلها في سجل التدقيق فشل.");
       else
         showMerchantsMsg("ok", next ? "اتفعّل مفتاح الدخول." : "اتوقّف مفتاح الدخول.");
       reloadMerchantDetail();
-    }).catch(merchantsErr);
+    }).catch(function(e){
+      var t = pinGateText(e) || (e && e.userText);
+      if (t) { showMerchantsMsg("err", t); return; }
+      merchantsErr(e);
+    });
 }
 function saveKeyAllowlist(k, idx){
   var kid = keyIdOf(k);
@@ -6893,9 +7148,13 @@ function askRotateMerchantKey(k){
     "<p>هيتعمل مفتاح دخول جديد مكان <b dir=\"ltr\">" + esc(maskedKeyText(k)) + "</b>، و<b>المفتاح القديم هيتوقف فورًا</b> وأي نظام بيستخدمه هيقف لحد ما ياخد الجديد.</p>" +
     "<p>المفتاح الجديد هيظهر <b>مرة واحدة بس</b> هنا في اللوحة بعد التنفيذ — انسخه وادّيه للتاجر في قناة آمنة.</p>",
     "دوّر المفتاح", function(){
-      return api("/control/bot-merchant-key-rotate", { method: "POST",
-        body: { merchant_id: merchantsState.selectedId, key_id: kid,
-          id: kid } })
+      // التدوير محروس بالرقم السري (م٦-د) لو مضبوط.
+      return withPin({ merchant_id: merchantsState.selectedId, key_id: kid,
+          id: kid })
+        .then(function(b){
+          return api("/control/bot-merchant-key-rotate", { method: "POST",
+            body: b });
+        })
         .then(function(d){
           var secret = rotatedSecretOf(d);
           if (d && d.audit_failed)
@@ -6905,7 +7164,7 @@ function askRotateMerchantKey(k){
           reloadMerchantDetail();
           if (secret) showMerchantSecret(secret);
           else showMerchantsMsg("warn", "اتدوّر المفتاح، بس البوت ما بعتش المفتاح الجديد في رده — راجع البوت قبل ما تقفل الشاشة.");
-        });
+        }).catch(throwPinGate);
     }, "merchants");
 }
 

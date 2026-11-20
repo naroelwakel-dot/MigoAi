@@ -969,15 +969,23 @@ export async function handleControlEventsRequest(
       // العدّادات: إجمالي كل بُعد بيحترم فلاتر الأبعاد التانية
       // وبيتجاهل فلتر بُعده هو — فعدّاد «ينتظر» مثلًا بيقول كام
       // حدث ينتظر ضمن المصدر/البحث الحاليين، مش ضمن حالة «ينتظر».
+      // النداءات الثمانية مستقلة عن بعضها — دفعة متوازية واحدة
+      // (م٦-د) بدل ثماني جولات متسلسلة؛ النتائج والشكل زي ما هما.
+      const [sourceCounts, statusCounts, total] = await Promise.all([
+        Promise.all(EVENT_SOURCES.map((s) => countFor({ ...filter, source: s }))),
+        Promise.all(
+          EVENT_STATUSES.map((st) => countFor({ ...filter, status: st })),
+        ),
+        countFor(filter),
+      ]);
       const bySource = {} as Record<StoreEventSource, number>;
-      for (const s of EVENT_SOURCES) {
-        bySource[s] = await countFor({ ...filter, source: s });
-      }
+      EVENT_SOURCES.forEach((s, i) => {
+        bySource[s] = sourceCounts[i];
+      });
       const byStatus = {} as Record<StoreEventStatus, number>;
-      for (const st of EVENT_STATUSES) {
-        byStatus[st] = await countFor({ ...filter, status: st });
-      }
-      const total = await countFor(filter);
+      EVENT_STATUSES.forEach((st, i) => {
+        byStatus[st] = statusCounts[i];
+      });
 
       const fetchLimit = offset + limit;
       const [smsRows, depRows, ctx, lastSms, lastBinance, lastBybit] =
