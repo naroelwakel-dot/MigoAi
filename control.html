@@ -158,6 +158,16 @@
     padding:10px 12px; font-size:14.5px; margin-bottom:12px;
   }
   .preview .warn{color:var(--red); font-weight:600;}
+  .switch{position:relative; display:inline-block; width:56px; height:32px; flex:none; cursor:pointer; vertical-align:middle;}
+  .switch input{opacity:0; width:0; height:0; position:absolute;}
+  .switch .track{position:absolute; inset:0; background:var(--surface2); border:1px solid var(--border); border-radius:999px; transition:.15s;}
+  .switch .track:before{content:""; position:absolute; top:3px; right:4px; width:24px; height:24px; border-radius:50%; background:var(--muted); transition:.15s;}
+  .switch input:checked + .track{background:#3A2E10; border-color:var(--gold);}
+  .switch input:checked + .track:before{transform:translateX(-22px); background:var(--gold);}
+  .addr{overflow-wrap:anywhere; direction:ltr; text-align:left; font-size:13.5px;}
+  .result-row.sel{outline:2px solid var(--gold); outline-offset:-2px; border-radius:10px; background:var(--surface2);}
+  .group-title{font-weight:700; font-size:14.5px; margin:14px 0 2px; color:var(--gold);}
+  .group-title:first-child{margin-top:2px;}
 </style>
 </head>
 <body>
@@ -202,6 +212,21 @@
     </div>
     <div class="sub" style="color:var(--muted); font-size:13px; margin-top:8px;">البحث بيدوّر في عملاء البوت وعملاء الموقع بنفس المعرّف.</div>
     <div id="custResults" style="margin-top:6px;"></div>
+  </section>
+
+  <section class="card" id="moneyCard">
+    <h2>إعدادات الفلوس</h2>
+    <div id="moneySettingsBody"><div class="sub" style="color:var(--muted)">بيحمّل الإعدادات…</div></div>
+    <button class="btn secondary" id="moneyReloadBtn" type="button" style="margin-top:10px;">تحديث الإعدادات</button>
+  </section>
+
+  <section class="card" id="lostCard">
+    <h2>شحنة ضايعة</h2>
+    <div class="field"><label>رقم العملية أو رقم العميل</label><input id="lostQ" type="text" placeholder="رقم عملية، بصمة تحويل، أو رقم عميل"></div>
+    <div class="field"><label>المبلغ (اختياري)</label><input id="lostAmt" type="number" inputmode="decimal" min="0" step="0.01"></div>
+    <div class="sub" style="color:var(--muted); font-size:13px;">المبلغ بالجنيه لشحنات البوت ورسائل البنك، وبالدولار لإيداعات المنصات.</div>
+    <button class="btn" id="lostSearchBtn" type="button" style="margin-top:10px;">بحث</button>
+    <div id="lostResults" style="margin-top:6px;"></div>
   </section>
 
   <div id="custFile" class="hidden" style="display:flex; flex-direction:column; gap:14px;"></div>
@@ -454,7 +479,7 @@ document.querySelectorAll("#bottomNav button").forEach(function(b){
   b.addEventListener("click", function(){
     var nav = b.getAttribute("data-nav");
     if (nav === "home") { showView("home"); return; }
-    if (nav === "customers") { showView("customers"); return; }
+    if (nav === "customers") { showView("customers"); ensureMoneyLoaded(); return; }
     $("sheetTitle").textContent = "قسم " + (navNames[nav] || "");
     $("sheet").classList.add("open");
     $("sheetVeil").classList.add("open");
@@ -516,6 +541,15 @@ function errText(e, ctx){
   if (code === "already_decided") return "الشحنة دي اتقرر فيها قبل كده.";
   if (code === "insufficient") return "الرصيد مش هيكفي لتنفيذ العملية دي.";
   if (code === "already_reversed") return "القيد ده اتعكس قبل كده.";
+  if (code === "customer_not_found") return "العميل مش موجود.";
+  if (code === "unknown_key") return "الإعداد ده مش معروف.";
+  if (code === "bad_rate") return "سعر الدولار لازم يكون رقم صحيح أكبر من صفر.";
+  if (code === "bad_address") return "العنوان مش صح — راجعه حرف حرف.";
+  if (code === "bad_package_list") return "قائمة التطبيقات فيها اسم مش صح.";
+  if (code === "bad_cap" || code === "bad_integer") return "القيمة بره الحدود المسموحة للإعداد ده.";
+  if (code === "bad_reason") return "سبب التعديل طويل أو مش صحيح.";
+  if (code === "setting_write_failed") return "الحفظ ما كملش — ما اتكتبش صف واحد زي ما هو مطلوب. حاول تاني.";
+  if (code === "bad_query") return "بيانات البحث مش صحيحة.";
   if (code === "bot_unavailable" || (e && e.data && e.data.bot_unavailable))
     return "البوت مش بيرد دلوقتي — حاول تاني بعد شوية.";
   if (code === "not_found" || (e && e.status === 404))
@@ -1165,6 +1199,480 @@ function openStoreReverse(tx){
   };
   openAdjust("store", preset);
 }
+
+// ============================================================
+// إعدادات الفلوس + الشحنة الضايعة (م١-ب): إعدادات المتجر من
+// قاعدته وإعدادات البوت من البوت نفسه، والبحث بيجمع شحنات البوت
+// الضايعة مع أحداث الموقع اللي وصلت ومتربطتش. الربط والاعتماد
+// بيتنفذ عند البوت بمسارات المطابقة الأصلية — مفيش شحن من هنا.
+// ============================================================
+
+var STORE_SETTING_LABELS = {
+  usdt_egp_rate: { label: "سعر الدولار في الشحن", kind: "decimal", unit: "ج.م لكل دولار" },
+  sms_autocredit_cap_egp: { label: "أعلى شحن تلقائي من رسالة بنك", kind: "decimal", unit: "ج.م" },
+  sms_trusted_cap_egp: { label: "أعلى شحن تلقائي من مرسل موثوق", kind: "decimal", unit: "ج.م" },
+  sms_trusted_daily_max: { label: "أقصى شحنات موثوقة في اليوم لرقم واحد", kind: "int", unit: "شحنة" },
+  sms_trusted_min_confirmed: { label: "أقل شحنات مؤكدة قبل اعتبار الرقم موثوق", kind: "int", unit: "شحنة" },
+  intent_expiry_minutes: { label: "مدة صلاحية تعليمات الشحن", kind: "int", unit: "دقيقة" },
+  deposit_address_binance: { label: "عنوان استقبال Binance", kind: "address", unit: "" },
+  deposit_address_bybit: { label: "عنوان استقبال Bybit", kind: "address", unit: "" },
+  wallet_app_package: { label: "تطبيقات البنوك والمحافظ المقبولة لقراءة الرسائل", kind: "packages", unit: "" }
+};
+var BOT_SETTING_LABELS = {
+  topup_auto_exchange_enabled: { label: "شحن تلقائي من البورصة", kind: "bool" },
+  topup_auto_sms_enabled: { label: "شحن تلقائي من رسائل البنك", kind: "bool" },
+  stars_topup_enabled: { label: "شحن بالنجوم", kind: "bool" },
+  stars_rate_minor: { label: "سعر النجمة الواحدة", kind: "int", unit: "قرش" },
+  stars_daily_cap_per_user: { label: "أقصى نجوم في اليوم لعميل واحد", kind: "int", unit: "نجمة" }
+};
+
+var moneyState = { store: [], bot: [], botUnavailable: false, storeFailed: false, loaded: false, loading: false };
+
+function settingValueText(meta, v){
+  if (v === null || v === undefined || v === "") return "مش متظبط";
+  if (meta && meta.kind === "bool") return (v === true || v === "true") ? "شغال" : "مقفول";
+  if (meta && meta.kind === "address") return String(v);
+  if (meta && (meta.kind === "decimal" || meta.kind === "int")) {
+    var n = Number(v);
+    return isFinite(n) ? fmtNum(n) + (meta.unit ? " " + meta.unit : "") : String(v);
+  }
+  return String(v);
+}
+
+function renderMoneySettings(){
+  var el = $("moneySettingsBody");
+  var html = '<div class="group-title">المتجر</div>';
+  if (moneyState.storeFailed) {
+    html += '<div class="sub" style="color:var(--red)">مش عارف أقرا إعدادات المتجر دلوقتي.</div>';
+  } else if (!moneyState.store.length) {
+    html += '<div class="sub" style="color:var(--muted)">مفيش إعدادات ظاهرة.</div>';
+  }
+  moneyState.store.forEach(function(r){
+    var meta = STORE_SETTING_LABELS[r.key];
+    var label = meta ? meta.label : r.key;
+    html += '<div class="result-row" style="cursor:default"><div class="who"><b>' + esc(label) + "</b>" +
+      (meta && meta.kind === "address" && r.value
+        ? '<small class="addr num">' + esc(r.value) + "</small>"
+        : "<small>" + esc(settingValueText(meta, r.value)) + "</small>") +
+      "</div>" +
+      '<button class="btn ghost small" type="button" data-set-store="' + esc(r.key) + '">تعديل</button></div>';
+  });
+  html += '<div class="group-title">البوت</div>';
+  if (moneyState.botUnavailable) {
+    html += '<div class="sub" style="color:var(--amber)">البوت مش بيرد دلوقتي — إعداداته مش ظاهرة بدل ما تتخترع.</div>';
+  } else if (!moneyState.bot.length) {
+    html += '<div class="sub" style="color:var(--muted)">مفيش إعدادات ظاهرة.</div>';
+  }
+  moneyState.bot.forEach(function(r){
+    var meta = BOT_SETTING_LABELS[r.key];
+    var label = meta ? meta.label : r.key;
+    html += '<div class="result-row" style="cursor:default"><div class="who"><b>' + esc(label) + "</b>" +
+      "<small>" + esc(settingValueText(meta, r.value)) + "</small></div>" +
+      '<button class="btn ghost small" type="button" data-set-bot="' + esc(r.key) + '">تعديل</button></div>';
+  });
+  el.innerHTML = html;
+  el.querySelectorAll("[data-set-store]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var key = b.getAttribute("data-set-store");
+      var row = moneyState.store.find(function(r){ return r.key === key; });
+      if (row) openSettingEdit("store", row);
+    });
+  });
+  el.querySelectorAll("[data-set-bot]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var key = b.getAttribute("data-set-bot");
+      var row = moneyState.bot.find(function(r){ return r.key === key; });
+      if (row) openSettingEdit("bot", row);
+    });
+  });
+}
+
+// شكل رد إعدادات البوت ممكن ييجي خريطة أو قائمة صفوف — بنطبّع
+// الاتنين من غير ما نخترع قيمة مش موجودة.
+function botSettingsList(d){
+  var src = d && (d.settings || d.values || d);
+  var pick = function(r){
+    if (r.value !== undefined) return r.value;
+    if (r.effective_value !== undefined) return r.effective_value;
+    if (r.current !== undefined) return r.current;
+    return null;
+  };
+  if (Array.isArray(src)) {
+    return src.filter(function(r){ return r && typeof r.key === "string"; })
+      .map(function(r){ return { key: r.key, value: pick(r) }; });
+  }
+  if (src && typeof src === "object") {
+    return Object.keys(src).filter(function(k){ return k !== "ok"; })
+      .map(function(k){ return { key: k, value: src[k] }; });
+  }
+  return [];
+}
+
+function loadMoneySettings(){
+  if (moneyState.loading) return Promise.resolve();
+  moneyState.loading = true;
+  var unauthorized = false;
+  var pStore = api("/control/store-money-settings").then(function(d){
+    moneyState.store = Array.isArray(d.settings) ? d.settings : [];
+    moneyState.storeFailed = false;
+  }).catch(function(e){
+    if (e && e.status === 401) { unauthorized = true; return; }
+    if (e && e.noKey) return;
+    moneyState.storeFailed = true;
+  });
+  var pBot = api("/control/bot-money-settings").then(function(d){
+    moneyState.bot = botSettingsList(d);
+    moneyState.botUnavailable = false;
+  }).catch(function(e){
+    if (e && e.status === 401) { unauthorized = true; return; }
+    if (e && e.noKey) return;
+    moneyState.botUnavailable = true;
+    moneyState.bot = [];
+  });
+  return Promise.all([pStore, pBot]).then(function(){
+    moneyState.loading = false;
+    moneyState.loaded = true;
+    renderMoneySettings();
+    if (unauthorized) {
+      showCustMsg("err", "مفتاح الأدمن غلط أو مش مكتوب. اكتبه تاني عشان تكمل.", true);
+    }
+  });
+}
+function ensureMoneyLoaded(){ if (!moneyState.loaded) loadMoneySettings(); }
+$("moneyReloadBtn").addEventListener("click", function(){ loadMoneySettings(); });
+
+function openSettingEdit(surface, row){
+  var isStore = surface === "store";
+  var meta = (isStore ? STORE_SETTING_LABELS : BOT_SETTING_LABELS)[row.key] ||
+    { label: row.key, kind: "text", unit: "" };
+  var cur = row.value;
+  var body = '<div class="preview">الإعداد: <b>' + esc(meta.label) + '</b><br>القيمة دلوقتي: <b>' +
+    (meta.kind === "address" && cur
+      ? '</b><span class="addr num">' + esc(cur) + "</span>"
+      : esc(settingValueText(meta, cur)) + "</b>") + "</div>";
+  if (meta.kind === "bool") {
+    var on = cur === true || cur === "true";
+    body += '<div class="field"><label>الحالة</label><div style="display:flex; align-items:center; gap:10px;">' +
+      '<label class="switch"><input type="checkbox" id="setVal"' + (on ? " checked" : "") + '><span class="track"></span></label>' +
+      '<span id="setValWord">' + (on ? "شغال" : "مقفول") + "</span></div></div>";
+  } else if (meta.kind === "packages") {
+    body += '<div class="field"><label>أسماء التطبيقات (بين كل اسم والتاني فاصلة)</label>' +
+      '<textarea id="setVal" rows="3">' + esc(cur == null ? "" : cur) + "</textarea></div>";
+  } else if (meta.kind === "address") {
+    body += '<div class="field"><label>العنوان الجديد — بيظهر كامل هنا قبل الحفظ، راجعه حرف حرف</label>' +
+      '<input id="setVal" type="text" class="addr" value="' + esc(cur == null ? "" : cur) + '"></div>' +
+      '<div class="preview addr" id="setAddrPreview"></div>';
+  } else {
+    body += '<div class="field"><label>القيمة الجديدة' + (meta.unit ? " (" + esc(meta.unit) + ")" : "") + "</label>" +
+      '<input id="setVal" type="number" inputmode="decimal" step="' + (meta.kind === "int" ? "1" : "0.01") +
+      '" value="' + esc(cur == null ? "" : cur) + '"></div>';
+  }
+  body += '<div class="field"><label>سبب التعديل (اختياري)</label><input id="setReason" type="text"></div>';
+
+  openActSheet("تعديل إعداد — " + (isStore ? "المتجر" : "البوت"), body, "حفظ التعديل", function(){
+    var value;
+    if (meta.kind === "bool") {
+      value = $("setVal").checked;
+    } else if (meta.kind === "int") {
+      value = Number($("setVal").value);
+      if (!isFinite(value) || Math.floor(value) !== value) failValidation("اكتب رقم صحيح من غير كسور.");
+    } else if (meta.kind === "decimal") {
+      value = parseFloat($("setVal").value);
+      if (!isFinite(value)) failValidation("اكتب رقم صحيح.");
+    } else if (meta.kind === "address") {
+      value = $("setVal").value.trim();
+      if (!/^0x[0-9a-fA-F]{40}$/.test(value)) {
+        failValidation("العنوان مش كامل أو فيه حرف غلط — راجعه حرف حرف قبل الحفظ.");
+      }
+    } else {
+      value = $("setVal").value.trim();
+      if (!value) failValidation("اكتب قيمة الأول.");
+    }
+    var reason = $("setReason").value.trim();
+    var payload = { key: row.key, value: value };
+    if (reason) payload.reason = reason;
+    var path = isStore ? "/control/store-money-settings" : "/control/bot-money-settings";
+    return api(path, { method: "POST", body: payload }).then(function(d){
+      return loadMoneySettings().then(function(){ return d; });
+    }).then(function(d){
+      if (d && d.audit_failed) {
+        showCustMsg("warn", "اتحفظ التعديل والقيمة الجديدة شغالة، بس تسجيله في سجل المتابعة ما كملش.");
+      } else {
+        showCustMsg("ok", "اتحفظ التعديل — القيم اللي في كارت إعدادات الفلوس دي من الخادم بعد الحفظ.");
+      }
+    });
+  }, "setting");
+
+  if (meta.kind === "bool") {
+    $("setVal").addEventListener("change", function(){
+      $("setValWord").textContent = $("setVal").checked ? "شغال" : "مقفول";
+    });
+  }
+  if (meta.kind === "address") {
+    var updAddr = function(){
+      var v = $("setVal").value.trim();
+      $("setAddrPreview").textContent = v || "العنوان الجديد هيظهر هنا كامل وانت بتكتبه.";
+    };
+    $("setVal").addEventListener("input", updAddr);
+    updAddr();
+  }
+}
+
+// ---------------- الشحنة الضايعة ----------------
+var lostState = {
+  topups: [], events: [], claims: [], intents: [],
+  selTopup: -1, selEvent: -1, searched: false,
+  botUnavailable: false, storeFailed: false
+};
+
+function storeRate(){
+  var row = moneyState.store.find(function(r){ return r.key === "usdt_egp_rate"; });
+  var n = row ? Number(row.value) : NaN;
+  return isFinite(n) && n > 0 ? n : null;
+}
+// مبلغ الحدث بالجنيه للمقارنة والعرض: رسالة البنك بالجنيه أصلًا،
+// وإيداع المنصة بالدولار فبيتحوّل بسعر الشحن الحالي لو معروف.
+function eventEgp(ev){
+  if (ev.source === "sms_events") {
+    var n = Number(ev.amount);
+    return isFinite(n) ? n : null;
+  }
+  var usd = Number(ev.amount);
+  var rate = storeRate();
+  if (!isFinite(usd) || !rate) return null;
+  return Math.round(usd * rate * 100) / 100;
+}
+function amountsDiffer(){
+  if (lostState.selTopup < 0 || lostState.selEvent < 0) return null;
+  var t = lostState.topups[lostState.selTopup];
+  var ev = lostState.events[lostState.selEvent];
+  var tAmt = egpFromMinor(t.amount);
+  var eAmt = eventEgp(ev);
+  if (tAmt === null || eAmt === null) return null;
+  return Math.round(tAmt * 100) !== Math.round(eAmt * 100);
+}
+
+function doLostSearch(){
+  var q = $("lostQ").value.trim();
+  var amtRaw = $("lostAmt").value.trim();
+  var amt = amtRaw ? parseFloat(amtRaw) : null;
+  if (amtRaw && (!isFinite(amt) || amt <= 0)) {
+    showCustMsg("err", "اكتب مبلغ صحيح أو سيب خانة المبلغ فاضية.");
+    return;
+  }
+  hideCustMsg();
+  lostState.selTopup = -1;
+  lostState.selEvent = -1;
+  lostState.searched = true;
+  $("lostResults").innerHTML = '<div class="sub" style="color:var(--muted)">بندوّر…</div>';
+  var btn = $("lostSearchBtn");
+  btn.disabled = true;
+  var botPath = "/control/bot-lost-topups?q=" + encodeURIComponent(q) +
+    (amt !== null ? "&amount_egp=" + encodeURIComponent(amt) : "") + "&days=30";
+  var storePath = "/control/lost-events?q=" + encodeURIComponent(q) +
+    (amt !== null ? "&amount=" + encodeURIComponent(amt) : "") + "&days=30";
+  var unauthorized = false;
+  var pBot = api(botPath).then(function(d){
+    var arr = [d.results, d.topups, d.matches, d.requests].find(function(v){ return Array.isArray(v); });
+    lostState.topups = arr || [];
+    lostState.botUnavailable = false;
+  }).catch(function(e){
+    if (e && e.status === 401) { unauthorized = true; return; }
+    if (e && e.noKey) return;
+    lostState.topups = [];
+    lostState.botUnavailable = true;
+  });
+  var pStore = api(storePath).then(function(d){
+    var evs = [];
+    (d.deposit_events || []).forEach(function(r){ evs.push(r); });
+    (d.sms_events || []).forEach(function(r){ evs.push(r); });
+    lostState.events = evs;
+    lostState.claims = Array.isArray(d.deposit_claims) ? d.deposit_claims : [];
+    lostState.intents = Array.isArray(d.topup_intents) ? d.topup_intents : [];
+    lostState.storeFailed = false;
+  }).catch(function(e){
+    if (e && e.status === 401) { unauthorized = true; return; }
+    if (e && e.noKey) return;
+    lostState.events = [];
+    lostState.claims = [];
+    lostState.intents = [];
+    lostState.storeFailed = true;
+  });
+  Promise.all([pBot, pStore]).then(function(){
+    btn.disabled = false;
+    renderLost();
+    if (unauthorized) {
+      showCustMsg("err", "مفتاح الأدمن غلط أو مش مكتوب. اكتبه تاني عشان تكمل.", true);
+    }
+  });
+}
+
+function lostEventLabel(ev){
+  return ev.source === "sms_events" ? "رسالة بنك" : "إيداع منصة";
+}
+function lostEventRef(ev){
+  return ev.exchange_ref || ev.tx_hash || ev.transfer_ref || ev.sender_account || "—";
+}
+
+function renderLost(){
+  var wrap = $("lostResults");
+  if (!lostState.searched) { wrap.innerHTML = ""; return; }
+  var html = "";
+
+  html += '<div class="group-title">شحنات البوت</div>';
+  if (lostState.botUnavailable) {
+    html += '<div class="sub" style="color:var(--amber)">البوت مش بيرد دلوقتي — شحناته مش ظاهرة.</div>';
+  } else if (!lostState.topups.length) {
+    html += '<div class="sub" style="color:var(--muted)">مفيش شحنات بوت مطابقة.</div>';
+  }
+  lostState.topups.forEach(function(t, i){
+    var age = relTime(t.created_at);
+    var pending = t.status === "pending";
+    html += '<div class="result-row' + (lostState.selTopup === i ? " sel" : "") + '"' +
+      (pending ? ' data-lost-topup="' + i + '"' : "") + '>' +
+      '<div class="who"><b class="num">' + fmtNum(egpFromMinor(t.amount)) + " ج.م</b>" +
+      "<small>" + esc(t.method_label || "") +
+      (t.operation_ref ? ' · رقم العملية: <span class="num">' + esc(t.operation_ref) + "</span>" : "") +
+      '<br>العميل: <span class="num">' + esc(t.customer_ref || "—") + "</span> · " +
+      statusTxt(BOT_TOPUP_STATUS, t.status) + (age ? " · " + esc(age) : "") +
+      (pending ? "<br>دوس على الشحنة دي عشان تختارها للربط" : "") +
+      "</small></div>" +
+      '<button class="btn ghost small" type="button" data-lost-open="' + i + '">فتح ملف العميل</button></div>';
+  });
+
+  html += '<div class="group-title">فلوس وصلت ومتربطتش</div>';
+  if (lostState.storeFailed) {
+    html += '<div class="sub" style="color:var(--red)">مش عارف أقرا أحداث الموقع دلوقتي.</div>';
+  } else if (!lostState.events.length) {
+    html += '<div class="sub" style="color:var(--muted)">مفيش إيداعات أو رسائل مطابقة لسه متربطتش.</div>';
+  }
+  lostState.events.forEach(function(ev, i){
+    var age = relTime(ev.time || ev.created_at);
+    var eAmt = eventEgp(ev);
+    var amtTxt = ev.source === "sms_events"
+      ? fmtNum(ev.amount) + " ج.م"
+      : fmtNum(ev.amount) + " دولار" + (eAmt !== null ? " (≈ " + fmtNum(eAmt) + " ج.م)" : "");
+    var pickable = ev.matched === false;
+    html += '<div class="result-row' + (lostState.selEvent === i ? " sel" : "") + '"' +
+      (pickable ? ' data-lost-event="' + i + '"' : "") + '>' +
+      '<div class="who"><b class="num">' + amtTxt + "</b>" +
+      "<small>" + esc(lostEventLabel(ev)) +
+      ' · رقم العملية: <span class="num">' + esc(lostEventRef(ev)) + "</span>" +
+      (ev.matched ? " · اتربطت قبل كده" : " · لسه متربطتش") +
+      (age ? " · " + esc(age) : "") +
+      (pickable ? "<br>دوس على الحدث ده عشان تختاره للربط" : "") +
+      "</small></div></div>";
+  });
+
+  if (lostState.claims.length) {
+    html += '<div class="group-title">طلبات تأكيد إيداع من عملاء الموقع</div>';
+    lostState.claims.forEach(function(c){
+      var age = relTime(c.created_at);
+      html += '<div class="topup-row"><div class="sub">' +
+        esc(c.rail === "bybit" ? "Bybit" : "Binance") +
+        ' · رقم العملية: <b class="num">' + esc(c.exchange_ref || "—") + "</b> · " +
+        statusTxt({}, c.status) + (age ? " · " + esc(age) : "") + "</div></div>";
+    });
+  }
+  if (lostState.intents.length) {
+    html += '<div class="group-title">تعليمات شحن موقع</div>';
+    lostState.intents.forEach(function(t){
+      var age = relTime(t.created_at);
+      html += '<div class="topup-row"><div class="sub">' +
+        '<b class="num">' + fmtNum(t.amount_egp) + " ج.م</b> · " +
+        esc(t.rail === "bybit" ? "Bybit" : "Binance") + " · " +
+        statusTxt({}, t.status) + (age ? " · " + esc(age) : "") + "</div></div>";
+    });
+  }
+
+  if (lostState.selTopup >= 0 && lostState.selEvent >= 0) {
+    var diff = amountsDiffer();
+    html += '<div class="preview" style="margin-top:12px;">اخترت شحنة بوت وحدث واصل.' +
+      (diff === true
+        ? '<br><span class="warn">المبلغين مش زي بعض — الربط واقف لحد ما تراجع الأرقام.</span>'
+        : diff === false
+          ? "<br>المبلغين قد بعض بالجنيه."
+          : "<br>مش عارفين نقارن المبلغين تلقائيًا — راجعهم في ورقة التأكيد.") +
+      '</div><button class="btn" type="button" id="lostMatchBtn"' +
+      (diff === true ? " disabled" : "") + ">اربط واعتمد</button>";
+  }
+
+  wrap.innerHTML = html;
+  wrap.querySelectorAll("[data-lost-open]").forEach(function(b){
+    b.addEventListener("click", function(ev2){
+      ev2.stopPropagation();
+      var t = lostState.topups[Number(b.getAttribute("data-lost-open"))];
+      if (t) openCustomer("bot", { ref: t.customer_ref });
+    });
+  });
+  wrap.querySelectorAll("[data-lost-topup]").forEach(function(el){
+    el.addEventListener("click", function(){
+      var i = Number(el.getAttribute("data-lost-topup"));
+      lostState.selTopup = lostState.selTopup === i ? -1 : i;
+      renderLost();
+    });
+  });
+  wrap.querySelectorAll("[data-lost-event]").forEach(function(el){
+    el.addEventListener("click", function(){
+      var i = Number(el.getAttribute("data-lost-event"));
+      lostState.selEvent = lostState.selEvent === i ? -1 : i;
+      renderLost();
+    });
+  });
+  var mb = $("lostMatchBtn");
+  if (mb) mb.addEventListener("click", openMatchConfirm);
+}
+
+function openMatchConfirm(){
+  var t = lostState.topups[lostState.selTopup];
+  var ev = lostState.events[lostState.selEvent];
+  if (!t || !ev) return;
+  var diff = amountsDiffer();
+  var tAmt = egpFromMinor(t.amount);
+  var eAmt = eventEgp(ev);
+  var evAmtTxt = ev.source === "sms_events"
+    ? fmtNum(ev.amount) + " ج.م"
+    : fmtNum(ev.amount) + " دولار" + (eAmt !== null ? " (≈ " + fmtNum(eAmt) + " ج.م بسعر الشحن الحالي)" : "");
+  var tTime = t.created_at ? new Date(t.created_at).toLocaleString("en-GB") : "—";
+  var eTime = (ev.time || ev.created_at)
+    ? new Date(ev.time || ev.created_at).toLocaleString("en-GB") : "—";
+  var body =
+    '<div class="preview">شحنة البوت: <b class="num">' + fmtNum(tAmt) + " ج.م</b>" +
+    (t.method_label ? " · " + esc(t.method_label) : "") +
+    '<br>العميل: <b class="num">' + esc(t.customer_ref || "—") + "</b>" +
+    (t.operation_ref ? '<br>رقم العملية: <b class="num">' + esc(t.operation_ref) + "</b>" : "") +
+    "<br>وقت الشحنة: " + esc(tTime) + "</div>" +
+    '<div class="preview">' + esc(lostEventLabel(ev)) + ': <b class="num">' + evAmtTxt + "</b>" +
+    '<br>رقم العملية: <b class="num">' + esc(lostEventRef(ev)) + "</b>" +
+    "<br>وقت الوصول: " + esc(eTime) + "</div>" +
+    (diff === true
+      ? '<div class="preview"><span class="warn">المبلغين مش زي بعض — الربط واقف. راجع الأرقام واختار حدث تاني لو ده مش هو.</span></div>'
+      : diff === null
+        ? '<div class="preview">راجع المبلغين والعملة والوقت بنفسك قبل الاعتماد — المقارنة التلقائية مش متاحة للزوج ده.</div>'
+        : "");
+  openActSheet("ربط الشحنة بالفلوس الواصلة واعتمادها", body, "اربط واعتمد", function(){
+    if (amountsDiffer() === true) {
+      failValidation("المبلغين مش زي بعض — الربط واقف.");
+    }
+    return api("/control/bot-topup-match", { method: "POST", body: {
+      topup_id: t.id,
+      event_source: ev.source === "sms_events" ? "sms" : "exchange",
+      event_id: ev.id
+    } }).then(function(){
+      showCustMsg("ok", "اتربطت الشحنة واعتمدت — دي نتيجة تنفيذ البوت نفسه بمسارات المطابقة الأصلية.");
+      doLostSearch();
+    });
+  }, "match");
+  if (diff === true) {
+    var c = $("actConfirm");
+    c.disabled = true;
+    c.textContent = "الربط واقف — المبلغين مختلفين";
+  }
+}
+$("lostSearchBtn").addEventListener("click", doLostSearch);
+$("lostQ").addEventListener("keydown", function(ev){
+  if (ev.key === "Enter") { ev.preventDefault(); doLostSearch(); }
+});
 
 load();
 </script>
