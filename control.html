@@ -220,6 +220,12 @@
 
   <div id="queueWrap" class="hidden" style="display:flex; flex-direction:column; gap:10px;"></div>
 
+  <section class="card" id="visitorsEntryCard">
+    <h2>زوار البوت <span class="num" id="visitorsCount" style="color:var(--gold);"></span></h2>
+    <div class="sub" style="color:var(--muted); font-size:13px;">الناس اللي كلّموا البوت، مرتبين بآخر نشاط — آخر رسالة، وعدد الرسائل والطلبات، والرصيد.</div>
+    <button class="btn" id="visitorsOpenBtn" type="button" style="margin-top:10px;">عرض الزوار</button>
+  </section>
+
   <section class="card hidden" id="topupCard">
     <h2>أحدث شحنات محفظة الموقع المنتظرة</h2>
     <div id="topupRows"></div>
@@ -528,6 +534,17 @@
     <div class="sub" style="color:var(--muted); font-size:13px;">المسودات والمجدولات تقدر تعدّلها أو تحذفها قبل ما تتنشر. المنشور اللي اتنشر فعلًا تقدر تعدّل نصه، أو تحذفه من القناة نفسها.</div>
     <div id="chnList" style="margin-top:6px;"></div>
     <button class="btn secondary" id="chnReloadBtn" type="button" style="margin-top:10px;">تحديث القائمة</button>
+  </section>
+</main>
+
+<main id="visitorsMain" class="hidden">
+  <div class="msg" id="visMsg"></div>
+
+  <section class="card">
+    <h2>زوار البوت</h2>
+    <div class="sub" style="color:var(--muted); font-size:13px;">الناس اللي كلّموا البوت، مرتبين بآخر نشاط. اللي ليه محادثة تقدر تفتحها من زرار «افتح المحادثة» في صفه.</div>
+    <div id="visList" style="margin-top:6px;"></div>
+    <button class="btn secondary" id="visReloadBtn" type="button" style="margin-top:10px;">تحديث القائمة</button>
   </section>
 </main>
 
@@ -851,6 +868,10 @@ function render(data){
     $("botTopupCard").classList.remove("hidden");
   }
 
+  // عدد زوار البوت على بطاقة الدخول في الرئيسية (تحميل هادي:
+  // فشله ما يعطّلش الرئيسية، وشاشة الزوار نفسها بتوضّح الخطأ).
+  refreshVisitorsCount();
+
   var gen = relTime(data.generated_at);
   $("updatedLine").textContent = "آخر تحديث: " + (gen || "دلوقتي");
 }
@@ -898,7 +919,7 @@ $("storePill").addEventListener("click", load);
 // شغالين، و«المزيد» فيها أسعار الموقع (م٣) والكتالوج والموردون
 // (م٣-ب) والأحداث والمكونات (م٤).
 var navNames = { events: "الأحداث", more: "المزيد" };
-var viewTitles = { home: "مهامي الآن", customers: "العملاء", orders: "الطلبات", chats: "المحادثات", prices: "أسعار الموقع", catalog: "الكتالوج", suppliers: "الموردون", events: "الأحداث والمكونات", settings: "إعدادات البوت", channel: "قناة التليجرام", coupons: "الكوبونات", merchants: "التجار", site: "الموقع" };
+var viewTitles = { home: "مهامي الآن", customers: "العملاء", orders: "الطلبات", chats: "المحادثات", prices: "أسعار الموقع", catalog: "الكتالوج", suppliers: "الموردون", events: "الأحداث والمكونات", settings: "إعدادات البوت", channel: "قناة التليجرام", coupons: "الكوبونات", merchants: "التجار", site: "الموقع", visitors: "زوار البوت" };
 function showView(name){
   $("homeMain").classList.toggle("hidden", name !== "home");
   $("customersMain").classList.toggle("hidden", name !== "customers");
@@ -913,6 +934,7 @@ function showView(name){
   $("couponsMain").classList.toggle("hidden", name !== "coupons");
   $("merchantsMain").classList.toggle("hidden", name !== "merchants");
   $("siteMain").classList.toggle("hidden", name !== "site");
+  $("visitorsMain").classList.toggle("hidden", name !== "visitors");
   $("pageTitle").textContent = viewTitles[name] || "";
   document.querySelectorAll("#bottomNav button").forEach(function(b){
     var nav = b.getAttribute("data-nav");
@@ -6104,6 +6126,133 @@ function askEditPublished(it){
       loadChannel();
     });
   }, "channel");
+}
+
+// ============================================================
+// زوار البوت (متابعة م٦): ناس كلّموا البوت مرتبين بآخر نشاط —
+// آخر رسالة وعدد الرسائل والطلبات والرصيد. القراءة من نقطة
+// البوت عبر تمرير الموقع، والصف اللي ليه محادثة بيفتحها في
+// شاشة المحادثات بنفس طريقة شاشة الطلبات.
+/*PURE-VISITORS-BEGIN*/
+function visitorItemsOf(d){
+  var arr = [d && d.items, d && d.visitors, d && d.rows]
+    .find(function(v){ return Array.isArray(v); });
+  return arr || [];
+}
+function visitorChatRefOf(v){
+  return String((v && v.chat_id) || "");
+}
+function visitorHasChat(v){
+  return !!(v && v.has_conversation === true && visitorChatRefOf(v));
+}
+function visitorsNextGen(state){
+  state.gen = (state.gen || 0) + 1;
+  return state.gen;
+}
+function visitorsGenIsCurrent(state, gen){
+  return !!state && gen === state.gen;
+}
+/*PURE-VISITORS-END*/
+
+var visitorsState = { items: [], loaded: false, listFailed: false, gen: 0 };
+
+function showVisitorsMsg(kind, html, withKeyBtn){
+  var box = $("visMsg");
+  box.className = "msg " + kind;
+  box.innerHTML = html + (withKeyBtn
+    ? '<button class="btn" id="visKeyBtn" type="button">كتابة المفتاح</button>' : "");
+  if (withKeyBtn) $("visKeyBtn").addEventListener("click", askKey);
+}
+function hideVisitorsMsg(){ $("visMsg").className = "msg"; $("visMsg").innerHTML = ""; }
+
+function visitorBalanceOf(v){
+  if (typeof v.balance_egp === "number" && isFinite(v.balance_egp)) return v.balance_egp;
+  return egpFromMinor(v.balance_minor);
+}
+function renderVisitorsList(){
+  var box = $("visList");
+  if (visitorsState.listFailed){
+    box.innerHTML = '<div class="empty">مش عارف أجيب زوار البوت دلوقتي.</div>';
+    return;
+  }
+  if (!visitorsState.items.length){
+    box.innerHTML = '<div class="empty"><b>لا يوجد زوار بعد</b>لسه محدش كلّم البوت.</div>';
+    return;
+  }
+  var html = "";
+  visitorsState.items.forEach(function(v){
+    var ref = visitorChatRefOf(v);
+    var age = relTime(v.last_inbound_at);
+    var bal = visitorBalanceOf(v);
+    var inN = Number(v.inbound_count) || 0;
+    var outN = Number(v.outbound_count) || 0;
+    var ordN = Number(v.orders_count) || 0;
+    var fulN = Number(v.orders_fulfilled) || 0;
+    html += '<div class="result-row"><div class="who"><b class="num">' + esc(ref || "—") + "</b>" +
+      "<small>" + (v.last_inbound_text ? esc(v.last_inbound_text) : "—") + "</small>" +
+      "<small>" + (age ? "آخر نشاط " + esc(age) : "") +
+      " · رسائل منه: " + fmtNum(inN) + " · ردود عليه: " + fmtNum(outN) + "</small></div>" +
+      '<div class="bal">' + (bal === null ? "—" : fmtNum(bal) + " ج.م") +
+      "<small>طلبات: " + fmtNum(ordN) + " (اتنفذ " + fmtNum(fulN) + ")</small></div>" +
+      (visitorHasChat(v)
+        ? '<button class="btn small" type="button" data-vis-chat="' + esc(ref) + '">افتح المحادثة</button>'
+        : "") +
+      "</div>";
+  });
+  box.innerHTML = html;
+  box.querySelectorAll("[data-vis-chat]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var ref = b.getAttribute("data-vis-chat");
+      if (ref) { showView("chats"); openChat(ref); }
+    });
+  });
+}
+function loadVisitors(){
+  hideVisitorsMsg();
+  visitorsState.loaded = true;
+  var gen = visitorsNextGen(visitorsState);
+  $("visList").innerHTML = '<div class="sub" style="color:var(--muted)">بيحمّل الزوار…</div>';
+  api("/control/bot-visitors").then(function(d){
+    if (!visitorsGenIsCurrent(visitorsState, gen)) return;
+    visitorsState.items = visitorItemsOf(d);
+    visitorsState.listFailed = false;
+    renderVisitorsList();
+    updateVisitorsCount();
+  }).catch(function(e){
+    if (!visitorsGenIsCurrent(visitorsState, gen)) return;
+    visitorsState.items = [];
+    visitorsState.listFailed = true;
+    renderVisitorsList();
+    updateVisitorsCount();
+    if (e && e.noKey) showVisitorsMsg("err", "لازم تكتب مفتاح الأدمن الأول.", true);
+    else showVisitorsMsg("err", esc(errText(e, "visitors")));
+  });
+}
+function ensureVisitorsLoaded(){
+  if (!visitorsState.loaded) loadVisitors();
+  else renderVisitorsList();
+}
+$("visReloadBtn").addEventListener("click", loadVisitors);
+$("visitorsOpenBtn").addEventListener("click", function(){
+  showView("visitors");
+  ensureVisitorsLoaded();
+});
+function updateVisitorsCount(){
+  var el = $("visitorsCount");
+  if (el) el.textContent = visitorsState.items.length ? "(" + fmtNum(visitorsState.items.length) + ")" : "";
+}
+function refreshVisitorsCount(){
+  var gen = visitorsNextGen(visitorsState);
+  api("/control/bot-visitors").then(function(d){
+    if (!visitorsGenIsCurrent(visitorsState, gen)) return;
+    visitorsState.items = visitorItemsOf(d);
+    visitorsState.loaded = true;
+    visitorsState.listFailed = false;
+    updateVisitorsCount();
+    if (!$("visitorsMain").classList.contains("hidden")) renderVisitorsList();
+  }).catch(function(){
+    // عدّاد الرئيسية مساعد — فشله ساكت، والشاشة نفسها بتوضّح.
+  });
 }
 
 /*PURE-COUPONS-BEGIN*/

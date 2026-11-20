@@ -106,6 +106,10 @@ import {
   PostgrestControlSiteClient,
   type SiteContentPublicDeps,
 } from "./control/site.ts";
+import {
+  type ControlVisitorsDeps,
+  handleControlVisitorsRequest,
+} from "./control/visitors.ts";
 import { bridgeBaseUrl } from "./sheerid/config.ts";
 import { makeAdminChecker, tokenEquals } from "./admin_auth.ts";
 
@@ -690,6 +694,27 @@ function getSiteContentPublicDeps(): SiteContentPublicDeps {
     logError,
   };
   return _siteContentPublicDeps;
+}
+
+// ---------------------------------------------------------------------------
+// لوحة التحكم (متابعة م٦): زوار البوت — تمرير خادمي لنقطة زوار
+// البوت (الناس اللي كلّموا البوت مرتبين بآخر نشاط). التجميع
+// والترتيب عند البوت؛ اللوحة بتمرّر بس، بنفس اعتماد الجسر
+// والمصادقة بتاعة م٥.
+// ---------------------------------------------------------------------------
+let _controlVisitorsDeps: ControlVisitorsDeps | null = null;
+function getControlVisitorsDeps(): ControlVisitorsDeps {
+  if (_controlVisitorsDeps) return _controlVisitorsDeps;
+  _controlVisitorsDeps = {
+    botClient: new BridgeBotControlProxyClient({
+      baseUrlOf: () => bridgeBaseUrl((n) => Deno.env.get(n)),
+      bridgeTokenOf: controlBridgeTokenOf(),
+    }),
+    isAdmin,
+    corsOf: (r: Request) => corsHeaders(r),
+    logError,
+  };
+  return _controlVisitorsDeps;
 }
 
 // ---------------------------------------------------------------------------
@@ -2315,6 +2340,11 @@ Deno.serve(async (req: Request) => {
         getControlSiteDeps(),
       );
       if (siteRes) return siteRes;
+      const visitorsRes = await handleControlVisitorsRequest(
+        req,
+        getControlVisitorsDeps(),
+      );
+      if (visitorsRes) return visitorsRes;
     } catch (e) {
       logError("control.customers.route", "unhandled customers route error", e);
     }
