@@ -705,7 +705,11 @@
     <h2>التجار</h2>
     <div class="sub" style="color:var(--muted); font-size:12px;">التجار المسجلين عند البوت ومفاتيح دخولهم وطلباتهم. اختر تاجرًا عشان تشوف مفاتيحه وآخر طلباته وتدير حالته.</div>
     <div id="mchList" style="margin-top:8px;"></div>
-    <button class="btn secondary" id="mchReloadBtn" type="button" style="margin-top:12px;">تحديث</button>
+    <div class="row-actions" style="margin-top:12px;">
+      <button class="btn" id="mchGrantBtn" type="button">افتح مفتاح لتاجر</button>
+      <button class="btn secondary" id="mchReloadBtn" type="button">تحديث</button>
+    </div>
+    <div class="sub" style="color:var(--muted); font-size:12px; margin-top:8px;">«افتح مفتاح لتاجر» بيفتح واجهة التجار لأي عميل عند البوت برقم آيديه — مجانًا من عندك، والمفتاح بيتبعت للعميل في البوت على طول.</div>
   </section>
 
   <section class="card hidden" id="mchDetailCard">
@@ -1340,7 +1344,10 @@ function errText(e, ctx){
   if (code === "already_decided") return "الشحنة دي اتقرر فيها قبل كده.";
   if (code === "insufficient") return "الرصيد مش هيكفي لتنفيذ العملية دي.";
   if (code === "already_reversed") return "الحركة دي اتراجع عنها قبل كده.";
+  if (code === "customer_not_found" && ctx === "merchants") return "الرقم ده مش عميل عند البوت — مفيش له محفظة ولا محادثة ولا طلبات. راجع رقم الآيدي وحاول تاني.";
   if (code === "customer_not_found") return "العميل مش موجود.";
+  if (code === "merchant_suspended") return "التاجر ده موقوف حاليًا — فعّله الأول من تفاصيل التاجر وبعدين افتح له المفتاح.";
+  if (code === "bad_ref" && ctx === "merchants") return "رقم الآيدي لازم يكون أرقام بس — ده رقم الشات بتاع العميل على تليجرام.";
   if (code === "review_not_found") return "التقييم ده مش موجود — يمكن اتمسح. حدّث القائمة.";
   if (code === "invalid_decision") return "القرار لازم يكون موافقة أو رفض.";
   if (code === "invalid_status") return "فلتر الحالة ده مش معروف.";
@@ -7807,6 +7814,33 @@ function rotatedSecretOf(d){
   }
   return "";
 }
+function merchantGrantOutcome(d){
+  // نتيجة منح مفتاح تاجر (من رد البوت) → رسالة اللوحة: {kind, text}.
+  // رد المنح بيحمل البادئة بس بنيويًا — المفتاح الخام بيتبعت للعميل
+  // في البوت من البوت نفسه ومش بيعدّي هنا أصلًا، فمفيش سرّ يتعرض.
+  if (!d || typeof d !== "object") return null;
+  var note = d.audit_failed
+    ? " (بس تسجيل العملية في سجل التغييرات فشل.)" : "";
+  if (d.already_open === true){
+    return { kind: "ok", text: "العميل ده مفتوح له مفتاح دخول أصلًا " +
+      "وشغال" + (d.key_prefix
+        ? " — بادئته " + String(d.key_prefix) : "") +
+      ". ما اتعملش مفتاح جديد ومفيش رسالة اتبعتت." + note };
+  }
+  if (d.granted === true){
+    if (d.delivery === "sent"){
+      var text = "اتفتح مفتاح الدخول واتبعت للعميل في البوت على طول.";
+      if (d.api_enabled === false)
+        text += " تنبيه: دخول التجار العام مقفول حاليًا — المفتاح " +
+          "مش هيشتغل لحد ما تفعّل «بيع التجار» من إعدادات البوت.";
+      return { kind: "ok", text: text + note };
+    }
+    return { kind: "warn", text: "المفتاح اتعمل والحساب اتفتح، بس " +
+      "الرسالة ما وصلتش للعميل — ممكن يكون قافل البوت. يقدر يطلع " +
+      "مفتاحه بنفسه من قسم التجار في البوت." + note };
+  }
+  return null;
+}
 /*PURE-MERCHANTS-END*/
 
 var merchantsState = { items: [], loaded: false, listFailed: false,
@@ -7882,6 +7916,7 @@ function loadMerchants(){
 }
 function ensureMerchantsLoaded(){ if (!merchantsState.loaded) loadMerchants(); }
 $("mchReloadBtn").addEventListener("click", loadMerchants);
+$("mchGrantBtn").addEventListener("click", function(){ askGrantMerchantKey(""); });
 
 function keyIdOf(k){
   if (!k || typeof k !== "object") return null;
@@ -7907,6 +7942,11 @@ function renderMerchantDetail(){
     "<span>الحالة: <b>" + (active ? "شغال" : "واقف") + "</b></span>" +
     '<button class="btn ghost small" type="button" id="mchToggleBtn">' + (active ? "إيقاف التاجر" : "تفعيل التاجر") + "</button>" +
   "</div>";
+  if (!m.activated || !merchantsState.keys.length){
+    html += '<div class="row-actions" style="margin-top:8px;">' +
+      '<button class="btn small" type="button" id="mchGrantDetailBtn">افتح مفتاح وابعته للعميل</button>' +
+    "</div>";
+  }
 
   html += '<h3 style="margin-top:16px;">مفاتيح الدخول</h3>';
   if (!merchantsState.keys.length){
@@ -7958,6 +7998,10 @@ function renderMerchantDetail(){
   body.innerHTML = html;
 
   $("mchToggleBtn").addEventListener("click", function(){ toggleMerchant(); });
+  var mchGrantDetailBtn = $("mchGrantDetailBtn");
+  if (mchGrantDetailBtn) mchGrantDetailBtn.addEventListener("click", function(){
+    askGrantMerchantKey(m.customer_ref ? String(m.customer_ref) : "");
+  });
   body.querySelectorAll("[data-mch-allowsave]").forEach(function(b){
     b.addEventListener("click", function(){
       var idx = Number(b.getAttribute("data-mch-allowsave"));
@@ -8121,6 +8165,75 @@ function askRotateMerchantKey(k){
           else showMerchantsMsg("warn", "اتغيّر المفتاح، بس البوت ما بعتش المفتاح الجديد في رده — راجع البوت قبل ما تقفل الشاشة.");
         }).catch(throwPinGate);
     }, "merchants");
+}
+function lookupGrantCustomer(){
+  var refInput = $("mchGrantRef");
+  var box = $("mchGrantInfo");
+  if (!refInput || !box) return;
+  var ref = (refInput.value || "").trim();
+  if (!/^\d{1,64}$/.test(ref)){
+    box.innerHTML = '<div class="sub" style="color:var(--muted)">اكتب رقم آيدي صحيح الأول (أرقام بس).</div>';
+    return;
+  }
+  box.innerHTML = '<div class="sub" style="color:var(--muted)">بنجيب بيانات الرقم ده…</div>';
+  api("/control/bot-customer?ref=" + encodeURIComponent(ref))
+    .then(function(d){
+      var c = (d && d.customer) || {};
+      var conv = (d && d.conversation) || {};
+      var bits = [];
+      if (c.balance_egp !== null && c.balance_egp !== undefined)
+        bits.push("رصيد محفظة البوت: " + fmtNum(Number(c.balance_egp)) + " ج.م");
+      if (c.wallet_created_at)
+        bits.push("المحفظة من " + fmtDT(c.wallet_created_at));
+      var lastAct = conv.last_at || conv.state_updated_at;
+      if (lastAct) bits.push("آخر نشاط: " + fmtDT(lastAct));
+      var found = null;
+      merchantsState.items.forEach(function(it){
+        if (String(it.customer_ref) === ref) found = it;
+      });
+      if (found)
+        bits.push(found.activated === true
+          ? "مسجل كتاجر ومفعّل أصلًا"
+          : "مسجل كتاجر ولسه مش مفعّل");
+      box.innerHTML = '<div class="preview">' +
+        esc(bits.length ? bits.join(" · ") : "العميل موجود عند البوت.") +
+        "</div>";
+    }).catch(function(e){
+      box.innerHTML = '<div class="preview"><span class="warn">' +
+        esc(errText(e, "merchants")) + "</span></div>";
+    });
+}
+function askGrantMerchantKey(prefillRef){
+  var body =
+    "<p>هيتفتح للعميل ده قفل واجهة التجار ومفتاح دخول — <b>مجانًا من عندك</b>، من غير شرط شراء سابق ولا رسم التفعيل. المفتاح بيتبعت <b>للعميل نفسه في البوت</b> على طول، ومش بيظهر هنا في اللوحة.</p>" +
+    '<div class="field"><label>رقم آيدي العميل على تليجرام (أرقام بس)</label>' +
+    '<input id="mchGrantRef" type="text" dir="ltr" inputmode="numeric" autocomplete="off" value="' + esc(prefillRef || "") + '"></div>' +
+    '<div class="field" style="margin-top:8px;"><label>سبب الفتح (اختياري — بيتحفظ في سجل التغييرات)</label>' +
+    '<input id="mchGrantReason" type="text" autocomplete="off"></div>' +
+    '<div class="row-actions" style="margin-top:8px;">' +
+      '<button class="btn ghost small" type="button" id="mchGrantLookup">عرض بيانات الرقم ده الأول</button>' +
+    "</div>" +
+    '<div id="mchGrantInfo" style="margin-top:8px;"></div>';
+  openActSheet("افتح مفتاح لتاجر", body, "افتح المفتاح وابعت للعميل", function(){
+    var ref = ($("mchGrantRef").value || "").trim();
+    if (!/^\d{1,64}$/.test(ref))
+      failValidation("رقم الآيدي لازم يكون أرقام بس — ده رقم الشات بتاع العميل على تليجرام.");
+    var reason = ($("mchGrantReason").value || "").trim();
+    // المنح محروس بالرقم السري (م٦-د) لو مضبوط — زي التدوير.
+    return withPin({ customer_ref: ref, reason: reason })
+      .then(function(b){
+        return api("/control/bot-merchant-key-grant", { method: "POST", body: b });
+      })
+      .then(function(d){
+        var out = merchantGrantOutcome(d);
+        if (out) showMerchantsMsg(out.kind, esc(out.text));
+        else showMerchantsMsg("ok", "اتنفذ الفتح.");
+        loadMerchants();
+        reloadMerchantDetail();
+      }).catch(throwPinGate);
+  }, "merchants");
+  $("mchGrantLookup").addEventListener("click", lookupGrantCustomer);
+  if (prefillRef) lookupGrantCustomer();
 }
 
 // ============================================================

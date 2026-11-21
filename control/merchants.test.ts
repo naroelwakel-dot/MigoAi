@@ -77,6 +77,7 @@ const ALL_PATHS: [string, string][] = [
   ["/control/bot-merchant-key-set", "POST"],
   ["/control/bot-merchant-key-allowlist", "POST"],
   ["/control/bot-merchant-key-rotate", "POST"],
+  ["/control/bot-merchant-key-grant", "POST"],
 ];
 
 // ---------------------------------------------------------------- المسارات
@@ -89,7 +90,7 @@ Deno.test("مسارات غريبة بترجع null", async () => {
   eq(await handleControlMerchantsRequest(req("/control/store-coupons"), d), null, "coupons");
 });
 
-Deno.test("بوابة الأدمن على مسارات التجار الستة", async () => {
+Deno.test("بوابة الأدمن على مسارات التجار السبعة", async () => {
   const bot = new FakeBotClient();
   const d = depsOf(bot, false);
   for (const [p, m] of ALL_PATHS) {
@@ -113,6 +114,7 @@ Deno.test("405 قبل البوابة وقبل أي نداء", async () => {
     ["/control/bot-merchant-key-set", "DELETE"],
     ["/control/bot-merchant-key-allowlist", "GET"],
     ["/control/bot-merchant-key-rotate", "PUT"],
+    ["/control/bot-merchant-key-grant", "GET"],
   ];
   for (const [p, m] of cases) {
     const res = await handleControlMerchantsRequest(req(p, m), d);
@@ -194,6 +196,44 @@ Deno.test("التمريرات الستة حرفية وبنفس الحالة", as
   eq((await bodyOf(res)).new_key, "mgk_newsecretvalue1234", "rotated secret passes through for the one-time display");
 });
 
+Deno.test("تمرير المنح حرفي: الجسم والرد والحالات", async () => {
+  const bot = new FakeBotClient();
+  const d = depsOf(bot);
+  const grantBody = { customer_ref: "7484779006", reason: "شريك" };
+  bot.result = {
+    status: 200,
+    body: {
+      ok: true,
+      granted: true,
+      key_prefix: "migo_live_ab",
+      delivery: "sent",
+      api_enabled: false,
+      merchant: { id: "m-1", customer_ref: "7484779006" },
+    },
+  };
+  let res = await handleControlMerchantsRequest(
+    req("/control/bot-merchant-key-grant", "POST", grantBody),
+    d,
+  );
+  eq(res?.status, 200, "grant status");
+  eq(bot.calls[0].method, "POST", "grant method");
+  eq(bot.calls[0].path, "/api/control/merchant-key-grant", "grant path");
+  eq(bot.calls[0].body, grantBody, "grant body verbatim");
+  const out = await bodyOf(res);
+  eq(out.key_prefix, "migo_live_ab", "grant prefix passthrough");
+  eq(out.delivery, "sent", "grant delivery passthrough");
+  // رد المنح مفيهوش أي سرّ خام من الأساس — البادئة بس اللي بتعدّي.
+  ok(!("api_key" in out), "grant response carries no raw key field");
+
+  bot.result = { status: 404, body: { ok: false, error: "customer_not_found" } };
+  res = await handleControlMerchantsRequest(
+    req("/control/bot-merchant-key-grant", "POST", { customer_ref: "1" }),
+    d,
+  );
+  eq(res?.status, 404, "grant 404 passthrough");
+  eq((await bodyOf(res)).error, "customer_not_found", "grant error verbatim");
+});
+
 Deno.test("جسم POST مش كائن = 400 من غير نداء بوت", async () => {
   const bot = new FakeBotClient();
   const d = depsOf(bot);
@@ -258,6 +298,9 @@ interface PureMerchants {
   validCidrLine: (line: string) => boolean;
   parseAllowlist: (text: string) => { list: string[] | null; problem: string };
   rotatedSecretOf: (d: Record<string, unknown> | null) => string;
+  merchantGrantOutcome: (
+    d: Record<string, unknown> | null,
+  ) => { kind: string; text: string } | null;
 }
 
 const PB = "/*PURE-MERCHANTS-BEGIN*/";
@@ -269,7 +312,7 @@ if (begin < 0 || end <= begin) {
 }
 const pure = (new Function(
   html.slice(begin, end) +
-    "\nreturn { merchantsItemsOf, merchantDetailOf, merchantKeysOf, merchantOrdersOf, merchantActiveOf, merchantKeysCountOf, merchantOrdersCountOf, maskedKeyText, keyAllowlistOf, allowlistText, validCidrLine, parseAllowlist, rotatedSecretOf };",
+    "\nreturn { merchantsItemsOf, merchantDetailOf, merchantKeysOf, merchantOrdersOf, merchantActiveOf, merchantKeysCountOf, merchantOrdersCountOf, maskedKeyText, keyAllowlistOf, allowlistText, validCidrLine, parseAllowlist, rotatedSecretOf, merchantGrantOutcome };",
 ) as () => PureMerchants)();
 
 Deno.test("merchantsItemsOf و merchantDetailOf: أول شكل معروف", () => {
@@ -349,4 +392,36 @@ Deno.test("keyAllowlistOf و allowlistText و rotatedSecretOf", () => {
   eq(pure.rotatedSecretOf({ secret: "mgk_y" }), "mgk_y", "secret fallback");
   eq(pure.rotatedSecretOf({ ok: true }), "", "no secret field");
   eq(pure.rotatedSecretOf(null), "", "null response");
+});
+
+Deno.test("merchantGrantOutcome: حالات المنح الأربع برسائل واضحة", () => {
+  const sent = pure.merchantGrantOutcome(
+    { granted: true, delivery: "sent", api_enabled: true });
+  eq(sent?.kind, "ok", "sent kind");
+  ok(sent!.text.includes("اتبعت للعميل في البوت"), "sent text says delivered");
+
+  const sentFlagOff = pure.merchantGrantOutcome(
+    { granted: true, delivery: "sent", api_enabled: false });
+  eq(sentFlagOff?.kind, "ok", "sent+flag off kind");
+  ok(sentFlagOff!.text.includes("مقفول حاليًا"), "flag-off warning present");
+
+  const undelivered = pure.merchantGrantOutcome(
+    { granted: true, delivery: "undelivered",
+      issued_but_undelivered: true });
+  eq(undelivered?.kind, "warn", "undelivered kind is a warning");
+  ok(undelivered!.text.includes("ما وصلتش للعميل"), "undelivered text");
+
+  const already = pure.merchantGrantOutcome(
+    { already_open: true, key_prefix: "migo_live_ab" });
+  eq(already?.kind, "ok", "already_open kind");
+  ok(already!.text.includes("migo_live_ab"), "already_open shows prefix");
+  ok(already!.text.includes("ما اتعملش مفتاح جديد"), "already_open no new key");
+
+  const audited = pure.merchantGrantOutcome(
+    { granted: true, delivery: "sent", api_enabled: true,
+      audit_failed: true });
+  ok(audited!.text.includes("سجل التغييرات فشل"), "audit failure noted");
+
+  eq(pure.merchantGrantOutcome(null), null, "null response");
+  eq(pure.merchantGrantOutcome({ ok: true }), null, "shapeless response");
 });
