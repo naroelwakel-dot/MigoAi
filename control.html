@@ -644,6 +644,24 @@
   </section>
 </main>
 
+<main id="guardsMain" class="hidden">
+  <div class="msg" id="grdMsg"></div>
+
+  <section class="card">
+    <h2>الحراس</h2>
+    <div class="sub" style="color:var(--muted); font-size:12px;">كل حارس له اسم ثابت ومهمة واحدة — هنا آخر مرة فحص فيها وحكم آخر فحص. الحراس بيشتغلوا لوحدهم وبيبعتوا تنبيهات؛ الزرار ده بيفوّقهم كلهم ويخليهم يعيدوا فحصهم دلوقتي.</div>
+    <button class="btn" id="grdWakeBtn" type="button" style="margin-top:12px;">فوّق الكل دلوقتي</button>
+    <div class="updated" id="grdWakeInfo"></div>
+    <div id="grdSummary" style="margin-top:8px;"></div>
+  </section>
+
+  <section class="card">
+    <div id="grdBody"></div>
+    <button class="btn secondary" id="grdReloadBtn" type="button" style="margin-top:12px;">تحديث</button>
+    <div class="updated" id="grdUpdated"></div>
+  </section>
+</main>
+
 <main id="reviewsMain" class="hidden">
   <div class="msg" id="revMsg"></div>
 
@@ -1154,7 +1172,7 @@ $("storePill").addEventListener("click", load);
 // شغالين، و«المزيد» فيها أسعار الموقع (م٣) والكتالوج والموردون
 // (م٣-ب) والأحداث والمكونات (م٤).
 var navNames = { events: "الأحداث", more: "المزيد" };
-var viewTitles = { home: "مهامي الآن", customers: "العملاء", orders: "الطلبات", chats: "المحادثات", prices: "أسعار الموقع", catalog: "الكتالوج", suppliers: "الموردون", events: "الأحداث", settings: "إعدادات البوت", channel: "قناة التليجرام", coupons: "الكوبونات", merchants: "التجار", site: "الموقع: الدفع والمحتوى", visitors: "زوار البوت", preview: "شوف كما يراه العميل", health: "صحة النظام", reviews: "التقييمات", adminUsers: "حسابات الموقع" };
+var viewTitles = { home: "مهامي الآن", customers: "العملاء", orders: "الطلبات", chats: "المحادثات", prices: "أسعار الموقع", catalog: "الكتالوج", suppliers: "الموردون", events: "الأحداث", settings: "إعدادات البوت", channel: "قناة التليجرام", coupons: "الكوبونات", merchants: "التجار", site: "الموقع: الدفع والمحتوى", visitors: "زوار البوت", preview: "شوف كما يراه العميل", health: "صحة النظام", guards: "الحراس", reviews: "التقييمات", adminUsers: "حسابات الموقع" };
 function showView(name){
   $("homeMain").classList.toggle("hidden", name !== "home");
   $("customersMain").classList.toggle("hidden", name !== "customers");
@@ -1172,13 +1190,14 @@ function showView(name){
   $("visitorsMain").classList.toggle("hidden", name !== "visitors");
   $("previewMain").classList.toggle("hidden", name !== "preview");
   $("healthMain").classList.toggle("hidden", name !== "health");
+  $("guardsMain").classList.toggle("hidden", name !== "guards");
   $("reviewsMain").classList.toggle("hidden", name !== "reviews");
   $("adminUsersMain").classList.toggle("hidden", name !== "adminUsers");
   $("pageTitle").textContent = viewTitles[name] || "";
   document.querySelectorAll("#bottomNav button").forEach(function(b){
     var nav = b.getAttribute("data-nav");
     // أسعار الموقع والكتالوج والموردون والإعدادات والقناة والكوبونات والتجار بيتفتحوا من «المزيد» فزرها هو اللي بيتلوّن وهم مفتوحين.
-    b.classList.toggle("active", nav === name || ((name === "prices" || name === "catalog" || name === "suppliers" || name === "settings" || name === "channel" || name === "coupons" || name === "merchants" || name === "site" || name === "preview" || name === "health" || name === "reviews" || name === "adminUsers") && nav === "more"));
+    b.classList.toggle("active", nav === name || ((name === "prices" || name === "catalog" || name === "suppliers" || name === "settings" || name === "channel" || name === "coupons" || name === "merchants" || name === "site" || name === "preview" || name === "health" || name === "guards" || name === "reviews" || name === "adminUsers") && nav === "more"));
   });
   if (name !== "chats" && typeof stopChatPolling === "function") stopChatPolling();
   window.scrollTo({ top: 0 });
@@ -1219,6 +1238,11 @@ function refreshVisibleView(){
     if (!getKey()) return;
     viewRefreshedAt[name] = now;
     load();
+  } else if (name === "guards") {
+    if (typeof guardsState === "undefined" || !guardsState.loaded) return;
+    if (typeof loadGuards !== "function") return;
+    viewRefreshedAt[name] = now;
+    loadGuards();
   }
 }
 document.addEventListener("visibilitychange", function(){
@@ -1245,6 +1269,7 @@ document.querySelectorAll("#bottomNav button").forEach(function(b){
         '<button class="btn" id="moreSuppliersBtn" type="button">الموردون</button>' +
         '<button class="btn" id="moreEventsBtn" type="button">الأحداث</button>' +
         '<button class="btn" id="moreHealthBtn" type="button">صحة النظام والحراس</button>' +
+        '<button class="btn" id="moreGuardsBtn" type="button">الحراس</button>' +
         '<div class="group-title">النشر والموقع</div>' +
         '<button class="btn" id="moreChannelBtn" type="button">قناة التليجرام</button>' +
         '<button class="btn" id="moreSiteBtn" type="button">الموقع: الدفع والمحتوى</button>' +
@@ -1281,6 +1306,11 @@ document.querySelectorAll("#bottomNav button").forEach(function(b){
         closeSheet();
         showView("health");
         ensureHealthLoaded();
+      });
+      $("moreGuardsBtn").addEventListener("click", function(){
+        closeSheet();
+        showView("guards");
+        ensureGuardsLoaded();
       });
       $("moreSettingsBtn").addEventListener("click", function(){
         closeSheet();
@@ -8983,6 +9013,140 @@ function loadHealth(){
 }
 function ensureHealthLoaded(){ if (!healthState.loaded) loadHealth(); }
 $("hlthReloadBtn").addEventListener("click", loadHealth);
+
+// ---------------- الحراس ----------------
+// المنطق النقي لشاشة الحراس: الاشتقاق من رد البوت بس — اللوحة
+// ما بتجمعش حالة بنفسها، والحارس اللي البوت قال إنه مالوش فحص
+// لسه بيظهر «لسه مفيش فحص مسجل» زي ما هو.
+/*PURE-GUARDS-BEGIN*/
+function guardStatusView(g){
+  if (!g) return { key: "unknown", word: "لسه مفيش فحص", dot: "" };
+  if (g.status === "problem") return { key: "problem", word: "في مشكلة", dot: "bad" };
+  if (g.status === "ok") return { key: "ok", word: "يعمل", dot: "ok" };
+  return { key: "unknown", word: "لسه مفيش فحص", dot: "" };
+}
+function guardRelText(epochSec, nowMs){
+  if (!epochSec) return null;
+  var sec = Math.max(0, Math.floor(nowMs / 1000 - epochSec));
+  if (sec < 60) return "دلوقتي";
+  var min = Math.floor(sec / 60);
+  if (min < 60) return "منذ " + min + " دقيقة";
+  var hr = Math.floor(min / 60);
+  if (hr < 24) return "منذ " + hr + " ساعة";
+  var day = Math.floor(hr / 24);
+  return "منذ " + day + " يوم";
+}
+function guardAbsText(epochSec){
+  if (!epochSec) return null;
+  try {
+    return new Date(epochSec * 1000).toLocaleString("ar-EG-u-nu-latn",
+      { timeZone: "Africa/Cairo", day: "numeric", month: "numeric",
+        hour: "numeric", minute: "2-digit" });
+  } catch (e) { return null; }
+}
+function guardWhenText(g, nowMs){
+  if (!g || !g.last_check_at) return "لسه مفيش فحص مسجل";
+  var rel = guardRelText(g.last_check_at, nowMs);
+  var abs = guardAbsText(g.last_check_at);
+  return "آخر فحص: " + rel + (abs ? " · " + abs : "");
+}
+var GUARD_GROUP_TITLES = [["vps", "حراس السيرفر"], ["cloudflare", "حراس السحابة"], ["agent", "حراس المتابعة"]];
+function guardsSummaryOf(payload){
+  var counts = { ok: 0, problem: 0, unknown: 0 };
+  var list = (payload && payload.guards) || [];
+  list.forEach(function(g){
+    var k = g && g.status;
+    if (counts[k] === undefined) k = "unknown";
+    counts[k]++;
+  });
+  return counts;
+}
+/*PURE-GUARDS-END*/
+
+var guardsState = { data: null, loaded: false, failed: false };
+
+function showGuardsMsg(kind, html, withKeyBtn){
+  var box = $("grdMsg");
+  box.className = "msg " + kind;
+  box.innerHTML = html + (withKeyBtn
+    ? '<button class="btn" id="grdKeyBtn" type="button">كتابة المفتاح</button>' : "");
+  if (withKeyBtn) $("grdKeyBtn").addEventListener("click", askKey);
+}
+function hideGuardsMsg(){ $("grdMsg").className = "msg"; $("grdMsg").innerHTML = ""; }
+
+function guardRowHtml(g){
+  var view = guardStatusView(g);
+  var meta = esc(g.mission || "") + "<br>" + esc(guardWhenText(g, Date.now()));
+  if (g.verdict) meta += "<br><b>" + esc(g.verdict) + "</b>";
+  return '<div class="comp-row"><span class="dot ' + view.dot + '"></span>' +
+    '<span class="name">' + esc(g.name || "") + '</span>' +
+    '<span class="meta">' + view.word + "<br>" + meta + "</span></div>";
+}
+function renderGuards(){
+  var box = $("grdBody");
+  if (guardsState.failed || !guardsState.data){
+    box.innerHTML = '<div class="empty">حالة الحراس غير متاحة الآن — البوت مش بيرد. اضغط تحديث بعد شوية.</div>';
+    $("grdSummary").innerHTML = "";
+    $("grdWakeInfo").textContent = "";
+    return;
+  }
+  var d = guardsState.data;
+  var counts = guardsSummaryOf(d);
+  $("grdSummary").innerHTML = '<span style="color:var(--muted); font-size:12px;">شغالين: <b>' +
+    counts.ok + "</b> · في مشكلة: <b>" + counts.problem +
+    "</b> · لسه مفيش فحص: <b>" + counts.unknown + "</b></span>";
+  if (d.wake && d.wake.requested_at) {
+    $("grdWakeInfo").textContent = "آخر طلب تفويق: " +
+      (guardRelText(d.wake.requested_at, Date.now()) || "") +
+      (guardAbsText(d.wake.requested_at) ? " · " + guardAbsText(d.wake.requested_at) : "");
+  } else {
+    $("grdWakeInfo").textContent = "";
+  }
+  var html = "";
+  GUARD_GROUP_TITLES.forEach(function(pair){
+    var rows = (d.guards || []).filter(function(g){ return g.group === pair[0]; });
+    if (!rows.length) return;
+    html += healthSection(pair[1], rows.map(guardRowHtml).join(""));
+  });
+  box.innerHTML = html || '<div class="empty">مفيش حراس معروفين.</div>';
+  var gen = relTime(d.generated_at);
+  $("grdUpdated").textContent = "آخر تحديث: " + (gen || "دلوقتي");
+}
+function loadGuards(){
+  hideGuardsMsg();
+  api("/control/guards").then(function(d){
+    guardsState.data = d;
+    guardsState.failed = false;
+    guardsState.loaded = true;
+    renderGuards();
+  }).catch(function(e){
+    guardsState.data = null;
+    guardsState.failed = true;
+    guardsState.loaded = true;
+    renderGuards();
+    if (e && e.noKey) showGuardsMsg("err", "لازم تكتب مفتاح الأدمن الأول.", true);
+    else if (!(e && e.status === 401)) showGuardsMsg("err", esc(errText(e, "guards")));
+  });
+}
+function ensureGuardsLoaded(){ if (!guardsState.loaded) loadGuards(); }
+$("grdReloadBtn").addEventListener("click", loadGuards);
+$("grdWakeBtn").addEventListener("click", function(){
+  var btn = $("grdWakeBtn");
+  btn.disabled = true;
+  withPin({}).then(function(b){
+    return api("/control/guards-wake", { method: "POST", body: b });
+  }).then(function(d){
+    var vps = (d && d.vps) || {};
+    var total = Object.keys(vps).length;
+    var okCount = Object.keys(vps).filter(function(k){ return vps[k]; }).length;
+    showGuardsMsg("ok", "اتطلب تفويق الكل: حراس السيرفر اتعاد تشغيل " + okCount +
+      " من " + total + "، وحراس المتابعة هيشتغلوا خلال دقيقتين. حدّث الشاشة بعد شوية عشان تشوف فحوصاتهم الجديدة.");
+    loadGuards();
+  }).catch(function(e){
+    if (e && e.noKey) showGuardsMsg("err", "لازم تكتب مفتاح الأدمن الأول.", true);
+    else if (!(e && e.status === 401)) showGuardsMsg("err", esc(errText(e, "guards")));
+  }).then(function(){ btn.disabled = false; });
+});
 
 // ---------------- التقييمات ----------------
 var revState = { filter: "pending", items: [], loaded: false, failed: false };
