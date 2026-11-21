@@ -122,6 +122,20 @@ import {
   type ControlPreviewDeps,
   handleControlPreviewRequest,
 } from "./control/preview.ts";
+import {
+  type ControlHealthDeps,
+  handleControlHealthRequest,
+} from "./control/health.ts";
+import {
+  type ControlReviewsDeps,
+  handleControlReviewsRequest,
+  PostgrestReviewsClient,
+} from "./control/reviews.ts";
+import {
+  type ControlAdminUsersDeps,
+  GoTrueAdminUsersClient,
+  handleControlAdminUsersRequest,
+} from "./control/admin_users.ts";
 import { bridgeBaseUrl } from "./sheerid/config.ts";
 import {
   isSessionShaped,
@@ -791,6 +805,65 @@ function getControlPreviewDeps(): ControlPreviewDeps {
     logError,
   };
   return _controlPreviewDeps;
+}
+
+// ---------------------------------------------------------------------------
+// لوحة التحكم: صحة النظام والحراس (تمرير قراءة بس لنقطة البوت
+// /api/control/system-health بنفس اعتماد الجسر)، وإدارة تقييمات
+// المتجر (جدول reviews بمفتاح الخدمة — قرار الموافقة/الرفض هو
+// بوابة النشر في الموقع)، ومستخدمو الأدمن (GoTrue Admin بنفس
+// مفتاح الخدمة وعقد ban_duration بتاع م١-ج، مع حاجزي قفل النفس).
+// جلسة اللوحة الحالية مش مربوطة بمستخدم مصادقة (admin_auth.ts)،
+// فـ requesterIdOf بيرجع null وحاجز حظر النفس بيشتغل أول ما
+// الجلسات تتربط بمستخدمين — حاجز آخر حساب غير محظور شغال دايمًا.
+// ---------------------------------------------------------------------------
+let _controlHealthDeps: ControlHealthDeps | null = null;
+function getControlHealthDeps(): ControlHealthDeps {
+  if (_controlHealthDeps) return _controlHealthDeps;
+  _controlHealthDeps = {
+    botClient: new BridgeBotControlProxyClient({
+      baseUrlOf: () => bridgeBaseUrl((n) => Deno.env.get(n)),
+      bridgeTokenOf: controlBridgeTokenOf(),
+    }),
+    isAdmin,
+    corsOf: (r: Request) => corsHeaders(r),
+    logError,
+  };
+  return _controlHealthDeps;
+}
+
+let _controlReviewsDeps: ControlReviewsDeps | null = null;
+function getControlReviewsDeps(): ControlReviewsDeps {
+  if (_controlReviewsDeps) return _controlReviewsDeps;
+  const env = (n: string) => Deno.env.get(n) || "";
+  _controlReviewsDeps = {
+    client: new PostgrestReviewsClient({
+      baseUrl: SB_URL,
+      keyOf: () => env("SUPABASE_SERVICE_ROLE_KEY"),
+    }),
+    isAdmin,
+    corsOf: (r: Request) => corsHeaders(r),
+    logError,
+    nowIso: () => new Date().toISOString(),
+  };
+  return _controlReviewsDeps;
+}
+
+let _controlAdminUsersDeps: ControlAdminUsersDeps | null = null;
+function getControlAdminUsersDeps(): ControlAdminUsersDeps {
+  if (_controlAdminUsersDeps) return _controlAdminUsersDeps;
+  const env = (n: string) => Deno.env.get(n) || "";
+  _controlAdminUsersDeps = {
+    client: new GoTrueAdminUsersClient({
+      baseUrl: SB_URL,
+      keyOf: () => env("SUPABASE_SERVICE_ROLE_KEY"),
+    }),
+    isAdmin,
+    corsOf: (r: Request) => corsHeaders(r),
+    logError,
+    requesterIdOf: () => null,
+  };
+  return _controlAdminUsersDeps;
 }
 
 // ---------------------------------------------------------------------------
@@ -2472,6 +2545,21 @@ Deno.serve(async (req: Request) => {
         getControlPreviewDeps(),
       );
       if (previewRes) return previewRes;
+      const healthRes = await handleControlHealthRequest(
+        req,
+        getControlHealthDeps(),
+      );
+      if (healthRes) return healthRes;
+      const reviewsRes = await handleControlReviewsRequest(
+        req,
+        getControlReviewsDeps(),
+      );
+      if (reviewsRes) return reviewsRes;
+      const adminUsersRes = await handleControlAdminUsersRequest(
+        req,
+        getControlAdminUsersDeps(),
+      );
+      if (adminUsersRes) return adminUsersRes;
     } catch (e) {
       logError("control.customers.route", "unhandled customers route error", e);
     }

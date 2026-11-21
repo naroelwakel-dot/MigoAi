@@ -224,6 +224,11 @@
     <div id="compRows"></div>
   </section>
 
+  <section class="card" id="sysHealthCard" style="cursor:pointer;">
+    <h2>صحة النظام والحراس</h2>
+    <div class="sub" id="sysHealthStrip" style="color:var(--muted); font-size:13px;">بيحمّل حالة النظام…</div>
+  </section>
+
   <div id="queueWrap" class="hidden" style="display:flex; flex-direction:column; gap:10px;"></div>
 
   <section class="card" id="visitorsEntryCard">
@@ -627,6 +632,46 @@
       </div>
     </div>
     <div id="pvProductBox" style="margin-top:10px;"></div>
+  </section>
+</main>
+
+<main id="healthMain" class="hidden">
+  <div class="msg" id="hlthMsg"></div>
+
+  <section class="card">
+    <h2>صحة النظام والحراس</h2>
+    <div class="sub" style="color:var(--muted); font-size:13px;">قراءة بس — حالة البوت وحلقات السيرفر وأرصدة الموردين والحراس زي ما هي دلوقتي. الحراس بيتصرفوا لوحدهم وبيبعتوا تنبيهات؛ الشاشة دي عشان تشوف الصورة كاملة في أي وقت.</div>
+    <div id="hlthBody" style="margin-top:6px;"></div>
+    <button class="btn secondary" id="hlthReloadBtn" type="button" style="margin-top:10px;">تحديث</button>
+    <div class="updated" id="hlthUpdated"></div>
+  </section>
+</main>
+
+<main id="reviewsMain" class="hidden">
+  <div class="msg" id="revMsg"></div>
+
+  <section class="card">
+    <h2>تقييمات العملاء</h2>
+    <div class="sub" style="color:var(--muted); font-size:13px;">التقييمات المقبولة بس هي اللي بتظهر للعملاء في الموقع. راجع اللي بانتظار القرار ووافق عليه أو ارفضه.</div>
+    <div class="row-actions" id="revFilters" style="margin-top:10px;">
+      <button class="btn small" type="button" data-rev-filter="pending">بانتظار القرار</button>
+      <button class="btn secondary small" type="button" data-rev-filter="approved">مقبولة</button>
+      <button class="btn secondary small" type="button" data-rev-filter="rejected">مرفوضة</button>
+      <button class="btn secondary small" type="button" data-rev-filter="all">الكل</button>
+    </div>
+    <div id="revList" style="margin-top:6px;"></div>
+    <button class="btn secondary" id="revReloadBtn" type="button" style="margin-top:10px;">تحديث القائمة</button>
+  </section>
+</main>
+
+<main id="adminUsersMain" class="hidden">
+  <div class="msg" id="admMsg"></div>
+
+  <section class="card">
+    <h2>حسابات الموقع</h2>
+    <div class="sub" style="color:var(--muted); font-size:13px;">حسابات الدخول للموقع — الحظر بيمنع تسجيل الدخول فورًا. حساب الدخول بتاعك وآخر حساب غير محظور محميين من الحظر عشان الدخول ما يتقفلش على الكل.</div>
+    <div id="admList" style="margin-top:6px;"></div>
+    <button class="btn secondary" id="admReloadBtn" type="button" style="margin-top:10px;">تحديث القائمة</button>
   </section>
 </main>
 
@@ -1057,6 +1102,10 @@ function render(data){
   // فشله ما يعطّلش الرئيسية، وشاشة الزوار نفسها بتوضّح الخطأ).
   refreshVisitorsCount();
 
+  // شريط صحة النظام في الرئيسية (تحميل هادي زيه بالظبط: فشله
+  // بيكتب «غير متاحة» في الشريط بس ومش بيوقع الرئيسية).
+  loadSystemStrip();
+
   var gen = relTime(data.generated_at);
   $("updatedLine").textContent = "آخر تحديث: " + (gen || "دلوقتي");
 }
@@ -1104,7 +1153,7 @@ $("storePill").addEventListener("click", load);
 // شغالين، و«المزيد» فيها أسعار الموقع (م٣) والكتالوج والموردون
 // (م٣-ب) والأحداث والمكونات (م٤).
 var navNames = { events: "الأحداث", more: "المزيد" };
-var viewTitles = { home: "مهامي الآن", customers: "العملاء", orders: "الطلبات", chats: "المحادثات", prices: "أسعار الموقع", catalog: "الكتالوج", suppliers: "الموردون", events: "الأحداث والمكونات", settings: "إعدادات البوت", channel: "قناة التليجرام", coupons: "الكوبونات", merchants: "التجار", site: "الموقع", visitors: "زوار البوت", preview: "شوف كما يراه العميل" };
+var viewTitles = { home: "مهامي الآن", customers: "العملاء", orders: "الطلبات", chats: "المحادثات", prices: "أسعار الموقع", catalog: "الكتالوج", suppliers: "الموردون", events: "الأحداث والمكونات", settings: "إعدادات البوت", channel: "قناة التليجرام", coupons: "الكوبونات", merchants: "التجار", site: "الموقع", visitors: "زوار البوت", preview: "شوف كما يراه العميل", health: "صحة النظام", reviews: "التقييمات", adminUsers: "حسابات الموقع" };
 function showView(name){
   $("homeMain").classList.toggle("hidden", name !== "home");
   $("customersMain").classList.toggle("hidden", name !== "customers");
@@ -1121,11 +1170,14 @@ function showView(name){
   $("siteMain").classList.toggle("hidden", name !== "site");
   $("visitorsMain").classList.toggle("hidden", name !== "visitors");
   $("previewMain").classList.toggle("hidden", name !== "preview");
+  $("healthMain").classList.toggle("hidden", name !== "health");
+  $("reviewsMain").classList.toggle("hidden", name !== "reviews");
+  $("adminUsersMain").classList.toggle("hidden", name !== "adminUsers");
   $("pageTitle").textContent = viewTitles[name] || "";
   document.querySelectorAll("#bottomNav button").forEach(function(b){
     var nav = b.getAttribute("data-nav");
     // أسعار الموقع والكتالوج والموردون والإعدادات والقناة والكوبونات والتجار بيتفتحوا من «المزيد» فزرها هو اللي بيتلوّن وهم مفتوحين.
-    b.classList.toggle("active", nav === name || ((name === "prices" || name === "catalog" || name === "suppliers" || name === "settings" || name === "channel" || name === "coupons" || name === "merchants" || name === "site" || name === "preview") && nav === "more"));
+    b.classList.toggle("active", nav === name || ((name === "prices" || name === "catalog" || name === "suppliers" || name === "settings" || name === "channel" || name === "coupons" || name === "merchants" || name === "site" || name === "preview" || name === "health" || name === "reviews" || name === "adminUsers") && nav === "more"));
   });
   if (name !== "chats" && typeof stopChatPolling === "function") stopChatPolling();
   window.scrollTo({ top: 0 });
@@ -1146,11 +1198,14 @@ document.querySelectorAll("#bottomNav button").forEach(function(b){
         '<button class="btn" id="moreCatalogBtn" type="button">الكتالوج</button>' +
         '<button class="btn" id="moreSuppliersBtn" type="button">الموردون</button>' +
         '<button class="btn" id="moreEventsBtn" type="button">الأحداث والمكونات</button>' +
+        '<button class="btn" id="moreHealthBtn" type="button">صحة النظام والحراس</button>' +
         '<button class="btn" id="moreSettingsBtn" type="button">إعدادات البوت</button>' +
         '<button class="btn" id="moreChannelBtn" type="button">قناة التليجرام</button>' +
         '<button class="btn" id="moreCouponsBtn" type="button">الكوبونات</button>' +
         '<button class="btn" id="moreMerchantsBtn" type="button">التجار</button>' +
         '<button class="btn" id="moreSiteBtn" type="button">الموقع</button>' +
+        '<button class="btn" id="moreReviewsBtn" type="button">التقييمات</button>' +
+        '<button class="btn" id="moreAdminUsersBtn" type="button">حسابات الموقع</button>' +
         '<button class="btn" id="morePreviewBtn" type="button">شوف كما يراه العميل</button>' +
         "</div>";
       $("sheet").classList.add("open");
@@ -1174,6 +1229,11 @@ document.querySelectorAll("#bottomNav button").forEach(function(b){
         closeSheet();
         showView("events");
         ensureEventsLoaded();
+      });
+      $("moreHealthBtn").addEventListener("click", function(){
+        closeSheet();
+        showView("health");
+        ensureHealthLoaded();
       });
       $("moreSettingsBtn").addEventListener("click", function(){
         closeSheet();
@@ -1199,6 +1259,16 @@ document.querySelectorAll("#bottomNav button").forEach(function(b){
         closeSheet();
         showView("site");
         ensureSiteLoaded();
+      });
+      $("moreReviewsBtn").addEventListener("click", function(){
+        closeSheet();
+        showView("reviews");
+        ensureReviewsLoaded();
+      });
+      $("moreAdminUsersBtn").addEventListener("click", function(){
+        closeSheet();
+        showView("adminUsers");
+        ensureAdminUsersLoaded();
       });
       $("morePreviewBtn").addEventListener("click", function(){
         closeSheet();
@@ -1270,6 +1340,11 @@ function errText(e, ctx){
   if (code === "insufficient") return "الرصيد مش هيكفي لتنفيذ العملية دي.";
   if (code === "already_reversed") return "القيد ده اتعكس قبل كده.";
   if (code === "customer_not_found") return "العميل مش موجود.";
+  if (code === "review_not_found") return "التقييم ده مش موجود — يمكن اتمسح. حدّث القائمة.";
+  if (code === "invalid_decision") return "القرار لازم يكون موافقة أو رفض.";
+  if (code === "invalid_status") return "فلتر الحالة ده مش معروف.";
+  if (code === "user_not_found") return "المستخدم ده مش موجود — يمكن اتمسح. حدّث القائمة.";
+  if (code === "self_ban" || code === "last_admin") return (e.data && e.data.reason) || "الحظر ده مرفوض حمايةً من قفل الدخول على الكل.";
   if (code === "invalid_status") return "الحالة دي مش من حالات طلبات الموقع المعروفة.";
   if (code === "invalid_transition") return "تغيير الحالة ده مش مسموح من حالة الطلب الحالية.";
   if (code === "reason_required") return "اكتب سبب الإلغاء أو الاسترداد الأول.";
@@ -7959,6 +8034,424 @@ $("pvProductBtn").addEventListener("click", function(){
       if (!(e && e.status === 401)) showPvMsg("err", esc(errText(e, "preview")));
     });
 });
+
+// ============================================================
+// صحة النظام والحراس (قراءة بس) + تقييمات العملاء + مستخدمو
+// الأدمن. الصحة والتقييمات والمستخدمون بييجوا من نقاط اللوحة
+// /control/system-health و/control/reviews و/control/admin-users.
+// ============================================================
+
+/*PURE-HEALTH-BEGIN*/
+function healthUnitState(v){
+  if (v === "active" || v === true) return "active";
+  if (v && typeof v === "object"){
+    if (v.active === true || v.status === "active" || v.state === "active") return "active";
+    if (v.active === false || v.status === "inactive" || v.state === "inactive" ||
+        v.status === "failed" || v.state === "failed") return "down";
+  }
+  if (v === "inactive" || v === "failed" || v === false) return "down";
+  return "unknown";
+}
+function healthLoopsDown(d){
+  var loops = d && d.loops;
+  if (!loops || typeof loops !== "object") return null;
+  var units = loops.units;
+  if (!units || typeof units !== "object") return null;
+  var down = [];
+  Object.keys(units).forEach(function(name){
+    if (healthUnitState(units[name]) === "down") down.push(name);
+  });
+  return down;
+}
+function healthWebhookLabel(d){
+  var t = d && d.bot && d.bot.webhook_target;
+  if (t === "vps") return "على السيرفر";
+  if (t === "vercel") return "على Vercel الاحتياطي";
+  return "مش معروف";
+}
+var HEALTH_PROBLEM_LABELS = {
+  failover_stalled: "حارس الانتقال واقف",
+  failover_state_missing: "سجل حارس الانتقال مش موجود",
+  loops_stale: "حارس الحلقات متأخر",
+  loops_missed: "حارس الحلقات فاته إيقاف",
+  agent_unreachable: "وكيل السيرفر مش بيرد",
+  money_stale: "حارس الفلوس متأخر",
+  money_findings_persist: "حارس الفلوس لسه بيلاقي ملاحظات",
+  error_registry_missing: "سجل حارس الأخطاء مش موجود"
+};
+function healthGuardProblems(d){
+  var g = d && d.guards;
+  if (!g || typeof g !== "object") return null;
+  if (g.payload && typeof g.payload === "object") g = g.payload;
+  var out = [];
+  if (Array.isArray(g.problems)) {
+    g.problems.forEach(function(p){
+      var k = String(p && p.text ? p.text : p);
+      out.push(HEALTH_PROBLEM_LABELS[k] || k);
+    });
+    return out;
+  }
+  Object.keys(g).forEach(function(name){
+    var v = g[name];
+    if (!v || typeof v !== "object") return;
+    if (v.ok === false) out.push(name);
+    else if (typeof v.problems === "number" && v.problems > 0) out.push(name + " (" + v.problems + ")");
+    else if (Array.isArray(v.problems)) v.problems.forEach(function(p){ out.push(name + ": " + String(p)); });
+  });
+  return out;
+}
+function healthStripSummary(d){
+  if (!d || d.ok === false) return { ok: false, text: "حالة النظام غير متاحة الآن" };
+  var parts = [];
+  parts.push(d.bot && d.bot.ok ? "البوت يعمل" : "البوت مش بيرد");
+  parts.push("الويب هوك " + healthWebhookLabel(d));
+  var down = healthLoopsDown(d);
+  if (down === null) parts.push("الحلقات: غير متاح");
+  else if (down.length) parts.push("حلقات واقفة: " + down.length);
+  else parts.push("الحلقات كلها شغالة");
+  var probs = healthGuardProblems(d);
+  if (probs === null) parts.push("الحراس: غير متاح");
+  else if (probs.length) parts.push("مشاكل حراس: " + probs.length);
+  else parts.push("الحراس كلهم تمام");
+  var okAll = !!(d.bot && d.bot.ok) && (down === null || down.length === 0) && (probs === null || probs.length === 0);
+  return { ok: okAll, text: parts.join(" · ") };
+}
+/*PURE-HEALTH-END*/
+
+/*PURE-REVIEWS-BEGIN*/
+function reviewStatusLabel(status){
+  if (status === "approved") return { key: "approved", label: "مقبول — ظاهر في الموقع" };
+  if (status === "rejected") return { key: "rejected", label: "مرفوض" };
+  return { key: "pending", label: "بانتظار القرار" };
+}
+function reviewStars(rating){
+  var n = Math.round(Number(rating) || 0);
+  if (n < 0) n = 0;
+  if (n > 5) n = 5;
+  var s = "";
+  for (var i = 0; i < 5; i++) s += i < n ? "★" : "☆";
+  return s;
+}
+/*PURE-REVIEWS-END*/
+
+/*PURE-ADMIN-BEGIN*/
+function adminUserState(u){
+  if (!u) return { key: "active", label: "نشط" };
+  var banned = u.banned === true;
+  if (!banned && u.banned_until) {
+    var t = Date.parse(u.banned_until);
+    banned = isNaN(t) ? true : t > Date.now();
+  }
+  return banned ? { key: "banned", label: "محظور" } : { key: "active", label: "نشط" };
+}
+/*PURE-ADMIN-END*/
+
+// ---------------- شريط الصحة في الرئيسية + شاشة الصحة ----------------
+function loadSystemStrip(){
+  var el = $("sysHealthStrip");
+  if (!el) return;
+  var key = getKey();
+  if (!key) { el.textContent = "حالة النظام غير متاحة الآن"; return; }
+  fetch(API_BASE + "/control/system-health", { headers: { "x-migo-admin": key } })
+    .then(function(res){
+      return res.json().catch(function(){ return null; });
+    })
+    .then(function(d){
+      var s = healthStripSummary(d);
+      el.textContent = s.text;
+      el.style.color = s.ok ? "var(--muted)" : "var(--gold)";
+    })
+    .catch(function(){
+      el.textContent = "حالة النظام غير متاحة الآن";
+    });
+}
+$("sysHealthCard").addEventListener("click", function(){
+  showView("health");
+  ensureHealthLoaded();
+});
+
+var healthState = { data: null, loaded: false, failed: false };
+
+function showHealthMsg(kind, html, withKeyBtn){
+  var box = $("hlthMsg");
+  box.className = "msg " + kind;
+  box.innerHTML = html + (withKeyBtn
+    ? '<button class="btn" id="hlthKeyBtn" type="button">كتابة المفتاح</button>' : "");
+  if (withKeyBtn) $("hlthKeyBtn").addEventListener("click", askKey);
+}
+function hideHealthMsg(){ $("hlthMsg").className = "msg"; $("hlthMsg").innerHTML = ""; }
+
+function healthSection(title, innerHtml){
+  return '<h3 style="margin:16px 0 6px;">' + esc(title) + "</h3>" + innerHtml;
+}
+function renderHealth(){
+  var box = $("hlthBody");
+  if (healthState.failed || !healthState.data){
+    box.innerHTML = '<div class="empty">حالة النظام غير متاحة الآن — البوت مش بيرد. اضغط تحديث بعد شوية.</div>';
+    return;
+  }
+  var d = healthState.data;
+  var html = "";
+  var bot = d.bot || {};
+  html += healthSection("البوت",
+    compRow("بوت التليجرام", bot.ok ? "ok" : "bad",
+      bot.ok ? "بيرد وتمام" : "مش بيرد دلوقتي") +
+    compRow("الويب هوك", bot.webhook_target ? "ok" : "warn",
+      "العملاء بيوصلوا للبوت " + esc(healthWebhookLabel(d)) +
+      (bot.webhook_url ? '<br><span dir="ltr">' + esc(bot.webhook_url) + "</span>" : "")));
+  var loopsHtml = "";
+  if (!d.loops || typeof d.loops !== "object" || !d.loops.units || typeof d.loops.units !== "object"){
+    loopsHtml = '<div class="empty">بيانات الحلقات غير متاحة دلوقتي.</div>';
+  } else {
+    var names = Object.keys(d.loops.units);
+    if (!names.length) loopsHtml = '<div class="empty">مفيش حلقات معروفة.</div>';
+    names.forEach(function(name){
+      var st = healthUnitState(d.loops.units[name]);
+      loopsHtml += compRow(name,
+        st === "active" ? "ok" : (st === "down" ? "bad" : "warn"),
+        st === "active" ? "شغالة" : (st === "down" ? "واقفة" : "حالتها مش واضحة"));
+    });
+  }
+  html += healthSection("حلقات السيرفر", loopsHtml);
+  var provHtml = "";
+  var provs = Array.isArray(d.providers) ? d.providers : null;
+  if (!provs) provHtml = '<div class="empty">بيانات الموردين غير متاحة دلوقتي.</div>';
+  else if (!provs.length) provHtml = '<div class="empty">مفيش موردين.</div>';
+  else provs.forEach(function(p){
+    var name = p.name || p.key || p.slug || "مورد";
+    var bal = (typeof p.balance === "number" || typeof p.balance === "string")
+      ? fmtNum(p.balance) + (p.currency ? " " + esc(p.currency) : "")
+      : null;
+    var meta;
+    if (bal !== null) meta = "الرصيد: <b>" + bal + "</b>";
+    else {
+      var st = (p.active === false) ? "موقوف" : "مفعّل";
+      if (p.dry_run) st += " · تجريبي";
+      var sync = p.last_sync_at ? relTime(p.last_sync_at) : null;
+      meta = st + (sync ? " · آخر مزامنة: " + esc(sync) : "");
+    }
+    if (typeof p.ok === "boolean") provHtml += compRow(name, p.ok ? "ok" : "bad", meta);
+    else provHtml += '<div class="comp-row"><span class="name">' + esc(name) + '</span><span class="meta">' + meta + "</span></div>";
+  });
+  html += healthSection("الموردون", provHtml);
+  var probs = healthGuardProblems(d);
+  var guardsHtml = "";
+  if (probs === null) guardsHtml = '<div class="empty">بيانات الحراس غير متاحة دلوقتي.</div>';
+  else if (!probs.length) guardsHtml = compRow("كل الحراس", "ok", "شغالين ومفيش مشاكل معروفة");
+  else probs.forEach(function(p){ guardsHtml += compRow("مشكلة عند حارس", "warn", esc(p)); });
+  html += healthSection("الحراس", guardsHtml);
+  box.innerHTML = html;
+  var gen = relTime(d.generated_at);
+  $("hlthUpdated").textContent = "آخر تحديث: " + (gen || "دلوقتي");
+}
+function loadHealth(){
+  hideHealthMsg();
+  api("/control/system-health").then(function(d){
+    healthState.data = d;
+    healthState.failed = false;
+    healthState.loaded = true;
+    renderHealth();
+  }).catch(function(e){
+    healthState.data = null;
+    healthState.failed = true;
+    healthState.loaded = true;
+    renderHealth();
+    if (e && e.noKey) showHealthMsg("err", "لازم تكتب مفتاح الأدمن الأول.", true);
+    else if (!(e && e.status === 401)) showHealthMsg("err", esc(errText(e, "health")));
+  });
+}
+function ensureHealthLoaded(){ if (!healthState.loaded) loadHealth(); }
+$("hlthReloadBtn").addEventListener("click", loadHealth);
+
+// ---------------- التقييمات ----------------
+var revState = { filter: "pending", items: [], loaded: false, failed: false };
+
+function showRevMsg(kind, html, withKeyBtn){
+  var box = $("revMsg");
+  box.className = "msg " + kind;
+  box.innerHTML = html + (withKeyBtn
+    ? '<button class="btn" id="revKeyBtn" type="button">كتابة المفتاح</button>' : "");
+  if (withKeyBtn) $("revKeyBtn").addEventListener("click", askKey);
+}
+function hideRevMsg(){ $("revMsg").className = "msg"; $("revMsg").innerHTML = ""; }
+
+function renderRevFilters(){
+  document.querySelectorAll("[data-rev-filter]").forEach(function(b){
+    var active = b.getAttribute("data-rev-filter") === revState.filter;
+    b.className = active ? "btn small" : "btn secondary small";
+  });
+}
+function renderRevList(){
+  var box = $("revList");
+  if (revState.failed){
+    box.innerHTML = '<div class="empty">مش عارف أجيب التقييمات دلوقتي.</div>';
+    return;
+  }
+  if (!revState.items.length){
+    box.innerHTML = '<div class="empty">' + (revState.filter === "pending"
+      ? "مفيش تقييمات مستنية قرار — كله تمام."
+      : "مفيش تقييمات في الحالة دي.") + "</div>";
+    return;
+  }
+  var html = "";
+  revState.items.forEach(function(r){
+    var st = reviewStatusLabel(r.status);
+    var age = relTime(r.created_at);
+    html += '<div class="result-row" style="flex-direction:column; align-items:stretch;">' +
+      '<div style="display:flex; justify-content:space-between; gap:8px;">' +
+        "<b>" + esc(reviewStars(r.rating)) + ' <span class="num">' + esc(r.rating) + "/5</span></b>" +
+        '<small style="color:var(--muted);">' + esc(st.label) + (age ? " · " + esc(age) : "") + "</small>" +
+      "</div>" +
+      '<div style="white-space:pre-wrap; margin-top:6px;">' + esc(r.body || "") + "</div>" +
+      '<div class="sub" style="color:var(--muted); font-size:12px; margin-top:4px;">' +
+        "الاسم: " + esc(r.display_name || "—") +
+        (r.product_label ? " · المنتج: " + esc(r.product_label) : "") +
+        '<br>رقم الطلب: <b class="num">' + esc(r.order_ref || "—") + "</b>" +
+        (r.customer_email ? ' · الإيميل: <span dir="ltr">' + esc(r.customer_email) + "</span>" : "") +
+      "</div>" +
+      (r.status === "pending"
+        ? '<div class="row-actions" style="margin-top:8px;"><button class="btn small" type="button" data-rev-approve="' + esc(r.id) + '">موافقة</button><button class="btn secondary small" type="button" data-rev-reject="' + esc(r.id) + '">رفض</button></div>'
+        : "") +
+    "</div>";
+  });
+  box.innerHTML = html;
+  box.querySelectorAll("[data-rev-approve]").forEach(function(b){
+    b.addEventListener("click", function(){ askReviewDecision(b.getAttribute("data-rev-approve"), "approved"); });
+  });
+  box.querySelectorAll("[data-rev-reject]").forEach(function(b){
+    b.addEventListener("click", function(){ askReviewDecision(b.getAttribute("data-rev-reject"), "rejected"); });
+  });
+}
+function askReviewDecision(id, decision){
+  var r = revState.items.filter(function(x){ return String(x.id) === String(id); })[0];
+  if (!r) return;
+  var approve = decision === "approved";
+  openActSheet(
+    approve ? "موافقة على التقييم" : "رفض التقييم",
+    '<div class="sub">' + (approve
+      ? "التقييم ده هيظهر للعملاء في الموقع على طول."
+      : "التقييم ده هيفضل مخفي ومش هيظهر في الموقع.") + "</div>" +
+      '<div style="white-space:pre-wrap; margin-top:8px;">' + esc(r.body || "") + "</div>" +
+      '<div class="sub" style="color:var(--muted); font-size:12px; margin-top:4px;">' +
+        esc(reviewStars(r.rating)) + " · " + esc(r.display_name || "") +
+        (r.product_label ? " · " + esc(r.product_label) : "") + "</div>",
+    approve ? "موافقة ونشر" : "رفض التقييم",
+    function(){
+      return api("/control/reviews-decision", { method: "POST", body: { id: r.id, decision: decision } })
+        .then(function(){ loadReviews(); });
+    },
+    "reviews");
+}
+function loadReviews(){
+  hideRevMsg();
+  renderRevFilters();
+  api("/control/reviews?status=" + encodeURIComponent(revState.filter)).then(function(d){
+    revState.items = Array.isArray(d.reviews) ? d.reviews : [];
+    revState.failed = false;
+    revState.loaded = true;
+    renderRevList();
+  }).catch(function(e){
+    revState.items = [];
+    revState.failed = true;
+    revState.loaded = true;
+    renderRevList();
+    if (e && e.noKey) showRevMsg("err", "لازم تكتب مفتاح الأدمن الأول.", true);
+    else if (!(e && e.status === 401)) showRevMsg("err", esc(errText(e, "reviews")));
+  });
+}
+function ensureReviewsLoaded(){ if (!revState.loaded) loadReviews(); }
+$("revReloadBtn").addEventListener("click", loadReviews);
+document.querySelectorAll("[data-rev-filter]").forEach(function(b){
+  b.addEventListener("click", function(){
+    revState.filter = b.getAttribute("data-rev-filter");
+    loadReviews();
+  });
+});
+
+// ---------------- حسابات الموقع ----------------
+var admState = { users: [], loaded: false, failed: false };
+
+function showAdmMsg(kind, html, withKeyBtn){
+  var box = $("admMsg");
+  box.className = "msg " + kind;
+  box.innerHTML = html + (withKeyBtn
+    ? '<button class="btn" id="admKeyBtn" type="button">كتابة المفتاح</button>' : "");
+  if (withKeyBtn) $("admKeyBtn").addEventListener("click", askKey);
+}
+function hideAdmMsg(){ $("admMsg").className = "msg"; $("admMsg").innerHTML = ""; }
+
+function renderAdmList(){
+  var box = $("admList");
+  if (admState.failed){
+    box.innerHTML = '<div class="empty">مش عارف أجيب المستخدمين دلوقتي.</div>';
+    return;
+  }
+  if (!admState.users.length){
+    box.innerHTML = '<div class="empty">مفيش مستخدمين.</div>';
+    return;
+  }
+  var html = "";
+  admState.users.forEach(function(u){
+    var st = adminUserState(u);
+    var last = u.last_sign_in_at
+      ? "آخر دخول: " + esc(relTime(u.last_sign_in_at) || "—")
+      : "لسه مدخلش خالص";
+    var created = u.created_at ? " · اتعمل " + esc(relTime(u.created_at) || "") : "";
+    html += '<div class="result-row" style="flex-direction:column; align-items:stretch;">' +
+      '<div style="display:flex; justify-content:space-between; gap:8px;">' +
+        '<b dir="ltr" style="text-align:left;">' + esc(u.email || "—") + "</b>" +
+        '<small style="color:' + (st.key === "banned" ? "var(--red)" : "var(--muted)") + ';">' + esc(st.label) + "</small>" +
+      "</div>" +
+      '<div class="sub" style="color:var(--muted); font-size:12px; margin-top:4px;">' + last + created + "</div>" +
+      '<div class="row-actions" style="margin-top:8px;">' +
+        (st.key === "banned"
+          ? '<button class="btn small" type="button" data-adm-unban="' + esc(u.id) + '">رفع الحظر</button>'
+          : '<button class="btn secondary small" type="button" data-adm-ban="' + esc(u.id) + '">حظر</button>') +
+      "</div>" +
+    "</div>";
+  });
+  box.innerHTML = html;
+  box.querySelectorAll("[data-adm-ban]").forEach(function(b){
+    b.addEventListener("click", function(){ askAdminBan(b.getAttribute("data-adm-ban"), true); });
+  });
+  box.querySelectorAll("[data-adm-unban]").forEach(function(b){
+    b.addEventListener("click", function(){ askAdminBan(b.getAttribute("data-adm-unban"), false); });
+  });
+}
+function askAdminBan(id, banned){
+  var u = admState.users.filter(function(x){ return String(x.id) === String(id); })[0];
+  if (!u) return;
+  openActSheet(
+    banned ? "حظر مستخدم" : "رفع الحظر عن مستخدم",
+    '<div class="sub">' + (banned
+      ? "المستخدم ده مش هيقدر يسجل دخول للموقع بعد الحظر."
+      : "المستخدم ده هيرجع يقدر يسجل دخول للموقع.") + "</div>" +
+      '<div dir="ltr" style="text-align:left; margin-top:8px;"><b>' + esc(u.email || "") + "</b></div>",
+    banned ? "حظر" : "رفع الحظر",
+    function(){
+      return api("/control/admin-user-ban", { method: "POST", body: { user_id: u.id, banned: banned } })
+        .then(function(){ loadAdminUsers(); });
+    },
+    "adminUsers");
+}
+function loadAdminUsers(){
+  hideAdmMsg();
+  api("/control/admin-users").then(function(d){
+    admState.users = Array.isArray(d.users) ? d.users : [];
+    admState.failed = false;
+    admState.loaded = true;
+    renderAdmList();
+  }).catch(function(e){
+    admState.users = [];
+    admState.failed = true;
+    admState.loaded = true;
+    renderAdmList();
+    if (e && e.noKey) showAdmMsg("err", "لازم تكتب مفتاح الأدمن الأول.", true);
+    else if (!(e && e.status === 401)) showAdmMsg("err", esc(errText(e, "adminUsers")));
+  });
+}
+function ensureAdminUsersLoaded(){ if (!admState.loaded) loadAdminUsers(); }
+$("admReloadBtn").addEventListener("click", loadAdminUsers);
 
 load();
 </script>
