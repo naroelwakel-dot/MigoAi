@@ -27,47 +27,48 @@
   header.top{
     position:sticky; top:0; z-index:20; background:var(--bg);
     border-bottom:1px solid var(--border);
-    padding:12px 16px; display:flex; align-items:center; gap:10px;
+    padding:12px 16px; display:flex; align-items:center; gap:8px;
   }
   header.top h1{font-size:19px; font-weight:700; flex:1;}
   .pill{
-    display:inline-flex; align-items:center; gap:6px;
+    display:inline-flex; align-items:center; gap:8px;
     border:1px solid var(--border); background:var(--surface);
     border-radius:999px; padding:4px 12px; font-size:13px; font-weight:600;
     cursor:pointer; color:var(--text); min-height:36px;
   }
   .dot{width:9px; height:9px; border-radius:50%; background:var(--muted); flex:none;}
   .dot.ok{background:var(--green);} .dot.bad{background:var(--red);} .dot.warn{background:var(--amber);}
-  main{padding:14px 14px 6px; display:flex; flex-direction:column; gap:14px; max-width:640px; margin:0 auto;}
-  .card{background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:14px;}
-  .card h2{font-size:16px; font-weight:700; margin-bottom:10px;}
-  .comp-row{display:flex; align-items:center; gap:9px; padding:9px 0; border-top:1px solid var(--border);}
-  .comp-row:first-of-type{border-top:none; padding-top:2px;}
+  main{padding:16px 16px 8px; display:flex; flex-direction:column; gap:16px; max-width:640px; margin:0 auto;}
+  .card{background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px;}
+  .card h2{font-size:16px; font-weight:700; margin-bottom:12px;}
+  h3{font-size:15px; font-weight:700;}
+  .comp-row{display:flex; align-items:center; gap:8px; padding:8px 0; border-top:1px solid var(--border);}
+  .comp-row:first-of-type{border-top:none; padding-top:4px;}
   .comp-row .name{font-weight:600; flex:1;}
-  .comp-row .meta{color:var(--muted); font-size:13px; text-align:left;}
+  .comp-row .meta{color:var(--muted); font-size:12px; text-align:left;}
   .comp-row .meta b{color:var(--text); font-weight:600;}
   .queue-card{
     background:var(--surface); border:1px solid var(--border); border-radius:14px;
-    padding:13px 14px; display:flex; align-items:center; gap:12px;
+    padding:12px 16px; display:flex; align-items:center; gap:12px;
     border-right:5px solid var(--muted);
   }
   .queue-card .lbl{flex:1; font-weight:600; font-size:15px;}
-  .queue-card .lbl small{display:block; color:var(--muted); font-weight:400; font-size:12.5px;}
+  .queue-card .lbl small{display:block; color:var(--muted); font-weight:400; font-size:12px;}
   .queue-card .cnt{font-size:26px; font-weight:700; line-height:1;}
   .queue-card .cnt.na{font-size:14px; color:var(--amber); font-weight:600;}
   .sev-amber{border-right-color:var(--amber);} .sev-red{border-right-color:var(--red);}
   .sev-blue{border-right-color:var(--blue);} .sev-purple{border-right-color:var(--purple);}
   .sev-green{border-right-color:var(--green);}
   .empty{
-    text-align:center; color:var(--muted); padding:26px 10px; font-size:16px;
+    text-align:center; color:var(--muted); padding:24px 12px; font-size:16px;
     background:var(--surface); border:1px dashed var(--border); border-radius:14px;
   }
   .empty b{color:var(--green); display:block; font-size:18px; margin-bottom:4px;}
-  .topup-row{padding:11px 0; border-top:1px solid var(--border);}
-  .topup-row:first-of-type{border-top:none; padding-top:2px;}
+  .topup-row{padding:12px 0; border-top:1px solid var(--border);}
+  .topup-row:first-of-type{border-top:none; padding-top:4px;}
   .topup-row .amt{font-size:20px; font-weight:700;}
-  .topup-row .amt small{font-size:13px; color:var(--muted); font-weight:500;}
-  .topup-row .sub{color:var(--muted); font-size:13.5px;}
+  .topup-row .amt small{font-size:12px; color:var(--muted); font-weight:500;}
+  .topup-row .sub{color:var(--muted); font-size:14px;}
   .topup-row .sub b{color:var(--text); font-weight:600;}
   .btn{
     display:block; width:100%; min-height:50px; border:none; border-radius:12px;
@@ -76,11 +77,11 @@
   }
   .btn:disabled{opacity:.55; cursor:default;}
   .btn.secondary{background:var(--surface2); color:var(--text); border:1px solid var(--border);}
-  .msg{display:none; border-radius:12px; padding:12px 14px; font-size:14.5px;}
+  .msg{display:none; border-radius:12px; padding:12px 16px; font-size:14px;}
   .msg.err{display:block; background:#2A1416; border:1px solid var(--red); color:#FFD7D5;}
   .msg.warn{display:block; background:#2A2110; border:1px solid var(--amber); color:#FFE1B0;}
-  .msg .btn{margin-top:10px;}
-  .updated{color:var(--muted); font-size:12.5px; text-align:center;}
+  .msg .btn{margin-top:12px;}
+  .updated{color:var(--muted); font-size:12px; text-align:center;}
   .hidden{display:none !important;}
   nav.bottom{
     position:fixed; bottom:0; right:0; left:0; z-index:30;
@@ -89,7 +90,7 @@
   }
   nav.bottom button{
     flex:1; background:none; border:none; color:var(--muted); font-family:inherit;
-    font-size:12.5px; font-weight:600; padding:10px 2px 12px; cursor:pointer; min-height:58px;
+    font-size:12px; font-weight:600; padding:10px 2px 12px; cursor:pointer; min-height:58px;
   }
   nav.bottom button .ic{display:block; font-size:20px; line-height:1.25;}
   nav.bottom button.active{color:var(--gold);}
@@ -99,50 +100,45 @@
   .sheet{
     position:fixed; right:0; left:0; bottom:0; z-index:41; display:none;
     background:var(--surface); border-top:1px solid var(--border);
-    border-radius:18px 18px 0 0; padding:20px 18px calc(20px + env(safe-area-inset-bottom));
+    border-radius:18px 18px 0 0; padding:24px 16px calc(24px + env(safe-area-inset-bottom));
     text-align:center;
   }
   .sheet.open, .sheet-veil.open{display:block;}
-  .sheet p{font-size:16px; font-weight:600; margin-bottom:6px;}
-  .sheet small{color:var(--muted); display:block; margin-bottom:14px;}
+  .sheet p{font-size:16px; font-weight:600; margin-bottom:8px;}
+  .sheet small{color:var(--muted); display:block; margin-bottom:16px;}
   .msg.ok{display:block; background:#0F2A1A; border:1px solid var(--green); color:#C9F5DC;}
-  .badge{
-    display:inline-block; font-size:11.5px; font-weight:700; border-radius:999px;
-    padding:2px 9px; background:var(--surface2); border:1px solid var(--border); color:var(--muted);
-    vertical-align:middle;
-  }
   .badge.bot{color:var(--blue); border-color:var(--blue);}
   .badge.store{color:var(--gold); border-color:var(--gold);}
   .search-row{display:flex; gap:8px;}
   .search-row input{
     flex:1; background:var(--surface2); border:1px solid var(--border); border-radius:10px;
-    color:var(--text); font-family:inherit; font-size:15px; padding:11px 12px; min-height:50px; min-width:0;
+    color:var(--text); font-family:inherit; font-size:15px; padding:12px; min-height:50px; min-width:0;
   }
-  .search-row .btn{width:auto; padding:10px 20px; flex:none;}
+  .search-row .btn{width:auto; padding:12px 16px; flex:none;}
   .result-row{
-    display:flex; align-items:center; gap:10px; padding:12px 0;
+    display:flex; align-items:center; gap:8px; padding:12px 0;
     border-top:1px solid var(--border); cursor:pointer;
   }
-  .result-row:first-of-type{border-top:none; padding-top:2px;}
+  .result-row:first-of-type{border-top:none; padding-top:4px;}
   .result-row .who{flex:1; min-width:0;}
   .result-row .who b{display:block; font-size:15px; overflow-wrap:anywhere;}
-  .result-row .who small{color:var(--muted); font-size:12.5px;}
+  .result-row .who small{color:var(--muted); font-size:12px;}
   .result-row .bal{font-weight:700; font-size:16px; text-align:left;}
   .result-row .bal small{display:block; color:var(--muted); font-weight:400; font-size:12px;}
   .wallet-card .bal-big{font-size:30px; font-weight:700; line-height:1.3;}
   .wallet-card .bal-big small{font-size:14px; color:var(--muted); font-weight:500;}
-  .row-actions{display:flex; gap:8px; margin-top:9px; flex-wrap:wrap;}
-  .btn.small{display:inline-block; width:auto; min-height:40px; padding:6px 14px; font-size:14px; border-radius:10px;}
+  .row-actions{display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;}
+  .btn.small{display:inline-block; width:auto; min-height:40px; padding:8px 16px; font-size:14px; border-radius:12px;}
   .btn.danger{background:var(--red); color:#FFFFFF;}
   .btn.go{background:var(--green); color:#FFFFFF;}
   .btn.ghost{background:var(--surface2); color:var(--text); border:1px solid var(--border);}
   .btn.back{margin-bottom:2px;}
-  .status-txt{font-weight:600; font-size:13px;}
+  .status-txt{font-weight:600; font-size:12px;}
   .st-pending{color:var(--amber);} .st-bad{color:var(--red);} .st-ok{color:var(--green);} .st-mut{color:var(--muted);}
   .sheet.form{text-align:right; max-height:88vh; overflow-y:auto;}
   .sheet.form .btn{margin-top:8px;}
   .field{margin-bottom:12px;}
-  .field label{display:block; font-size:13.5px; color:var(--muted); margin-bottom:5px; font-weight:600;}
+  .field label{display:block; font-size:14px; color:var(--muted); margin-bottom:4px; font-weight:600;}
   .field input, .field select, .field textarea{
     width:100%; background:var(--surface2); border:1px solid var(--border); border-radius:10px;
     color:var(--text); font-family:inherit; font-size:15px; padding:11px 12px; min-height:48px;
@@ -150,13 +146,13 @@
   .seg{display:flex; gap:8px;}
   .seg button{
     flex:1; background:var(--surface2); border:1px solid var(--border); border-radius:10px;
-    color:var(--text); font-family:inherit; font-size:14.5px; font-weight:600;
+    color:var(--text); font-family:inherit; font-size:14px; font-weight:600;
     padding:10px 4px; min-height:48px; cursor:pointer;
   }
   .seg button.on{background:var(--gold); color:var(--gold-text); border-color:var(--gold);}
   .preview{
     background:var(--surface2); border:1px solid var(--border); border-radius:10px;
-    padding:10px 12px; font-size:14.5px; margin-bottom:12px;
+    padding:12px; font-size:14px; margin-bottom:12px;
   }
   .preview .warn{color:var(--red); font-weight:600;}
   .switch{position:relative; display:inline-block; width:56px; height:32px; flex:none; cursor:pointer; vertical-align:middle;}
@@ -165,44 +161,44 @@
   .switch .track:before{content:""; position:absolute; top:3px; right:4px; width:24px; height:24px; border-radius:50%; background:var(--muted); transition:.15s;}
   .switch input:checked + .track{background:#3A2E10; border-color:var(--gold);}
   .switch input:checked + .track:before{transform:translateX(-22px); background:var(--gold);}
-  .addr{overflow-wrap:anywhere; direction:ltr; text-align:left; font-size:13.5px;}
+  .addr{overflow-wrap:anywhere; direction:ltr; text-align:left; font-size:14px;}
   .result-row.sel{outline:2px solid var(--gold); outline-offset:-2px; border-radius:10px; background:var(--surface2);}
-  .group-title{font-weight:700; font-size:14.5px; margin:14px 0 2px; color:var(--gold);}
-  .group-title:first-child{margin-top:2px;}
+  .group-title{font-weight:700; font-size:14px; margin:16px 0 4px; color:var(--gold);}
+  .group-title:first-child{margin-top:4px;}
   .badge.kind{color:var(--muted); border-color:var(--border);}
   .badge.unans{color:#FFD7D5; border-color:var(--red); background:#2A1416;}
   .seg .cnt{color:var(--gold); font-weight:700;}
   .actbar{
     position:sticky; bottom:70px; display:flex; gap:8px; background:var(--surface);
-    border:1px solid var(--border); border-radius:14px; padding:10px; z-index:5;
+    border:1px solid var(--border); border-radius:14px; padding:12px; z-index:5;
   }
   .actbar .btn{flex:1;}
-  .menu-list{display:flex; flex-direction:column; gap:8px; margin-top:10px;}
-  .kv{display:flex; justify-content:space-between; gap:10px; padding:7px 0; border-top:1px solid var(--border); font-size:14px;}
+  .menu-list{display:flex; flex-direction:column; gap:8px; margin-top:12px;}
+  .kv{display:flex; justify-content:space-between; gap:8px; padding:8px 0; border-top:1px solid var(--border); font-size:14px;}
   .kv:first-of-type{border-top:none;}
   .kv .k{color:var(--muted); flex:none;}
   .kv .v{font-weight:600; text-align:left; overflow-wrap:anywhere;}
-  .bubble{max-width:88%; padding:9px 12px; border-radius:14px; margin:7px 0; font-size:14.5px; overflow-wrap:anywhere; white-space:pre-wrap; background:var(--surface2);}
-  .bubble .who{display:block; font-size:11.5px; color:var(--muted); font-weight:700; margin-bottom:3px;}
+  .bubble{max-width:88%; padding:8px 12px; border-radius:14px; margin:8px 0; font-size:14px; overflow-wrap:anywhere; white-space:pre-wrap; background:var(--surface2);}
+  .bubble .who{display:block; font-size:12px; color:var(--muted); font-weight:700; margin-bottom:4px;}
   .bubble.cust{margin-inline-start:auto;}
   .bubble.ours{margin-inline-end:auto; border:1px solid var(--gold);}
   .bubble.botm{margin-inline-end:auto; border:1px solid var(--border);}
   .ptable{width:100%; min-width:520px; border-collapse:collapse; font-size:13px;}
-  .ptable th, .ptable td{padding:7px 6px; border-top:1px solid var(--border); text-align:right; vertical-align:top; overflow-wrap:anywhere;}
+  .ptable th, .ptable td{padding:8px; border-top:1px solid var(--border); text-align:right; vertical-align:top; overflow-wrap:anywhere;}
   .ptable th{color:var(--muted); font-weight:600; border-top:none;}
   .ptable td.price, .ptable th.price{text-align:left; white-space:nowrap;}
   .ptable th:last-child, .ptable td:last-child{white-space:nowrap;}
   .ev-row{display:block; padding:12px 0; border-top:1px solid var(--border);}
-  .ev-row:first-of-type{border-top:none; padding-top:2px;}
+  .ev-row:first-of-type{border-top:none; padding-top:4px;}
   .ev-row .who b{font-size:15px; overflow-wrap:anywhere;}
-  .ev-row .who small{color:var(--muted); font-size:12.5px;}
+  .ev-row .who small{color:var(--muted); font-size:12px;}
   .ptable tr.drift td{background:#2A2110;}
   .cnt-chips{display:flex; gap:8px; flex-wrap:wrap;}
-  .cnt-chips .chip{background:var(--surface2); border:1px solid var(--border); border-radius:999px; padding:5px 12px; font-size:13px; font-weight:600;}
+  .cnt-chips .chip{background:var(--surface2); border:1px solid var(--border); border-radius:999px; padding:4px 12px; font-size:12px; font-weight:600;}
   .cnt-chips .chip b{font-weight:700;}
   .cnt-chips button.chip{cursor:pointer; font:inherit; color:inherit;}
   .cnt-chips button.chip.on{border-color:var(--gold); background:#3A2E10;}
-  .badge{display:inline-block; border:1px solid var(--border); border-radius:999px; padding:2px 10px; font-size:12px; font-weight:700;}
+  .badge{display:inline-block; font-size:12px; font-weight:700; border-radius:999px; padding:2px 10px; background:var(--surface2); border:1px solid var(--border); color:var(--muted); vertical-align:middle;}
   .badge.gold{border-color:var(--gold); color:var(--gold);}
   .badge.ok{border-color:#2E7D4F; color:#7BD88F;}
   .badge.warn{border-color:#8A6D1F; color:var(--amber);}
@@ -220,36 +216,36 @@
   <div class="msg" id="msgBox"></div>
 
   <section class="card hidden" id="compCard">
-    <h2>حالة الأجزاء</h2>
+    <h2>حالة البوت والموقع</h2>
     <div id="compRows"></div>
   </section>
 
   <section class="card" id="sysHealthCard" style="cursor:pointer;">
     <h2>صحة النظام والحراس</h2>
-    <div class="sub" id="sysHealthStrip" style="color:var(--muted); font-size:13px;">بيحمّل حالة النظام…</div>
+    <div class="sub" id="sysHealthStrip" style="color:var(--muted); font-size:12px;">بيحمّل حالة النظام…</div>
   </section>
 
-  <div id="queueWrap" class="hidden" style="display:flex; flex-direction:column; gap:10px;"></div>
+  <div id="queueWrap" class="hidden" style="display:flex; flex-direction:column; gap:12px;"></div>
 
   <section class="card" id="visitorsEntryCard">
     <h2>زوار البوت <span class="num" id="visitorsCount" style="color:var(--gold);"></span></h2>
-    <div class="sub" style="color:var(--muted); font-size:13px;">الناس اللي كلّموا البوت، مرتبين بآخر نشاط — آخر رسالة، وعدد الرسائل والطلبات، والرصيد.</div>
-    <button class="btn" id="visitorsOpenBtn" type="button" style="margin-top:10px;">عرض الزوار</button>
+    <div class="sub" style="color:var(--muted); font-size:12px;">الناس اللي كلّموا البوت، مرتبين بآخر نشاط — آخر رسالة، وعدد الرسائل والطلبات، والرصيد.</div>
+    <button class="btn" id="visitorsOpenBtn" type="button" style="margin-top:12px;">عرض الزوار</button>
   </section>
 
   <section class="card hidden" id="salesCard">
     <h2>البيع في البوت</h2>
-    <div class="sub" id="salesState" style="color:var(--muted); font-size:13px;"></div>
-    <button class="btn" id="salesToggleBtn" type="button" style="margin-top:10px;">إيقاف البيع</button>
+    <div class="sub" id="salesState" style="color:var(--muted); font-size:12px;"></div>
+    <button class="btn" id="salesToggleBtn" type="button" style="margin-top:12px;">إيقاف البيع</button>
   </section>
 
   <section class="card hidden" id="topupCard">
-    <h2>أحدث شحنات محفظة الموقع المنتظرة</h2>
+    <h2>شحنات موقع مستنية قرارك</h2>
     <div id="topupRows"></div>
   </section>
 
   <section class="card hidden" id="botTopupCard">
-    <h2>أحدث شحنات البوت المنتظرة</h2>
+    <h2>شحنات بوت مستنية قرارك</h2>
     <div id="botTopupRows"></div>
   </section>
 
@@ -266,32 +262,32 @@
       <input id="custQ" type="text" placeholder="رقم عميل، إيميل، رقم عملية، أو رقم طلب">
       <button class="btn" id="custSearchBtn" type="button">بحث</button>
     </div>
-    <div class="sub" style="color:var(--muted); font-size:13px; margin-top:8px;">البحث بيدوّر في عملاء البوت وعملاء الموقع بنفس المعرّف.</div>
-    <div id="custResults" style="margin-top:6px;"></div>
+    <div class="sub" style="color:var(--muted); font-size:12px; margin-top:8px;">البحث بيدوّر في عملاء البوت والموقع مع بعض — العميل اللي ليه حساب في الجهتين بيظهر مرة واحدة بكل بياناته.</div>
+    <div id="custResults" style="margin-top:8px;"></div>
   </section>
 
   <section class="card" id="moneyCard">
     <h2>إعدادات الفلوس</h2>
     <div id="moneySettingsBody"><div class="sub" style="color:var(--muted)">بيحمّل الإعدادات…</div></div>
-    <button class="btn secondary" id="moneyReloadBtn" type="button" style="margin-top:10px;">تحديث الإعدادات</button>
+    <button class="btn secondary" id="moneyReloadBtn" type="button" style="margin-top:12px;">تحديث</button>
   </section>
 
   <section class="card" id="lostCard">
     <h2>شحنة ضايعة</h2>
     <div class="field"><label>رقم العملية أو رقم العميل</label><input id="lostQ" type="text" placeholder="رقم عملية، بصمة تحويل، أو رقم عميل"></div>
     <div class="field"><label>المبلغ (اختياري)</label><input id="lostAmt" type="number" inputmode="decimal" min="0" step="0.01"></div>
-    <div class="sub" style="color:var(--muted); font-size:13px;">المبلغ بالجنيه لشحنات البوت ورسائل البنك، وبالدولار لإيداعات المنصات.</div>
-    <button class="btn" id="lostSearchBtn" type="button" style="margin-top:10px;">بحث</button>
-    <div id="lostResults" style="margin-top:6px;"></div>
+    <div class="sub" style="color:var(--muted); font-size:12px;">المبلغ بالجنيه لشحنات البوت ورسائل البنك، وبالدولار لإيداعات المنصات.</div>
+    <button class="btn" id="lostSearchBtn" type="button" style="margin-top:12px;">بحث</button>
+    <div id="lostResults" style="margin-top:8px;"></div>
   </section>
 
-  <div id="custFile" class="hidden" style="display:flex; flex-direction:column; gap:14px;"></div>
+  <div id="custFile" class="hidden" style="display:flex; flex-direction:column; gap:16px;"></div>
 </main>
 
 <main id="ordersMain" class="hidden">
   <div class="msg" id="ordMsg"></div>
 
-  <div id="ordLists" style="display:flex; flex-direction:column; gap:14px;">
+  <div id="ordLists" style="display:flex; flex-direction:column; gap:16px;">
     <section class="card">
       <h2>طلبات البوت</h2>
       <div class="seg" id="ordQueueSeg">
@@ -307,26 +303,26 @@
       </div>
       <div id="ordList" style="margin-top:8px;"></div>
       <div class="row-actions">
-        <button class="btn secondary" id="ordReloadBtn" type="button">تحديث القائمة</button>
+        <button class="btn secondary" id="ordReloadBtn" type="button">تحديث</button>
         <button class="btn ghost" id="ordCreateBtn" type="button">إنشاء طلب لعميل</button>
       </div>
     </section>
 
     <section class="card">
       <h2>المهام اليدوية</h2>
-      <div class="sub" style="color:var(--muted); font-size:13px;">طلبات بتتنفذ بره النظام (زي تنفيذ مورد يدوي): تسجيل الدفع وبعده التسليم للعميل من هنا.</div>
-      <div id="manualList" style="margin-top:6px;"></div>
-      <button class="btn secondary" id="manualNewBtn" type="button" style="margin-top:10px;">مهمة يدوية جديدة</button>
+      <div class="sub" style="color:var(--muted); font-size:12px;">طلبات بتتنفذ بره النظام (زي تنفيذ مورد يدوي): تسجيل الدفع وبعده التسليم للعميل من هنا.</div>
+      <div id="manualList" style="margin-top:8px;"></div>
+      <button class="btn secondary" id="manualNewBtn" type="button" style="margin-top:12px;">مهمة يدوية جديدة</button>
     </section>
 
     <section class="card">
       <h2>طلبات الموقع</h2>
       <div id="storeOrdList"></div>
-      <button class="btn secondary" id="storeOrdReloadBtn" type="button" style="margin-top:10px;">تحديث القائمة</button>
+      <button class="btn secondary" id="storeOrdReloadBtn" type="button" style="margin-top:12px;">تحديث</button>
     </section>
   </div>
 
-  <div id="ordDetail" class="hidden" style="display:flex; flex-direction:column; gap:14px;"></div>
+  <div id="ordDetail" class="hidden" style="display:flex; flex-direction:column; gap:16px;"></div>
 </main>
 
 <main id="chatsMain" class="hidden">
@@ -335,10 +331,10 @@
   <section class="card" id="chatListCard">
     <h2>المحادثات</h2>
     <div id="chatList"></div>
-    <button class="btn secondary" id="chatReloadBtn" type="button" style="margin-top:10px;">تحديث القائمة</button>
+    <button class="btn secondary" id="chatReloadBtn" type="button" style="margin-top:12px;">تحديث</button>
   </section>
 
-  <div id="chatScreen" class="hidden" style="display:flex; flex-direction:column; gap:14px;"></div>
+  <div id="chatScreen" class="hidden" style="display:flex; flex-direction:column; gap:16px;"></div>
 </main>
 
 <main id="pricesMain" class="hidden">
@@ -346,16 +342,16 @@
 
   <section class="card">
     <h2>مقارنة الأسعار</h2>
-    <div class="sub" style="color:var(--muted); font-size:13px;">سعر قاعدة البيانات هو السعر الأصلي اللي بيتحسب بيه أي طلب. الجدول ده بيقارنه بسعر ملفات العرض في الموقع، وأي اختلاف بيظهر هنا لحد ما يتصلّح.</div>
-    <div class="cnt-chips" id="pricesCounts" style="margin-top:10px;"></div>
-    <div id="pricesTable" style="margin-top:6px; overflow-x:auto;"></div>
-    <button class="btn secondary" id="pricesReloadBtn" type="button" style="margin-top:10px;">تحديث المقارنة</button>
+    <div class="sub" style="color:var(--muted); font-size:12px;">سعر قاعدة البيانات هو السعر اللي بيتحسب بيه أي طلب فعلًا. الجدول ده بيقارنه بالسعر الظاهر للعملاء في الموقع، وأي اختلاف بيظهر هنا لحد ما يتصلّح.</div>
+    <div class="cnt-chips" id="pricesCounts" style="margin-top:12px;"></div>
+    <div id="pricesTable" style="margin-top:8px; overflow-x:auto;"></div>
+    <button class="btn secondary" id="pricesReloadBtn" type="button" style="margin-top:12px;">تحديث</button>
   </section>
 
   <section class="card">
-    <h2>حد الأسعار الأدنى</h2>
-    <div class="sub" style="color:var(--muted); font-size:13px;">لو سعر منتج في القاعدة نزل عن تكلفته مع هامش الربح، الزرار ده بيرفعه للحد الأدنى الآمن. الأسعار من هنا بتطلع بس — ما بتنزلش أبدًا.</div>
-    <button class="btn" id="pricesApplyBtn" type="button" style="margin-top:10px;">طبّق حد الأسعار الآن</button>
+    <h2>الحد الآمن للأسعار</h2>
+    <div class="sub" style="color:var(--muted); font-size:12px;">لو سعر منتج في القاعدة نزل عن تكلفته مع هامش الربح، الزرار ده بيرفعه للحد الآمن. الأسعار من هنا بتطلع بس — ما بتنزلش أبدًا.</div>
+    <button class="btn" id="pricesApplyBtn" type="button" style="margin-top:12px;">طبّق الحد الآمن للأسعار الآن</button>
   </section>
 
   <section class="card">
@@ -369,8 +365,8 @@
 
   <section class="card">
     <h2>منتجات البوت</h2>
-    <div class="sub" style="color:var(--muted); font-size:13px;">كل منتج بيتباع في البوت: فئته وحالته وسعر بيعه وحالة هامشه. اضغط على أي منتج عشان تعدّل بياناته أو سعره أو تشوف مورديه وتنقله لمورد تاني.</div>
-    <div class="search-row" style="margin-top:10px;">
+    <div class="sub" style="color:var(--muted); font-size:12px;">كل منتج بيتباع في البوت: فئته وحالته وسعر بيعه وهل سعره فوق تكلفته بهامش ربح آمن ولا لأ. اضغط على أي منتج عشان تعدّل بياناته أو سعره أو تشوف مورديه وتنقله لمورد تاني.</div>
+    <div class="search-row" style="margin-top:12px;">
       <input id="catQ" type="text" placeholder="ابحث باسم المنتج">
     </div>
     <div class="row-actions">
@@ -380,18 +376,18 @@
     <div id="catMeta" style="margin-top:8px;"></div>
     <div id="catList" style="margin-top:4px;"></div>
     <div class="row-actions">
-      <button class="btn secondary" id="catReloadBtn" type="button">تحديث القائمة</button>
+      <button class="btn secondary" id="catReloadBtn" type="button">تحديث</button>
       <button class="btn ghost" id="catNewBtn" type="button">منتج جديد</button>
       <button class="btn ghost" id="catCategoryBtn" type="button">فئة جديدة / تعديل فئة</button>
-      <button class="btn ghost" id="catBatchBtn" type="button">دفعة أسعار</button>
+      <button class="btn ghost" id="catBatchBtn" type="button">مجموعة تغييرات أسعار</button>
     </div>
   </section>
 
   <section class="card">
-    <h2>ربط الهوية</h2>
-    <div class="sub" style="color:var(--muted); font-size:13px;">ربط مفاتيح مصدر الأسعار بمنتجات البوت وأسماء منتجات الموقع، عشان التسعير والنقل بين الموردين يوصلوا للمنتج الصح.</div>
+    <h2>ربط المنتجات ببعضها (البوت ↔ المورد ↔ الموقع)</h2>
+    <div class="sub" style="color:var(--muted); font-size:12px;">ربط مفاتيح مصدر الأسعار بمنتجات البوت وأسماء منتجات الموقع، عشان التسعير والنقل بين الموردين يوصلوا للمنتج الصح.</div>
     <div id="identityBody" style="margin-top:8px;"><div class="sub" style="color:var(--muted)">بيحمّل الربط…</div></div>
-    <button class="btn secondary" id="identityLinkBtn" type="button" style="margin-top:10px;">ربط جديد</button>
+    <button class="btn secondary" id="identityLinkBtn" type="button" style="margin-top:12px;">ربط جديد</button>
   </section>
 </main>
 
@@ -399,22 +395,22 @@
   <div class="msg" id="supMsg"></div>
 
   <section class="card">
-    <h2>موردو المحرك</h2>
-    <div class="sub" style="color:var(--muted); font-size:13px;">الموردون المربوطون بالبوت فعليًا: حالتهم وآخر مزامنة وأرصدتهم وروابط منتجاتهم. أسماء المفاتيح المحفوظة بتظهر بس — قيمتها ما بتظهرش أبدًا.</div>
-    <div id="engineList" style="margin-top:6px;"></div>
-    <button class="btn secondary" id="supReloadBtn" type="button" style="margin-top:10px;">تحديث القائمة</button>
+    <h2>الموردون الشغالين في البوت</h2>
+    <div class="sub" style="color:var(--muted); font-size:12px;">الموردون المربوطون بالبوت فعليًا: حالتهم وآخر مزامنة وأرصدتهم وروابط منتجاتهم. أسماء المفاتيح المحفوظة بتظهر بس — قيمتها ما بتظهرش أبدًا.</div>
+    <div id="engineList" style="margin-top:8px;"></div>
+    <button class="btn secondary" id="supReloadBtn" type="button" style="margin-top:12px;">تحديث</button>
   </section>
 
   <section class="card">
     <h2>سجل الموردين</h2>
-    <div class="sub" style="color:var(--muted); font-size:13px;">سجل كل الموردين اللي بنتعامل معاهم أو بنجرّبهم أو بنفكر فيهم، سواء مربوطين بالمحرك أو لأ. الإغلاق بيتم بضبط حالة المورد لـ«مغلق» — مفيش حذف من السجل.</div>
-    <div id="registryList" style="margin-top:6px;"></div>
-    <button class="btn secondary" id="registryNewBtn" type="button" style="margin-top:10px;">مورد جديد في السجل</button>
+    <div class="sub" style="color:var(--muted); font-size:12px;">سجل كل الموردين اللي بنتعامل معاهم أو بنجرّبهم أو بنفكر فيهم، سواء مربوطين بالبوت أو لأ. الإغلاق بيتم بضبط حالة المورد لـ«مغلق» — مفيش حذف من السجل.</div>
+    <div id="registryList" style="margin-top:8px;"></div>
+    <button class="btn secondary" id="registryNewBtn" type="button" style="margin-top:12px;">مورد جديد في السجل</button>
   </section>
 
   <section class="card">
-    <h2>مفاتيح سجل من غير محرك</h2>
-    <div class="sub" style="color:var(--muted); font-size:13px;">مفاتيح موردين ظاهرة في سجل مصدر الأسعار ومفيش مورد في المحرك بنفس المفتاح.</div>
+    <h2>مفاتيح أسعار من غير مورد شغال</h2>
+    <div class="sub" style="color:var(--muted); font-size:12px;">دي مفاتيح مصادر أسعار لقيناها في السجل ومفيش مورد شغال في البوت بنفس المفتاح — يعني أسعار بلا مورد ينفّذها.</div>
     <div id="registryKeysBody" style="margin-top:8px;"></div>
   </section>
 </main>
@@ -423,34 +419,34 @@
   <div class="msg" id="eventsMsg"></div>
 
   <section class="card">
-    <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;">
-      <h2 style="margin:0;">الأحداث والمكونات</h2>
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;">
+      <h2 style="margin:0;">الأحداث</h2>
       <span class="badge gold">تسجيل فقط</span>
     </div>
-    <div class="sub" id="eventsPeriodLine" style="color:var(--muted); font-size:13px; margin-top:6px;">في فترة التسجيل دي الأحداث بتتجمع وبتتعرض هنا، والشحن التلقائي شغال بمساراته الحالية زي ما هو — أي اعتماد من هنا بيتم يدويًا وبقرارك.</div>
+    <div class="sub" id="eventsPeriodLine" style="color:var(--muted); font-size:12px; margin-top:8px;">دلوقتي بنسجّل الأحداث وبنعرضها هنا من غير ما نغيّر حاجة: الشحن التلقائي شغال زي ما هو، وأي شحن من هنا بيتم يدويًا وبقرارك أنت.</div>
     <div class="seg" id="eventsTabs" style="margin-top:12px;">
       <button type="button" data-evtab="events" class="on">الأحداث</button>
-      <button type="button" data-evtab="components">المكونات</button>
+      <button type="button" data-evtab="components">أجزاء الاستقبال</button>
     </div>
   </section>
 
   <div id="eventsTabEvents">
     <section class="card">
       <h2>صندوق الأحداث</h2>
-      <div class="sub" style="color:var(--muted); font-size:13px;">أحداث فلوس الموقع (رسائل وإشعارات وإيداعات منصات) وشحنات البوت المعلّقة والمقررة، في خط زمني واحد من الأحدث للأقدم.</div>
-      <div class="cnt-chips" id="evSourceChips" style="margin-top:10px;"></div>
-      <div class="seg" id="evStatusSeg" style="margin-top:10px;">
+      <div class="sub" style="color:var(--muted); font-size:12px;">أحداث فلوس الموقع (رسائل وإشعارات وإيداعات منصات) وشحنات البوت المعلّقة والمقررة، في خط زمني واحد من الأحدث للأقدم.</div>
+      <div class="cnt-chips" id="evSourceChips" style="margin-top:12px;"></div>
+      <div class="seg" id="evStatusSeg" style="margin-top:12px;">
         <button type="button" data-evstatus="" class="on">الكل</button>
         <button type="button" data-evstatus="pending">ينتظر</button>
         <button type="button" data-evstatus="done">تم</button>
         <button type="button" data-evstatus="ignored">متجاهل</button>
       </div>
-      <div class="search-row" style="margin-top:10px;">
+      <div class="search-row" style="margin-top:12px;">
         <input id="evQ" type="text" placeholder="ابحث برقم العملية أو نص الرسالة">
         <button class="btn secondary" id="evSearchBtn" type="button">ابحث</button>
       </div>
-      <div id="evTimeline" style="margin-top:6px;"></div>
-      <div class="row-actions" style="margin-top:10px;">
+      <div id="evTimeline" style="margin-top:8px;"></div>
+      <div class="row-actions" style="margin-top:12px;">
         <button class="btn secondary" id="evReloadBtn" type="button">تحديث</button>
         <button class="btn ghost" id="evPasteBtn" type="button">ألصق رسالة</button>
         <button class="btn ghost" id="evExclusionsBtn" type="button">الكلمات المستبعدة</button>
@@ -460,16 +456,16 @@
 
   <div id="eventsTabComponents" class="hidden">
     <section class="card">
-      <h2>المكونات</h2>
-      <div class="sub" style="color:var(--muted); font-size:13px;">حالة كل مكوّن بيستقبل فلوس أو رسائل: آخر مرة اشتغل، ومفاتيح تشغيل ممرات البوت.</div>
-      <div id="evComponents" style="margin-top:6px;"></div>
-      <button class="btn secondary" id="evCompReloadBtn" type="button" style="margin-top:10px;">تحديث المكونات</button>
+      <h2>أجزاء استقبال الفلوس والرسائل</h2>
+      <div class="sub" style="color:var(--muted); font-size:12px;">حالة كل جزء بيستقبل فلوس أو رسائل بنكية: آخر مرة اشتغل، ومفاتيح تشغيل الطرق اللي البوت بيستقبل بيها.</div>
+      <div id="evComponents" style="margin-top:8px;"></div>
+      <button class="btn secondary" id="evCompReloadBtn" type="button" style="margin-top:12px;">تحديث</button>
     </section>
 
     <section class="card">
-      <h2>تقرير المطابقة</h2>
-      <div class="sub" style="color:var(--muted); font-size:13px;">عدّادات المطابقة في فترة التسجيل: قد إيه اتطابق واتشحن، وقد إيه لسه بينتظر — دي الأرقام اللي هيتقرر على أساسها تشغيل المطابقة التلقائية بعد الفترة.</div>
-      <div id="evMatchReport" style="margin-top:6px;"></div>
+      <h2>تقرير مطابقة الفلوس بالشحنات</h2>
+      <div class="sub" style="color:var(--muted); font-size:12px;">كام حدث فلوس اتطابق مع طلب شحن واتشحن فعلًا، وكام لسه مستني.</div>
+      <div id="evMatchReport" style="margin-top:8px;"></div>
     </section>
   </div>
 </main>
@@ -479,10 +475,10 @@
 
   <section class="card">
     <h2>وسائل شحن البوت</h2>
-    <div class="sub" style="color:var(--muted); font-size:13px;">الوسائل اللي العميل بيشوفها لما ييجي يشحن رصيده في البوت: اسمها ورقمها أو حسابها والتعليمات اللي بتظهر له. الترتيب هنا هو نفس ترتيب ظهورها للعميل.</div>
+    <div class="sub" style="color:var(--muted); font-size:12px;">الوسائل اللي العميل بيشوفها لما ييجي يشحن رصيده في البوت: اسمها ورقمها أو حسابها والتعليمات اللي بتظهر له. الترتيب هنا هو نفس ترتيب ظهورها للعميل.</div>
     <div class="sub" id="setPaySource" style="margin-top:8px;"></div>
-    <div id="setPayList" style="margin-top:6px;"></div>
-    <div class="row-actions" style="margin-top:10px;">
+    <div id="setPayList" style="margin-top:8px;"></div>
+    <div class="row-actions" style="margin-top:12px;">
       <button class="btn" id="setPaySaveBtn" type="button">حفظ وسائل الشحن</button>
       <button class="btn secondary" id="setPayAddBtn" type="button">إضافة وسيلة</button>
     </div>
@@ -490,78 +486,78 @@
 
   <section class="card">
     <h2>محتوى البوت</h2>
-    <div class="sub" style="color:var(--muted); font-size:13px;">النصوص اللي العميل بيشوفها وبيتعامل معاها في البوت نفسه: طريقة التواصل مع الدعم، ونصوص الترحيب والشاشات، والردود الجاهزة اللي الأدمن بيستخدمها في الرد على العملاء. كل تعديل هنا بيتحفظ لوحده وبيتسجل في سجل التغييرات.</div>
-    <div id="setContentSupport" style="margin-top:10px;"></div>
-    <div id="setContentTexts" style="margin-top:10px;"></div>
-    <div id="setContentReplies" style="margin-top:10px;"></div>
+    <div class="sub" style="color:var(--muted); font-size:12px;">النصوص اللي العميل بيشوفها وبيتعامل معاها في البوت نفسه: طريقة التواصل مع الدعم، ونصوص الترحيب والشاشات، والردود الجاهزة اللي الأدمن بيستخدمها في الرد على العملاء. كل تعديل هنا بيتحفظ لوحده وبيتسجل في سجل التغييرات.</div>
+    <div id="setContentSupport" style="margin-top:12px;"></div>
+    <div id="setContentTexts" style="margin-top:12px;"></div>
+    <div id="setContentReplies" style="margin-top:12px;"></div>
   </section>
 
   <section class="card">
     <h2>إعدادات البوت</h2>
-    <div class="sub" style="color:var(--muted); font-size:13px;">كل إعدادات البوت اللي اللوحة تقدر تعدّلها، وكل تعديل بيتحفظ لوحده وبيتسجل في سجل التغييرات. المفاتيح السرية بتظهر «محفوظة» بس — قيمتها ما بتظهرش ولا بتتعدل من هنا.</div>
-    <div id="setRows" style="margin-top:6px;"></div>
-    <button class="btn secondary" id="setReloadBtn" type="button" style="margin-top:10px;">تحديث الإعدادات</button>
+    <div class="sub" style="color:var(--muted); font-size:12px;">كل إعدادات البوت اللي اللوحة تقدر تعدّلها، وكل تعديل بيتحفظ لوحده وبيتسجل في سجل التغييرات. المفاتيح السرية بتظهر «محفوظة» بس — قيمتها ما بتظهرش ولا بتتعدل من هنا.</div>
+    <div id="setRows" style="margin-top:8px;"></div>
+    <button class="btn secondary" id="setReloadBtn" type="button" style="margin-top:12px;">تحديث</button>
   </section>
 
   <section class="card">
     <h2>الرقم السري للوحة</h2>
-    <div class="sub" style="color:var(--muted); font-size:13px;">رقم سري بيتحط على الأفعال الحساسة: إيقاف وتشغيل البيع في البوت، تعديل رصيد كبير أو ضبط رصيد محفظة بوت، وتدوير أو إيقاف مفاتيح التجار وإيقاف تاجر. خمس محاولات غلط ورا بعض بيقفلوا المحاولات 15 دقيقة.</div>
-    <div id="pinNotSetBox" style="margin-top:10px;">
+    <div class="sub" style="color:var(--muted); font-size:12px;">رقم سري بيتحط على الأفعال الحساسة: إيقاف وتشغيل البيع في البوت، تعديل رصيد كبير أو ضبط رصيد محفظة بوت، وتدوير أو إيقاف مفاتيح التجار وإيقاف تاجر. خمس محاولات غلط ورا بعض بيقفلوا المحاولات 15 دقيقة.</div>
+    <div id="pinNotSetBox" style="margin-top:12px;">
       <div class="field"><label>الرقم السري الجديد</label><input id="pinNew" type="password" inputmode="numeric" autocomplete="off"></div>
-      <button class="btn" id="pinSetBtn" type="button" style="margin-top:10px;">حفظ الرقم السري</button>
+      <button class="btn" id="pinSetBtn" type="button" style="margin-top:12px;">حفظ الرقم السري</button>
     </div>
-    <div id="pinSetBox" class="hidden" style="margin-top:10px;">
+    <div id="pinSetBox" class="hidden" style="margin-top:12px;">
       <div class="field"><label>الرقم السري الحالي</label><input id="pinCurrent" type="password" inputmode="numeric" autocomplete="off"></div>
       <div class="field"><label>الرقم السري الجديد</label><input id="pinChangeNew" type="password" inputmode="numeric" autocomplete="off"></div>
-      <button class="btn" id="pinChangeBtn" type="button" style="margin-top:10px;">تغيير الرقم السري</button>
+      <button class="btn" id="pinChangeBtn" type="button" style="margin-top:12px;">تغيير الرقم السري</button>
     </div>
   </section>
 
   <section class="card">
     <h2>التحقق بخطوتين</h2>
-    <div class="sub" style="color:var(--muted); font-size:13px;">طبقة دخول تانية للوحة: بعد مفتاح الأدمن، الدخول بيطلب رمزًا من تطبيق مصادقة على تليفونك (زي Google Authenticator) بيتغيّر كل 30 ثانية. خمس محاولات غلط ورا بعض بيقفلوا المحاولات 15 دقيقة.</div>
+    <div class="sub" style="color:var(--muted); font-size:12px;">طبقة دخول تانية للوحة: بعد مفتاح الأدمن، الدخول بيطلب رمزًا من تطبيق مصادقة على تليفونك (زي Google Authenticator) بيتغيّر كل 30 ثانية. خمس محاولات غلط ورا بعض بيقفلوا المحاولات 15 دقيقة.</div>
     <div class="sub" id="totpState" style="margin-top:8px;">الحالة: …</div>
-    <div id="totpEnrollBox" style="margin-top:10px;">
+    <div id="totpEnrollBox" style="margin-top:12px;">
       <button class="btn" id="totpEnrollBtn" type="button">تفعيل التحقق بخطوتين</button>
     </div>
-    <div id="totpSecretBox" class="hidden" style="margin-top:10px; border:1px solid var(--gold, #c9a227); border-radius:8px; padding:10px;">
+    <div id="totpSecretBox" class="hidden" style="margin-top:12px; border:1px solid var(--gold, #c9a227); border-radius:14px; padding:12px;">
       <b>اكتب الرمز ده في تطبيق المصادقة (زي Google Authenticator) — مش هيظهر تاني.</b>
       <div class="row-actions" style="margin-top:8px;">
         <input id="totpSecret" type="text" readonly dir="ltr" style="flex:1;">
       </div>
-      <div class="field" style="margin-top:10px;"><label>رمز التحقق من التطبيق للتأكيد</label><input id="totpConfirmCode" type="text" inputmode="numeric" autocomplete="off" dir="ltr"></div>
-      <button class="btn" id="totpConfirmBtn" type="button" style="margin-top:10px;">تأكيد التفعيل</button>
+      <div class="field" style="margin-top:12px;"><label>رمز التحقق من التطبيق للتأكيد</label><input id="totpConfirmCode" type="text" inputmode="numeric" autocomplete="off" dir="ltr"></div>
+      <button class="btn" id="totpConfirmBtn" type="button" style="margin-top:12px;">تأكيد التفعيل</button>
     </div>
-    <div id="totpDisableBox" class="hidden" style="margin-top:10px;">
+    <div id="totpDisableBox" class="hidden" style="margin-top:12px;">
       <div class="field"><label>رمز التحقق الحالي من التطبيق</label><input id="totpDisableCode" type="text" inputmode="numeric" autocomplete="off" dir="ltr"></div>
-      <button class="btn secondary" id="totpDisableBtn" type="button" style="margin-top:10px;">إيقاف التحقق بخطوتين</button>
+      <button class="btn secondary" id="totpDisableBtn" type="button" style="margin-top:12px;">إيقاف التحقق بخطوتين</button>
     </div>
   </section>
 
   <section class="card">
     <h2>سجل التغييرات</h2>
-    <div class="sub" style="color:var(--muted); font-size:13px;">آخر تغييرات اتعملت على الإعدادات من اللوحة: إيه اتغيّر ومن كام لكام وإمتى. قيم المفاتيح السرية بتظهر مقنّعة.</div>
-    <div id="setHistory" style="margin-top:6px;"></div>
+    <div class="sub" style="color:var(--muted); font-size:12px;">آخر تغييرات اتعملت على الإعدادات من اللوحة: إيه اتغيّر ومن كام لكام وإمتى. قيم المفاتيح السرية بتظهر مقنّعة.</div>
+    <div id="setHistory" style="margin-top:8px;"></div>
   </section>
 
   <section class="card">
     <h2>تغييرات مجدولة</h2>
-    <div class="sub" style="color:var(--muted); font-size:13px;">تغييرات إعدادات هتتطبق لوحدها في وقتها. التغيير المنتظر تقدر تلغيه قبل وقته؛ واللي اتطبق بيظهر في سجل التغييرات فوق زي أي تغيير.</div>
-    <div id="schedList" style="margin-top:6px;"></div>
+    <div class="sub" style="color:var(--muted); font-size:12px;">تغييرات إعدادات هتتطبق لوحدها في وقتها. التغيير المنتظر تقدر تلغيه قبل وقته؛ واللي اتطبق بيظهر في سجل التغييرات فوق زي أي تغيير.</div>
+    <div id="schedList" style="margin-top:8px;"></div>
     <div class="field" style="margin-top:12px;"><label>الإعداد</label><select id="schedKey"></select></div>
     <div class="field"><label>القيمة الجديدة</label><span id="schedValueWrap"></span></div>
     <div class="field"><label>وقت التنفيذ</label><input id="schedWhen" type="datetime-local"></div>
     <div class="field"><label>سبب (اختياري)</label><input id="schedReason" type="text"></div>
-    <button class="btn" id="schedAddBtn" type="button" style="margin-top:10px;">جدولة التغيير</button>
-    <div class="sub" style="color:var(--muted); font-size:12px; margin-top:8px;">التغيير بيتنفذ تلقائيًا مع دورة البوت التالية بعد وقته.</div>
+    <button class="btn" id="schedAddBtn" type="button" style="margin-top:12px;">جدولة التغيير</button>
+    <div class="sub" style="color:var(--muted); font-size:12px; margin-top:8px;">التغيير بيتنفذ لوحده أول ما البوت يراجع إعداداته بعد الوقت ده (عادة خلال دقائق).</div>
   </section>
 
   <section class="card">
-    <h2>النسخة الاحتياطية</h2>
-    <div class="sub" style="color:var(--muted); font-size:13px;">التصدير بيحفظ كل الإعدادات في ملف واحد، والاستيراد بيرجّعها من ملف اتصدّر قبل كده وبيكتب فوق القيم الحالية للمفاتيح اللي فيه.</div>
-    <div class="row-actions" style="margin-top:10px;">
-      <button class="btn secondary" id="setExportBtn" type="button">تصدير النسخة</button>
-      <button class="btn secondary" id="setImportBtn" type="button">استيراد نسخة</button>
+    <h2>تصدير واستيراد الإعدادات</h2>
+    <div class="sub" style="color:var(--muted); font-size:12px;">التصدير بيحفظ كل الإعدادات في ملف واحد، والاستيراد بيرجّعها من ملف اتصدّر قبل كده وبيكتب فوق القيم الحالية للمفاتيح اللي فيه.</div>
+    <div class="row-actions" style="margin-top:12px;">
+      <button class="btn secondary" id="setExportBtn" type="button">تصدير الإعدادات</button>
+      <button class="btn secondary" id="setImportBtn" type="button">استيراد الإعدادات</button>
       <input id="setImportFile" type="file" accept=".json,application/json" class="hidden">
     </div>
     <div class="sub" id="setImportResult" style="margin-top:8px;"></div>
@@ -573,8 +569,8 @@
 
   <section class="card">
     <h2>منشور جديد</h2>
-    <div class="sub" style="color:var(--muted); font-size:13px;">اكتب المنشور واحفظه — بيتنشر في القناة على طول، أو حدّد وقت نشر وبيتنشر لما ييجي وقته. لو سبت الأزرار فاضية بتظهر شبكة الأزرار الافتراضية بتاعة القناة.</div>
-    <div class="field" style="margin-top:10px;"><label>نص المنشور</label><textarea id="chnText" rows="5"></textarea></div>
+    <div class="sub" style="color:var(--muted); font-size:12px;">اكتب المنشور واحفظه — بيتنشر في القناة على طول، أو حدّد وقت نشر وبيتنشر لما ييجي وقته. لو سبت الأزرار فاضية بتظهر شبكة الأزرار الافتراضية بتاعة القناة.</div>
+    <div class="field" style="margin-top:12px;"><label>نص المنشور</label><textarea id="chnText" rows="5"></textarea></div>
     <div class="field"><label>رابط صورة (اختياري)</label><input id="chnPhoto" type="url" dir="ltr" placeholder="https://…"></div>
     <div class="field"><label>أزرار (اختياري) — كل زر في سطر لوحده: نص الزر | الرابط</label><textarea id="chnButtons" rows="3" placeholder="اشترك دلوقتي | https://t.me/example"></textarea></div>
     <div class="field"><label>وقت النشر (اختياري — فاضي يعني يتنشر على طول)</label><input id="chnSchedule" type="datetime-local"></div>
@@ -586,7 +582,7 @@
       </div>
       <div class="sub" style="color:var(--muted); font-size:12px;">بيملأ نص المنشور من اسم المنتج وسعره — راجعه وعدّله قبل الحفظ. أزرار المنشور بتفضل الافتراضية بتاعة القناة.</div>
     </div>
-    <div class="row-actions" style="margin-top:10px;">
+    <div class="row-actions" style="margin-top:12px;">
       <button class="btn" id="chnSaveBtn" type="button">حفظ المنشور</button>
       <button class="btn secondary hidden" id="chnCancelEditBtn" type="button">إلغاء التعديل</button>
     </div>
@@ -595,9 +591,9 @@
 
   <section class="card">
     <h2>منشورات القناة</h2>
-    <div class="sub" style="color:var(--muted); font-size:13px;">المسودات والمجدولات تقدر تعدّلها أو تحذفها قبل ما تتنشر. المنشور اللي اتنشر فعلًا تقدر تعدّل نصه، أو تحذفه من القناة نفسها.</div>
-    <div id="chnList" style="margin-top:6px;"></div>
-    <button class="btn secondary" id="chnReloadBtn" type="button" style="margin-top:10px;">تحديث القائمة</button>
+    <div class="sub" style="color:var(--muted); font-size:12px;">المسودات والمجدولات تقدر تعدّلها أو تحذفها قبل ما تتنشر. المنشور اللي اتنشر فعلًا تقدر تعدّل نصه، أو تحذفه من القناة نفسها.</div>
+    <div id="chnList" style="margin-top:8px;"></div>
+    <button class="btn secondary" id="chnReloadBtn" type="button" style="margin-top:12px;">تحديث</button>
   </section>
 </main>
 
@@ -606,9 +602,9 @@
 
   <section class="card">
     <h2>زوار البوت</h2>
-    <div class="sub" style="color:var(--muted); font-size:13px;">الناس اللي كلّموا البوت، مرتبين بآخر نشاط. اللي ليه محادثة تقدر تفتحها من زرار «افتح المحادثة» في صفه.</div>
-    <div id="visList" style="margin-top:6px;"></div>
-    <button class="btn secondary" id="visReloadBtn" type="button" style="margin-top:10px;">تحديث القائمة</button>
+    <div class="sub" style="color:var(--muted); font-size:12px;">الناس اللي كلّموا البوت، مرتبين بآخر نشاط. اللي ليه محادثة تقدر تفتحها من زرار «افتح المحادثة» في صفه.</div>
+    <div id="visList" style="margin-top:8px;"></div>
+    <button class="btn secondary" id="visReloadBtn" type="button" style="margin-top:12px;">تحديث</button>
   </section>
 </main>
 
@@ -617,21 +613,21 @@
 
   <section class="card">
     <h2>القائمة الرئيسية كما يراها العميل</h2>
-    <div class="sub" style="color:var(--muted); font-size:13px;">معاينة للقراءة بس — دي نفس الرسالة اللي بتوصل العميل في تليجرام.</div>
-    <div id="pvMenuBox" style="margin-top:10px;"></div>
-    <button class="btn secondary" id="pvMenuReloadBtn" type="button" style="margin-top:10px;">تحديث المعاينة</button>
+    <div class="sub" style="color:var(--muted); font-size:12px;">معاينة للقراءة بس — دي نفس الرسالة اللي بتوصل العميل في تليجرام.</div>
+    <div id="pvMenuBox" style="margin-top:12px;"></div>
+    <button class="btn secondary" id="pvMenuReloadBtn" type="button" style="margin-top:12px;">تحديث</button>
   </section>
 
   <section class="card">
     <h2>بطاقة منتج كما يراها العميل</h2>
-    <div class="sub" style="color:var(--muted); font-size:13px;">معاينة للقراءة بس — دي نفس الرسالة اللي بتوصل العميل في تليجرام.</div>
-    <div class="field" style="margin-top:10px;"><label>المنتج</label>
+    <div class="sub" style="color:var(--muted); font-size:12px;">معاينة للقراءة بس — دي نفس الرسالة اللي بتوصل العميل في تليجرام.</div>
+    <div class="field" style="margin-top:12px;"><label>المنتج</label>
       <div class="row-actions">
         <select id="pvProductSel" style="flex:1;"><option value="">اختر منتجًا…</option></select>
         <button class="btn secondary" id="pvProductBtn" type="button">عرض البطاقة</button>
       </div>
     </div>
-    <div id="pvProductBox" style="margin-top:10px;"></div>
+    <div id="pvProductBox" style="margin-top:12px;"></div>
   </section>
 </main>
 
@@ -640,9 +636,9 @@
 
   <section class="card">
     <h2>صحة النظام والحراس</h2>
-    <div class="sub" style="color:var(--muted); font-size:13px;">قراءة بس — حالة البوت وحلقات السيرفر وأرصدة الموردين والحراس زي ما هي دلوقتي. الحراس بيتصرفوا لوحدهم وبيبعتوا تنبيهات؛ الشاشة دي عشان تشوف الصورة كاملة في أي وقت.</div>
-    <div id="hlthBody" style="margin-top:6px;"></div>
-    <button class="btn secondary" id="hlthReloadBtn" type="button" style="margin-top:10px;">تحديث</button>
+    <div class="sub" style="color:var(--muted); font-size:12px;">قراءة بس — حالة البوت وحلقات السيرفر وأرصدة الموردين والحراس زي ما هي دلوقتي. الحراس بيتصرفوا لوحدهم وبيبعتوا تنبيهات؛ الشاشة دي عشان تشوف الصورة كاملة في أي وقت.</div>
+    <div id="hlthBody" style="margin-top:8px;"></div>
+    <button class="btn secondary" id="hlthReloadBtn" type="button" style="margin-top:12px;">تحديث</button>
     <div class="updated" id="hlthUpdated"></div>
   </section>
 </main>
@@ -652,15 +648,15 @@
 
   <section class="card">
     <h2>تقييمات العملاء</h2>
-    <div class="sub" style="color:var(--muted); font-size:13px;">التقييمات المقبولة بس هي اللي بتظهر للعملاء في الموقع. راجع اللي بانتظار القرار ووافق عليه أو ارفضه.</div>
-    <div class="row-actions" id="revFilters" style="margin-top:10px;">
+    <div class="sub" style="color:var(--muted); font-size:12px;">التقييمات المقبولة بس هي اللي بتظهر للعملاء في الموقع. راجع اللي بانتظار القرار ووافق عليه أو ارفضه.</div>
+    <div class="row-actions" id="revFilters" style="margin-top:12px;">
       <button class="btn small" type="button" data-rev-filter="pending">بانتظار القرار</button>
       <button class="btn secondary small" type="button" data-rev-filter="approved">مقبولة</button>
       <button class="btn secondary small" type="button" data-rev-filter="rejected">مرفوضة</button>
       <button class="btn secondary small" type="button" data-rev-filter="all">الكل</button>
     </div>
-    <div id="revList" style="margin-top:6px;"></div>
-    <button class="btn secondary" id="revReloadBtn" type="button" style="margin-top:10px;">تحديث القائمة</button>
+    <div id="revList" style="margin-top:8px;"></div>
+    <button class="btn secondary" id="revReloadBtn" type="button" style="margin-top:12px;">تحديث</button>
   </section>
 </main>
 
@@ -669,9 +665,9 @@
 
   <section class="card">
     <h2>حسابات الموقع</h2>
-    <div class="sub" style="color:var(--muted); font-size:13px;">حسابات الدخول للموقع — الحظر بيمنع تسجيل الدخول فورًا. حساب الدخول بتاعك وآخر حساب غير محظور محميين من الحظر عشان الدخول ما يتقفلش على الكل.</div>
-    <div id="admList" style="margin-top:6px;"></div>
-    <button class="btn secondary" id="admReloadBtn" type="button" style="margin-top:10px;">تحديث القائمة</button>
+    <div class="sub" style="color:var(--muted); font-size:12px;">حسابات الدخول للموقع — الحظر بيمنع تسجيل الدخول فورًا. حساب الدخول بتاعك وآخر حساب غير محظور محميين من الحظر عشان الدخول ما يتقفلش على الكل.</div>
+    <div id="admList" style="margin-top:8px;"></div>
+    <button class="btn secondary" id="admReloadBtn" type="button" style="margin-top:12px;">تحديث</button>
   </section>
 </main>
 
@@ -680,14 +676,14 @@
 
   <section class="card">
     <h2 id="cpnFormTitle">كوبون جديد</h2>
-    <div class="sub" style="color:var(--muted); font-size:13px;">الكوبون بيشتغل في المتجر على طول بعد حفظه وهو مفعّل. كود الكوبون ما بيتبدّلش بعد إنشائه — اللي عاوز كود تاني بيعمل كوبون جديد وبيوقّف القديم.</div>
-    <div class="field" style="margin-top:10px;"><label>كود الكوبون</label><input id="cpnCode" type="text" dir="ltr" placeholder="SAVE10"></div>
+    <div class="sub" style="color:var(--muted); font-size:12px;">الكوبون بيشتغل في المتجر على طول بعد حفظه وهو شغال. كود الكوبون ما بيتبدّلش بعد إنشائه — اللي عاوز كود تاني بيعمل كوبون جديد وبيوقّف القديم.</div>
+    <div class="field" style="margin-top:12px;"><label>كود الكوبون</label><input id="cpnCode" type="text" dir="ltr" placeholder="SAVE10"></div>
     <div class="field"><label>نسبة الخصم (٪)</label><input id="cpnDiscount" type="number" min="0" max="100" step="any"></div>
     <div class="field"><label>تاريخ الانتهاء (اختياري — فاضي يعني ملوش انتهاء)</label><input id="cpnExpires" type="datetime-local"></div>
     <div class="field"><label>أقصى عدد استخدامات (اختياري — فاضي يعني ملوش حد)</label><input id="cpnMaxUses" type="number" min="1" step="1"></div>
     <div class="field"><label>أقل إجمالي طلب بالجنيه (اختياري — فاضي يعني ملوش حد أدنى)</label><input id="cpnMinOrder" type="number" min="0" step="any"></div>
-    <div class="field"><label><input id="cpnActive" type="checkbox" checked> الكوبون مفعّل</label></div>
-    <div class="row-actions" style="margin-top:10px;">
+    <div class="field"><label><input id="cpnActive" type="checkbox" checked> الكوبون شغال</label></div>
+    <div class="row-actions" style="margin-top:12px;">
       <button class="btn" id="cpnSaveBtn" type="button">حفظ الكوبون</button>
       <button class="btn secondary hidden" id="cpnCancelEditBtn" type="button">إلغاء التعديل</button>
     </div>
@@ -695,9 +691,9 @@
 
   <section class="card">
     <h2>الكوبونات</h2>
-    <div class="sub" style="color:var(--muted); font-size:13px;">الكوبون اللي اتستخدم قبل كده ما بيتحذفش عشان سجل استخدامه ما يتمسحش — وقّفه وخلاص. الحذف متاح للي ما اتستخدمش خالص.</div>
-    <div id="cpnList" style="margin-top:6px;"></div>
-    <button class="btn secondary" id="cpnReloadBtn" type="button" style="margin-top:10px;">تحديث القائمة</button>
+    <div class="sub" style="color:var(--muted); font-size:12px;">الكوبون اللي اتستخدم قبل كده ما بيتحذفش عشان سجل استخدامه ما يتمسحش — وقّفه وخلاص. الحذف متاح للي ما اتستخدمش خالص.</div>
+    <div id="cpnList" style="margin-top:8px;"></div>
+    <button class="btn secondary" id="cpnReloadBtn" type="button" style="margin-top:12px;">تحديث</button>
   </section>
 </main>
 
@@ -706,14 +702,14 @@
 
   <section class="card">
     <h2>التجار</h2>
-    <div class="sub" style="color:var(--muted); font-size:13px;">التجار المسجلين عند البوت ومفاتيح دخولهم وطلباتهم. اختر تاجرًا عشان تشوف مفاتيحه وآخر طلباته وتدير حالته.</div>
-    <div id="mchList" style="margin-top:6px;"></div>
-    <button class="btn secondary" id="mchReloadBtn" type="button" style="margin-top:10px;">تحديث القائمة</button>
+    <div class="sub" style="color:var(--muted); font-size:12px;">التجار المسجلين عند البوت ومفاتيح دخولهم وطلباتهم. اختر تاجرًا عشان تشوف مفاتيحه وآخر طلباته وتدير حالته.</div>
+    <div id="mchList" style="margin-top:8px;"></div>
+    <button class="btn secondary" id="mchReloadBtn" type="button" style="margin-top:12px;">تحديث</button>
   </section>
 
   <section class="card hidden" id="mchDetailCard">
     <h2 id="mchDetailTitle">تفاصيل التاجر</h2>
-    <div id="mchNewSecretBox" class="hidden" style="border:1px solid var(--gold, #c9a227); border-radius:8px; padding:10px; margin-top:8px;">
+    <div id="mchNewSecretBox" class="hidden" style="border:1px solid var(--gold, #c9a227); border-radius:14px; padding:12px; margin-top:8px;">
       <b>مفتاح الدخول الجديد — انسخه دلوقتي، مش هيظهر تاني.</b>
       <div class="sub" style="color:var(--muted); font-size:12px; margin-top:4px;">المفتاح القديم اتوقف خلاص. ادّي المفتاح الجديد للتاجر في قناة آمنة، وبعدين اخفي الصندوق ده.</div>
       <div class="row-actions" style="margin-top:8px;">
@@ -722,7 +718,7 @@
         <button class="btn ghost" id="mchHideSecretBtn" type="button">أخفيته — تمام</button>
       </div>
     </div>
-    <div id="mchDetailBody" style="margin-top:6px;"></div>
+    <div id="mchDetailBody" style="margin-top:8px;"></div>
   </section>
 </main>
 
@@ -731,17 +727,17 @@
 
   <section class="card">
     <h2>طرق الدفع في الموقع</h2>
-    <div class="sub" style="color:var(--muted); font-size:13px;">دي وسائل الدفع اللي الموقع بيقبل الشراء بيها. إيقاف وسيلة بيوقف الشراء بيها فورًا، وتفعيلها بيرجّعه. تغيير اسم وسيلة لازم يقابله نفس الاسم على زر الدفع في الموقع، وإلا الشراء بيها هيقف — عشان كده الحفظ بيعدّي على معاينة الأول.</div>
-    <div id="siteMethodsList" style="margin-top:6px;"></div>
-    <button class="btn secondary" id="siteMethodsReloadBtn" type="button" style="margin-top:10px;">تحديث القائمة</button>
+    <div class="sub" style="color:var(--muted); font-size:12px;">دي وسائل الدفع اللي الموقع بيقبل الشراء بيها. إيقاف وسيلة بيوقف الشراء بيها فورًا، وتفعيلها بيرجّعه. تغيير اسم وسيلة لازم يقابله نفس الاسم على زر الدفع في الموقع، وإلا الشراء بيها هيقف — عشان كده الحفظ بيعدّي على معاينة الأول.</div>
+    <div id="siteMethodsList" style="margin-top:8px;"></div>
+    <button class="btn secondary" id="siteMethodsReloadBtn" type="button" style="margin-top:12px;">تحديث</button>
   </section>
 
   <section class="card hidden" id="siteMethodFormCard">
     <h2 id="siteMethodFormTitle">تعديل وسيلة دفع</h2>
-    <div class="field" style="margin-top:10px;"><label>اسم الوسيلة (زي ما بيظهر للعميل)</label><input id="siteMethodName" type="text"></div>
+    <div class="field" style="margin-top:12px;"><label>اسم الوسيلة (زي ما بيظهر للعميل)</label><input id="siteMethodName" type="text"></div>
     <div class="field"><label>ملحوظة داخلية (مش بتظهر للعملاء)</label><input id="siteMethodNote" type="text"></div>
     <div class="field"><label><input id="siteMethodActive" type="checkbox" checked> الوسيلة شغالة ويتقبل الشراء بيها</label></div>
-    <div class="row-actions" style="margin-top:10px;">
+    <div class="row-actions" style="margin-top:12px;">
       <button class="btn" id="siteMethodSaveBtn" type="button">معاينة وحفظ</button>
       <button class="btn secondary" id="siteMethodCancelBtn" type="button">إلغاء</button>
     </div>
@@ -749,20 +745,20 @@
 
   <section class="card">
     <h2>شريط الإعلان</h2>
-    <div class="sub" style="color:var(--muted); font-size:13px;">شريط بيظهر أعلى الصفحة الرئيسية للموقع. وهو مطفي أو نصه فاضي مش هيظهر حاجة.</div>
-    <div class="field" style="margin-top:10px;"><label>نص الإعلان</label><input id="siteAnnText" type="text"></div>
+    <div class="sub" style="color:var(--muted); font-size:12px;">شريط بيظهر أعلى الصفحة الرئيسية للموقع. وهو مطفي أو نصه فاضي مش هيظهر حاجة.</div>
+    <div class="field" style="margin-top:12px;"><label>نص الإعلان</label><input id="siteAnnText" type="text"></div>
     <div class="field"><label>رابط عند الضغط (اختياري)</label><input id="siteAnnUrl" type="text" dir="ltr" placeholder="https://..."></div>
     <div class="field"><label><input id="siteAnnEnabled" type="checkbox"> الشريط ظاهر للعملاء</label></div>
-    <div class="row-actions" style="margin-top:10px;">
+    <div class="row-actions" style="margin-top:12px;">
       <button class="btn" id="siteAnnSaveBtn" type="button">حفظ شريط الإعلان</button>
     </div>
   </section>
 
   <section class="card">
     <h2>الأسئلة الشائعة في الصفحة الرئيسية</h2>
-    <div class="sub" style="color:var(--muted); font-size:13px;">الأسئلة والإجابات اللي بتظهر في قسم الأسئلة في الصفحة الرئيسية، بنفس الترتيب اللي بتكتبها بيه هنا.</div>
-    <div id="siteFaqList" style="margin-top:10px;"></div>
-    <div class="row-actions" style="margin-top:10px;">
+    <div class="sub" style="color:var(--muted); font-size:12px;">الأسئلة والإجابات اللي بتظهر في قسم الأسئلة في الصفحة الرئيسية، بنفس الترتيب اللي بتكتبها بيه هنا.</div>
+    <div id="siteFaqList" style="margin-top:12px;"></div>
+    <div class="row-actions" style="margin-top:12px;">
       <button class="btn secondary" id="siteFaqAddBtn" type="button">إضافة سؤال</button>
       <button class="btn" id="siteFaqSaveBtn" type="button">حفظ الأسئلة</button>
     </div>
@@ -770,35 +766,35 @@
 
   <section class="card">
     <h2>أقسام الصفحة الرئيسية</h2>
-    <div class="sub" style="color:var(--muted); font-size:13px;">إخفاء قسم بيخفيه من الصفحة الرئيسية من غير ما يمسح محتواه — تقدر ترجّعه في أي وقت.</div>
-    <div id="siteSectionsList" style="margin-top:10px;"></div>
-    <div class="row-actions" style="margin-top:10px;">
+    <div class="sub" style="color:var(--muted); font-size:12px;">إخفاء قسم بيخفيه من الصفحة الرئيسية من غير ما يمسح محتواه — تقدر ترجّعه في أي وقت.</div>
+    <div id="siteSectionsList" style="margin-top:12px;"></div>
+    <div class="row-actions" style="margin-top:12px;">
       <button class="btn" id="siteSectionsSaveBtn" type="button">حفظ الأقسام</button>
     </div>
   </section>
 
   <section class="card">
     <h2>نص الشروط البديل</h2>
-    <div class="sub" style="color:var(--muted); font-size:13px;">صفحة الشروط الحالية مكتوبة ومنسّقة في الموقع نفسه وبتظهر زي ما هي. لو كتبت نصًا هنا وحفظته، هو اللي هيظهر في صفحة الشروط بدل النص المنسّق (بيظهر كنص عادي، فقرة لكل سطر فاضي بينها). سيبه فاضي عشان الصفحة الحالية تفضل هي اللي ظاهرة.</div>
-    <div class="field" style="margin-top:10px;"><label>نص الشروط</label><textarea id="siteTermsText" rows="8"></textarea></div>
-    <div class="row-actions" style="margin-top:10px;">
+    <div class="sub" style="color:var(--muted); font-size:12px;">صفحة الشروط الحالية مكتوبة ومنسّقة في الموقع نفسه وبتظهر زي ما هي. لو كتبت نصًا هنا وحفظته، هو اللي هيظهر في صفحة الشروط بدل النص المنسّق (بيظهر كنص عادي، فقرة لكل سطر فاضي بينها). سيبه فاضي عشان الصفحة الحالية تفضل هي اللي ظاهرة.</div>
+    <div class="field" style="margin-top:12px;"><label>نص الشروط</label><textarea id="siteTermsText" rows="8"></textarea></div>
+    <div class="row-actions" style="margin-top:12px;">
       <button class="btn" id="siteTermsSaveBtn" type="button">حفظ نص الشروط</button>
     </div>
   </section>
 
   <section class="card">
     <h2>وضع الصيانة</h2>
-    <div class="sub" style="color:var(--muted); font-size:13px;">لما الصيانة شغالة، العملاء بيشوفوا رسالة الصيانة بدل المتجر في الصفحة الرئيسية وصفحة الشروط. اللوحة دي وكل شغل الإدارة بيضلوا شغالين عادي — الصيانة بتقفل واجهة المتجر بس.</div>
-    <div class="field" style="margin-top:10px;"><label>رسالة الصيانة اللي العميل هيشوفها</label><textarea id="siteMaintMsg" rows="3"></textarea></div>
+    <div class="sub" style="color:var(--muted); font-size:12px;">لما الصيانة شغالة، العملاء بيشوفوا رسالة الصيانة بدل المتجر في الصفحة الرئيسية وصفحة الشروط. اللوحة دي وكل شغل الإدارة بيضلوا شغالين عادي — الصيانة بتقفل واجهة المتجر بس.</div>
+    <div class="field" style="margin-top:12px;"><label>رسالة الصيانة اللي العميل هيشوفها</label><textarea id="siteMaintMsg" rows="3"></textarea></div>
     <div class="field"><label><input id="siteMaintEnabled" type="checkbox"> الصيانة شغالة دلوقتي</label></div>
-    <div class="row-actions" style="margin-top:10px;">
+    <div class="row-actions" style="margin-top:12px;">
       <button class="btn" id="siteMaintSaveBtn" type="button">حفظ وضع الصيانة</button>
     </div>
   </section>
 
   <section class="card">
-    <h2>حاجات بتتعدّل من الكود نفسه</h2>
-    <div class="sub" style="color:var(--muted); font-size:13px;">الحاجات دي مكانها الطبيعي هو كود الموقع نفسه، فمش بتتعدّل من اللوحة — أي تغيير فيها بيتم بتعديل الموقع ونشره:
+    <h2>حاجات مكانها في الموقع نفسه (مش من اللوحة)</h2>
+    <div class="sub" style="color:var(--muted); font-size:12px;">الحاجات دي مكانها الطبيعي هو كود الموقع نفسه، فمش بتتعدّل من اللوحة — أي تغيير فيها بيتم بتعديل الموقع ونشره:
       <br>• صورة وحركة الواجهة الرئيسية الكبيرة (التنين) في أول الصفحة الرئيسية.
       <br>• ترتيب أقسام الصفحة الرئيسية (اللي فوق واللي تحت) — اللوحة بتظهرهم وبتخفيهم بس.
       <br>• أرقام الحسابات وتعليمات الدفع اللي العميل بيشوفها جوّه نافذة إتمام الشراء (رقم المحفظة، معرّف باينانس، وهكذا) — اللوحة بتدير اسم كل وسيلة وحالتها هنا، والرقم نفسه بيتغيّر من الكود.
@@ -810,7 +806,7 @@
 <div class="sheet-veil" id="sheetVeil"></div>
 <div class="sheet" id="sheet">
   <p id="sheetTitle"></p>
-  <div id="sheetBody"><small>القسم ده هيتبني في مرحلته الجاية من خطة اللوحة.</small></div>
+  <div id="sheetBody"><small>اختر قسمًا من تحت.</small></div>
   <button class="btn secondary" id="sheetClose" type="button">تمام</button>
 </div>
 
@@ -910,7 +906,7 @@ function attemptLogin(raw){
       return;
     }
     if (!r.data || r.data.ok === false || typeof r.data.active !== "boolean") {
-      showMsg("err", "مش عارفين نتأكد من حالة التحقق بخطوتين دلوقتي — البوت مش بيرد. جرّب تاني بعد شوية.", false);
+      showMsg("err", "مش عارفين نتأكد من حالة التحقق بخطوتين دلوقتي (الخادم مش بيرد). اتأكد من النت وجرّب تاني بعد شوية.", false);
       return;
     }
     if (r.data.active !== true) {
@@ -985,7 +981,7 @@ function render(data){
   $("storeDot").className = "dot ok";
   $("storePillText").textContent = "المتجر يعمل";
 
-  // حالة الأجزاء
+  // حالة البوت والموقع
   var rows = "";
   var botAt = bot ? relTime(bot.generated_at) : null;
   rows += compRow("البوت",
@@ -1153,7 +1149,7 @@ $("storePill").addEventListener("click", load);
 // شغالين، و«المزيد» فيها أسعار الموقع (م٣) والكتالوج والموردون
 // (م٣-ب) والأحداث والمكونات (م٤).
 var navNames = { events: "الأحداث", more: "المزيد" };
-var viewTitles = { home: "مهامي الآن", customers: "العملاء", orders: "الطلبات", chats: "المحادثات", prices: "أسعار الموقع", catalog: "الكتالوج", suppliers: "الموردون", events: "الأحداث والمكونات", settings: "إعدادات البوت", channel: "قناة التليجرام", coupons: "الكوبونات", merchants: "التجار", site: "الموقع", visitors: "زوار البوت", preview: "شوف كما يراه العميل", health: "صحة النظام", reviews: "التقييمات", adminUsers: "حسابات الموقع" };
+var viewTitles = { home: "مهامي الآن", customers: "العملاء", orders: "الطلبات", chats: "المحادثات", prices: "أسعار الموقع", catalog: "الكتالوج", suppliers: "الموردون", events: "الأحداث", settings: "إعدادات البوت", channel: "قناة التليجرام", coupons: "الكوبونات", merchants: "التجار", site: "الموقع: الدفع والمحتوى", visitors: "زوار البوت", preview: "شوف كما يراه العميل", health: "صحة النظام", reviews: "التقييمات", adminUsers: "حسابات الموقع" };
 function showView(name){
   $("homeMain").classList.toggle("hidden", name !== "home");
   $("customersMain").classList.toggle("hidden", name !== "customers");
@@ -1194,19 +1190,23 @@ document.querySelectorAll("#bottomNav button").forEach(function(b){
       $("sheetTitle").textContent = "المزيد";
       $("sheetBody").innerHTML =
         '<div class="menu-list">' +
-        '<button class="btn" id="morePricesBtn" type="button">أسعار الموقع</button>' +
+        '<div class="group-title">البيع</div>' +
         '<button class="btn" id="moreCatalogBtn" type="button">الكتالوج</button>' +
-        '<button class="btn" id="moreSuppliersBtn" type="button">الموردون</button>' +
-        '<button class="btn" id="moreEventsBtn" type="button">الأحداث والمكونات</button>' +
-        '<button class="btn" id="moreHealthBtn" type="button">صحة النظام والحراس</button>' +
-        '<button class="btn" id="moreSettingsBtn" type="button">إعدادات البوت</button>' +
-        '<button class="btn" id="moreChannelBtn" type="button">قناة التليجرام</button>' +
+        '<button class="btn" id="morePricesBtn" type="button">أسعار الموقع</button>' +
         '<button class="btn" id="moreCouponsBtn" type="button">الكوبونات</button>' +
+        '<div class="group-title">التشغيل</div>' +
+        '<button class="btn" id="moreSuppliersBtn" type="button">الموردون</button>' +
+        '<button class="btn" id="moreEventsBtn" type="button">الأحداث</button>' +
+        '<button class="btn" id="moreHealthBtn" type="button">صحة النظام والحراس</button>' +
+        '<div class="group-title">النشر والموقع</div>' +
+        '<button class="btn" id="moreChannelBtn" type="button">قناة التليجرام</button>' +
+        '<button class="btn" id="moreSiteBtn" type="button">الموقع: الدفع والمحتوى</button>' +
+        '<button class="btn" id="morePreviewBtn" type="button">شوف كما يراه العميل</button>' +
+        '<div class="group-title">الإدارة</div>' +
+        '<button class="btn" id="moreSettingsBtn" type="button">إعدادات البوت</button>' +
         '<button class="btn" id="moreMerchantsBtn" type="button">التجار</button>' +
-        '<button class="btn" id="moreSiteBtn" type="button">الموقع</button>' +
         '<button class="btn" id="moreReviewsBtn" type="button">التقييمات</button>' +
         '<button class="btn" id="moreAdminUsersBtn" type="button">حسابات الموقع</button>' +
-        '<button class="btn" id="morePreviewBtn" type="button">شوف كما يراه العميل</button>' +
         "</div>";
       $("sheet").classList.add("open");
       $("sheetVeil").classList.add("open");
@@ -1278,7 +1278,7 @@ document.querySelectorAll("#bottomNav button").forEach(function(b){
       return;
     }
     $("sheetTitle").textContent = "قسم " + (navNames[nav] || "");
-    $("sheetBody").innerHTML = "<small>القسم ده هيتبني في مرحلته الجاية من خطة اللوحة.</small>";
+    $("sheetBody").innerHTML = "<small>اختر قسمًا من تحت.</small>";
     $("sheet").classList.add("open");
     $("sheetVeil").classList.add("open");
   });
@@ -1338,29 +1338,28 @@ function errText(e, ctx){
   var code = e && e.data && e.data.error;
   if (code === "already_decided") return "الشحنة دي اتقرر فيها قبل كده.";
   if (code === "insufficient") return "الرصيد مش هيكفي لتنفيذ العملية دي.";
-  if (code === "already_reversed") return "القيد ده اتعكس قبل كده.";
+  if (code === "already_reversed") return "الحركة دي اتراجع عنها قبل كده.";
   if (code === "customer_not_found") return "العميل مش موجود.";
   if (code === "review_not_found") return "التقييم ده مش موجود — يمكن اتمسح. حدّث القائمة.";
   if (code === "invalid_decision") return "القرار لازم يكون موافقة أو رفض.";
   if (code === "invalid_status") return "فلتر الحالة ده مش معروف.";
-  if (code === "user_not_found") return "المستخدم ده مش موجود — يمكن اتمسح. حدّث القائمة.";
+  if (code === "user_not_found") return "الحساب ده مش موجود — يمكن اتحذف. حدّث القائمة.";
   if (code === "self_ban" || code === "last_admin") return (e.data && e.data.reason) || "الحظر ده مرفوض حمايةً من قفل الدخول على الكل.";
-  if (code === "invalid_status") return "الحالة دي مش من حالات طلبات الموقع المعروفة.";
   if (code === "invalid_transition") return "تغيير الحالة ده مش مسموح من حالة الطلب الحالية.";
   if (code === "reason_required") return "اكتب سبب الإلغاء أو الاسترداد الأول.";
   if (code === "feed_unavailable") return "بيانات تكاليف الموردين مش متاحة دلوقتي — ما اتطبقش أي تغيير على أي سعر.";
-  if (code === "below_floor") return "السعر أو التكلفة دي أقل من الحد الآمن المحسوب من تكلفة المورد المنفّذ — ما اتكتبش حاجة عشان مايتباعش بخسارة.";
-  if (code === "no_executing_link") return "المنتج ده مالوش مورد منفّذ مربوط بيه، فتكلفته مش هتتكتب في أي حتة. اربطه بمورد من روابط المورد الأول.";
-  if (code === "already_undone") return "الدفعة دي اتراجع عنها قبل كده.";
-  if (code === "executing_link_changed") return "المورد المنفّذ لمنتج في الدفعة اتغيّر من ساعة ما اتعملت — التراجع اترفض عشان ما يكتبش تكلفة قديمة عند المورد الجديد.";
-  if (code === "modified_since_batch") return "تكلفة منتج في الدفعة اتغيّرت بعد ما اتعملت — التراجع اترفض عشان ما يمسحش التعديل الأحدث.";
+  if (code === "below_floor") return "السعر أو التكلفة دي أقل من الحد الآمن المحسوب من تكلفة المورد اللي بينفّذ المنتج ده — ما اتكتبش حاجة عشان مايتباعش بخسارة.";
+  if (code === "no_executing_link") return "المنتج ده مالوش مورد مربوط بيه بينفّذه فعلًا، فتكلفته مش هتتكتب في أي حتة. اربطه بمورد من روابط المورد الأول.";
+  if (code === "already_undone") return "مجموعة التغييرات دي اتراجع عنها قبل كده.";
+  if (code === "executing_link_changed") return "المورد اللي بينفّذ منتج في مجموعة التغييرات اتغيّر من ساعة ما اتعملت — التراجع اترفض عشان ما يكتبش تكلفة قديمة عند المورد الجديد.";
+  if (code === "modified_since_batch") return "تكلفة منتج في مجموعة التغييرات اتغيّرت بعد ما اتعملت — التراجع اترفض عشان ما يمسحش التعديل الأحدث.";
   if (code === "undo_incomplete") return "التراجع كمل جزئيًا بس — فيه منتجات ما اتراجعش عنها. حدّث القائمة وراجع اللي باقي.";
-  if (code === "batch_write_failed") return "الدفعة وقفت في النص: اللي اتطبق اتسجل في التدقيق وقابل للتراجع، والباقي ما اتلمسش.";
+  if (code === "batch_write_failed") return "مجموعة التغييرات وقفت في النص: اللي اتطبق اتسجل في سجل التغييرات وقابل للتراجع، والباقي ما اتلمسش.";
   if (code === "pricing_write_failed") return "كتابة التكلفة ما كملتش — المنتج زي ما هو وما اتغيّرش فيه حاجة.";
   if (code === "pricing_write_partial") return "كتابة التكلفة وقفت في النص وحالة رابط المورد محتاجة مراجعة قبل أي تعديل تاني.";
   if (code === "target_link_in_use") return "صف المورد الهدف مربوط بمنتج تاني أصلًا — النقل ما كملش.";
-  if (code === "not_mapped") return "المنتج ده مش مربوط في خريطة الهوية — اربطه الأول من قسم ربط الهوية في شاشة الكتالوج.";
-  if (code === "target_not_in_engine") return "المورد الهدف مش موجود في المحرك أو صف منتجه مش موجود فيه — النقل ما بدأش.";
+  if (code === "not_mapped") return "المنتج ده لسه مش مربوط بالمنتج المقابل له عند المورد — اربطه الأول من قسم «ربط المنتجات» في شاشة الكتالوج.";
+  if (code === "target_not_in_engine") return "المورد الهدف مش شغال في البوت أصلًا أو صف منتجه مش موجود عنده — النقل ما بدأش.";
   if (code === "target_not_assigned") return "المورد الهدف مش مسند للمنتج ده في سجل الموردين.";
   if (code === "failover_incomplete") return "النقل بدأ بس ما كملش — السجل اتقفل والسعر محتاج مراجعة قبل أي بيع.";
   if (code === "failover_partial") return "النقل اتنفذ في السجل بس خطوة الربط أو تحديث الكتالوج وقفت — راجع المنتج قبل أي بيع.";
@@ -1369,8 +1368,8 @@ function errText(e, ctx){
   if (code === "supplier_not_found") return "المورد مش موجود.";
   if (code === "link_not_found") return "الرابط ده مش موجود عند المورد.";
   if (code === "category_not_found") return "الفئة مش موجودة.";
-  if (code === "audit_not_found") return "سجل الدفعة دي مش موجود في التدقيق.";
-  if (code === "not_a_price_batch") return "السجل ده مش دفعة أسعار — التراجع متاح لدفعات الأسعار بس.";
+  if (code === "audit_not_found") return "سجل مجموعة التغييرات دي مش موجود في سجل التغييرات — حدّث القائمة وحاول تاني.";
+  if (code === "not_a_price_batch") return "السجل ده مش مجموعة تغييرات أسعار — التراجع متاح لمجموعات تغييرات الأسعار بس.";
   if (code === "identity_link_required") return "الربط لازم يكون فيه منتج بوت أو اسم منتج موقع على الأقل.";
   if (code === "bad_product_key") return "مفتاح المنتج مش صحيح — من غير مسافات وبحد أقصى ٨٠ حرف.";
   if (code === "bad_product_id") return "معرّف المنتج مش صحيح.";
@@ -1385,7 +1384,7 @@ function errText(e, ctx){
   if (code === "bad_key") return "المفتاح ده مش معروف في سجل إعدادات البوت.";
   if (code === "not_editable") return "الإعداد ده مش قابل للتعديل من اللوحة.";
   if (code === "bad_value" && ctx === "channel") return "بيانات المنشور مش صحيحة — راجع النص والأزرار ووقت النشر وحاول تاني.";
-  if (code === "bad_value" && ctx === "merchants") return "فيه عنوان مش مكتوب بصيغة صحيحة في قائمة العناوين المسموحة — كل سطر لازم يكون عنوان أو نطاق بصيغة CIDR زي 203.0.113.0/24.";
+  if (code === "bad_value" && ctx === "merchants") return "فيه عنوان مش مكتوب بصيغة صحيحة في قائمة العناوين المسموحة — كل سطر لازم يكون عنوان إنترنت (IP) أو نطاق عناوين زي 203.0.113.0/24.";
   if (code === "bad_value" && ctx === "site") return "البيانات دي مش صحيحة — راجع النصوص والأطوال (نص الإعلان لحد ٣٠٠ حرف، والرابط لازم يبدأ بـ http)، وحاول تاني.";
   if (code === "bad_value") return "القيمة دي مش صحيحة للإعداد ده — راجعها وحاول تاني.";
   if (code === "bad_rate") return "سعر الدولار لازم يكون رقم صحيح أكبر من صفر.";
@@ -1395,9 +1394,9 @@ function errText(e, ctx){
   if (code === "bad_reason") return "سبب التعديل طويل أو مش صحيح.";
   if (code === "setting_write_failed") return "الحفظ ما كملش — ما اتكتبش صف واحد زي ما هو مطلوب. حاول تاني.";
   if (code === "bad_query") return "بيانات البحث مش صحيحة.";
-  if (code === "event_consumed") return "الحدث ده اتستهلك خلاص — اتربط أو اتشحن بيه قبل كده، فمش هيتقبل عليه فعل تاني.";
-  if (code === "needs_target") return "الاعتماد محتاج هدف: اكتب معرّف مطالبة إيداع أو معرّف نية شحن في ورقة الاعتماد، وإلا الاعتماد مش هيتم.";
-  if (code === "bad_target") return "حدّد هدف واحد بس للاعتماد: معرّف مطالبة أو معرّف نية — مش الاتنين مع بعض.";
+  if (code === "event_consumed") return "الحدث ده اتستخدم قبل كده — اتربط بشحنة أو اتشحن بيه، فمش هيتقبل عليه حاجة تانية.";
+  if (code === "needs_target") return "لازم تختار الشحنة دي هتتضاف لمين: اكتب رقم طلب الشحن أو رقم الإيداع اللي جاي منه الفلوس — واحد بس منهم.";
+  if (code === "bad_target") return "حدّد هدف واحد بس: رقم طلب الشحن أو رقم الإيداع — مش الاتنين مع بعض.";
   if (code === "bad_rail") return "منصة الإيداع دي مش معروفة — الحدث مش Binance ولا Bybit.";
   if (code === "bad_event") return "الحدث مش موجود أو معرّفه مش صحيح.";
   if (code === "bad_action") return "الفعل ده مش متاح للحدث ده بحالته الحالية.";
@@ -1422,21 +1421,26 @@ function errText(e, ctx){
   if (code === "not_found" && ctx === "channel") return "المنشور ده مش موجود — يمكن اتحذف. حدّث القائمة.";
   if (code === "not_found" && ctx === "coupons") return "الكوبون ده مش موجود — يمكن اتحذف. حدّث القائمة.";
   if (code === "not_found" && ctx === "merchants") return "التاجر أو مفتاح الدخول ده مش موجود — يمكن اتحذف. حدّث القائمة.";
-  if (code === "not_found" || (e && e.status === 404))
-    return ctx === "reverse" ? "القيد ده مش موجود." : "العميل مش موجود.";
+  if (code === "not_found" || (e && e.status === 404)){
+    if (ctx === "reverse") return "الحركة دي مش موجودة.";
+    if (ctx === "file" || ctx === "search" || ctx === "decide" || ctx === "adjust" || ctx === "transfer") return "العميل مش موجود.";
+    if (ctx === "order" || ctx === "manual") return "الطلب مش موجود — يمكن اتحذف. حدّث القائمة.";
+    if (ctx === "catalog") return "المنتج مش موجود — يمكن اتحذف. حدّث القائمة.";
+    return "العنصر ده مش موجود — يمكن اتحذف أو اتغيّر. حدّث الشاشة وحاول تاني.";
+  }
   if (e && e.status === 409 && ctx === "manual")
     return "فيه تعارض — غالبًا مرجع الدفع ده اتسجل قبل كده. حدّث القائمة وشوف حالة المهمة.";
   if (e && e.status === 409 && ctx === "order")
     return "العملية دي اتعملت قبل كده أو حالة الطلب اتغيرت. حدّث الشاشة وشوف حالته دلوقتي.";
   if (e && e.status === 409)
-    return ctx === "decide" ? "الشحنة دي اتقرر فيها قبل كده." : "القيد ده اتعكس قبل كده.";
+    return ctx === "decide" ? "الشحنة دي اتقرر فيها قبل كده." : "الحركة دي اتراجع عنها قبل كده.";
   if (e && e.status === 422) return "الرصيد مش هيكفي لتنفيذ العملية دي.";
   if (e && e.status === 400) {
-    if (ctx === "reverse") return "القيد ده نفسه عكس لقيد تاني، ومينفعش يتعكس.";
+    if (ctx === "reverse") return "الحركة دي نفسها تراجع عن حركة تانية، فما ينفعش يتعملها تراجع.";
     return "فيه بيانات ناقصة أو مش صحيحة في الطلب.";
   }
   if (e && (e.status === 502 || e.status === 503)) return "الخدمة مش بترد دلوقتي — حاول تاني بعد شوية.";
-  return "حصلت مشكلة ومش عارف أوصل للخادم. حاول تاني.";
+  return "مش عارف أوصل للخادم دلوقتي. اتأكد إن النت شغال، واستنى دقيقة وجرّب تاني. لو المشكلة فضلت، افتح شاشة «صحة النظام» وشوف البوت شغال ولا لأ.";
 }
 
 function newIdem(){
@@ -1454,7 +1458,7 @@ function egpFromMinor(v){
 function senderName(s){
   if (s === "customer") return "العميل";
   if (s === "bot") return "البوت";
-  if (s === "admin") return "الأدمن";
+  if (s === "admin") return "أنت (من اللوحة)";
   return s || "—";
 }
 
@@ -1743,7 +1747,7 @@ function botLedgerHtml(){
   var list = (custFile.bot && Array.isArray(custFile.bot.ledger)) ? custFile.bot.ledger : [];
   if (!custFile.bot) return "";
   var rows = "";
-  if (!list.length) rows = '<div class="sub" style="color:var(--muted)">مفيش قيود لسه.</div>';
+  if (!list.length) rows = '<div class="sub" style="color:var(--muted)">مفيش حركات لسه.</div>';
   list.forEach(function(tx, i){
     var age = relTime(tx.created_at);
     var amt = egpFromMinor(tx.amount);
@@ -1756,18 +1760,18 @@ function botLedgerHtml(){
     var isReversal = (tx.note && tx.note.indexOf("[reversal]") === 0) ||
       (tx.operation_ref && tx.operation_ref.indexOf("panel-reversal:") === 0);
     if (!isReversal) {
-      rows += '<div class="row-actions"><button class="btn ghost small" type="button" data-breverse="' + i + '">عكس القيد</button></div>';
+      rows += '<div class="row-actions"><button class="btn ghost small" type="button" data-breverse="' + i + '">تراجع عن الحركة</button></div>';
     }
     rows += "</div>";
   });
-  return '<section class="card"><h2>قيود محفظة البوت</h2>' + rows + "</section>";
+  return '<section class="card"><h2>حركات محفظة البوت (شحن وخصم وتعديل)</h2>' + rows + "</section>";
 }
 
 function storeLedgerHtml(){
   var list = (custFile.store && Array.isArray(custFile.store.transactions)) ? custFile.store.transactions : [];
   if (!custFile.store) return "";
   var rows = "";
-  if (!list.length) rows = '<div class="sub" style="color:var(--muted)">مفيش قيود لسه.</div>';
+  if (!list.length) rows = '<div class="sub" style="color:var(--muted)">مفيش حركات لسه.</div>';
   list.forEach(function(tx, i){
     var age = relTime(tx.created_at);
     var amt = Number(tx.amount_egp);
@@ -1779,11 +1783,11 @@ function storeLedgerHtml(){
       (age ? " · " + esc(age) : "") + "</div>" +
       (tx.note ? '<div class="sub">' + esc(tx.note) + "</div>" : "");
     if (isFinite(amt) && amt !== 0) {
-      rows += '<div class="row-actions"><button class="btn ghost small" type="button" data-sreverse="' + i + '">عكس القيد</button></div>';
+      rows += '<div class="row-actions"><button class="btn ghost small" type="button" data-sreverse="' + i + '">تراجع عن الحركة</button></div>';
     }
     rows += "</div>";
   });
-  return '<section class="card"><h2>قيود محفظة الموقع</h2>' + rows + "</section>";
+  return '<section class="card"><h2>حركات محفظة الموقع</h2>' + rows + "</section>";
 }
 
 function botOrdersHtml(){
@@ -1984,7 +1988,7 @@ function customerControlHtml(){
   FLAG_DEFS.forEach(function(def){
     var on = !!f[def[0]];
     html += '<div class="sub" style="display:flex;justify-content:space-between;align-items:center;gap:8px">' +
-      '<span><b>' + esc(def[1]) + '</b>' + (on ? ' <span class="status-txt st-bad">مفعّل</span>' : '') +
+      '<span><b>' + esc(def[1]) + '</b>' + (on ? ' <span class="status-txt st-bad">شغال</span>' : '') +
       '<br><span style="color:var(--muted)">' + esc(def[2]) + '</span></span>' +
       '<button class="btn ' + (on ? 'secondary' : 'danger') + '" type="button" data-flag="' + def[0] + '" data-flag-value="' + (on ? '0' : '1') + '">' + (on ? 'إيقاف' : 'تفعيل') + '</button></div>';
   });
@@ -1997,7 +2001,7 @@ function customerControlHtml(){
       '<span>معلّق <b class="num">' + fmtNum(egpFromMinor(h.amount_minor)) + ' ج.م</b> — ' + esc(h.reason || '') + '</span>' +
       '<button class="btn secondary" type="button" data-hold-release="' + i + '">فكّ التعليق</button></div>';
   });
-  html += '<div class="sub" style="margin-top:10px"><b>الوسوم:</b> ' +
+  html += '<div class="sub" style="margin-top:12px"><b>الوسوم:</b> ' +
     ((c.tags && c.tags.length) ? c.tags.map(function(t){
       return '<span class="badge bot">' + esc(t) + ' <a href="#" data-tag-del="' + esc(t) + '" style="color:inherit">✕</a></span>';
     }).join(' ') : 'مفيش وسوم') +
@@ -2005,7 +2009,7 @@ function customerControlHtml(){
   html += '<div class="sub"><b>حساب الموقع المرتبط:</b> ' +
     (c.link ? '<span class="num">' + esc(c.link.store_customer_id) + '</span> <button class="btn secondary" type="button" data-link-del>فكّ الربط</button>'
             : 'مش مربوط <button class="btn secondary" type="button" data-link-new>اربط حساب موقع</button>') + '</div>';
-  html += '<div class="sub" style="margin-top:10px"><b>ملاحظات:</b></div>';
+  html += '<div class="sub" style="margin-top:12px"><b>ملاحظات:</b></div>';
   (c.notes || []).forEach(function(n){
     html += '<div class="sub">• ' + esc(n.body) + ' <span style="color:var(--muted)">(' + esc(relTime(n.created_at) || '') + ')</span></div>';
   });
@@ -2125,7 +2129,7 @@ function openStoreBanSheet(ban){
       customer_id: custFile.storeId, banned: ban,
       reason: $("banReason").value.trim() } })
       .then(function(r){
-        if (r && r.audit_failed) showCustMsg("err", "الحظر اتنفذ بس تسجيله في سجل التدقيق فشل — خد بالك.");
+        if (r && r.audit_failed) showCustMsg("err", "الحظر اتنفذ بس تسجيله في سجل التغييرات فشل — خد بالك.");
         return reloadStoreBan();
       })
       .then(function(){ showCustMsg("ok", ban ? "اتحظر حساب الموقع." : "اتفكّ حظر الموقع."); });
@@ -2159,7 +2163,7 @@ function openDecide(surface, t, action){
     return api(path, { method: "POST", body: payload }).then(function(){
       return reloadSurface(surface);
     }).then(function(){
-      showCustMsg("ok", "اتنفذ: " + (DECIDE_LABEL[action] || "القرار") + " — الأرقام اللي تحت دي من الخادم بعد التنفيذ.");
+      showCustMsg("ok", "اتنفذ: " + (DECIDE_LABEL[action] || "القرار") + " — دي الأرقام النهائية بعد التنفيذ.");
     });
   }, "decide");
 }
@@ -2202,7 +2206,7 @@ function openAdjust(surface, preset){
       return api(path, { method: "POST", body: payload }).then(function(){
         return reloadSurface(surface);
       }).then(function(){
-        showCustMsg("ok", "اتنفذ تعديل الرصيد — الرصيد اللي تحت ده من الخادم بعد التنفيذ.");
+        showCustMsg("ok", "اتنفذ تعديل الرصيد — ده الرصيد النهائي بعد التنفيذ.");
       }).catch(throwPinGate);
     }
     if (!isBot) return doAdjust();
@@ -2276,7 +2280,7 @@ function openTransfer(){
     } }).then(function(){
       return reloadSurface("bot");
     }).then(function(){
-      showCustMsg("ok", "اتنفذ النقل — رصيد العميل اللي تحت ده من الخادم بعد التنفيذ.");
+      showCustMsg("ok", "اتنفذ النقل — ده رصيد العميل النهائي بعد التنفيذ.");
     });
   }, "transfer");
   function upd(){
@@ -2297,19 +2301,19 @@ function openBotReverse(tx){
   var data = custFile.bot;
   var amt = egpFromMinor(tx.amount);
   var body =
-    '<div class="preview">القيد: <b>' + esc(BOT_KIND[tx.kind] || tx.kind || "") + '</b> بمبلغ <b class="num">' + fmtNum(amt) + ' ج.م</b>' +
+    '<div class="preview">الحركة: <b>' + esc(BOT_KIND[tx.kind] || tx.kind || "") + '</b> بمبلغ <b class="num">' + fmtNum(amt) + ' ج.م</b>' +
     (tx.note ? "<br>" + esc(tx.note) : "") +
-    "<br>العكس هيعمل قيد معاكس بنفس المبلغ على محفظة العميل.</div>" +
-    '<div class="field"><label>سبب العكس (إلزامي)</label><input id="revReason" type="text"></div>';
-  var ctx = openActSheet("عكس قيد محفظة البوت", body, "تنفيذ العكس", function(){
+    "<br>التراجع هيعمل حركة معاكسة بنفس المبلغ على محفظة العميل.</div>" +
+    '<div class="field"><label>سبب التراجع (إلزامي)</label><input id="revReason" type="text"></div>';
+  var ctx = openActSheet("تراجع عن حركة محفظة البوت", body, "تنفيذ التراجع", function(){
     var reason = $("revReason").value.trim();
-    if (!reason) failValidation("سبب العكس إلزامي.");
+    if (!reason) failValidation("سبب التراجع إلزامي.");
     return api("/control/bot-wallet-reverse", { method: "POST", body: {
       customer_ref: data.customer.ref || custFile.botRef, tx_id: tx.id, reason: reason, idempotency_key: ctx.idem
     } }).then(function(){
       return reloadSurface("bot");
     }).then(function(){
-      showCustMsg("ok", "اتنفذ عكس القيد — القيود اللي تحت دي من الخادم بعد التنفيذ.");
+      showCustMsg("ok", "اتعمل التراجع — دي حركات المحفظة النهائية بعد التراجع.");
     });
   }, "reverse");
 }
@@ -2323,7 +2327,7 @@ function openStoreReverse(tx){
     mode: signed > 0 ? "deduct" : "add",
     amount: Math.abs(signed),
     kind: "correction",
-    reason: "عكس قيد" + (tx.ref ? " — رقم العملية: " + tx.ref : "")
+    reason: "تراجع عن حركة" + (tx.ref ? " — رقم العملية: " + tx.ref : "")
   };
   openAdjust("store", preset);
 }
@@ -2337,14 +2341,14 @@ function openStoreReverse(tx){
 
 var STORE_SETTING_LABELS = {
   usdt_egp_rate: { label: "سعر الدولار في الشحن", kind: "decimal", unit: "ج.م لكل دولار" },
-  sms_autocredit_cap_egp: { label: "أعلى شحن تلقائي من رسالة بنك", kind: "decimal", unit: "ج.م" },
-  sms_trusted_cap_egp: { label: "أعلى شحن تلقائي من مرسل موثوق", kind: "decimal", unit: "ج.م" },
+  sms_autocredit_cap_egp: { label: "أعلى مبلغ يتشحن تلقائيًا من أي رسالة بنك", kind: "decimal", unit: "ج.م" },
+  sms_trusted_cap_egp: { label: "أعلى مبلغ يتشحن تلقائيًا من رقم اتأكدت شحناته قبل كده (مرسل موثوق)", kind: "decimal", unit: "ج.م" },
   sms_trusted_daily_max: { label: "أقصى شحنات موثوقة في اليوم لرقم واحد", kind: "int", unit: "شحنة" },
-  sms_trusted_min_confirmed: { label: "أقل شحنات مؤكدة قبل اعتبار الرقم موثوق", kind: "int", unit: "شحنة" },
-  intent_expiry_minutes: { label: "مدة صلاحية تعليمات الشحن", kind: "int", unit: "دقيقة" },
+  sms_trusted_min_confirmed: { label: "عدد الشحنات المؤكدة اللي بعدها الرقم يبقى «موثوق» ويتشحن له تلقائيًا", kind: "int", unit: "شحنة" },
+  intent_expiry_minutes: { label: "المدة اللي تعليمات الشحن بتفضل صالحة فيها للعميل (بعدها لازم يطلب تعليمات جديدة)", kind: "int", unit: "دقيقة" },
   deposit_address_binance: { label: "عنوان استقبال Binance", kind: "address", unit: "" },
   deposit_address_bybit: { label: "عنوان استقبال Bybit", kind: "address", unit: "" },
-  wallet_app_package: { label: "تطبيقات البنوك والمحافظ المقبولة لقراءة الرسائل", kind: "packages", unit: "" }
+  wallet_app_package: { label: "التطبيقات اللي رسائلها البنكية بتتقبل للشحن التلقائي", kind: "packages", unit: "" }
 };
 var BOT_SETTING_LABELS = {
   topup_auto_exchange_enabled: { label: "شحن تلقائي من البورصة", kind: "bool" },
@@ -2358,7 +2362,7 @@ var moneyState = { store: [], bot: [], botUnavailable: false, storeFailed: false
 
 function settingValueText(meta, v){
   if (v === null || v === undefined || v === "") return "مش متظبط";
-  if (meta && meta.kind === "bool") return (v === true || v === "true") ? "شغال" : "مقفول";
+  if (meta && meta.kind === "bool") return (v === true || v === "true") ? "شغال" : "واقف";
   if (meta && meta.kind === "address") return String(v);
   if (meta && (meta.kind === "decimal" || meta.kind === "int")) {
     var n = Number(v);
@@ -2377,7 +2381,7 @@ function renderMoneySettings(){
   }
   moneyState.store.forEach(function(r){
     var meta = STORE_SETTING_LABELS[r.key];
-    var label = meta ? meta.label : r.key;
+    var label = meta ? meta.label : "إعداد لسه مالوش شرح";
     html += '<div class="result-row" style="cursor:default"><div class="who"><b>' + esc(label) + "</b>" +
       (meta && meta.kind === "address" && r.value
         ? '<small class="addr num">' + esc(r.value) + "</small>"
@@ -2393,7 +2397,7 @@ function renderMoneySettings(){
   }
   moneyState.bot.forEach(function(r){
     var meta = BOT_SETTING_LABELS[r.key];
-    var label = meta ? meta.label : r.key;
+    var label = meta ? meta.label : "إعداد لسه مالوش شرح";
     html += '<div class="result-row" style="cursor:default"><div class="who"><b>' + esc(label) + "</b>" +
       "<small>" + esc(settingValueText(meta, r.value)) + "</small></div>" +
       '<button class="btn ghost small" type="button" data-set-bot="' + esc(r.key) + '">تعديل</button></div>';
@@ -2472,7 +2476,7 @@ $("moneyReloadBtn").addEventListener("click", function(){ loadMoneySettings(); }
 function openSettingEdit(surface, row){
   var isStore = surface === "store";
   var meta = (isStore ? STORE_SETTING_LABELS : BOT_SETTING_LABELS)[row.key] ||
-    { label: row.key, kind: "text", unit: "" };
+    { label: "إعداد لسه مالوش شرح", kind: "text", unit: "" };
   var cur = row.value;
   var body = '<div class="preview">الإعداد: <b>' + esc(meta.label) + '</b><br>القيمة دلوقتي: <b>' +
     (meta.kind === "address" && cur
@@ -2480,12 +2484,13 @@ function openSettingEdit(surface, row){
       : esc(settingValueText(meta, cur)) + "</b>") + "</div>";
   if (meta.kind === "bool") {
     var on = cur === true || cur === "true";
-    body += '<div class="field"><label>الحالة</label><div style="display:flex; align-items:center; gap:10px;">' +
+    body += '<div class="field"><label>الحالة</label><div style="display:flex; align-items:center; gap:8px;">' +
       '<label class="switch"><input type="checkbox" id="setVal"' + (on ? " checked" : "") + '><span class="track"></span></label>' +
-      '<span id="setValWord">' + (on ? "شغال" : "مقفول") + "</span></div></div>";
+      '<span id="setValWord">' + (on ? "شغال" : "واقف") + "</span></div></div>";
   } else if (meta.kind === "packages") {
     body += '<div class="field"><label>أسماء التطبيقات (بين كل اسم والتاني فاصلة)</label>' +
-      '<textarea id="setVal" rows="3">' + esc(cur == null ? "" : cur) + "</textarea></div>";
+      '<textarea id="setVal" rows="3">' + esc(cur == null ? "" : cur) + "</textarea>" +
+      '<div class="sub" style="color:var(--amber); margin-top:4px;">دي أسماء تقنية للتطبيقات — ما تعدّلهاش إلا لو عارف الاسم الصح بالحرف.</div></div>';
   } else if (meta.kind === "address") {
     body += '<div class="field"><label>العنوان الجديد — بيظهر كامل هنا قبل الحفظ، راجعه حرف حرف</label>' +
       '<input id="setVal" type="text" class="addr" value="' + esc(cur == null ? "" : cur) + '"></div>' +
@@ -2526,14 +2531,14 @@ function openSettingEdit(surface, row){
       if (d && d.audit_failed) {
         showCustMsg("warn", "اتحفظ التعديل والقيمة الجديدة شغالة، بس تسجيله في سجل المتابعة ما كملش.");
       } else {
-        showCustMsg("ok", "اتحفظ التعديل — القيم اللي في كارت إعدادات الفلوس دي من الخادم بعد الحفظ.");
+        showCustMsg("ok", "اتحفظ التعديل — دي القيم النهائية بعد الحفظ.");
       }
     });
   }, "setting");
 
   if (meta.kind === "bool") {
     $("setVal").addEventListener("change", function(){
-      $("setValWord").textContent = $("setVal").checked ? "شغال" : "مقفول";
+      $("setValWord").textContent = $("setVal").checked ? "شغال" : "واقف";
     });
   }
   if (meta.kind === "address") {
@@ -3123,7 +3128,7 @@ function openStoreOrderStatusSheet(o){
       order_id: o.id, status: newStatus, reason: reason } })
       .then(function(r){
         if (r && r.audit_failed) {
-          showOrdMsg("err", "الحالة اتغيرت بس تسجيلها في سجل التدقيق فشل — خد بالك.");
+          showOrdMsg("err", "الحالة اتغيرت بس تسجيلها في سجل التغييرات فشل — خد بالك.");
         } else if (r && r.refund && r.refund.applied) {
           showOrdMsg("ok", "اتغيرت حالة الطلب، ومبلغه رجع لمحفظة العميل.");
         } else {
@@ -3219,7 +3224,7 @@ function renderOrdDetail(){
 
   var execObj = o.execution || o.inputs || o.delivery_input || null;
   if (execObj) {
-    html += '<section class="card"><h2>بيانات التنفيذ</h2>';
+    html += '<section class="card"><h2>تفاصيل التنفيذ عند المورد</h2>';
     if (typeof execObj === "object") {
       Object.keys(execObj).forEach(function(k){
         var v = execObj[k];
@@ -3376,7 +3381,7 @@ function showChatMsg(kind, html, withKeyBtn){
 }
 function hideChatMsg(){ $("chatMsg").className = "msg"; $("chatMsg").innerHTML = ""; }
 
-var CHAT_SENDER = { customer: "العميل", bot: "البوت", admin: "الأدمن", panel: "اللوحة" };
+var CHAT_SENDER = { customer: "العميل", bot: "البوت", admin: "أنت (من اللوحة)", panel: "اللوحة" };
 var chatState = {
   loaded: false, active: [], unanswered: [],
   openRef: "", history: [], mode: "", pollTimer: null, saved: null
@@ -3413,7 +3418,7 @@ function chatRowHtml(c, unanswered){
     '<small>' + (c.last_sender ? "آخر رسالة من " + esc(CHAT_SENDER[c.last_sender] || c.last_sender) : "") +
     (age ? " · " + esc(age) : "") + "</small></div>" +
     (unanswered ? '<span class="badge unans">من غير رد</span>' : "") +
-    (c.mode === "human" ? '<span class="badge store">الأدمن بيرد</span>' : "") +
+    (c.mode === "human" ? '<span class="badge store">أنت بترد</span>' : "") +
     '<button class="btn small" type="button" data-chat-open="' + esc(ref) + '">افتح</button></div>';
 }
 function renderChatList(){
@@ -3492,7 +3497,7 @@ function refreshChatHistory(){
 }
 function chatModeText(){
   return chatState.mode === "human"
-    ? 'وضع الرد: <b>الأدمن بيرد</b> — البوت ساكت في المحادثة دي.'
+    ? 'وضع الرد: <b>أنت بترد</b> — البوت ساكت في المحادثة دي.'
     : 'وضع الرد: <b>البوت بيرد</b> تلقائيًا.';
 }
 function chatHistoryHtml(){
@@ -3530,7 +3535,7 @@ function renderChatScreen(){
     '<div id="savedWrap"></div>' +
     '<div class="field" style="margin-top:12px"><label>أو ابعت بطاقة منتج — رقم المنتج في البوت</label><input id="chatGiveId" type="text"></div>' +
     '<button class="btn secondary" type="button" id="chatGiveBtn">ابعت بطاقة المنتج</button>' +
-    '<div class="sub" style="color:var(--muted); margin-top:10px; font-size:13px;">المحادثة بتتحدث تلقائيًا كل كام ثانية — الرسائل الجديدة هتظهر هنا لوحدها.</div>' +
+    '<div class="sub" style="color:var(--muted); margin-top:12px; font-size:12px;">المحادثة بتتحدث تلقائيًا كل كام ثانية — الرسائل الجديدة هتظهر هنا لوحدها.</div>' +
     "</section>";
   scr.innerHTML = html;
   $("chatBack").addEventListener("click", closeChat);
@@ -3713,7 +3718,7 @@ function loadPrices(){
       });
       html += "</tbody></table>";
       if (Array.isArray(data.file_errors) && data.file_errors.length) {
-        html += '<div class="sub" style="color:var(--amber); font-size:13px; margin-top:8px;">ملحوظة: الملفات دي ما اتقرتش من الموقع: ' +
+        html += '<div class="sub" style="color:var(--amber); font-size:12px; margin-top:8px;">ملحوظة: الملفات دي ما اتقرتش من الموقع: ' +
           esc(data.file_errors.join("، ")) + " — أسعارها مش داخلة في المقارنة دي.</div>";
       }
       $("pricesTable").innerHTML = html;
@@ -3734,7 +3739,7 @@ function loadExecState(){
       $("execStateBody").innerHTML =
         '<div class="kv"><span class="k">الحالة</span><span class="v">' + line + "</span></div>" +
         '<div class="kv"><span class="k">طلبات الاسترداد المسجلة</span><span class="v num">' + rf.toLocaleString("en-US") + "</span></div>" +
-        '<div class="sub" style="color:var(--muted); font-size:13px; margin-top:8px;">' + esc(data.note || "") + "</div>";
+        '<div class="sub" style="color:var(--muted); font-size:12px; margin-top:8px;">' + esc(data.note || "") + "</div>";
     })
     .catch(function(e){
       $("execStateBody").innerHTML = '<div class="sub" style="color:var(--red)">' + esc(errText(e, "prices")) + "</div>";
@@ -3752,7 +3757,7 @@ function openApplyFloorsSheet(){
         var msg = raised > 0
           ? "اترفع سعر " + raised + " منتج للحد الآمن."
           : "كل الأسعار فوق الحد الآمن — مفيش سعر اتغيّر.";
-        if (data.audit_failed) msg += " (تنبيه: تسجيل العملية في سجل التدقيق فشل.)";
+        if (data.audit_failed) msg += " (تنبيه: تسجيل العملية في سجل التغييرات فشل.)";
         showPricesMsg("ok", msg);
         loadPrices();
       });
@@ -3828,7 +3833,7 @@ function loadCatalog(){
     if (d.fx_rate !== null && d.fx_rate !== undefined)
       meta.push("سعر الدولار: " + fmtNum(Number(d.fx_rate)) + " ج.م");
     $("catMeta").innerHTML = meta.length
-      ? '<div class="sub" style="color:var(--muted); font-size:13px;">' + esc(meta.join(" · ")) + "</div>"
+      ? '<div class="sub" style="color:var(--muted); font-size:12px;">' + esc(meta.join(" · ")) + "</div>"
       : "";
   }).catch(function(e){
     $("catList").innerHTML = "";
@@ -4006,7 +4011,7 @@ function loadProductSuppliers(productId){
     }
     var assigns = d.assignments;
     if (d.assignments_unavailable){
-      html += '<div class="sub" style="color:var(--muted); margin-top:6px;">إسناد سجل الموردين مش متاح دلوقتي.</div>';
+      html += '<div class="sub" style="color:var(--muted); margin-top:8px;">إسناد سجل الموردين مش متاح دلوقتي.</div>';
     } else if (assigns && assigns.length){
       html += '<div class="group-title">إسناد سجل الموردين</div>';
       assigns.forEach(function(a){
@@ -4019,7 +4024,7 @@ function loadProductSuppliers(productId){
       });
     }
     if (!d.product_key){
-      html += '<div class="preview" style="margin-top:10px;"><span class="warn">النقل لمورد آخر مش متاح:</span> المنتج ده مش مربوط في خريطة الهوية. اربطه الأول من قسم ربط الهوية تحت.</div>';
+      html += '<div class="preview" style="margin-top:12px;"><span class="warn">النقل لمورد آخر مش متاح:</span> المنتج ده لسه مش مربوط بالمنتج المقابل له عند المورد. اربطه الأول من قسم «ربط المنتجات» تحت.</div>';
     } else {
       var targets = (assigns || []).filter(function(a){ return a.state !== "constant"; });
       if (targets.length){
@@ -4034,7 +4039,7 @@ function loadProductSuppliers(productId){
           '<div class="msg" id="pfFailoverMsg"></div>' +
           '<button class="btn danger" id="pfFailoverBtn" type="button">انقل لمورد آخر</button>';
       } else {
-        html += '<div class="sub" style="color:var(--muted); margin-top:6px;">النقل محتاج مورد تاني مسند للمنتج في سجل الموردين.</div>';
+        html += '<div class="sub" style="color:var(--muted); margin-top:8px;">النقل محتاج مورد تاني مسند للمنتج في سجل الموردين.</div>';
       }
     }
     box.innerHTML = html;
@@ -4085,7 +4090,7 @@ function openCategorySheet(){
     }).join("") + "</select></div>" +
     '<div class="field"><label>اسم الفئة</label><input id="cfName" type="text"></div>' +
     '<div class="field"><label>الاسم المختصر في الرابط (اختياري لفئة جديدة)</label><input id="cfSlug" type="text"></div>' +
-    '<div class="field"><label>مفعّلة</label><select id="cfEnabled"><option value="1">أيوه</option><option value="0">لأ</option></select></div>' +
+    '<div class="field"><label>شغالة</label><select id="cfEnabled"><option value="1">أيوه</option><option value="0">لأ</option></select></div>' +
     '<div class="field"><label>ترتيب العرض</label><input id="cfSort" type="number" step="1" value="0"></div>' +
     '<div class="field"><label>سبب التعديل (اختياري)</label><input id="cfReason" type="text"></div>';
   openActSheet("فئة جديدة / تعديل فئة", body, "حفظ الفئة", function(){
@@ -4146,7 +4151,7 @@ function renderBatchPreview(d){
     bad_item: "بيانات مش صحيحة",
     product_not_found: "المنتج مش موجود",
     fixed_price: "سعره ثابت بالجنيه — ما بيتبعش المعادلة",
-    no_executing_link: "مالوش مورد منفّذ"
+    no_executing_link: "مالوش مورد بينفّذه"
   };
   var egpTxt = function(v){
     return v === null || v === undefined ? "—" : fmtNum(Number(v) / 100) + " ج.م";
@@ -4175,7 +4180,7 @@ function openBatchSheet(){
     return (p.currency || "USD") !== "EGP";
   });
   if (!usdProducts.length){
-    showCatalogMsg("warn", "مفيش منتجات دولارية في الكتالوج عشان تعمل دفعة أسعار.");
+    showCatalogMsg("warn", "مفيش منتجات دولارية في الكتالوج عشان تعمل مجموعة تغييرات أسعار.");
     return;
   }
   var rows = usdProducts.map(function(p){
@@ -4189,17 +4194,17 @@ function openBatchSheet(){
   }).join("");
   var body =
     (catalogState.lastBatchAuditId
-      ? '<div class="preview">فيه دفعة مطبقة برقم تدقيق ' + esc(catalogState.lastBatchAuditId) +
-        ' لسه ممكن تتراجع عنها.<br><button class="btn danger small" id="bfUndoBtn" type="button" style="margin-top:8px;">تراجع عن الدفعة</button></div>'
+      ? '<div class="preview">فيه مجموعة تغييرات مطبقة برقم ' + esc(catalogState.lastBatchAuditId) +
+        ' في سجل التغييرات لسه ممكن تتراجع عنها.<br><button class="btn danger small" id="bfUndoBtn" type="button" style="margin-top:8px;">تراجع عن مجموعة التغييرات دي</button></div>'
       : "") +
     '<div class="sub" style="color:var(--muted); margin-bottom:8px;">اكتب التكلفة الجديدة بالدولار للمنتجات اللي عايز تغيّرها وسيب الباقي فاضي. المعاينة الأول وبعدين التطبيق.</div>' +
     rows +
-    '<div class="field" style="margin-top:10px;"><label>سبب الدفعة (مطلوب عند التطبيق)</label><input id="bfReason" type="text"></div>' +
+    '<div class="field" style="margin-top:12px;"><label>سبب مجموعة تغييرات الأسعار (مطلوب عند التطبيق)</label><input id="bfReason" type="text"></div>' +
     '<div class="msg" id="bfMsg"></div>' +
     '<div id="bfPreview"></div>' +
-    '<div class="row-actions"><button class="btn secondary" id="bfDryBtn" type="button">معاينة الدفعة</button>' +
-    '<button class="btn" id="bfApplyBtn" type="button" disabled>تطبيق الدفعة</button></div>';
-  openActSheet("دفعة أسعار", body, "تمام", function(){}, "catalog");
+    '<div class="row-actions"><button class="btn secondary" id="bfDryBtn" type="button">معاينة مجموعة التغييرات</button>' +
+    '<button class="btn" id="bfApplyBtn" type="button" disabled>تطبيق مجموعة التغييرات</button></div>';
+  openActSheet("مجموعة تغييرات أسعار", body, "تمام", function(){}, "catalog");
   var undoBtn = $("bfUndoBtn");
   if (undoBtn) undoBtn.addEventListener("click", function(){
     closeActSheet();
@@ -4239,7 +4244,7 @@ function openBatchSheet(){
     }
     if (!reason){
       m.className = "msg err";
-      m.textContent = "اكتب سبب الدفعة الأول — التطبيق لازم يكون ليه سبب متسجل.";
+      m.textContent = "اكتب سبب مجموعة التغييرات الأول — التطبيق لازم يكون ليه سبب متسجل.";
       return;
     }
     var btn = $("bfApplyBtn");
@@ -4250,9 +4255,9 @@ function openBatchSheet(){
       if (d.audit_id !== null && d.audit_id !== undefined)
         catalogState.lastBatchAuditId = d.audit_id;
       closeActSheet();
-      showCatalogMsg("ok", "الدفعة اتطبقت عند البوت." +
+      showCatalogMsg("ok", "مجموعة التغييرات اتطبقت عند البوت." +
         (catalogState.lastBatchAuditId
-          ? ' <button class="btn danger" id="catUndoBtn" type="button" style="margin-top:8px;">تراجع عن الدفعة</button>'
+          ? ' <button class="btn danger" id="catUndoBtn" type="button" style="margin-top:8px;">تراجع عن مجموعة التغييرات دي</button>'
           : ""));
       var ub = $("catUndoBtn");
       if (ub) ub.addEventListener("click", openBatchUndoSheet);
@@ -4265,7 +4270,7 @@ function openBatchSheet(){
         loadCatalog();
         closeActSheet();
         showCatalogMsg("err", esc(errText(e, "catalog")) +
-          ' <button class="btn danger" id="catUndoBtn" type="button" style="margin-top:8px;">تراجع عن الدفعة</button>');
+          ' <button class="btn danger" id="catUndoBtn" type="button" style="margin-top:8px;">تراجع عن مجموعة التغييرات دي</button>');
         var ub2 = $("catUndoBtn");
         if (ub2) ub2.addEventListener("click", openBatchUndoSheet);
         return;
@@ -4277,15 +4282,15 @@ function openBatchSheet(){
 }
 function openBatchUndoSheet(){
   if (!catalogState.lastBatchAuditId){
-    showCatalogMsg("warn", "مفيش دفعة مطبقة في الجلسة دي عشان تتراجع عنها.");
+    showCatalogMsg("warn", "مفيش مجموعة تغييرات مطبقة في الجلسة دي عشان تتراجع عنها.");
     return;
   }
   var auditId = catalogState.lastBatchAuditId;
   var body =
-    '<div class="preview">التراجع هيرجّع تكاليف منتجات الدفعة (رقم تدقيق ' + esc(auditId) +
-    ") للي كانت عليه قبلها، بشرط إن التكلفة ما تكونش اتغيّرت بعد الدفعة ولا المورد المنفّذ اتغيّر.</div>" +
+    '<div class="preview">التراجع هيرجّع تكاليف منتجات مجموعة التغييرات (رقمها ' + esc(auditId) +
+    ") للي كانت عليه قبلها، بشرط إن التكلفة ما تكونش اتغيّرت بعد مجموعة التغييرات ولا المورد اللي بينفّذ اتغيّر.</div>" +
     '<div class="field"><label>سبب التراجع (اختياري)</label><input id="buReason" type="text"></div>';
-  openActSheet("تراجع عن دفعة أسعار", body, "تنفيذ التراجع", function(){
+  openActSheet("تراجع عن مجموعة تغييرات أسعار", body, "تنفيذ التراجع", function(){
     var payload = { audit_id: auditId };
     var reason = $("buReason").value.trim();
     if (reason) payload.reason = reason;
@@ -4322,7 +4327,7 @@ function renderIdentity(){
         "<br>" + (it.store_sku ? "موقع: " + esc(it.store_sku) : "موقع: —") + "</span></div>";
     });
   } else {
-    html += '<div class="sub" style="color:var(--muted)">مفيش روابط هوية لسه.</div>';
+    html += '<div class="sub" style="color:var(--muted)">مفيش روابط منتجات لسه.</div>';
   }
   if (identityState.unmappedKeys.length){
     html += '<div class="group-title">مفاتيح مصدر مش مربوطة</div><div class="cnt-chips">' +
@@ -4355,7 +4360,7 @@ function openIdentitySheet(){
     '<div class="field"><label>منتج البوت</label><select id="idProduct">' + productOptions + "</select></div>" +
     '<div class="field"><label>اسم منتج الموقع (اختياري)</label><input id="idSku" type="text"></div>' +
     '<div class="field"><label>سبب الربط (اختياري)</label><input id="idReason" type="text"></div>';
-  openActSheet("ربط هوية جديد", body, "حفظ الربط", function(){
+  openActSheet("ربط منتج جديد", body, "حفظ الربط", function(){
     var key = $("idKey").value.trim();
     if (!key) failValidation("اكتب مفتاح المنتج الأول.");
     var pid = $("idProduct").value;
@@ -4385,7 +4390,7 @@ $("catBatchBtn").addEventListener("click", openBatchSheet);
 $("identityLinkBtn").addEventListener("click", openIdentitySheet);
 
 // ============================================================
-// قسم الموردين (م٣-ب): موردو المحرك وسجل الموردين وروابطهم —
+// قسم الموردين (م٣-ب): الموردون الشغالين في البوت وسجل الموردين وروابطهم —
 // كل قراءة وكتابة بتعدّي على البوت من مسارات
 // /control/bot-supplier-*، والنجاح بيظهر بس بعد رد سليم منه.
 // أسماء المفاتيح المحفوظة بتظهر بس — قيمتها ما بتظهرش أبدًا.
@@ -4403,8 +4408,8 @@ function hideSupMsg(){ $("supMsg").className = "msg"; $("supMsg").innerHTML = ""
 
 var suppliersState = { loaded: false, engine: [], registry: [], registryOnlyKeys: [] };
 var supplierProductsState = { slug: null, offset: 0, total: 0, limit: 50 };
-var REGISTRY_KIND_LABEL = { api: "ربط برمجي", manual: "يدوي", mixed: "مختلط" };
-var REGISTRY_STATUS_LABEL = { active: "نشط", prospective: "مرتقب", trial: "تجربة", closed: "مغلق" };
+var REGISTRY_KIND_LABEL = { api: "بيتربط بالنظام تلقائيًا (API)", manual: "يدوي", mixed: "مختلط" };
+var REGISTRY_STATUS_LABEL = { active: "شغال", prospective: "لسه قيد التفكير", trial: "تجربة", closed: "مغلق" };
 var ENGINE_OP_LABEL = {
   activate: "تشغيل المورد", disable: "إيقاف المورد",
   dry_run_on: "تشغيل وضع التجربة", dry_run_off: "إيقاف وضع التجربة",
@@ -4437,7 +4442,7 @@ function loadSuppliers(){
 
 function renderEngineList(){
   if (!suppliersState.engine.length){
-    $("engineList").innerHTML = '<div class="empty">مفيش موردين في المحرك.</div>';
+    $("engineList").innerHTML = '<div class="empty">مفيش موردين شغالين في البوت.</div>';
     return;
   }
   var html = "";
@@ -4452,7 +4457,7 @@ function renderEngineList(){
         ? "مفاتيح محفوظة (الأسماء بس): " + esc((s.secrets_set || []).join("، ") || "—")
         : "مفيش مفاتيح محفوظة") + "</small></div>" +
       '<div class="bal"><span class="status-txt ' + (active ? "st-ok" : "st-mut") + '">' +
-      (active ? "شغال" : "موقوف") + "</span>" +
+      (active ? "شغال" : "واقف") + "</span>" +
       (s.dry_run ? '<small class="status-txt st-pending">وضع التجربة شغال</small>' : "") +
       "</div></div>";
   });
@@ -4503,9 +4508,9 @@ function openEngineSheet(s){
   var body =
     '<div class="kv"><span>الحالة</span><span class="status-txt ' +
     (s.status === "active" ? "st-ok" : "st-mut") + '">' +
-    (s.status === "active" ? "شغال" : "موقوف") + "</span></div>" +
+    (s.status === "active" ? "شغال" : "واقف") + "</span></div>" +
     '<div class="kv"><span>وضع التجربة (الشراء بيتحاكى بس)</span><span>' +
-    (s.dry_run ? "شغال" : "مقفل") + "</span></div>" +
+    (s.dry_run ? "شغال" : "واقف") + "</span></div>" +
     '<div class="kv"><span>آخر مزامنة</span><span>' +
     esc(s.last_sync_at ? relTime(s.last_sync_at) : "لسه") + "</span></div>" +
     '<div class="kv"><span>المفاتيح المحفوظة (الأسماء بس)</span><span>' +
@@ -4522,7 +4527,7 @@ function openEngineSheet(s){
     '<button class="btn secondary small" type="button" data-eng-op="balance">قراءة الرصيد</button>' +
     '<button class="btn ghost small" type="button" id="engLinksBtn">روابط المورد</button>' +
     "</div>" +
-    '<div id="engResult" style="margin-top:10px;"></div>';
+    '<div id="engResult" style="margin-top:12px;"></div>';
   openActSheet("مورد: " + (s.name || s.slug), body, "تمام", function(){}, "suppliers");
   document.querySelectorAll("[data-eng-op]").forEach(function(b){
     b.addEventListener("click", function(){
@@ -4568,7 +4573,7 @@ function renderRegistryKeys(){
     ? '<div class="cnt-chips">' + keys.map(function(k){
         return '<span class="chip">' + esc(k) + "</span>";
       }).join("") + "</div>"
-    : '<div class="sub" style="color:var(--muted)">مفيش مفاتيح زيادة — كل مفاتيح السجل مربوطة بمورد في المحرك.</div>';
+    : '<div class="sub" style="color:var(--muted)">مفيش مفاتيح زيادة — كل مفاتيح السجل مربوطة بمورد شغال في البوت.</div>';
 }
 function registryOptions(map, selected){
   var html = "";
@@ -4627,7 +4632,7 @@ function openSupplierProductsSheet(s){
   var body =
     '<div class="search-row"><input id="spQ" type="text" placeholder="ابحث في منتجات المورد">' +
     '<button class="btn" id="spSearchBtn" type="button">بحث</button></div>' +
-    '<div class="field" style="margin-top:10px;"><label>منتج الكتالوج اللي الصف هيتربط بيه</label>' +
+    '<div class="field" style="margin-top:12px;"><label>منتج الكتالوج اللي الصف هيتربط بيه</label>' +
     '<select id="spProduct">' + supplierProductOptionsHtml() + "</select></div>" +
     '<div class="msg" id="spMsg"></div>' +
     '<div id="spList"><div class="sub" style="color:var(--muted)">بيحمّل منتجات المورد…</div></div>' +
@@ -5126,16 +5131,16 @@ function openEvApproveSheet(it){
     " على " + esc(EV_SOURCE_LABELS[it.source] || it.source) +
     (it.ref ? '<br>رقم العملية: <b class="num">' + esc(it.ref) + "</b>" : "") +
     "</div>" +
-    '<div class="field"><label>معرّف مطالبة إيداع (لو العميل قدّم مطالبة)</label>' +
-    '<input id="evClaimId" type="text" placeholder="معرّف المطالبة"></div>' +
-    '<div class="field"><label>أو معرّف نية شحن مفتوحة</label>' +
-    '<input id="evIntentId" type="text" placeholder="معرّف النية"></div>' +
-    '<div class="preview">لازم هدف واحد على الأقل: الاعتماد بيعدّي على دوال القاعدة الحالية وحراسها، ومفيش اعتماد من غير مطالبة أو نية.</div>';
+    '<div class="field"><label>رقم مطالبة الإيداع (لو العميل قدّم مطالبة)</label>' +
+    '<input id="evClaimId" type="text" placeholder="رقم المطالبة"></div>' +
+    '<div class="field"><label>أو رقم نية شحن مفتوحة</label>' +
+    '<input id="evIntentId" type="text" placeholder="رقم النية"></div>' +
+    '<div class="preview">لازم هدف واحد على الأقل: مفيش اعتماد من غير مطالبة أو نية — الفلوس لازم تروح لشحنة معروفة.</div>';
   openActSheet("اعتماد إيداع", body, "اعتمد الإيداع", function(){
     var claim = $("evClaimId").value.trim();
     var intent = $("evIntentId").value.trim();
     if (!claim && !intent) {
-      failValidation("اكتب معرّف مطالبة أو معرّف نية الأول — الاعتماد من غير هدف مش هيتم.");
+      failValidation("اكتب رقم مطالبة أو رقم نية الأول — الاعتماد من غير هدف مش هيتم.");
     }
     var payload = { source: it.source, event_id: it.id, action: "approve" };
     if (claim) payload.claim_id = claim;
@@ -5278,19 +5283,19 @@ function renderComponents(){
     yLast ? "آخر إيداع اتسجل " + esc(relTime(yLast) || "") + "."
       : "مفيش إيداعات مسجلة لسه.", null);
   if (evState.componentsFailed) {
-    html += '<div class="sub" style="color:var(--amber)">البوت مش بيرد دلوقتي — مفاتيح ممراته مش ظاهرة بدل ما تتخترع.</div>';
+    html += '<div class="sub" style="color:var(--amber)">البوت مش بيرد دلوقتي — مفاتيح تشغيل طرقه مش ظاهرة بدل ما تتخترع.</div>';
   }
-  html += evComponentRow("ممر رسائل البوت",
+  html += evComponentRow("طريق رسائل البوت",
     "شحنات البوت من رسائل البنك: " +
-    (evLaneOn("sms_auto") === null ? "مش معروف" : evLaneOn("sms_auto") ? "شغال" : "مقفول") + ".",
+    (evLaneOn("sms_auto") === null ? "مش معروف" : evLaneOn("sms_auto") ? "شغال" : "واقف") + ".",
     "sms_auto");
-  html += evComponentRow("ممر منصات البوت",
+  html += evComponentRow("طريق منصات البوت",
     "شحنات البوت من إيداعات المنصات: " +
-    (evLaneOn("exchange_auto") === null ? "مش معروف" : evLaneOn("exchange_auto") ? "شغال" : "مقفول") + ".",
+    (evLaneOn("exchange_auto") === null ? "مش معروف" : evLaneOn("exchange_auto") ? "شغال" : "واقف") + ".",
     "exchange_auto");
   html += evComponentRow("النجوم",
     "شحن البوت بالنجوم: " +
-    (evLaneOn("stars") === null ? "مش معروف" : evLaneOn("stars") ? "شغال" : "مقفول") + ".",
+    (evLaneOn("stars") === null ? "مش معروف" : evLaneOn("stars") ? "شغال" : "واقف") + ".",
     "stars");
   // العناوين عرض فقط من إعدادات الفلوس (قسم العملاء) — تعديلها من هناك.
   var addrB = moneyState.store.find(function(r){ return r.key === "deposit_address_binance"; });
@@ -5341,7 +5346,7 @@ function renderMatchReport(){
   } else {
     html += '<div class="sub" style="color:var(--muted)">عدّادات الموقع مش متاحة دلوقتي.</div>';
   }
-  html += '<div class="group-title">مطابقة البوت في فترة التسجيل</div>';
+  html += '<div class="group-title">مطابقة البوت دلوقتي</div>';
   if (evState.reportFailed) {
     html += '<div class="sub" style="color:var(--amber)">البوت مش بيرد دلوقتي — تقريره مش ظاهر بدل ما يتخترع.</div>';
   } else if (evState.report) {
@@ -5684,9 +5689,9 @@ function renderPayMethods(){
       '<input type="text" data-pay-field="account" data-pay-idx="' + i + '" value="' + esc(pm.account) + '"></div>' +
       '<div class="field"><label>التعليمات اللي بتظهر للعميل</label>' +
       '<textarea rows="2" data-pay-field="instructions" data-pay-idx="' + i + '">' + esc(pm.instructions) + "</textarea></div>" +
-      '<div style="display:flex; align-items:center; gap:10px;">' +
+      '<div style="display:flex; align-items:center; gap:8px;">' +
       '<label class="switch"><input type="checkbox" data-pay-field="enabled" data-pay-idx="' + i + '"' +
-      (pm.enabled ? " checked" : "") + '><span class="track"></span></label><span>مفعّلة</span></div>' +
+      (pm.enabled ? " checked" : "") + '><span class="track"></span></label><span>شغالة</span></div>' +
       '<div class="row-actions" style="margin-top:8px;">' +
       '<button class="btn ghost small" type="button" data-pay-up="' + i + '">أعلى</button>' +
       '<button class="btn ghost small" type="button" data-pay-down="' + i + '">أسفل</button>' +
@@ -5754,7 +5759,7 @@ $("setPaySaveBtn").addEventListener("click", function(){
     if (d && d.audit_failed) {
       showSettingsMsg("warn", "اتحفظت وسائل الشحن والقائمة الجديدة شغالة، بس تسجيل التغيير في سجل التغييرات ما كملش.");
     } else {
-      showSettingsMsg("ok", "اتحفظت وسائل الشحن — القائمة اللي تحت دي من الخادم بعد الحفظ.");
+      showSettingsMsg("ok", "اتحفظت وسائل الشحن — دي القائمة النهائية بعد الحفظ.");
     }
     loadSettings();
   }).catch(function(e){
@@ -5783,15 +5788,15 @@ function renderContentSupport(){
   var e = setState.supportEntry;
   var label = e && e.label ? String(e.label) : "دعم واتساب — الرقم أو الرابط";
   var head = "<b>" + esc(label) + "</b>" +
-    '<div class="sub" style="color:var(--muted); font-size:13px;">اللي العميل بيلاقيه في البوت لما يحتاج يكلم الدعم.</div>';
+    '<div class="sub" style="color:var(--muted); font-size:12px;">اللي العميل بيلاقيه في البوت لما يحتاج يكلم الدعم.</div>';
   if (e && e.editable === false) {
-    box.innerHTML = head + '<div style="margin-top:6px;">القيمة دلوقتي: <b>' +
+    box.innerHTML = head + '<div style="margin-top:8px;">القيمة دلوقتي: <b>' +
       esc(setValueText(e.value)) + '</b> <span class="sub">(عرض بس)</span></div>';
     return;
   }
   var val = e && e.value != null ? String(e.value) : "";
   box.innerHTML = head +
-    '<div class="field" style="margin-top:6px;"><label>الرقم أو الرابط</label>' +
+    '<div class="field" style="margin-top:8px;"><label>الرقم أو الرابط</label>' +
     '<input type="text" id="setSupportIn" value="' + esc(val) + '"></div>' +
     (setState.supportSeen ? "" :
       '<div class="sub" style="color:var(--amber); margin-top:4px;">غير مضبوط — البوت بيستخدم القيمة الاحتياطية لحد ما تحفظ قيمة هنا.</div>') +
@@ -5814,21 +5819,20 @@ function renderContentTexts(){
   var box = $("setContentTexts");
   if (setState.listFailed) { box.innerHTML = ""; return; }
   var head = '<b>نصوص الترحيب والشاشات</b>' +
-    '<div class="sub" style="color:var(--muted); font-size:13px;">النصوص الطويلة اللي بتظهر للعميل جوه البوت.</div>';
+    '<div class="sub" style="color:var(--muted); font-size:12px;">النصوص الطويلة اللي بتظهر للعميل جوه البوت.</div>';
   var rows = setState.textEntries;
   if (!rows.length) {
-    box.innerHTML = head + '<div class="empty" style="margin-top:6px;">مفيش نصوص قابلة للتحرير في البوت دلوقتي.</div>';
+    box.innerHTML = head + '<div class="empty" style="margin-top:8px;">مفيش نصوص قابلة للتحرير في البوت دلوقتي.</div>';
     return;
   }
   box.innerHTML = head + rows.map(function(e, i){
     var val = e.value == null ? "" : String(e.value);
-    var body = '<div style="margin-top:10px;"><b>' + esc(setLabelOf(e)) + "</b>" +
-      '<br><small class="num">' + esc(e.key) + "</small>";
+    var body = '<div style="margin-top:12px;"><b>' + esc(setLabelOf(e)) + "</b>" + setNoLabelBadge(e);
     if (e.editable === false) {
-      return body + '<div style="margin-top:6px;">' + esc(val) +
+      return body + '<div style="margin-top:8px;">' + esc(val) +
         ' <span class="sub">(عرض بس)</span></div></div>';
     }
-    return body + '<div class="field" style="margin-top:6px;"><label>النص</label>' +
+    return body + '<div class="field" style="margin-top:8px;"><label>النص</label>' +
       '<textarea rows="5" id="setTextIn' + i + '">' + esc(val) + "</textarea></div>" +
       '<div class="row-actions"><button class="btn small" type="button" data-text-save="' + i + '">حفظ</button></div></div>';
   }).join("");
@@ -5853,7 +5857,7 @@ function renderContentReplies(){
   var box = $("setContentReplies");
   if (setState.listFailed) { box.innerHTML = ""; return; }
   var head = '<b>الردود الجاهزة</b>' +
-    '<div class="sub" style="color:var(--muted); font-size:13px;">ردود معتمدة يقدر الأدمن يبعتها للعميل زي ما هي بدل ما يكتبها كل مرة. الترتيب هنا هو ترتيب ظهورها.</div>' +
+    '<div class="sub" style="color:var(--muted); font-size:12px;">ردود معتمدة يقدر الأدمن يبعتها للعميل زي ما هي بدل ما يكتبها كل مرة. الترتيب هنا هو ترتيب ظهورها.</div>' +
     (setState.repliesSeen ? "" :
       '<div class="sub" style="color:var(--amber); margin-top:4px;">الردود الجاهزة لسه مش مضبوطة في البوت — أول حفظ من هنا هيظبطها.</div>');
   var list = setState.replies.length ? setState.replies.map(function(r, i){
@@ -5867,9 +5871,9 @@ function renderContentReplies(){
       '<button class="btn ghost small" type="button" data-reply-down="' + i + '">أسفل</button>' +
       '<button class="btn ghost small" type="button" data-reply-del="' + i + '">حذف</button>' +
       "</div></div></div>";
-  }).join("") : '<div class="empty" style="margin-top:6px;">مفيش ردود جاهزة لسه — ضيف أول رد من زرار «إضافة رد».</div>';
-  box.innerHTML = head + '<div style="margin-top:6px;">' + list + "</div>" +
-    '<div class="row-actions" style="margin-top:10px;">' +
+  }).join("") : '<div class="empty" style="margin-top:8px;">مفيش ردود جاهزة لسه — ضيف أول رد من زرار «إضافة رد».</div>';
+  box.innerHTML = head + '<div style="margin-top:8px;">' + list + "</div>" +
+    '<div class="row-actions" style="margin-top:12px;">' +
     '<button class="btn" type="button" data-reply-save="1">حفظ الردود الجاهزة</button>' +
     '<button class="btn secondary" type="button" data-reply-add="1">إضافة رد</button></div>';
 }
@@ -5932,8 +5936,27 @@ function setKindOf(e){
   if (typeof e.value === "string") return "string";
   return "json";
 }
+// أسماء عرض محلية لإعدادات معروفة، عشان أي إعداد ييجي من البوت
+// من غير اسم عرض ما يظهرش بمفتاحه الإنجليزي الخام أبدًا.
+var PANEL_SETTING_LABELS = {
+  sales_enabled: "البيع في البوت",
+  merchant_api_enabled: "بيع التجار (دخول التجار البرمجي)",
+  pixel_enabled: "طلبات Google Pixel",
+  support_whatsapp: "رقم دعم واتساب",
+  saved_replies: "الردود الجاهزة",
+  payment_methods: "وسائل شحن البوت"
+};
+function setHasLabel(e){
+  return !!(e && (e.label || (e.key && PANEL_SETTING_LABELS[e.key])));
+}
 function setLabelOf(e){
-  return e.label ? String(e.label) : String(e.key || "");
+  if (e && e.label) return String(e.label);
+  if (e && e.key && PANEL_SETTING_LABELS[e.key]) return PANEL_SETTING_LABELS[e.key];
+  return "إعداد لسه مالوش شرح";
+}
+function setNoLabelBadge(e){
+  return setHasLabel(e) ? "" :
+    ' <span class="badge warn">لسه مالوش شرح — ما تعدّلوش إلا لو عارف بيعمل إيه</span>';
 }
 function setValueText(v){
   if (v === null || v === undefined) return "—";
@@ -5963,32 +5986,32 @@ function renderSettingRows(){
     var kind = setKindOf(e);
     var label = esc(setLabelOf(e));
     var head = '<div class="result-row" style="cursor:default"><div style="flex:1;"><b>' +
-      label + '</b><br><small class="num">' + esc(e.key) + "</small>";
+      label + "</b>" + setNoLabelBadge(e);
     if (kind === "secret") {
-      return head + '<div style="margin-top:6px;"><span class="badge gold">محفوظ</span>' +
+      return head + '<div style="margin-top:8px;"><span class="badge gold">محفوظ</span>' +
         ' <span class="sub">القيمة ما بتظهرش ولا بتتعدل من اللوحة.</span></div></div></div>';
     }
     if (e.editable === false) {
-      return head + '<div style="margin-top:6px;">القيمة دلوقتي: <b>' +
+      return head + '<div style="margin-top:8px;">القيمة دلوقتي: <b>' +
         esc(setValueText(e.value)) + '</b> <span class="sub">(عرض بس)</span></div></div></div>';
     }
     if (kind === "bool") {
       var on = e.value === true || e.value === "true";
-      return head + '<div style="display:flex; align-items:center; gap:10px; margin-top:6px;">' +
+      return head + '<div style="display:flex; align-items:center; gap:8px; margin-top:8px;">' +
         '<label class="switch"><input type="checkbox" data-set-bool="' + i + '"' +
         (on ? " checked" : "") + '><span class="track"></span></label>' +
-        "<span>" + (on ? "شغال" : "مقفول") + "</span></div></div></div>";
+        "<span>" + (on ? "شغال" : "واقف") + "</span></div></div></div>";
     }
     if (kind === "json") {
       var txt = typeof e.value === "string" ? e.value
         : JSON.stringify(e.value, null, 2);
-      return head + '<div class="field" style="margin-top:6px;"><label>القيمة (JSON)</label>' +
+      return head + '<div class="field" style="margin-top:8px;"><label>القيمة (بصيغة تقنية JSON — عدّل الأرقام والنصوص بس وسيب الأقواس والفواصل زي ما هي)</label>' +
         '<textarea rows="4" id="setIn' + i + '">' + esc(txt == null ? "" : txt) + "</textarea></div>" +
         '<div class="row-actions"><button class="btn small" type="button" data-set-save="' + i + '">حفظ</button></div></div></div>';
     }
     var inputType = kind === "number" ? "number" : "text";
     var step = kind === "number" ? ' step="any"' : "";
-    return head + '<div class="field" style="margin-top:6px;"><label>القيمة</label>' +
+    return head + '<div class="field" style="margin-top:8px;"><label>القيمة</label>' +
       '<input type="' + inputType + '"' + step + ' id="setIn' + i + '" value="' +
       esc(e.value == null ? "" : e.value) + '"></div>' +
       '<div class="row-actions"><button class="btn small" type="button" data-set-save="' + i + '">حفظ</button></div></div></div>';
@@ -6053,7 +6076,7 @@ function setSavedMsg(d){
   if (d && d.audit_failed) {
     showSettingsMsg("warn", "اتحفظ التعديل والقيمة الجديدة شغالة، بس تسجيله في سجل التغييرات ما كملش.");
   } else {
-    showSettingsMsg("ok", "اتحفظ التعديل — القيم اللي تحت دي من الخادم بعد الحفظ.");
+    showSettingsMsg("ok", "اتحفظ التعديل — دي القيم النهائية بعد الحفظ.");
   }
 }
 
@@ -6211,7 +6234,7 @@ function askUndoHistory(id, key){
       })
         .then(function(){ return loadSettings(); })
         .then(function(){
-          showSettingsMsg("ok", "اتعمل التراجع — القيم اللي تحت دي من الخادم بعد التراجع.");
+          showSettingsMsg("ok", "اتعمل التراجع — دي القيم النهائية بعد التراجع.");
         }).catch(throwPinGate);
     }, "settings");
 }
@@ -6241,8 +6264,7 @@ function renderHistory(){
         esc(String(h.key || "")) + '">تراجع</button>'
       : "";
     return '<div class="result-row" style="cursor:default"><div class="who"><b>' +
-      esc(h.label ? String(h.label) : String(h.key || "")) + "</b><small>" +
-      '<span class="num">' + esc(h.key || "") + "</span><br>" +
+      esc(h.label ? String(h.label) : "إعداد لسه مالوش شرح") + "</b><small>" +
       "قبل: " + esc(setHistVal(before, h.secret === true)) +
       " ← بعد: " + esc(setHistVal(after, h.secret === true)) +
       (when ? "<br>" + esc(when) + (full ? ' (<span class="num">' + esc(full) + "</span>)" : "") : "") +
@@ -6291,7 +6313,7 @@ function renderSchedules(){
   }
   box.innerHTML = setState.schedules.map(function(s){
     var entry = schedEntryOf(s.setting_key || s.key);
-    var label = entry ? setLabelOf(entry) : String(s.setting_key || s.key || "");
+    var label = entry ? setLabelOf(entry) : "إعداد لسه مالوش شرح";
     var st = SCHED_STATUS[s.status] || [String(s.status || "—"), "st-mut"];
     var at = s.run_at || s.at;
     var when = at ? (relTime(at) || "") : "";
@@ -6302,7 +6324,6 @@ function renderSchedules(){
       : "";
     return '<div class="result-row" style="cursor:default"><div class="who"><b>' +
       esc(label) + '</b> <span class="status-txt ' + st[1] + '">' + esc(st[0]) + "</span><small>" +
-      '<span class="num">' + esc(String(s.setting_key || s.key || "")) + "</span><br>" +
       "القيمة الجديدة: " + esc(setHistVal(s.value, false)) +
       (when ? "<br>التنفيذ: " + esc(when) + (full ? ' (<span class="num">' + esc(full) + "</span>)" : "") : "") +
       (s.error
@@ -6336,7 +6357,7 @@ function renderSchedValueControl(){
   if (!entry) { wrap.innerHTML = ""; return; }
   var kind = setKindOf(entry);
   if (kind === "bool") {
-    wrap.innerHTML = '<select id="schedValue"><option value="true">شغال</option><option value="false">متوقف</option></select>';
+    wrap.innerHTML = '<select id="schedValue"><option value="true">شغال</option><option value="false">واقف</option></select>';
   } else if (kind === "number") {
     wrap.innerHTML = '<input id="schedValue" type="number" step="any">';
   } else if ((entry.kind || entry.type) === "text") {
@@ -6443,7 +6464,7 @@ $("setImportFile").addEventListener("change", function(){
           : d.skipped_count != null ? d.skipped_count : 0;
         $("setImportResult").textContent = "الاستيراد كمّل: اتاستعاد " +
           (restored != null ? restored : "—") + " إعداد، واتتخطى " + skipped + ".";
-        showSettingsMsg("ok", "اتاستوردت النسخة — القيم اللي تحت دي من الخادم بعد الاستيراد.");
+        showSettingsMsg("ok", "اتاستوردت النسخة — دي القيم النهائية بعد الاستيراد.");
         loadSettings();
       });
   }).catch(function(e){
@@ -6543,6 +6564,19 @@ function channelActionsHtml(it, st){
   return '<button class="btn ghost small" type="button" data-chn-edit="' + esc(it.id) + '">تعديل</button>' +
     '<button class="btn ghost small" type="button" data-chn-del="' + esc(it.id) + '">حذف</button>';
 }
+// خطأ نشر القناة: لو النص الخام كود معروف عند errText نعرض ترجمته
+// الواضحة، والنص الخام بيظهر صغير تحته للتشخيص بس.
+function channelErrorText(raw){
+  var t = errText({ data: { error: String(raw || "") } }, "channel");
+  if (!t || t.indexOf("مش عارف أوصل للخادم دلوقتي") === 0) return "";
+  return t;
+}
+function channelFailHtml(raw){
+  var friendly = channelErrorText(raw);
+  if (!friendly) return '<div class="sub" style="margin-top:4px;">سبب الفشل: ' + esc(raw) + "</div>";
+  return '<div class="sub" style="margin-top:4px;">سبب الفشل: ' + esc(friendly) + "</div>" +
+    '<div class="sub" dir="ltr" style="color:var(--muted); font-size:12px; margin-top:4px; text-align:left;">' + esc(raw) + "</div>";
+}
 function renderChannelList(){
   var box = $("chnList");
   if (channelState.listFailed){
@@ -6565,10 +6599,10 @@ function renderChannelList(){
         "<b>" + esc(st.label) + "</b>" +
         '<small style="color:var(--muted);">' + esc(when) + "</small>" +
       "</div>" +
-      '<div style="white-space:pre-wrap; margin-top:6px;">' + esc(it.text || "") + "</div>" +
+      '<div style="white-space:pre-wrap; margin-top:8px;">' + esc(it.text || "") + "</div>" +
       (it.photo_url ? '<div class="sub" dir="ltr" style="color:var(--muted); font-size:12px; margin-top:4px;">' + esc(it.photo_url) + "</div>" : "") +
       (it.pin ? '<div class="sub" style="margin-top:4px;">هيتثبّت في القناة بعد النشر</div>' : "") +
-      (st.key === "failed" && it.error ? '<div class="sub" style="margin-top:4px;">سبب الفشل: ' + esc(it.error) + "</div>" : "") +
+      (st.key === "failed" && it.error ? channelFailHtml(it.error) : "") +
       '<div class="row-actions" style="margin-top:8px;">' + channelActionsHtml(it, st) + "</div>" +
     "</div>";
   });
@@ -7017,9 +7051,9 @@ function renderCouponsList(){
     html += '<div class="result-row" style="flex-direction:column; align-items:stretch;">' +
       '<div style="display:flex; justify-content:space-between; gap:8px;">' +
         '<b dir="ltr">' + esc(c.code) + "</b>" +
-        "<span>" + (c.active ? "مفعّل" : "موقوف") + "</span>" +
+        "<span>" + (c.active ? "شغال" : "واقف") + "</span>" +
       "</div>" +
-      '<div class="sub" style="color:var(--muted); font-size:13px; margin-top:4px;">' +
+      '<div class="sub" style="color:var(--muted); font-size:12px; margin-top:4px;">' +
         "خصم " + esc(fmtNum(c.discount)) + "٪ · الاستخدام: " + esc(couponUsesText(c)) +
         " · " + esc(couponExpiresText(c)) +
         (c.min_order_egp !== null && c.min_order_egp !== undefined && c.min_order_egp !== ""
@@ -7091,7 +7125,7 @@ function toggleCoupon(c){
   api("/control/store-coupons-save", { method: "POST", body: couponBodyFromRow(c, !c.active) })
     .then(function(d){
       if (d.audit_failed)
-        showCouponsMsg("warn", "اتغيّرت حالة الكوبون، بس تسجيلها في سجل التدقيق فشل.");
+        showCouponsMsg("warn", "اتغيّرت حالة الكوبون، بس تسجيلها في سجل التغييرات فشل.");
       else
         showCouponsMsg("ok", c.active ? "اتوقّف الكوبون." : "اتفعّل الكوبون.");
       loadCoupons();
@@ -7147,7 +7181,7 @@ $("cpnSaveBtn").addEventListener("click", function(){
   btn.disabled = true;
   api("/control/store-coupons-save", { method: "POST", body: body }).then(function(d){
     if (d.audit_failed)
-      showCouponsMsg("warn", "اتحفظ الكوبون، بس تسجيله في سجل التدقيق فشل.");
+      showCouponsMsg("warn", "اتحفظ الكوبون. (ملحوظة: ما اتسجلش في سجل التغييرات — التغيير نفسه نافذ.)");
     else
       showCouponsMsg("ok", "اتحفظ الكوبون.");
     resetCouponForm();
@@ -7164,7 +7198,7 @@ function askDeleteCoupon(c){
       return api("/control/store-coupons-delete", { method: "POST", body: { code: c.code } })
         .then(function(d){
           if (d.audit_failed)
-            showCouponsMsg("warn", "اتحذف الكوبون، بس تسجيله في سجل التدقيق فشل.");
+            showCouponsMsg("warn", "اتحذف الكوبون، بس تسجيله في سجل التغييرات فشل.");
           else
             showCouponsMsg("ok", "اتحذف الكوبون.");
           if (couponsState.editingCode === c.code) resetCouponForm();
@@ -7313,7 +7347,7 @@ function parseAllowlist(text){
     if (!line) continue;
     if (!validCidrLine(line))
       return { list: null, problem: "السطر رقم " + (i + 1) +
-        " مش عنوان صحيح — اكتبه بصيغة CIDR زي 203.0.113.0/24 أو عنوان لوحده زي 203.0.113.7." };
+        " مش عنوان إنترنت صحيح — اكتبه كنطاق عناوين زي 203.0.113.0/24 أو عنوان لوحده زي 203.0.113.7." };
     if (list.indexOf(line) < 0) list.push(line);
   }
   return { list: list, problem: "" };
@@ -7368,11 +7402,11 @@ function renderMerchantsList(){
     html += '<div class="result-row" style="flex-direction:column; align-items:stretch;">' +
       '<div style="display:flex; justify-content:space-between; gap:8px;">' +
         "<b>" + esc(merchantNameOf(m)) + "</b>" +
-        "<span>" + (active ? "شغّال" : "موقوف") + "</span>" +
+        "<span>" + (active ? "شغال" : "واقف") + "</span>" +
       "</div>" +
-      (bits.length ? '<div class="sub" style="color:var(--muted); font-size:13px; margin-top:4px;">' + esc(bits.join(" · ")) + "</div>" : "") +
+      (bits.length ? '<div class="sub" style="color:var(--muted); font-size:12px; margin-top:4px;">' + esc(bits.join(" · ")) + "</div>" : "") +
       (m.id !== null && m.id !== undefined
-        ? '<div class="sub" dir="ltr" style="color:var(--muted); font-size:12px; margin-top:2px; text-align:left;">' + esc(m.id) + "</div>" : "") +
+        ? '<div class="sub" style="color:var(--muted); font-size:12px; margin-top:4px;">رقم التاجر: <span dir="ltr">' + esc(m.id) + "</span></div>" : "") +
       '<div class="row-actions" style="margin-top:8px;">' +
         '<button class="btn ghost small" type="button" data-mch-open="' + esc(m.id) + '">التفاصيل والمفاتيح</button>' +
       "</div>" +
@@ -7424,7 +7458,7 @@ function renderMerchantDetail(){
   }
   var active = merchantActiveOf(m);
   var html = '<div style="display:flex; justify-content:space-between; gap:8px; align-items:center;">' +
-    "<span>الحالة: <b>" + (active ? "شغّال" : "موقوف") + "</b></span>" +
+    "<span>الحالة: <b>" + (active ? "شغال" : "واقف") + "</b></span>" +
     '<button class="btn ghost small" type="button" id="mchToggleBtn">' + (active ? "إيقاف التاجر" : "تفعيل التاجر") + "</button>" +
   "</div>";
 
@@ -7438,18 +7472,18 @@ function renderMerchantDetail(){
     html += '<div class="result-row" style="flex-direction:column; align-items:stretch;">' +
       '<div style="display:flex; justify-content:space-between; gap:8px;">' +
         '<b dir="ltr">' + esc(maskedKeyText(k)) + "</b>" +
-        "<span>" + (kActive ? "شغّال" : "موقوف") + "</span>" +
+        "<span>" + (kActive ? "شغال" : "واقف") + "</span>" +
       "</div>" +
       '<div class="sub" style="color:var(--muted); font-size:12px; margin-top:4px;">' +
         (lastUsed ? "آخر استخدام: " + esc(fmtDT(lastUsed)) : "لسه ما اتستخدمش") +
       "</div>" +
-      '<div class="field" style="margin-top:8px;"><label>العناوين المسموحة — سطر لكل عنوان (CIDR). فاضي يعني المفتاح شغال من أي عنوان.</label>' +
+      '<div class="field" style="margin-top:8px;"><label>العناوين المسموحة للمفتاح ده — سطر لكل عنوان إنترنت (IP) أو نطاق عناوين. سيبها فاضية والمفتاح هيشتغل من أي مكان.</label>' +
       '<textarea id="mchAllow-' + idx + '" rows="3" dir="ltr" placeholder="203.0.113.0/24">' +
         esc(allowlistText(keyAllowlistOf(k))) + "</textarea></div>" +
       '<div class="row-actions" style="margin-top:8px;">' +
         '<button class="btn ghost small" type="button" data-mch-allowsave="' + idx + '">حفظ العناوين المسموحة</button>' +
         '<button class="btn ghost small" type="button" data-mch-keytoggle="' + idx + '">' + (kActive ? "إيقاف المفتاح" : "تفعيل المفتاح") + "</button>" +
-        '<button class="btn ghost small" type="button" data-mch-rotate="' + idx + '">تدوير المفتاح</button>' +
+        '<button class="btn ghost small" type="button" data-mch-rotate="' + idx + '">تغيير المفتاح (القديم هيتوقف فورًا)</button>' +
       "</div>" +
     "</div>";
   });
@@ -7472,7 +7506,7 @@ function renderMerchantDetail(){
       '<div style="display:flex; justify-content:space-between; gap:8px;">' +
         '<b dir="ltr">' + esc(o.id != null ? o.id : "") + "</b>" +
       "</div>" +
-      (bits.length ? '<div class="sub" style="color:var(--muted); font-size:13px; margin-top:4px;">' + esc(bits.join(" · ")) + "</div>" : "") +
+      (bits.length ? '<div class="sub" style="color:var(--muted); font-size:12px; margin-top:4px;">' + esc(bits.join(" · ")) + "</div>" : "") +
     "</div>";
   });
   body.innerHTML = html;
@@ -7534,7 +7568,7 @@ function toggleMerchant(){
   })
     .then(function(d){
       if (d && d.audit_failed)
-        showMerchantsMsg("warn", "اتغيّرت حالة التاجر، بس تسجيلها في سجل التدقيق فشل.");
+        showMerchantsMsg("warn", "اتغيّرت حالة التاجر، بس تسجيلها في سجل التغييرات فشل.");
       else
         showMerchantsMsg("ok", next ? "اتفعّل التاجر." : "اتوقّف التاجر.");
       loadMerchants();
@@ -7558,7 +7592,7 @@ function toggleMerchantKey(k){
   })
     .then(function(d){
       if (d && d.audit_failed)
-        showMerchantsMsg("warn", "اتغيّرت حالة المفتاح، بس تسجيلها في سجل التدقيق فشل.");
+        showMerchantsMsg("warn", "اتغيّرت حالة المفتاح، بس تسجيلها في سجل التغييرات فشل.");
       else
         showMerchantsMsg("ok", next ? "اتفعّل مفتاح الدخول." : "اتوقّف مفتاح الدخول.");
       reloadMerchantDetail();
@@ -7578,7 +7612,7 @@ function saveKeyAllowlist(k, idx){
       id: kid, allowlist: parsed.list, cidrs: parsed.list } })
     .then(function(d){
       if (d && d.audit_failed)
-        showMerchantsMsg("warn", "اتحفظت العناوين المسموحة، بس تسجيلها في سجل التدقيق فشل.");
+        showMerchantsMsg("warn", "اتحفظت العناوين المسموحة، بس تسجيلها في سجل التغييرات فشل.");
       else
         showMerchantsMsg("ok", parsed.list.length
           ? "اتحفظت العناوين المسموحة للمفتاح."
@@ -7622,7 +7656,7 @@ function askRotateMerchantKey(k){
   openActSheet("تدوير مفتاح الدخول",
     "<p>هيتعمل مفتاح دخول جديد مكان <b dir=\"ltr\">" + esc(maskedKeyText(k)) + "</b>، و<b>المفتاح القديم هيتوقف فورًا</b> وأي نظام بيستخدمه هيقف لحد ما ياخد الجديد.</p>" +
     "<p>المفتاح الجديد هيظهر <b>مرة واحدة بس</b> هنا في اللوحة بعد التنفيذ — انسخه وادّيه للتاجر في قناة آمنة.</p>",
-    "دوّر المفتاح", function(){
+    "تغيير المفتاح", function(){
       // التدوير محروس بالرقم السري (م٦-د) لو مضبوط.
       return withPin({ merchant_id: merchantsState.selectedId, key_id: kid,
           id: kid })
@@ -7633,12 +7667,12 @@ function askRotateMerchantKey(k){
         .then(function(d){
           var secret = rotatedSecretOf(d);
           if (d && d.audit_failed)
-            showMerchantsMsg("warn", "اتدوّر المفتاح، بس تسجيله في سجل التدقيق فشل.");
+            showMerchantsMsg("warn", "اتغيّر المفتاح، بس تسجيله في سجل التغييرات فشل.");
           else
-            showMerchantsMsg("ok", "اتدوّر مفتاح الدخول — المفتاح القديم اتوقف.");
+            showMerchantsMsg("ok", "اتغيّر مفتاح الدخول — المفتاح القديم اتوقف.");
           reloadMerchantDetail();
           if (secret) showMerchantSecret(secret);
-          else showMerchantsMsg("warn", "اتدوّر المفتاح، بس البوت ما بعتش المفتاح الجديد في رده — راجع البوت قبل ما تقفل الشاشة.");
+          else showMerchantsMsg("warn", "اتغيّر المفتاح، بس البوت ما بعتش المفتاح الجديد في رده — راجع البوت قبل ما تقفل الشاشة.");
         }).catch(throwPinGate);
     }, "merchants");
 }
@@ -7785,7 +7819,7 @@ $("siteMethodSaveBtn").addEventListener("click", function(){
           active: after.active, note: after.note } })
         .then(function(d){
           if (d.audit_failed)
-            showSiteMsg("warn", "اتحفظ التعديل، بس تسجيله في سجل التدقيق فشل.");
+            showSiteMsg("warn", "اتحفظ التعديل، بس تسجيله في سجل التغييرات فشل.");
           else
             showSiteMsg("ok", "اتحفظ تعديل وسيلة الدفع.");
           cancelSiteMethodEdit();
@@ -7872,7 +7906,7 @@ function saveSiteContent(key, value, okText){
     body: { key: key, value: value } })
     .then(function(d){
       if (d.audit_failed)
-        showSiteMsg("warn", "اتحفظ، بس تسجيله في سجل التدقيق فشل.");
+        showSiteMsg("warn", "اتحفظ، بس تسجيله في سجل التغييرات فشل.");
       else
         showSiteMsg("ok", okText);
       loadSiteContent();
@@ -7973,7 +8007,7 @@ function pvButtonsHtml(buttons){
   if (!Array.isArray(buttons)) return "";
   return buttons.map(function(row){
     if (!Array.isArray(row) || !row.length) return "";
-    return '<div class="row-actions" style="margin-top:6px;">' + row.map(function(b){
+    return '<div class="row-actions" style="margin-top:8px;">' + row.map(function(b){
       var label = (b && b.label != null) ? String(b.label) : "";
       return '<button class="btn secondary" type="button" disabled style="flex:1;">' +
         esc(label) + "</button>";
@@ -8065,15 +8099,15 @@ function healthLoopsDown(d){
 }
 function healthWebhookLabel(d){
   var t = d && d.bot && d.bot.webhook_target;
-  if (t === "vps") return "على السيرفر";
-  if (t === "vercel") return "على Vercel الاحتياطي";
+  if (t === "vps") return "على سيرفرنا الأساسي";
+  if (t === "vercel") return "على الخادم الاحتياطي (Vercel)";
   return "مش معروف";
 }
 var HEALTH_PROBLEM_LABELS = {
-  failover_stalled: "حارس الانتقال واقف",
-  failover_state_missing: "سجل حارس الانتقال مش موجود",
+  failover_stalled: "حارس نقل البوت للاحتياطي واقف",
+  failover_state_missing: "سجل حارس نقل البوت للاحتياطي مش موجود",
   loops_stale: "حارس الحلقات متأخر",
-  loops_missed: "حارس الحلقات فاته إيقاف",
+  loops_missed: "حارس الحلقات ما نفّذش إيقاف/تشغيل كان المفروض يعمله",
   agent_unreachable: "وكيل السيرفر مش بيرد",
   money_stale: "حارس الفلوس متأخر",
   money_findings_persist: "حارس الفلوس لسه بيلاقي ملاحظات",
@@ -8104,7 +8138,7 @@ function healthStripSummary(d){
   if (!d || d.ok === false) return { ok: false, text: "حالة النظام غير متاحة الآن" };
   var parts = [];
   parts.push(d.bot && d.bot.ok ? "البوت يعمل" : "البوت مش بيرد");
-  parts.push("الويب هوك " + healthWebhookLabel(d));
+  parts.push("وصول العملاء للبوت " + healthWebhookLabel(d));
   var down = healthLoopsDown(d);
   if (down === null) parts.push("الحلقات: غير متاح");
   else if (down.length) parts.push("حلقات واقفة: " + down.length);
@@ -8136,13 +8170,13 @@ function reviewStars(rating){
 
 /*PURE-ADMIN-BEGIN*/
 function adminUserState(u){
-  if (!u) return { key: "active", label: "نشط" };
+  if (!u) return { key: "active", label: "شغال" };
   var banned = u.banned === true;
   if (!banned && u.banned_until) {
     var t = Date.parse(u.banned_until);
     banned = isNaN(t) ? true : t > Date.now();
   }
-  return banned ? { key: "banned", label: "محظور" } : { key: "active", label: "نشط" };
+  return banned ? { key: "banned", label: "محظور" } : { key: "active", label: "شغال" };
 }
 /*PURE-ADMIN-END*/
 
@@ -8182,7 +8216,19 @@ function showHealthMsg(kind, html, withKeyBtn){
 function hideHealthMsg(){ $("hlthMsg").className = "msg"; $("hlthMsg").innerHTML = ""; }
 
 function healthSection(title, innerHtml){
-  return '<h3 style="margin:16px 0 6px;">' + esc(title) + "</h3>" + innerHtml;
+  return '<h3 style="margin:16px 0 8px;">' + esc(title) + "</h3>" + innerHtml;
+}
+// أسماء عرض مفهومة لحلقات السيرفر — الاسم التقني الخام ما بيظهرش.
+var HEALTH_LOOP_LABELS = {
+  "sheerid-sweep": "فحص طلبات التحقق (SheerID)",
+  "exec-sweep": "تنفيذ المشتريات التلقائية",
+  "stock-cycle": "مزامنة أسعار ومخزون الموردين",
+  "migo-site-sheerid-sweep": "فحص تحققات الموقع",
+  "migo-deposit-watcher": "مراقبة إيداعات Binance/Bybit",
+  "provenance-heartbeat": "نبضة فحص المصدر"
+};
+function healthLoopLabel(name){
+  return HEALTH_LOOP_LABELS[name] || (String(name) + " (اسم تقني)");
 }
 function renderHealth(){
   var box = $("hlthBody");
@@ -8196,7 +8242,7 @@ function renderHealth(){
   html += healthSection("البوت",
     compRow("بوت التليجرام", bot.ok ? "ok" : "bad",
       bot.ok ? "بيرد وتمام" : "مش بيرد دلوقتي") +
-    compRow("الويب هوك", bot.webhook_target ? "ok" : "warn",
+    compRow("طريقة وصول رسائل العملاء للبوت", bot.webhook_target ? "ok" : "warn",
       "العملاء بيوصلوا للبوت " + esc(healthWebhookLabel(d)) +
       (bot.webhook_url ? '<br><span dir="ltr">' + esc(bot.webhook_url) + "</span>" : "")));
   var loopsHtml = "";
@@ -8207,7 +8253,7 @@ function renderHealth(){
     if (!names.length) loopsHtml = '<div class="empty">مفيش حلقات معروفة.</div>';
     names.forEach(function(name){
       var st = healthUnitState(d.loops.units[name]);
-      loopsHtml += compRow(name,
+      loopsHtml += compRow(healthLoopLabel(name),
         st === "active" ? "ok" : (st === "down" ? "bad" : "warn"),
         st === "active" ? "شغالة" : (st === "down" ? "واقفة" : "حالتها مش واضحة"));
     });
@@ -8225,8 +8271,8 @@ function renderHealth(){
     var meta;
     if (bal !== null) meta = "الرصيد: <b>" + bal + "</b>";
     else {
-      var st = (p.active === false) ? "موقوف" : "مفعّل";
-      if (p.dry_run) st += " · تجريبي";
+      var st = (p.active === false) ? "واقف"
+        : (p.dry_run ? "شغال بوضع التجربة — بيقرا الأسعار بس ومش بينفّذ شراء حقيقي" : "شغال");
       var sync = p.last_sync_at ? relTime(p.last_sync_at) : null;
       meta = st + (sync ? " · آخر مزامنة: " + esc(sync) : "");
     }
@@ -8302,7 +8348,7 @@ function renderRevList(){
         "<b>" + esc(reviewStars(r.rating)) + ' <span class="num">' + esc(r.rating) + "/5</span></b>" +
         '<small style="color:var(--muted);">' + esc(st.label) + (age ? " · " + esc(age) : "") + "</small>" +
       "</div>" +
-      '<div style="white-space:pre-wrap; margin-top:6px;">' + esc(r.body || "") + "</div>" +
+      '<div style="white-space:pre-wrap; margin-top:8px;">' + esc(r.body || "") + "</div>" +
       '<div class="sub" style="color:var(--muted); font-size:12px; margin-top:4px;">' +
         "الاسم: " + esc(r.display_name || "—") +
         (r.product_label ? " · المنتج: " + esc(r.product_label) : "") +
@@ -8383,11 +8429,11 @@ function hideAdmMsg(){ $("admMsg").className = "msg"; $("admMsg").innerHTML = ""
 function renderAdmList(){
   var box = $("admList");
   if (admState.failed){
-    box.innerHTML = '<div class="empty">مش عارف أجيب المستخدمين دلوقتي.</div>';
+    box.innerHTML = '<div class="empty">مش عارف أجيب الحسابات دلوقتي.</div>';
     return;
   }
   if (!admState.users.length){
-    box.innerHTML = '<div class="empty">مفيش مستخدمين.</div>';
+    box.innerHTML = '<div class="empty">مفيش حسابات.</div>';
     return;
   }
   var html = "";
@@ -8422,10 +8468,10 @@ function askAdminBan(id, banned){
   var u = admState.users.filter(function(x){ return String(x.id) === String(id); })[0];
   if (!u) return;
   openActSheet(
-    banned ? "حظر مستخدم" : "رفع الحظر عن مستخدم",
+    banned ? "حظر حساب" : "رفع الحظر عن حساب",
     '<div class="sub">' + (banned
-      ? "المستخدم ده مش هيقدر يسجل دخول للموقع بعد الحظر."
-      : "المستخدم ده هيرجع يقدر يسجل دخول للموقع.") + "</div>" +
+      ? "الحساب ده مش هيقدر يسجل دخول للموقع بعد الحظر."
+      : "الحساب ده هيرجع يقدر يسجل دخول للموقع.") + "</div>" +
       '<div dir="ltr" style="text-align:left; margin-top:8px;"><b>' + esc(u.email || "") + "</b></div>",
     banned ? "حظر" : "رفع الحظر",
     function(){
