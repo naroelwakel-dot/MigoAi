@@ -16,12 +16,12 @@
     --text:#FFFFFF; --muted:#7F91A4;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
-  html{-webkit-text-size-adjust:100%;}
+  html{-webkit-text-size-adjust:100%; overflow-x:hidden;}
   body{
     background:var(--bg); color:var(--text);
     font-family:"IBM Plex Sans Arabic", -apple-system, "Segoe UI", Tahoma, Arial, sans-serif;
     font-size:15px; line-height:1.6; padding-bottom:84px;
-    overflow-x:clip;
+    overflow-x:hidden; overflow-x:clip;
   }
   .num{font-variant-numeric:tabular-nums; letter-spacing:.2px;}
   header.top{
@@ -122,7 +122,7 @@
   .result-row:first-of-type{border-top:none; padding-top:4px;}
   .result-row .who{flex:1; min-width:0;}
   .result-row .who b{display:block; font-size:15px; overflow-wrap:anywhere;}
-  .result-row .who small{color:var(--muted); font-size:12px;}
+  .result-row .who small{color:var(--muted); font-size:12px; overflow-wrap:anywhere;}
   .result-row .bal{font-weight:700; font-size:16px; text-align:left;}
   .result-row .bal small{display:block; color:var(--muted); font-weight:400; font-size:12px;}
   .wallet-card .bal-big{font-size:30px; font-weight:700; line-height:1.3;}
@@ -161,7 +161,7 @@
   .switch .track:before{content:""; position:absolute; top:3px; right:4px; width:24px; height:24px; border-radius:50%; background:var(--muted); transition:.15s;}
   .switch input:checked + .track{background:#3A2E10; border-color:var(--gold);}
   .switch input:checked + .track:before{transform:translateX(-22px); background:var(--gold);}
-  .addr{overflow-wrap:anywhere; direction:ltr; text-align:left; font-size:14px;}
+  .addr{overflow-wrap:anywhere; word-break:break-word; max-width:100%; direction:ltr; text-align:left; font-size:14px;}
   .result-row.sel{outline:2px solid var(--gold); outline-offset:-2px; border-radius:10px; background:var(--surface2);}
   .group-title{font-weight:700; font-size:14px; margin:16px 0 4px; color:var(--gold);}
   .group-title:first-child{margin-top:4px;}
@@ -2383,7 +2383,7 @@ function renderMoneySettings(){
     var meta = STORE_SETTING_LABELS[r.key];
     var label = meta ? meta.label : "إعداد لسه مالوش شرح";
     html += '<div class="result-row" style="cursor:default"><div class="who"><b>' + esc(label) + "</b>" +
-      (meta && meta.kind === "address" && r.value
+      (meta && (meta.kind === "address" || meta.kind === "packages") && r.value
         ? '<small class="addr num">' + esc(r.value) + "</small>"
         : "<small>" + esc(settingValueText(meta, r.value)) + "</small>") +
       "</div>" +
@@ -2429,13 +2429,28 @@ function botSettingsList(d){
     if (r.current !== undefined) return r.current;
     return null;
   };
+  // في شكل الخريطة كل إعداد بييجي مغلفًا {value, effective, default…} —
+  // بنفك التغليف: أول قيمة موجودة فعلًا (false و0 قيم حقيقية ما بتقعش)،
+  // والقيمة الخام اللي مش مغلفة بتعدي زي ما هي.
+  var unwrap = function(entry){
+    if (!entry || typeof entry !== "object") return entry;
+    var keys = ["value", "effective_value", "effective", "current", "default"];
+    var seen = false;
+    for (var i = 0; i < keys.length; i++){
+      if (keys[i] in entry){
+        seen = true;
+        if (entry[keys[i]] !== null && entry[keys[i]] !== undefined) return entry[keys[i]];
+      }
+    }
+    return seen ? null : entry;
+  };
   if (Array.isArray(src)) {
     return src.filter(function(r){ return r && typeof r.key === "string"; })
       .map(function(r){ return { key: r.key, value: pick(r) }; });
   }
   if (src && typeof src === "object") {
     return Object.keys(src).filter(function(k){ return k !== "ok"; })
-      .map(function(k){ return { key: k, value: src[k] }; });
+      .map(function(k){ return { key: k, value: unwrap(src[k]) }; });
   }
   return [];
 }
@@ -8079,8 +8094,9 @@ $("pvProductBtn").addEventListener("click", function(){
 function healthUnitState(v){
   if (v === "active" || v === true) return "active";
   if (v && typeof v === "object"){
-    if (v.active === true || v.status === "active" || v.state === "active") return "active";
-    if (v.active === false || v.status === "inactive" || v.state === "inactive" ||
+    if (v.active === true || v.active === "active" || v.status === "active" || v.state === "active") return "active";
+    if (v.active === false || v.active === "inactive" || v.active === "failed" ||
+        v.status === "inactive" || v.state === "inactive" ||
         v.status === "failed" || v.state === "failed") return "down";
   }
   if (v === "inactive" || v === "failed" || v === false) return "down";
@@ -8228,7 +8244,9 @@ var HEALTH_LOOP_LABELS = {
   "provenance-heartbeat": "نبضة فحص المصدر"
 };
 function healthLoopLabel(name){
-  return HEALTH_LOOP_LABELS[name] || (String(name) + " (اسم تقني)");
+  // أسماء الوحدات بتيجي من السيرفر لاحقة .service — بنشيلها قبل البحث.
+  var key = String(name).replace(/\.service$/, "");
+  return HEALTH_LOOP_LABELS[key] || (String(name) + " (اسم تقني)");
 }
 function renderHealth(){
   var box = $("hlthBody");

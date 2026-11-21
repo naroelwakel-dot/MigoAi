@@ -125,6 +125,23 @@ Deno.test("healthUnitState: أشكال حالة الوحدات", () => {
   eq(pure.healthUnitState({ status: "failed" }), "down", "object failed");
   eq(pure.healthUnitState({}), "unknown", "empty object");
   eq(pure.healthUnitState(null), "unknown", "null");
+  // شكل السيرفر الحي: الحالة نص systemd جوه كائن، مش بوليان.
+  eq(pure.healthUnitState({ active: "active", journal_age_s: 26734 }),
+    "active", "systemd string active");
+  eq(pure.healthUnitState({ active: "inactive" }), "down", "systemd string inactive");
+  eq(pure.healthUnitState({ active: "failed" }), "down", "systemd string failed");
+});
+
+Deno.test("healthLoopsDown: شكل السيرفر الحي كله شغال", () => {
+  const live = { loops: { units: {
+    "provenance-heartbeat.service": { active: "active", journal_age_s: 26734 },
+    "stock-cycle.service": { active: "active", journal_age_s: 20682 },
+    "sheerid-sweep.service": { active: "active", journal_age_s: 26823 },
+    "migo-site-sheerid-sweep.service": { active: "active", journal_age_s: 33630 },
+    "exec-sweep.service": { active: "active", journal_age_s: 33612 },
+    "migo-deposit-watcher.service": { active: "active", journal_age_s: 26823 },
+  } } };
+  eq(pure.healthLoopsDown(live), [], "live units all active, none down");
 });
 
 Deno.test("healthLoopsDown: الواقفة بس، وغياب القسم = null", () => {
