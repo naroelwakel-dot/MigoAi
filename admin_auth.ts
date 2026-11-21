@@ -76,7 +76,7 @@ export function makeAdminChecker(
 // ---------------------------------------------------------------------------
 
 /** عمر جلسة اللوحة بالثواني (٨ ساعات). */
-export const SESSION_TTL_SECONDS = 8 * 3600;
+export const SESSION_TTL_SECONDS = 30 * 24 * 3600;
 
 /** بادئة رسالة التوقيع — بتفصل توقيعات الجلسة عن أي استخدام تاني للتوكن. */
 export const SESSION_SIGNING_PREFIX = "migo-panel-session.";

@@ -873,16 +873,16 @@ function showMsg(kind, html, withKeyBtn){
 }
 function hideMsg(){ $("msgBox").className = "msg"; $("msgBox").innerHTML = ""; }
 
-function getSession(){ try { return sessionStorage.getItem(SESSION_SLOT) || ""; } catch(e){ return ""; } }
+function getSession(){ try { return localStorage.getItem(SESSION_SLOT) || ""; } catch(e){ return ""; } }
 function setSession(s){ try {
-  if (s) sessionStorage.setItem(SESSION_SLOT, s); else sessionStorage.removeItem(SESSION_SLOT);
+  if (s) localStorage.setItem(SESSION_SLOT, s); else localStorage.removeItem(SESSION_SLOT);
 } catch(e){} }
 // قيمة الترويسة اللي اللوحة بتشتغل بيها: جلسة محفوظة سارية
 // الأول (م٦-هـ — بعد دخول بخطوتين ناجح)، وإلا التوكن الخام
 // زي النهاردة بالحرف.
-function getKey(){ try { return sessionStorage.getItem(SESSION_SLOT) || sessionStorage.getItem(KEY_SLOT) || ""; } catch(e){ return ""; } }
+function getKey(){ try { return localStorage.getItem(SESSION_SLOT) || localStorage.getItem(KEY_SLOT) || ""; } catch(e){ return ""; } }
 function setKey(k){ try {
-  if (k) sessionStorage.setItem(KEY_SLOT, k); else sessionStorage.removeItem(KEY_SLOT);
+  if (k) localStorage.setItem(KEY_SLOT, k); else localStorage.removeItem(KEY_SLOT);
 } catch(e){} }
 // خروج كامل: التوكن الخام والجلسة معًا (أي 401 أثناء الاستخدام).
 function clearAuth(){ setKey(""); setSession(""); }
