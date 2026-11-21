@@ -490,6 +490,7 @@
     <div id="setContentSupport" style="margin-top:12px;"></div>
     <div id="setContentTexts" style="margin-top:12px;"></div>
     <div id="setContentReplies" style="margin-top:12px;"></div>
+    <div id="setContentButtons" style="margin-top:12px;"></div>
   </section>
 
   <section class="card">
@@ -5449,7 +5450,10 @@ var setState = {
   schedules: [], schedulesFailed: false,
   supportEntry: null, supportSeen: false,
   textEntries: [],
-  replies: [], repliesSeen: false
+  replies: [], repliesSeen: false,
+  menuBtns: [], menuBtnsSeen: false,
+  menuOv: {}, menuOvSeen: false,
+  mbCatalog: null, mbCatalogLoading: false
 };
 
 function showSettingsMsg(kind, text){
@@ -5575,6 +5579,171 @@ function savedRepliesProblem(list){
 }
 /*PURE-CONTENT-END*/
 
+/*PURE-BUTTONS-BEGIN*/
+// منطق أزرار القائمة النقي (خيار ب): تطبيع الأزرار المخصصة
+// وتجاوزات العرض والتحقق منها قبل الحفظ — والاختبارات
+// (control/buttons.test.ts) بتقراه من هنا حرفيًا. القواعد هنا
+// مرآة مدقّق البوت (botkit.menu_buttons) بالحرف: أفعال مغلقة،
+// روابط https بس، ولازم الاسم يكون موجود.
+var MENU_BUTTON_SCREENS = [
+  { value: "menu:home", name: "القائمة الرئيسية" },
+  { value: "shop:cats", name: "أقسام المتجر" },
+  { value: "shop:gemini", name: "خدمة Google Student" },
+  { value: "shop:pixel", name: "خدمة Google Pixel" },
+  { value: "wallet:show", name: "المحفظة" },
+  { value: "orders:list", name: "طلباتي" },
+  { value: "pay:menu", name: "شحن المحفظة" },
+  { value: "support:wa", name: "الدعم وخدمة العملاء" },
+  { value: "mrc:home", name: "قسم التجار" }
+];
+var MENU_CORE_BUTTONS = [
+  { key: "shop", name: "المتجر والمنتجات", emoji: "🛍️", noHide: false },
+  { key: "webapp", name: "المتجر بالصور", emoji: "🖼️", noHide: false },
+  { key: "wallet", name: "محفظتي", emoji: "💰", noHide: true },
+  { key: "orders", name: "طلباتي وحالتها", emoji: "🧾", noHide: false },
+  { key: "topup", name: "شحن المحفظة", emoji: "💳", noHide: true },
+  { key: "history", name: "سجل المعاملات", emoji: "📜", noHide: false },
+  { key: "support", name: "الدعم وخدمة العملاء", emoji: "💬", noHide: false },
+  { key: "merchant", name: "Merchant API", emoji: "🔌", noHide: false },
+  { key: "report", name: "الإبلاغ عن مشكلة", emoji: "🚨", noHide: false },
+  { key: "channel", name: "انضم لقناتنا", emoji: "🔗", noHide: false }
+];
+function menuScreenOptions(){ return MENU_BUTTON_SCREENS; }
+function menuCoreButtons(){ return MENU_CORE_BUTTONS; }
+function setMenuButtonsValueOf(d, entries){
+  var e = entries.find(function(x){ return x && x.key === "menu_custom_buttons"; });
+  var v = e ? e.value : undefined;
+  if (v === undefined && d.menu_custom_buttons !== undefined) v = d.menu_custom_buttons;
+  if (typeof v === "string") {
+    try { v = JSON.parse(v); } catch(_err){ v = null; }
+  }
+  return Array.isArray(v) ? v : null;
+}
+function setMenuOverridesValueOf(d, entries){
+  var e = entries.find(function(x){ return x && x.key === "menu_button_overrides"; });
+  var v = e ? e.value : undefined;
+  if (v === undefined && d.menu_button_overrides !== undefined) v = d.menu_button_overrides;
+  if (typeof v === "string") {
+    try { v = JSON.parse(v); } catch(_err){ v = null; }
+  }
+  return (v && typeof v === "object" && !Array.isArray(v)) ? v : null;
+}
+function normalizeMenuButtons(raw){
+  var v = raw;
+  if (typeof v === "string") {
+    try { v = JSON.parse(v); } catch(_err){ v = null; }
+  }
+  if (!Array.isArray(v)) return [];
+  var used = {};
+  var maxB = 0;
+  v.forEach(function(it){
+    if (it && typeof it === "object" && it.id != null && String(it.id) !== "") {
+      used[String(it.id)] = true;
+      var m = /^b(\d+)$/.exec(String(it.id));
+      if (m) maxB = Math.max(maxB, Number(m[1]));
+    }
+  });
+  var seq = maxB + 1;
+  function freshId(){
+    var id;
+    do { id = "b" + seq; seq += 1; } while (used[id]);
+    used[id] = true;
+    return id;
+  }
+  var emitted = {};
+  return v.map(function(it){
+    it = (it && typeof it === "object") ? it : {};
+    var action = ["url", "text", "category", "product", "screen"]
+      .indexOf(it.action) >= 0 ? it.action : "url";
+    var id = (it.id != null && String(it.id) !== "") ? String(it.id) : null;
+    if (id === null || emitted[id]) id = freshId();
+    emitted[id] = true;
+    return {
+      id: id,
+      label: it.label != null ? String(it.label) : "",
+      emoji: it.emoji != null ? String(it.emoji) : "",
+      action: action,
+      url: it.url != null ? String(it.url) : "",
+      text: it.text != null ? String(it.text) : "",
+      target: it.target != null ? String(it.target) : "",
+      wide: it.wide === true
+    };
+  });
+}
+function nextMenuButtonId(list){
+  var maxB = 0;
+  var used = {};
+  (list || []).forEach(function(it){
+    if (it && it.id != null && String(it.id) !== "") {
+      used[String(it.id)] = true;
+      var m = /^b(\d+)$/.exec(String(it.id));
+      if (m) maxB = Math.max(maxB, Number(m[1]));
+    }
+  });
+  var seq = maxB + 1;
+  var id = "b" + seq;
+  while (used[id]) { seq += 1; id = "b" + seq; }
+  return id;
+}
+// رسالة المشكلة اللي تمنع حفظ الأزرار المخصصة، أو "" لو سليمة.
+function menuButtonsProblem(list){
+  list = list || [];
+  if (list.length > 8) return "الأزرار الإضافية آخرها ٨ — امسح زر قبل ما تضيف غيره.";
+  for (var i = 0; i < list.length; i++) {
+    var b = list[i];
+    var label = (b.label || "").trim();
+    if (!label) return "فيه زر إضافي من غير اسم — اكتب اسمه أو امسحه قبل الحفظ.";
+    if (label.length > 32) return "اسم الزر «" + label + "» أطول من ٣٢ حرف — قصّره قبل الحفظ.";
+    if (b.action === "url") {
+      var url = (b.url || "").trim();
+      if (url.indexOf("https://") !== 0)
+        return "زر «" + label + "» رابطه لازم يبدأ بـ https:// — راجعه قبل الحفظ.";
+    } else if (b.action === "text") {
+      if (!(b.text || "").trim())
+        return "زر «" + label + "» من نوع صفحة كلام بس الصفحة فاضية — اكتب كلامها أو امسح الزر.";
+    } else if (!String(b.target || "").trim()) {
+      return "زر «" + label + "» لسه ما اخترتلوش هدفه — اختاره قبل الحفظ.";
+    }
+  }
+  return "";
+}
+// بناء قيمة التجاوزات القابلة للحفظ من حالة المحرر: المفاتيح
+// المعروفة بس، وحقل بيتحط بس لو فيه قيمة (اسم/إيموجي) أو إخفاء.
+function menuOverridesValue(overrides){
+  var out = {};
+  MENU_CORE_BUTTONS.forEach(function(core){
+    var ov = (overrides || {})[core.key];
+    if (!ov || typeof ov !== "object") return;
+    var entry = {};
+    if (ov.label != null && String(ov.label).trim() !== "")
+      entry.label = String(ov.label).trim();
+    if (ov.emoji != null && String(ov.emoji).trim() !== "")
+      entry.emoji = String(ov.emoji).trim();
+    if (ov.hidden === true && !core.noHide) entry.hidden = true;
+    if (Object.keys(entry).length) out[core.key] = entry;
+  });
+  return out;
+}
+function normalizeMenuOverrides(raw){
+  var v = raw;
+  if (typeof v === "string") {
+    try { v = JSON.parse(v); } catch(_err){ v = null; }
+  }
+  if (!v || typeof v !== "object" || Array.isArray(v)) return {};
+  var out = {};
+  MENU_CORE_BUTTONS.forEach(function(core){
+    var ov = v[core.key];
+    if (!ov || typeof ov !== "object") return;
+    out[core.key] = {
+      label: ov.label != null ? String(ov.label) : "",
+      emoji: ov.emoji != null ? String(ov.emoji) : "",
+      hidden: ov.hidden === true && !core.noHide
+    };
+  });
+  return out;
+}
+/*PURE-BUTTONS-END*/
+
 function loadSettings(){
   if (setState.loading) return Promise.resolve();
   setState.loading = true;
@@ -5599,6 +5768,16 @@ function loadSettings(){
     setState.repliesSeen = entries.some(function(x){
       return x && x.key === "saved_replies";
     }) || d.saved_replies !== undefined;
+    var btnsRaw = setMenuButtonsValueOf(d, entries);
+    setState.menuBtns = btnsRaw ? normalizeMenuButtons(btnsRaw) : [];
+    setState.menuBtnsSeen = entries.some(function(x){
+      return x && x.key === "menu_custom_buttons";
+    }) || d.menu_custom_buttons !== undefined;
+    var ovRaw = setMenuOverridesValueOf(d, entries);
+    setState.menuOv = ovRaw ? normalizeMenuOverrides(ovRaw) : {};
+    setState.menuOvSeen = entries.some(function(x){
+      return x && x.key === "menu_button_overrides";
+    }) || d.menu_button_overrides !== undefined;
     setState.listFailed = false;
   }).catch(function(e){
     if (e && e.status === 401) { unauthorized = true; return; }
@@ -5612,6 +5791,10 @@ function loadSettings(){
     setState.textEntries = [];
     setState.replies = [];
     setState.repliesSeen = false;
+    setState.menuBtns = [];
+    setState.menuBtnsSeen = false;
+    setState.menuOv = {};
+    setState.menuOvSeen = false;
   });
   var pHist = api("/control/bot-settings-history?limit=50").then(function(d){
     var arr = [d.history, d.items, d.changes, d.entries]
@@ -5792,6 +5975,7 @@ function renderBotContent(){
   renderContentSupport();
   renderContentTexts();
   renderContentReplies();
+  renderContentButtons();
 }
 
 function renderContentSupport(){
@@ -5939,6 +6123,250 @@ $("setContentReplies").addEventListener("click", function(e){
   }
 });
 
+// ============================================================
+// أزرار قائمة البوت (خيار ب): أزرار إضافية من عندك + تعديل شكل
+// الأزرار الحالية — الحفظ عبر نفس مسار الإعدادات
+// (bot-settings-set بمفتاحي menu_custom_buttons /
+// menu_button_overrides)، والبوت بيقراهم حي فالتعديل بيبان
+// للعميل فورًا. وظيفة أي زر حالي ما بتتغيرش من هنا أبدًا.
+// ============================================================
+
+function mbEnsureCatalog(){
+  if (setState.mbCatalog || setState.mbCatalogLoading) return;
+  setState.mbCatalogLoading = true;
+  api("/control/bot-catalog-products").then(function(d){
+    setState.mbCatalog = { items: d.items || [], categories: d.categories || [] };
+  }).catch(function(){
+    setState.mbCatalog = { items: [], categories: [] };
+  }).finally(function(){
+    setState.mbCatalogLoading = false;
+    renderContentButtons();
+  });
+}
+
+function mbTargetHtml(b, i){
+  if (b.action === "url") {
+    return '<div class="field"><label>الرابط (لازم يبدأ بـ https://)</label>' +
+      '<input type="text" dir="ltr" data-mb-field="url" data-mb-idx="' + i + '" value="' + esc(b.url) + '"></div>';
+  }
+  if (b.action === "text") {
+    return '<div class="field"><label>كلام الصفحة اللي العميل هيشوفها لما يدوس الزر</label>' +
+      '<textarea rows="3" data-mb-field="text" data-mb-idx="' + i + '">' + esc(b.text) + "</textarea></div>";
+  }
+  if (b.action === "screen") {
+    var opts = menuScreenOptions().map(function(s){
+      return '<option value="' + esc(s.value) + '"' +
+        (b.target === s.value ? " selected" : "") + ">" + esc(s.name) + "</option>";
+    }).join("");
+    return '<div class="field"><label>الشاشة اللي الزر هيفتحها</label>' +
+      '<select data-mb-field="target" data-mb-idx="' + i + '">' +
+      '<option value="">اختر الشاشة…</option>' + opts + "</select></div>";
+  }
+  var cat = setState.mbCatalog;
+  var isCat = b.action === "category";
+  var pool = cat ? (isCat ? cat.categories : cat.items) : [];
+  var found = false;
+  var options = pool.map(function(x){
+    var id = String(x.id);
+    if (id === String(b.target)) found = true;
+    return '<option value="' + esc(id) + '"' +
+      (id === String(b.target) ? " selected" : "") + ">" +
+      esc(String(x.name || x.slug || id)) + "</option>";
+  }).join("");
+  if (b.target && !found) {
+    options = '<option value="' + esc(b.target) + '" selected>' +
+      esc(b.target) + " (مش باين في الكتالوج دلوقتي)</option>" + options;
+  }
+  return '<div class="field"><label>' + (isCat ? "القسم اللي الزر هيفتحه" : "المنتج اللي الزر هيفتحه") + "</label>" +
+    '<select data-mb-field="target" data-mb-idx="' + i + '">' +
+    '<option value="">' + (isCat ? "اختر القسم…" : "اختر المنتج…") + "</option>" +
+    options + "</select></div>" +
+    (cat ? "" : '<div class="sub" style="color:var(--muted); font-size:12px;">بيحمّل الكتالوج…</div>');
+}
+
+function renderContentButtons(){
+  var box = $("setContentButtons");
+  if (!box) return;
+  if (setState.listFailed) { box.innerHTML = ""; return; }
+  mbEnsureCatalog();
+  var head = '<b>أزرار قائمة البوت</b>' +
+    '<div class="sub" style="color:var(--muted); font-size:12px;">ضيف أزرار من عندك في آخر قائمة البوت، أو عدّل اسم وإيموجي الأزرار الحالية أو اخفي زر اختياري. وظيفة أي زر من جوه ما بتتغيرش أبدًا، وأي تعديل بيبان للعميل فورًا بعد الحفظ — وتقدر تشوف النتيجة في شاشة «شوف كما يراه العميل».</div>';
+  var actionOpts = [
+    ["url", "يفتح رابط"],
+    ["text", "يعرض صفحة كلام بتكتبها"],
+    ["category", "يفتح قسم في المتجر"],
+    ["product", "يفتح منتج"],
+    ["screen", "يفتح شاشة جاهزة في البوت"]
+  ];
+  var list = setState.menuBtns.length ? setState.menuBtns.map(function(b, i){
+    var opts = actionOpts.map(function(pair){
+      return '<option value="' + pair[0] + '"' +
+        (b.action === pair[0] ? " selected" : "") + ">" + pair[1] + "</option>";
+    }).join("");
+    return '<div class="result-row" style="cursor:default"><div style="flex:1;">' +
+      '<div class="field"><label>اسم الزر</label>' +
+      '<input type="text" data-mb-field="label" data-mb-idx="' + i + '" value="' + esc(b.label) + '"></div>' +
+      '<div class="field"><label>إيموجي الزر (اختياري)</label>' +
+      '<input type="text" data-mb-field="emoji" data-mb-idx="' + i + '" value="' + esc(b.emoji) + '"></div>' +
+      '<div class="field"><label>الزر يعمل إيه لما العميل يدوسه؟</label>' +
+      '<select data-mb-field="action" data-mb-idx="' + i + '">' + opts + "</select></div>" +
+      mbTargetHtml(b, i) +
+      '<label style="display:flex; align-items:center; gap:8px; margin-top:8px;">' +
+      '<input type="checkbox" data-mb-field="wide" data-mb-idx="' + i + '"' +
+      (b.wide ? " checked" : "") + "> الزر ده ياخد صف كامل لوحده</label>" +
+      '<div class="row-actions" style="margin-top:8px;">' +
+      '<button class="btn ghost small" type="button" data-mb-up="' + i + '">أعلى</button>' +
+      '<button class="btn ghost small" type="button" data-mb-down="' + i + '">أسفل</button>' +
+      '<button class="btn ghost small" type="button" data-mb-del="' + i + '">حذف</button>' +
+      "</div></div></div>";
+  }).join("") : '<div class="empty" style="margin-top:8px;">مفيش أزرار إضافية لسه — القائمة شغالة بشكلها العادي.</div>';
+  var partA = '<div style="margin-top:12px;"><b>أزرار إضافية من عندك</b>' +
+    '<div class="sub" style="color:var(--muted); font-size:12px;">آخرها ٨ أزرار، وبتظهر في آخر القائمة بالترتيب ده.</div>' +
+    '<div style="margin-top:8px;">' + list + "</div>" +
+    '<div class="row-actions" style="margin-top:12px;">' +
+    '<button class="btn" type="button" data-mb-save="1">حفظ الأزرار الإضافية</button>' +
+    '<button class="btn secondary" type="button" data-mb-add="1">إضافة زر</button></div></div>';
+  var core = menuCoreButtons().map(function(c){
+    var ov = setState.menuOv[c.key] || { label: "", emoji: "", hidden: false };
+    var hideRow = c.noHide
+      ? '<div class="sub" style="color:var(--muted); font-size:12px; margin-top:4px;">الزر ده مدخل أساسي لفلوس العميل — ما بيختفيش؛ الاسم والإيموجي بس اللي يتعدلوا.</div>'
+      : '<label style="display:flex; align-items:center; gap:8px; margin-top:8px;">' +
+        '<input type="checkbox" data-mov-field="hidden" data-mov-key="' + c.key + '"' +
+        (ov.hidden ? " checked" : "") + "> إخفاء الزر ده من القائمة</label>";
+    return '<div class="result-row" style="cursor:default"><div style="flex:1;">' +
+      "<b>" + esc(c.emoji) + " " + esc(c.name) + '</b> <span class="sub">(الشكل الافتراضي)</span>' +
+      '<div class="field" style="margin-top:8px;"><label>اسم جديد (سيبه فاضي لو عايز الافتراضي)</label>' +
+      '<input type="text" data-mov-field="label" data-mov-key="' + c.key + '" value="' + esc(ov.label || "") + '"></div>' +
+      '<div class="field"><label>إيموجي جديد (سيبه فاضي لو عايز الافتراضي)</label>' +
+      '<input type="text" data-mov-field="emoji" data-mov-key="' + c.key + '" value="' + esc(ov.emoji || "") + '"></div>' +
+      hideRow + "</div></div>";
+  }).join("");
+  var partB = '<div style="margin-top:16px;"><b>شكل الأزرار الحالية</b>' +
+    '<div class="sub" style="color:var(--muted); font-size:12px;">الاسم والإيموجي والإخفاء بس — وظيفة كل زر بتفضل زي ما هي بالحرف.</div>' +
+    '<div style="margin-top:8px;">' + core + "</div>" +
+    '<div class="row-actions" style="margin-top:12px;">' +
+    '<button class="btn" type="button" data-mov-save="1">حفظ شكل الأزرار</button>' +
+    '<button class="btn ghost" type="button" data-mb-restore="1">استعادة القائمة الافتراضية</button></div>' +
+    '<div class="sub" style="color:var(--muted); font-size:12px; margin-top:4px;">الاستعادة بتمسح الأزرار الإضافية وكل تعديلات الشكل وترجّع القائمة لأصلها.</div></div>';
+  box.innerHTML = head + partA + partB;
+}
+
+function mbSaveCustomButtons(btn){
+  var problem = menuButtonsProblem(setState.menuBtns);
+  if (problem) { showSettingsMsg("err", problem); return; }
+  var value = setState.menuBtns.map(function(b){
+    var out = { id: b.id, label: b.label.trim(), emoji: b.emoji.trim(),
+                action: b.action, wide: !!b.wide };
+    if (b.action === "url") out.url = b.url.trim();
+    else if (b.action === "text") out.text = b.text;
+    else out.target = b.target;
+    return out;
+  });
+  btn.disabled = true;
+  api("/control/bot-settings-set", { method: "POST", body: {
+    key: "menu_custom_buttons", value: value
+  } }).then(function(d){
+    setSavedMsg(d);
+    loadSettings();
+    loadPreviewMenu();
+  }).catch(function(err){
+    showSettingsMsg("err", errText(err, "settings"));
+  }).finally(function(){ btn.disabled = false; });
+}
+
+function mbSaveOverrides(btn){
+  var value = menuOverridesValue(setState.menuOv);
+  btn.disabled = true;
+  api("/control/bot-settings-set", { method: "POST", body: {
+    key: "menu_button_overrides", value: value
+  } }).then(function(d){
+    setSavedMsg(d);
+    loadSettings();
+    loadPreviewMenu();
+  }).catch(function(err){
+    showSettingsMsg("err", errText(err, "settings"));
+  }).finally(function(){ btn.disabled = false; });
+}
+
+$("setContentButtons").addEventListener("input", function(e){
+  var t = e.target;
+  if (!t.getAttribute) return;
+  var field = t.getAttribute("data-mb-field");
+  if (field) {
+    var b = setState.menuBtns[Number(t.getAttribute("data-mb-idx"))];
+    if (!b) return;
+    if (field === "wide") { b.wide = !!t.checked; return; }
+    b[field] = t.value;
+    if (field === "action") renderContentButtons();
+    return;
+  }
+  var mfield = t.getAttribute("data-mov-field");
+  if (mfield) {
+    var key = t.getAttribute("data-mov-key");
+    var ov = setState.menuOv[key] ||
+      (setState.menuOv[key] = { label: "", emoji: "", hidden: false });
+    if (mfield === "hidden") ov.hidden = !!t.checked;
+    else ov[mfield] = t.value;
+  }
+});
+$("setContentButtons").addEventListener("change", function(e){
+  var t = e.target;
+  if (!t.getAttribute) return;
+  if (t.getAttribute("data-mb-field") === "action") {
+    var b = setState.menuBtns[Number(t.getAttribute("data-mb-idx"))];
+    if (b) { b.action = t.value; renderContentButtons(); }
+  }
+});
+$("setContentButtons").addEventListener("click", function(e){
+  var t = e.target;
+  if (!t.getAttribute) return;
+  var arr = setState.menuBtns;
+  var add = t.getAttribute("data-mb-add");
+  var save = t.getAttribute("data-mb-save");
+  var up = t.getAttribute("data-mb-up");
+  var down = t.getAttribute("data-mb-down");
+  var del = t.getAttribute("data-mb-del");
+  var osave = t.getAttribute("data-mov-save");
+  var restore = t.getAttribute("data-mb-restore");
+  if (add !== null && add !== undefined) {
+    if (arr.length >= 8) {
+      showSettingsMsg("err", "الأزرار الإضافية آخرها ٨ — امسح زر قبل ما تضيف غيره.");
+      return;
+    }
+    arr.push({ id: nextMenuButtonId(arr), label: "", emoji: "",
+               action: "url", url: "", text: "", target: "", wide: true });
+    renderContentButtons();
+  } else if (up !== null && up !== undefined) {
+    var i = Number(up);
+    if (i > 0) { var tmp = arr[i - 1]; arr[i - 1] = arr[i]; arr[i] = tmp; renderContentButtons(); }
+  } else if (down !== null && down !== undefined) {
+    var j = Number(down);
+    if (j < arr.length - 1) { var tmp2 = arr[j + 1]; arr[j + 1] = arr[j]; arr[j] = tmp2; renderContentButtons(); }
+  } else if (del !== null && del !== undefined) {
+    arr.splice(Number(del), 1);
+    renderContentButtons();
+  } else if (save !== null && save !== undefined) {
+    mbSaveCustomButtons(t);
+  } else if (osave !== null && osave !== undefined) {
+    mbSaveOverrides(t);
+  } else if (restore !== null && restore !== undefined) {
+    t.disabled = true;
+    api("/control/bot-settings-set", { method: "POST", body: {
+      key: "menu_custom_buttons", value: []
+    } }).then(function(){
+      return api("/control/bot-settings-set", { method: "POST", body: {
+        key: "menu_button_overrides", value: {}
+      } });
+    }).then(function(d){
+      setSavedMsg(d);
+      loadSettings();
+      loadPreviewMenu();
+    }).catch(function(err){
+      showSettingsMsg("err", errText(err, "settings"));
+    }).finally(function(){ t.disabled = false; });
+  }
+});
+
 function setKindOf(e){
   if (e.secret === true || e.kind === "secret" || e.type === "secret") return "secret";
   var k = e.kind || e.type || "";
@@ -5959,7 +6387,9 @@ var PANEL_SETTING_LABELS = {
   pixel_enabled: "طلبات Google Pixel",
   support_whatsapp: "رقم دعم واتساب",
   saved_replies: "الردود الجاهزة",
-  payment_methods: "وسائل شحن البوت"
+  payment_methods: "وسائل شحن البوت",
+  menu_custom_buttons: "أزرار مخصصة في قائمة البوت",
+  menu_button_overrides: "شكل أزرار قائمة البوت"
 };
 function setHasLabel(e){
   return !!(e && (e.label || (e.key && PANEL_SETTING_LABELS[e.key])));
@@ -5991,6 +6421,7 @@ function renderSettingRows(){
     // القسم العام لباقي الإعدادات بس، والحفظ واحد في الحالتين.
     return e && e.key && e.key !== "payment_methods" &&
       e.key !== "support_whatsapp" && e.key !== "saved_replies" &&
+      e.key !== "menu_custom_buttons" && e.key !== "menu_button_overrides" &&
       !isTextEntry(e);
   });
   if (!rows.length) {
