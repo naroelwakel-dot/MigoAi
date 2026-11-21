@@ -6374,6 +6374,30 @@ $("setContentButtons").addEventListener("click", function(e){
   }
 });
 
+/*PURE-SETTINGS-BEGIN*/
+// حالة مفتاح تشغيل/إيقاف من صف سجل البوت: القيمة الصريحة
+// (true/false) هي الحقيقة دايمًا. القيمة الفاضية (null) معناها
+// إن الإعداد عمره ما اتظبط، والبوت وقتها بيطبّق افتراضيه الخاص
+// بالمفتاح ده بالذات — والافتراضي مش واحد لكل المفاتيح: مفاتيح
+// الشحن التلقائي افتراضيها واقف عند البوت، ومفاتيح إظهار أزرار
+// القائمة التلاتة افتراضيها شغال (البوت بيقراها بـ
+// get_bool(key, True): الزر بيظهر ما لم يتخفي صراحةً، وغياب
+// تعديلات العرض معناه ظاهر أصلًا). عشان كده الافتراضي بيتعرف
+// هنا بالمفتاح، والمفتاح اللي افتراضيه مش معروف وقيمته فاضية
+// بيترسم واقف زي ما كان (ما نخترعش حالة).
+var SET_BOOL_UNSET_DEFAULTS = {
+  menu_show_webapp: true,
+  menu_show_report: true,
+  menu_show_channel: true
+};
+function setBoolOnOf(e){
+  var v = e ? e.value : undefined;
+  if (v === true || v === "true") return true;
+  if (v === false || v === "false") return false;
+  return !!(e && SET_BOOL_UNSET_DEFAULTS[e.key] === true);
+}
+/*PURE-SETTINGS-END*/
+
 function setKindOf(e){
   if (e.secret === true || e.kind === "secret" || e.type === "secret") return "secret";
   var k = e.kind || e.type || "";
@@ -6450,7 +6474,7 @@ function renderSettingRows(){
         esc(setValueText(e.value)) + '</b> <span class="sub">(عرض بس)</span></div></div></div>';
     }
     if (kind === "bool") {
-      var on = e.value === true || e.value === "true";
+      var on = setBoolOnOf(e);
       return head + '<div style="display:flex; align-items:center; gap:8px; margin-top:8px;">' +
         '<label class="switch"><input type="checkbox" data-set-bool="' + i + '"' +
         (on ? " checked" : "") + '><span class="track"></span></label>' +
