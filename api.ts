@@ -127,6 +127,10 @@ import {
   handleControlHealthRequest,
 } from "./control/health.ts";
 import {
+  type ControlGuardsDeps,
+  handleControlGuardsRequest,
+} from "./control/guards.ts";
+import {
   type ControlReviewsDeps,
   handleControlReviewsRequest,
   PostgrestReviewsClient,
@@ -830,6 +834,21 @@ function getControlHealthDeps(): ControlHealthDeps {
     logError,
   };
   return _controlHealthDeps;
+}
+
+let _controlGuardsDeps: ControlGuardsDeps | null = null;
+function getControlGuardsDeps(): ControlGuardsDeps {
+  if (_controlGuardsDeps) return _controlGuardsDeps;
+  _controlGuardsDeps = {
+    botClient: new BridgeBotControlProxyClient({
+      baseUrlOf: () => bridgeBaseUrl((n) => Deno.env.get(n)),
+      bridgeTokenOf: controlBridgeTokenOf(),
+    }),
+    isAdmin,
+    corsOf: (r: Request) => corsHeaders(r),
+    logError,
+  };
+  return _controlGuardsDeps;
 }
 
 let _controlReviewsDeps: ControlReviewsDeps | null = null;
@@ -2550,6 +2569,11 @@ Deno.serve(async (req: Request) => {
         getControlHealthDeps(),
       );
       if (healthRes) return healthRes;
+      const guardsRes = await handleControlGuardsRequest(
+        req,
+        getControlGuardsDeps(),
+      );
+      if (guardsRes) return guardsRes;
       const reviewsRes = await handleControlReviewsRequest(
         req,
         getControlReviewsDeps(),
