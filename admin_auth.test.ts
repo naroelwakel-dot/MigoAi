@@ -101,7 +101,7 @@ Deno.test("session: make + verify roundtrip, والانتهاء = دلوقتي +
   const s = await makeSessionToken(SHARED, NOW);
   eq(isSessionShaped(s), true, "made token is session-shaped");
   eq(s.split(".")[1], String(NOW + SESSION_TTL_SECONDS), "exp is now + TTL");
-  eq(SESSION_TTL_SECONDS, 8 * 3600, "TTL is 8 hours");
+  eq(SESSION_TTL_SECONDS, 30 * 24 * 3600, "TTL is 30 days");
   eq(await verifySessionToken(s, SHARED, NOW), true, "verifies at issue time");
   eq(await verifySessionToken(s, SHARED, NOW + SESSION_TTL_SECONDS - 1), true, "verifies just before expiry");
   eq(await verifySessionToken(s, SHARED, NOW + SESSION_TTL_SECONDS), false, "expired at exp");

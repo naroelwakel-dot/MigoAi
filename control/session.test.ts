@@ -217,7 +217,7 @@ Deno.test("الدخول الناجح: جلسة موقعة صالحة بدل رم
     false,
     "session does not verify with another secret",
   );
-  eq(body.expires_at, new Date((NOW + 8 * 3600) * 1000).toISOString(), "expires_at is now + 8h");
+  eq(body.expires_at, new Date((NOW + 30 * 24 * 3600) * 1000).toISOString(), "expires_at is now + 30d");
 });
 
 Deno.test("الدخول برمز غلط أو من غير رمز: رد البوت بيعدّي ومفيش جلسة", async () => {
