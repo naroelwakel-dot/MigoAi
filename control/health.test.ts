@@ -158,7 +158,7 @@ Deno.test("healthStripSummary: ملخص الشريط وعدم الاختراع",
     guards: { failover: { ok: true } },
   });
   eq(good.ok, true, "all good flag");
-  eq(good.text, "البوت يعمل · الويب هوك على السيرفر · الحلقات كلها شغالة · الحراس كلهم تمام",
+  eq(good.text, "البوت يعمل · وصول العملاء للبوت على سيرفرنا الأساسي · الحلقات كلها شغالة · الحراس كلهم تمام",
     "all good text");
   const degraded = pure.healthStripSummary({
     ok: true,
@@ -168,6 +168,6 @@ Deno.test("healthStripSummary: ملخص الشريط وعدم الاختراع",
   });
   eq(degraded.ok, false, "degraded flag");
   eq(degraded.text,
-    "البوت مش بيرد · الويب هوك على Vercel الاحتياطي · حلقات واقفة: 1 · الحراس: غير متاح",
+    "البوت مش بيرد · وصول العملاء للبوت على الخادم الاحتياطي (Vercel) · حلقات واقفة: 1 · الحراس: غير متاح",
     "degraded text names the gaps, never invents");
 });
