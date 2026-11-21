@@ -3,7 +3,9 @@
  * عميل بوت وهمي. الوحدة تمرير قراءة بس: العقد هو 405 قبل البوابة،
  * 401 قبل أي نداء بوت، تمرير حرفي للحالة والجسم لنقطة البوت
  * /api/control/system-health، وفشل البوت = 502 bot_unavailable
- * (الواجهة بتعرض «غير متاحة» ومش بتخترع حالة).
+ * (الواجهة بتعرض «غير متاحة» ومش بتخترع حالة). الإضافة الوحيدة
+ * على التمرير: أرصدة موردي المحرك الشغالين بتتلحق من عملية
+ * الرصيد بنفس شكل رصيد Pixel، وفشل أي مورد بيعدّي هادي.
  */
 import type { BotProxyResult } from "./customers.ts";
 import {
@@ -19,13 +21,30 @@ function eq(actual: unknown, expected: unknown, label: string) {
 }
 
 class FakeBotClient {
-  calls: { method: string; path: string }[] = [];
+  calls: { method: string; path: string; body?: Record<string, unknown> }[] =
+    [];
   result: BotProxyResult = { status: 200, body: { ok: true } };
+  engineResults: Record<string, BotProxyResult> = {};
+  engineFail = false;
   fail = false;
-  proxy(method: string, path: string): Promise<BotProxyResult> {
-    this.calls.push({ method, path });
+  proxy(
+    method: string,
+    path: string,
+    body?: Record<string, unknown>,
+  ): Promise<BotProxyResult> {
+    this.calls.push({ method, path, body });
     if (this.fail) return Promise.reject(new Error("bot down"));
+    if (path === "/api/control/supplier-engine") {
+      if (this.engineFail) return Promise.reject(new Error("engine down"));
+      const slug = String(body?.slug ?? "");
+      return Promise.resolve(
+        this.engineResults[slug] ?? { status: 502, body: { ok: false } },
+      );
+    }
     return Promise.resolve(this.result);
+  }
+  engineCalls(): { method: string; path: string; body?: Record<string, unknown> }[] {
+    return this.calls.filter((c) => c.path === "/api/control/supplier-engine");
   }
 }
 
@@ -80,6 +99,94 @@ Deno.test("التمرير حرفي للحالة والجسم", async () => {
   const body = await res!.json() as Record<string, unknown>;
   eq((body.bot as Record<string, unknown>).webhook_target, "vps", "body verbatim");
   eq(res?.headers.get("Cache-Control"), "no-store", "no-store header");
+});
+
+Deno.test("أرصدة موردي المحرك بتتلحق بنفس شكل Pixel (قيمة رئيسية)", async () => {
+  const bot = new FakeBotClient();
+  bot.result = {
+    status: 200,
+    body: {
+      ok: true,
+      providers: [
+        { key: "bunny-ai", name: "Bunny AI", active: true, dry_run: false },
+        { key: "drayik", name: "Drayik", active: true, dry_run: false },
+        { key: "wasmou", name: "Wasmou", active: false, dry_run: false },
+        { key: "pixel-verification", name: "Pixel Verification", active: true, balance: 2, currency: "$" },
+      ],
+    },
+  };
+  // عملية الرصيد بترجع أصغر وحدة: 212 = $2.12.
+  bot.engineResults = {
+    "bunny-ai": { status: 200, body: { ok: true, result: { balance: 212, currency: "USD" } } },
+    "drayik": { status: 200, body: { ok: true, result: { balance: 0, currency: "USD" } } },
+  };
+  const res = await handleControlHealthRequest(
+    req("/control/system-health"), depsOf(bot));
+  eq(res?.status, 200, "status");
+  const body = await res!.json() as Record<string, unknown>;
+  const provs = body.providers as Record<string, unknown>[];
+  eq(provs[0].balance, 2.12, "bunny minor 212 -> major 2.12");
+  eq(provs[0].currency, "$", "bunny currency mirrors pixel shape");
+  eq(provs[1].balance, 0, "drayik zero balance attached");
+  eq(provs[2].balance, undefined, "inactive supplier not asked, no balance");
+  eq(provs[3].balance, 2, "pixel balance untouched");
+  eq(provs[3].currency, "$", "pixel currency untouched");
+  const slugs = bot.engineCalls().map((c) => c.body?.slug).sort();
+  eq(slugs, ["bunny-ai", "drayik"], "engine asked for active engine suppliers only");
+  eq(bot.engineCalls()[0].body?.op, "balance", "balance op only");
+});
+
+Deno.test("فشل رصيد مورد بيعدّي هادي ومش بيوقع رد الصحة", async () => {
+  const bot = new FakeBotClient();
+  bot.result = {
+    status: 200,
+    body: {
+      ok: true,
+      providers: [
+        { key: "bunny-ai", name: "Bunny AI", active: true },
+        { key: "tunvn", name: "TunVN PreHub", active: true },
+      ],
+    },
+  };
+  bot.engineResults = {
+    "bunny-ai": { status: 200, body: { ok: true, result: { balance: 212, currency: "USD" } } },
+    // tunvn غايب من الخريطة = المحرك رجّع 502 عند الوهمي.
+  };
+  const res = await handleControlHealthRequest(
+    req("/control/system-health"), depsOf(bot));
+  eq(res?.status, 200, "status stays 200");
+  const body = await res!.json() as Record<string, unknown>;
+  const provs = body.providers as Record<string, unknown>[];
+  eq(provs[0].balance, 2.12, "healthy supplier enriched");
+  eq(provs[1].balance, undefined, "failed supplier passes without balance");
+
+  const bot2 = new FakeBotClient();
+  bot2.result = {
+    status: 200,
+    body: {
+      ok: true,
+      providers: [
+        { key: "bunny-ai", name: "Bunny AI", active: true },
+        { key: "tunvn", name: "TunVN PreHub", active: true },
+      ],
+    },
+  };
+  bot2.engineFail = true;
+  const res2 = await handleControlHealthRequest(
+    req("/control/system-health"), depsOf(bot2));
+  eq(res2?.status, 200, "engine fully down still 200");
+  const body2 = await res2!.json() as Record<string, unknown>;
+  eq((body2.providers as Record<string, unknown>[])[0].balance, undefined,
+    "no invented balance when engine down");
+});
+
+Deno.test("حالة البوت غير 200 بتعدّي زي ما هي من غير نداءات محرك", async () => {
+  const bot = new FakeBotClient();
+  bot.result = { status: 502, body: { ok: false, error: "x" } };
+  const res = await handleControlHealthRequest(
+    req("/control/system-health"), depsOf(bot));
+  eq(res?.status, 502, "status passthrough");
+  eq(bot.engineCalls().length, 0, "no engine calls on error status");
 });
 
 Deno.test("فشل البوت = 502 bot_unavailable", async () => {

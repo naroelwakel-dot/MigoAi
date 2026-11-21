@@ -1182,7 +1182,49 @@ function showView(name){
   });
   if (name !== "chats" && typeof stopChatPolling === "function") stopChatPolling();
   window.scrollTo({ top: 0 });
+  currentViewName = name;
+  refreshVisibleView();
 }
+// تحديث بيانات الشاشة الظاهرة لما التطبيق يرجع للمقدمة أو
+// الشاشة تتفتح من جديد: أندرويد بيخلي صفحة اللوحة حية في
+// الخلفية بالساعات، فمن غير التحديث ده الشاشات بتفضل عارضة
+// لقطة من وقت ما اتفتحت كأنها بيانات حية. التحديث بيروح
+// للشاشات اللي بياناتها بتتغير مع الوقت (الرئيسية والزوار
+// والموردون وإعدادات البوت)، وكل محمّل واخد باله من نفسه
+// (حراس الأجيال والتحميل الجاري)، وبين كل تحديثين لنفس
+// الشاشة ٣ ثواني على الأقل عشان حدثا الرجوع (الظهور والتركيز)
+// ما يعملوش تحميلين ورا بعض.
+var currentViewName = "home";
+var viewRefreshedAt = {};
+function refreshVisibleView(){
+  var name = currentViewName;
+  var now = Date.now();
+  if (viewRefreshedAt[name] && now - viewRefreshedAt[name] < 3000) return;
+  if (name === "visitors") {
+    if (typeof visitorsState === "undefined" || !visitorsState.loaded) return;
+    if (typeof loadVisitors !== "function") return;
+    viewRefreshedAt[name] = now;
+    loadVisitors();
+  } else if (name === "suppliers") {
+    if (typeof suppliersState === "undefined" || !suppliersState.loaded) return;
+    if (typeof loadSuppliers !== "function") return;
+    viewRefreshedAt[name] = now;
+    loadSuppliers();
+  } else if (name === "settings") {
+    if (typeof setState === "undefined" || !setState.loaded) return;
+    if (typeof loadSettings !== "function") return;
+    viewRefreshedAt[name] = now;
+    loadSettings();
+  } else if (name === "home") {
+    if (!getKey()) return;
+    viewRefreshedAt[name] = now;
+    load();
+  }
+}
+document.addEventListener("visibilitychange", function(){
+  if (!document.hidden) refreshVisibleView();
+});
+window.addEventListener("focus", refreshVisibleView);
 document.querySelectorAll("#bottomNav button").forEach(function(b){
   b.addEventListener("click", function(){
     var nav = b.getAttribute("data-nav");
@@ -4429,7 +4471,22 @@ function showSupMsg(kind, html, withKeyBtn){
 }
 function hideSupMsg(){ $("supMsg").className = "msg"; $("supMsg").innerHTML = ""; }
 
-var suppliersState = { loaded: false, engine: [], registry: [], registryOnlyKeys: [] };
+/*PURE-SUPPLIERS-BEGIN*/
+// رصيد المورد من رد عملية الرصيد: الرد {result: {balance,
+// currency}} والرصيد بأصغر وحدة — بنرجّع القيمة الرئيسية
+// واسم العملة زي ما بتتعرض (212 أصغر وحدة دولار = 2.12
+// دولار)، أو null لو الشكل مش سليم.
+function supplierBalanceOf(d){
+  var r = d && d.result;
+  if (!r || typeof r !== "object") return null;
+  var minor = Number(r.balance);
+  if (!isFinite(minor)) return null;
+  var code = (typeof r.currency === "string" && r.currency) ? r.currency : "USD";
+  return { amount: Math.round(minor) / 100, currency: code === "USD" ? "دولار" : code };
+}
+/*PURE-SUPPLIERS-END*/
+
+var suppliersState = { loaded: false, engine: [], registry: [], registryOnlyKeys: [], balances: {}, balGen: 0 };
 var supplierProductsState = { slug: null, offset: 0, total: 0, limit: 50 };
 var REGISTRY_KIND_LABEL = { api: "بيتربط بالنظام تلقائيًا (API)", manual: "يدوي", mixed: "مختلط" };
 var REGISTRY_STATUS_LABEL = { active: "شغال", prospective: "لسه قيد التفكير", trial: "تجربة", closed: "مغلق" };
@@ -4447,6 +4504,8 @@ function ensureSuppliersLoaded(){
 
 function loadSuppliers(){
   hideSupMsg();
+  suppliersState.balances = {};
+  suppliersState.balGen += 1;
   $("engineList").innerHTML = '<div class="sub" style="color:var(--muted)">بيحمّل الموردين…</div>';
   api("/control/bot-suppliers").then(function(d){
     suppliersState.engine = d.engine || [];
@@ -4455,12 +4514,40 @@ function loadSuppliers(){
     renderEngineList();
     renderRegistryList();
     renderRegistryKeys();
+    fetchSupplierBalances();
   }).catch(function(e){
     $("engineList").innerHTML = "";
     $("registryList").innerHTML = "";
     if (e && e.noKey) showSupMsg("err", "لازم تكتب مفتاح الأدمن الأول.", true);
     else showSupMsg("err", esc(errText(e, "suppliers")));
   });
+}
+
+// أرصدة الموردين الشغالين بتتقرأ لوحدها مع فتح الشاشة (عملية
+// الرصيد قراءة بس) عشان الرصيد يبقى باين في القائمة نفسها
+// بدل ما يتدوّر عليه جوه صفحة كل مورد. جيل التحميل بيحرس
+// الردود المتأخرة من تحميل أقدم، وفشل مورد بيكتب «مش متاح»
+// في صفه بس.
+function fetchSupplierBalances(){
+  var gen = suppliersState.balGen;
+  suppliersState.engine.forEach(function(s){
+    if (s.status !== "active") return;
+    api("/control/bot-supplier-engine", { method: "POST", body: { slug: s.slug, op: "balance" } }).then(function(d){
+      if (gen !== suppliersState.balGen) return;
+      suppliersState.balances[s.slug] = supplierBalanceOf(d) || "failed";
+      renderEngineList();
+    }).catch(function(){
+      if (gen !== suppliersState.balGen) return;
+      suppliersState.balances[s.slug] = "failed";
+      renderEngineList();
+    });
+  });
+}
+function supplierBalanceLine(slug){
+  var b = suppliersState.balances[slug];
+  if (b === undefined) return "الرصيد: بيتقرأ دلوقتي…";
+  if (b === "failed") return "الرصيد: مش متاح دلوقتي";
+  return "الرصيد: " + fmtNum(b.amount) + " " + b.currency;
 }
 
 function renderEngineList(){
@@ -4478,7 +4565,8 @@ function renderEngineList(){
       (s.last_sync_at ? (s.last_sync_ok ? " (تمام)" : " (فشلت)") : "") + "</small>" +
       "<small>" + (s.has_secrets
         ? "مفاتيح محفوظة (الأسماء بس): " + esc((s.secrets_set || []).join("، ") || "—")
-        : "مفيش مفاتيح محفوظة") + "</small></div>" +
+        : "مفيش مفاتيح محفوظة") + "</small>" +
+      (active ? "<small>" + esc(supplierBalanceLine(s.slug)) + "</small>" : "") + "</div>" +
       '<div class="bal"><span class="status-txt ' + (active ? "st-ok" : "st-mut") + '">' +
       (active ? "شغال" : "واقف") + "</span>" +
       (s.dry_run ? '<small class="status-txt st-pending">وضع التجربة شغال</small>' : "") +
