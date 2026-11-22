@@ -26,6 +26,41 @@ Deno.test("الأحداث: بطاقة شحنة البوت بتدرج حالة st
   );
 });
 
+Deno.test("الأحداث: شارة «اتسوّى يدويًا» للإيداع المتسوّي يدويًا بس", () => {
+  const start = html.indexOf("function storeEventCard(");
+  ok(start >= 0, "storeEventCard found");
+  const body = html.slice(start, start + 1600);
+  ok(
+    body.includes('it.outcome === "manually_settled"'),
+    "badge gated on the manually_settled outcome",
+  );
+  ok(body.includes("اتسوّى يدويًا"), "manually settled badge label");
+  ok(body.includes("badge ok"), "manually settled badge is the ok badge");
+});
+
+Deno.test("الأحداث: زر «تسوية يدوية» على بطاقات الإيداع المعلّقة بس", () => {
+  ok(
+    html.includes('data-ev-act="settle_manually"'),
+    "settle button carries the settle_manually action",
+  );
+  ok(html.includes("تسوية يدوية"), "settle button label");
+});
+
+Deno.test("الأحداث: فعل التسوية بيعدّي على ورقة تأكيد ونص نجاح صريح", () => {
+  const start = html.indexOf("function runStoreEventAction(");
+  ok(start >= 0, "runStoreEventAction found");
+  const body = html.slice(start, start + 4000);
+  ok(
+    body.includes('action === "settle_manually"'),
+    "settle action handled explicitly",
+  );
+  ok(body.includes("تسوية إيداع يدويًا"), "settle confirmation sheet title");
+  ok(
+    body.includes("الحدث اتسوّى يدويًا واتقفل — من غير أي شحن."),
+    "settle success message states no credit happened",
+  );
+});
+
 Deno.test("الأحداث: statusTxt نفسها لسه بتهرّب نص الشارة جوّه الوسم", () => {
   const start = html.indexOf("function statusTxt(");
   ok(start >= 0, "statusTxt found");

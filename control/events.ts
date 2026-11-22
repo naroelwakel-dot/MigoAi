@@ -32,6 +32,8 @@ export interface StoreEvent {
   ref: string | null;
   dedupe_key: string;
   status: StoreEventStatus;
+  /** نتيجة الإيداع الخام (صف الإيداعات بس؛ الرسائل = null دايمًا). */
+  outcome: string | null;
   body: string | null;
   sender_masked: string | null;
   confidence: EventConfidence;
@@ -120,6 +122,16 @@ export interface ControlEventsClient {
     fromState: string,
     toState: string,
   ): Promise<number>;
+  /**
+   * تسوية إيداع يدويًا: كتابة محروسة على عمود outcome وحده
+   * (من الحالة الحالية + كل الروابط فاضية) لقيمة
+   * manually_settled — بيرجع عدد الصفوف المعدّلة. مفيش أي
+   * مسار محفظة/نية/مطالبة/شحنة في الكتابة دي.
+   */
+  settleDepositEvent(
+    id: string,
+    fromOutcome: string | null,
+  ): Promise<number>;
   getSetting(
     key: string,
   ): Promise<{ key: string; value: string | null } | null>;
@@ -187,13 +199,17 @@ export function smsStatusOf(matchState: string | null | undefined): StoreEventSt
 
 /**
  * حالة إيداع مطبّعة: credited أو مربوط بأي سطح (نية/مطالبة/شحن
- * بوت) = تمّ؛ no_matching_intent = ينتظر. مفيش حالة «متجاهل»
- * للإيداعات — نتيجتها بتكتبها دوال الائتمان بس. أي outcome تاني
- * غير معروف بيتحسب «ينتظر» (ما اتحسمش) بدل ما يختفي.
+ * بوت) أو manually_settled (اتسوّى يدويًا برّه المنصة بقرار
+ * المالك — هجرة 031) = تمّ؛ no_matching_intent = ينتظر. مفيش
+ * حالة «متجاهل» للإيداعات — نتيجتها بتكتبها دوال الائتمان بس،
+ * ما عدا التسوية اليدوية اللي بيكتبها فعل اللوحة المحروس
+ * (settle_manually) على عمود outcome وحده. أي outcome تاني غير
+ * معروف بيتحسب «ينتظر» (ما اتحسمش) بدل ما يختفي.
  */
 export function depositStatusOf(row: DepositEventRow): StoreEventStatus {
   if (
     String(row.outcome || "") === "credited" ||
+    String(row.outcome || "") === "manually_settled" ||
     row.matched_intent_id || row.claim_id || row.matched_bot_topup_id
   ) {
     return "done";
@@ -256,6 +272,7 @@ export function normalizeSmsEvent(
     ref: row.transfer_ref ? String(row.transfer_ref) : null,
     dedupe_key: String(row.dedupe_key || ""),
     status: smsStatusOf(row.match_state),
+    outcome: null,
     body: row.body !== null && row.body !== undefined
       ? String(row.body)
       : null,
@@ -304,6 +321,7 @@ export function normalizeDepositEvent(
     // مفتاح منع التكرار البنيوي للإيداع هو الزوج (rail, exchange_ref).
     dedupe_key: `${rail}:${ref || ""}`,
     status: depositStatusOf(row),
+    outcome: row.outcome ? String(row.outcome) : null,
     body: null,
     sender_masked: null,
     confidence: confidenceOf({
@@ -427,15 +445,19 @@ function depositFilterParams(f: StoreEventsFilter): string[] | null {
     plain.push(`rail=eq.${f.source}`);
   }
   if (f.status === "pending") {
-    // بيطابق depositStatusOf بالحرف: مش credited ومش مربوط بأي
-    // هدف — أي outcome تانية (بما فيها الفاضية) لسه pending.
-    groups.push("or=(outcome.is.null,outcome.neq.credited)");
+    // بيطابق depositStatusOf بالحرف: مش credited ومش
+    // manually_settled ومش مربوط بأي هدف — أي outcome تانية
+    // (بما فيها الفاضية) لسه pending.
+    groups.push(
+      "or=(outcome.is.null,outcome.not.in.(credited,manually_settled))",
+    );
     plain.push("matched_intent_id=is.null");
     plain.push("claim_id=is.null");
     plain.push("matched_bot_topup_id=is.null");
   } else if (f.status === "done") {
     groups.push(
-      "or=(outcome.eq.credited,matched_intent_id.not.is.null," +
+      "or=(outcome.eq.credited,outcome.eq.manually_settled," +
+        "matched_intent_id.not.is.null," +
         "claim_id.not.is.null,matched_bot_topup_id.not.is.null)",
     );
   }
@@ -671,6 +693,49 @@ export class PostgrestControlEventsClient implements ControlEventsClient {
     return Array.isArray(parsed) ? parsed.length : 0;
   }
 
+  async settleDepositEvent(
+    id: string,
+    fromOutcome: string | null,
+  ): Promise<number> {
+    // كتابة محروسة بنفس نمط updateSmsEventState: بتتم بس لو
+    // النتيجة لسه هي اللي اتقرت وكل الروابط فاضية — أي سباق
+    // (استهلاك/ربط حصل بين القراءة والكتابة) بيخلي الصفوف صفر.
+    const outcomeGuard = fromOutcome === null
+      ? "outcome=is.null"
+      : `outcome=eq.${encodeURIComponent(fromOutcome)}`;
+    const res = await fetch(
+      `${this.opts.baseUrl}/rest/v1/wallet_deposit_events?id=eq.${
+        encodeURIComponent(id)
+      }&${outcomeGuard}` +
+        "&matched_intent_id=is.null&claim_id=is.null" +
+        "&matched_bot_topup_id=is.null",
+      {
+        method: "PATCH",
+        headers: {
+          ...this.headers(),
+          "Content-Type": "application/json",
+          "Prefer": "return=representation",
+        },
+        body: JSON.stringify({ outcome: "manually_settled" }),
+      },
+    );
+    const text = await res.text();
+    if (!res.ok) {
+      throw new Error(
+        `control events settle write http ${res.status}: ${
+          text.slice(0, 200)
+        }`,
+      );
+    }
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(text);
+    } catch {
+      parsed = null;
+    }
+    return Array.isArray(parsed) ? parsed.length : 0;
+  }
+
   async getSetting(
     key: string,
   ): Promise<{ key: string; value: string | null } | null> {
@@ -767,7 +832,13 @@ const EVENT_SOURCES: StoreEventSource[] = [
   "bybit",
 ];
 const EVENT_STATUSES: StoreEventStatus[] = ["pending", "done", "ignored"];
-const EVENT_ACTIONS = ["approve", "ignore", "unignore", "rematch"];
+const EVENT_ACTIONS = [
+  "approve",
+  "ignore",
+  "unignore",
+  "rematch",
+  "settle_manually",
+];
 
 /**
  * معالج أحداث اللوحة (م٤) — بيتركب في api.ts على مسارات /control/*.
@@ -1234,6 +1305,39 @@ export async function handleControlEventsRequest(
         if (before.status === "done") {
           return json({ ok: false, error: "event_consumed" }, 409);
         }
+        if (action === "settle_manually") {
+          // تسوية يدوية خارج المنصة (هجرة 031): الحدث لسه معلّق
+          // ومش مربوط بأي سطح (فحص done فوق بيضمن ده)، فالكتابة
+          // المحروسة بتقفل نتيجته manually_settled على عمود
+          // outcome وحده — من غير أي شحن محفظة ولا ربط. صفر
+          // صفوف = سباق استهلاك/ربط حصل بعد القراءة.
+          const settledRows = await deps.client.settleDepositEvent(
+            eventId,
+            row.outcome ? String(row.outcome) : null,
+          );
+          if (settledRows !== 1) {
+            return json({ ok: false, error: "event_consumed" }, 409);
+          }
+          const settledRow = await deps.client.getDepositEvent(eventId);
+          const settledAfter = settledRow
+            ? normalizeDepositEvent(settledRow, ctx)
+            : before;
+          const settleAuditOk = await audit(
+            "store_event_action",
+            "store_event",
+            `${source}:${eventId}`,
+            { status: before.status },
+            { action, status: settledAfter.status },
+            reason,
+          );
+          return json({
+            ok: true,
+            action,
+            result: { outcome: "manually_settled" },
+            event: settledAfter,
+            audit_failed: !settleAuditOk,
+          });
+        }
         const hasClaim = body.claim_id !== undefined &&
           body.claim_id !== null && body.claim_id !== "";
         const hasIntent = body.intent_id !== undefined &&
@@ -1322,6 +1426,12 @@ export async function handleControlEventsRequest(
         return json({ ok: false, error: "bad_source" }, 400);
       }
       const before = normalizeSmsEvent(row, ctx);
+      if (action === "settle_manually") {
+        // التسوية اليدوية فعل إيداعات بس: أحداث الرسائل مالهاش
+        // outcome أصلًا — رفض صريح بدل ما الفعل يعدّي صامتًا
+        // ويرجع ok من غير ما يعمل حاجة.
+        return json({ ok: false, error: "bad_action" }, 400);
+      }
       if (before.status === "done") {
         // حدث مستهلَك (matched/credited): أي فعل عليه مرفوض بنيويًا.
         return json({ ok: false, error: "event_consumed" }, 409);
