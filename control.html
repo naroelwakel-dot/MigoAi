@@ -5271,7 +5271,7 @@ function botTopupCard(t, idx){
     evStatusBadge(topupStatusCat(t)) +
     "<small>شحنة بوت" +
     (t.method_label ? " · " + esc(t.method_label) : "") +
-    " · " + esc(statusTxt(BOT_TOPUP_STATUS, t.status)) +
+    " · " + statusTxt(BOT_TOPUP_STATUS, t.status) +
     (age ? " · " + esc(age) : "") +
     '<br>العميل: <span class="num">' + esc(t.customer_ref || "—") + "</span>" +
     (t.operation_ref
