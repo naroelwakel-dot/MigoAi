@@ -555,7 +555,7 @@
 
   <section class="card">
     <h2>تصدير واستيراد الإعدادات</h2>
-    <div class="sub" style="color:var(--muted); font-size:12px;">التصدير بيحفظ كل الإعدادات في ملف واحد، والاستيراد بيرجّعها من ملف اتصدّر قبل كده وبيكتب فوق القيم الحالية للمفاتيح اللي فيه.</div>
+    <div class="sub" style="color:var(--muted); font-size:12px;">التصدير بيحفظ إعدادات البوت الأساسية وطرق دفع الموقع في ملف واحد، والاستيراد بيرجّعها من ملف اتصدّر قبل كده وبيكتب فوق القيم الحالية للمفاتيح اللي فيه. حزم الأيقونات ومفاتيح السرية وسجلات التشغيل مش ضمن التصدير — لو رجّعت نسخة، راجع أيقونات البوت بعدها.</div>
     <div class="row-actions" style="margin-top:12px;">
       <button class="btn secondary" id="setExportBtn" type="button">تصدير الإعدادات</button>
       <button class="btn secondary" id="setImportBtn" type="button">استيراد الإعدادات</button>
@@ -1816,7 +1816,8 @@ function statusTxt(map, s){
 }
 var BOT_TOPUP_STATUS = {
   pending: ["منتظرة", "st-pending"], needs_info: ["محتاج بيانات", "st-pending"],
-  approved: ["مقبولة", "st-ok"], rejected: ["مرفوضة", "st-bad"]
+  approved: ["مقبولة", "st-ok"], rejected: ["مرفوضة", "st-bad"],
+  invoiced: ["فاتورة مستنية الدفع", "st-pending"]
 };
 var STORE_TOPUP_STATUS = {
   pending: ["منتظرة", "st-pending"], credited: ["معتمدة", "st-ok"], rejected: ["مرفوضة", "st-bad"]
@@ -1955,7 +1956,7 @@ function botOrdersHtml(){
     var age = relTime(o.created_at);
     rows += '<div class="topup-row">' +
       '<div class="amt num">' + fmtNum(egpFromMinor(o.total)) + ' ج.م <small>' + esc(o.product_name || "") + "</small></div>" +
-      '<div class="sub">' + statusTxt({}, o.status) + (age ? " · " + esc(age) : "") + "</div>";
+      '<div class="sub">' + statusTxt(ORD_STATUS, o.status) + (age ? " · " + esc(age) : "") + "</div>";
     if (o.id) {
       rows += '<div class="row-actions"><button class="btn ghost small" type="button" data-ord-jump="' + i + '">تفاصيل الطلب</button></div>';
     }
@@ -1973,7 +1974,7 @@ function storeOrdersHtml(){
     var age = relTime(o.created_at);
     rows += '<div class="topup-row">' +
       '<div class="amt num">' + fmtNum(o.server_total) + ' ج.م <small>' + esc(o.order_ref || "") + "</small></div>" +
-      '<div class="sub">' + statusTxt({}, o.status) + (age ? " · " + esc(age) : "") + "</div></div>";
+      '<div class="sub">' + statusTxt(STORE_ORD_STATUS, o.status) + (age ? " · " + esc(age) : "") + "</div></div>";
   });
   return '<section class="card"><h2>طلبات الموقع</h2>' + rows + "</section>";
 }
@@ -1984,7 +1985,7 @@ function botSheerHtml(){
   var rows = "";
   list.forEach(function(j){
     var age = relTime(j.created_at);
-    rows += '<div class="topup-row"><div class="sub">' + statusTxt({}, j.status) + (age ? " · " + esc(age) : "") + "</div></div>";
+    rows += '<div class="topup-row"><div class="sub">' + statusTxt(ORD_STATUS, j.status) + (age ? " · " + esc(age) : "") + "</div></div>";
   });
   return '<section class="card"><h2>طلبات تحقق أخيرة</h2>' + rows + "</section>";
 }
@@ -2504,7 +2505,8 @@ var STORE_SETTING_LABELS = {
   intent_expiry_minutes: { label: "المدة اللي تعليمات الشحن بتفضل صالحة فيها للعميل (بعدها لازم يطلب تعليمات جديدة)", kind: "int", unit: "دقيقة" },
   deposit_address_binance: { label: "عنوان استقبال Binance", kind: "address", unit: "" },
   deposit_address_bybit: { label: "عنوان استقبال Bybit", kind: "address", unit: "" },
-  wallet_app_package: { label: "التطبيقات اللي رسائلها البنكية بتتقبل للشحن التلقائي", kind: "packages", unit: "" }
+  wallet_app_package: { label: "التطبيقات اللي رسائلها البنكية بتتقبل للشحن التلقائي", kind: "packages", unit: "" },
+  sms_excluded_words: { label: "كلمات لو ظهرت في رسالة البنك بتتستبعد من الشحن التلقائي", kind: "words", unit: "" }
 };
 var BOT_SETTING_LABELS = {
   topup_auto_exchange_enabled: { label: "شحن تلقائي من البورصة", kind: "bool" },
@@ -2519,6 +2521,12 @@ var moneyState = { store: [], bot: [], botUnavailable: false, storeFailed: false
 function settingValueText(meta, v){
   if (v === null || v === undefined || v === "") return "مش متظبط";
   if (meta && meta.kind === "bool") return (v === true || v === "true") ? "شغال" : "واقف";
+  if (meta && meta.kind === "words") {
+    var wordsList = null;
+    try { var parsedWords = JSON.parse(v); if (Array.isArray(parsedWords)) wordsList = parsedWords; } catch (e) {}
+    if (!wordsList) return String(v);
+    return wordsList.length ? wordsList.map(String).join("، ") : "مفيش كلمات مستبعدة";
+  }
   if (meta && meta.kind === "address") return String(v);
   if (meta && (meta.kind === "decimal" || meta.kind === "int")) {
     var n = Number(v);
@@ -2648,6 +2656,15 @@ function openSettingEdit(surface, row){
   var isStore = surface === "store";
   var meta = (isStore ? STORE_SETTING_LABELS : BOT_SETTING_LABELS)[row.key] ||
     { label: "إعداد لسه مالوش شرح", kind: "text", unit: "" };
+  if (meta.kind === "words") {
+    // كلمات الاستبعاد ليها محررها الحقيقي في شاشة الأحداث — ما نفتحش
+    // المحرر العام هنا (كان بيطلع حقل رقم لكلمات)، بنودّي صاحب اللوحة
+    // للمحرر الصح مع تنبيه قصير.
+    showView("events");
+    ensureEventsLoaded();
+    showEventsMsg("ok", "كلمات الاستبعاد بتتعدّل من شاشة الأحداث — دوس «الكلمات المستبعدة» فوق عشان تفتح محررها.");
+    return;
+  }
   var cur = row.value;
   var body = '<div class="preview">الإعداد: <b>' + esc(meta.label) + '</b><br>القيمة دلوقتي: <b>' +
     (meta.kind === "address" && cur
@@ -3012,6 +3029,7 @@ var ORD_STATUS = {
   manual_review: ["محتاج مراجعة", "st-pending"],
   needs_review: ["محتاج مراجعة", "st-pending"], refunded: ["اتسترد", "st-mut"]
 };
+var ORD_TIMELINE_EVENT = { created: "اتعمل الطلب", sheerid_job: "طلب التحقق" };
 var MANUAL_STATUS = {
   waiting_payment: ["مستنية الدفع", "st-pending"],
   waiting_execution: ["مستنية التنفيذ", "st-pending"],
@@ -3391,7 +3409,28 @@ function renderOrdDetail(){
     ((o.operation_ref || o.external_ref) ? '<div class="kv"><span class="k">رقم عملية المورد</span><span class="v num">' + esc(o.operation_ref || o.external_ref) + "</span></div>" : "") +
     ((o.provider_name || o.provider) ? '<div class="kv"><span class="k">المورد</span><span class="v">' + esc(o.provider_name || o.provider) + "</span></div>" : "") +
     (err ? '<div class="kv"><span class="k">خطأ المورد</span><span class="v" style="color:var(--red)">' + esc(err) + "</span></div>" : "") +
+    (o.note ? '<div class="kv"><span class="k">ملحوظة</span><span class="v">' + esc(o.note) + "</span></div>" : "") +
     "</section>";
+
+  var sheerJob = o.sheerid_job || d.data.sheerid_job || null;
+  if (sheerJob) {
+    html += '<section class="card"><h2>طلب التحقق المرتبط</h2>' +
+      '<div class="kv"><span class="k">الحالة</span><span class="v">' + statusTxt(ORD_STATUS, sheerJob.status) + "</span></div>" +
+      (sheerJob.provider_job_id ? '<div class="kv"><span class="k">رقم الطلب عند مقدم التحقق</span><span class="v num">' + esc(sheerJob.provider_job_id) + "</span></div>" : "") +
+      "</section>";
+  }
+
+  var recentMsgs = pickArr(d.data, ["recent_messages"]);
+  if (!recentMsgs.length && Array.isArray(o.recent_messages)) recentMsgs = o.recent_messages;
+  if (recentMsgs.length) {
+    html += '<section class="card"><h2>آخر رسايل العميل</h2>';
+    recentMsgs.forEach(function(m){
+      var mWhen = relTime(m.created_at || m.at);
+      html += '<div class="sub"><b>' + esc(senderName(m.sender)) + ":</b> " + esc(m.body || m.text || "") +
+        (mWhen ? ' <span style="color:var(--muted)">(' + esc(mWhen) + ")</span>" : "") + "</div>";
+    });
+    html += "</section>";
+  }
 
   var execObj = o.execution || o.inputs || o.delivery_input || null;
   if (execObj) {
@@ -3415,7 +3454,11 @@ function renderOrdDetail(){
     html += '<section class="card"><h2>اللي حصل بالترتيب</h2>';
     timeline.forEach(function(t){
       var when = relTime(t.at || t.created_at);
-      html += '<div class="sub">• ' + esc(t.text || t.label || t.status || t.action || "") +
+      var tlText = t.detail || t.text || t.label || t.status || t.action || "";
+      if (tlText && ORD_STATUS[tlText]) tlText = ORD_STATUS[tlText][0];
+      var evLabel = ORD_TIMELINE_EVENT[t.event] || "";
+      var tlLine = evLabel && tlText ? evLabel + " — " + tlText : (evLabel || tlText);
+      html += '<div class="sub">• ' + esc(tlLine) +
         (when ? ' <span style="color:var(--muted)">(' + esc(when) + ")</span>" : "") + "</div>";
     });
     html += "</section>";
@@ -3971,6 +4014,10 @@ var MARGIN_LABEL = {
   below: ["تحت التكلفة", "st-bad"],
   unknown: ["غير معروف", "st-mut"]
 };
+var AVAILABILITY_LABEL = {
+  in_stock: ["متاح", "st-ok"], out_of_stock: ["نافد", "st-bad"],
+  backorder: ["بيتوفر بالطلب", "st-pending"], preorder: ["حجز مسبق", "st-pending"]
+};
 var PRODUCT_STATUS_LABEL = { published: "منشور", draft: "مسودة", archived: "مؤرشف" };
 function productStatusLabel(s){ return PRODUCT_STATUS_LABEL[s] || (s || "—"); }
 
@@ -4065,7 +4112,10 @@ function renderCatalogList(){
       " · " + esc(FULFILLMENT_LABEL[p.fulfillment] || p.fulfillment || "") + "</small></div>" +
       '<div class="bal">' + esc(sellTextOf(p)) +
       '<small>التكلفة: ' + esc(costTextOf(p)) + "</small>" +
-      '<small>الهامش: <span class="status-txt ' + m[1] + '">' + m[0] + "</span></small></div></div>";
+      '<small>الهامش: <span class="status-txt ' + m[1] + '">' + m[0] + "</span></small>" +
+      '<small>المخزون: <span class="num">' +
+      (p.stock === null || p.stock === undefined ? "—" : fmtNum(Number(p.stock))) +
+      "</span> · " + statusTxt(AVAILABILITY_LABEL, p.availability) + "</small></div></div>";
   });
   $("catList").innerHTML = html;
   $("catList").querySelectorAll("[data-cat-product]").forEach(function(row){
@@ -4114,6 +4164,9 @@ function openProductSheet(p){
     '<div class="field"><label>الوصف</label><textarea id="pfDesc" rows="2">' + esc(p.description || "") + "</textarea></div>" +
     '<div class="field"><label>الفئة</label><select id="pfCategory">' + productCategoryOptions(p.category_id) + "</select></div>" +
     '<div class="field"><label>الحالة</label><select id="pfStatus">' + productStatusOptions(p.status || "published") + "</select></div>" +
+    (isNew ? "" : '<div class="preview">المخزون الحالي: ' +
+      (p.stock === null || p.stock === undefined ? "—" : fmtNum(Number(p.stock))) +
+      " — " + esc((AVAILABILITY_LABEL[p.availability] || [p.availability || "—"])[0]) + "</div>") +
     '<div class="field"><label>ترتيب العرض</label><input id="pfSort" type="number" step="1" value="' + esc(p.sort_order !== null && p.sort_order !== undefined ? p.sort_order : 0) + '"></div>' +
     '<div class="field"><label>التسعير</label><div class="seg" id="pfModeSeg">' +
     '<button type="button" data-mode="none" class="on">من غير تغيير</button>' +
@@ -8213,13 +8266,14 @@ function renderMerchantDetail(){
       : (o.total != null ? o.total : o.amount);
     if (total !== null && total !== undefined && total !== "")
       bits.push(fmtNum(total) + " ج.م");
-    if (o.status) bits.push(String(o.status));
     if (o.created_at) bits.push(fmtDT(o.created_at));
     html += '<div class="result-row" style="flex-direction:column; align-items:stretch;">' +
       '<div style="display:flex; justify-content:space-between; gap:8px;">' +
         '<b dir="ltr">' + esc(o.id != null ? o.id : "") + "</b>" +
       "</div>" +
-      (bits.length ? '<div class="sub" style="color:var(--muted); font-size:12px; margin-top:4px;">' + esc(bits.join(" · ")) + "</div>" : "") +
+      (bits.length || o.status ? '<div class="sub" style="color:var(--muted); font-size:12px; margin-top:4px;">' +
+        (bits.length ? esc(bits.join(" · ")) : "") +
+        (o.status ? (bits.length ? " · " : "") + statusTxt(ORD_STATUS, o.status) : "") + "</div>" : "") +
     "</div>";
   });
   body.innerHTML = html;
