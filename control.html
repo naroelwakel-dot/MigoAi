@@ -1091,8 +1091,8 @@ function render(data){
     bItems.forEach(function(t){
       var bAge = relTime(t.created_at);
       bHtml += '<div class="topup-row">' +
-        '<div class="amt num">' + fmtNum(t.amount) + ' <small>' + esc(t.currency || "") +
-        (t.method_label ? " · " + esc(t.method_label) : "") + "</small></div>" +
+        '<div class="amt num">' + fmtNum(egpFromMinor(t.amount)) + ' ج.م <small>' +
+        (t.method_label ? esc(t.method_label) : "") + "</small></div>" +
         '<div class="sub">العميل: <b class="num">' + esc(t.customer_ref || "—") + "</b>" +
         (t.ref_seen_before ? ' · <b style="color:var(--red)">رقم العملية اتشاف قبل كده</b>' : "") +
         (bAge ? " · " + esc(bAge) : "") + "</div></div>";
@@ -1207,12 +1207,14 @@ function showView(name){
 // تحديث بيانات الشاشة الظاهرة لما التطبيق يرجع للمقدمة أو
 // الشاشة تتفتح من جديد: أندرويد بيخلي صفحة اللوحة حية في
 // الخلفية بالساعات، فمن غير التحديث ده الشاشات بتفضل عارضة
-// لقطة من وقت ما اتفتحت كأنها بيانات حية. التحديث بيروح
-// للشاشات اللي بياناتها بتتغير مع الوقت (الرئيسية والزوار
-// والموردون وإعدادات البوت)، وكل محمّل واخد باله من نفسه
-// (حراس الأجيال والتحميل الجاري)، وبين كل تحديثين لنفس
-// الشاشة ٣ ثواني على الأقل عشان حدثا الرجوع (الظهور والتركيز)
-// ما يعملوش تحميلين ورا بعض.
+// لقطة من وقت ما اتفتحت كأنها بيانات حية. التحديث بيغطي كل
+// الشاشات اللي اتفتحت قبل كده (حارس «اتحمّلت» لكل شاشة)،
+// وكل محمّل واخد باله من نفسه (حراس الأجيال والتحميل
+// الجاري)، وبين كل تحديثين لنفس الشاشة ٣ ثواني على الأقل
+// عشان حدثا الرجوع (الظهور والتركيز) ما يعملوش تحميلين
+// ورا بعض. المحادثات بتتحدث قائمتها بس لو مفيش محادثة
+// مفتوحة (المفتوحة ليها تحديثها الدوري لوحدها)، والمعاينة
+// بتتحدث قائمة البوت فيها (بطاقة المنتج بتتعمل عند الطلب).
 var currentViewName = "home";
 var viewRefreshedAt = {};
 function refreshVisibleView(){
@@ -1243,6 +1245,80 @@ function refreshVisibleView(){
     if (typeof loadGuards !== "function") return;
     viewRefreshedAt[name] = now;
     loadGuards();
+  } else if (name === "customers") {
+    if (typeof moneyState === "undefined" || !moneyState.loaded) return;
+    if (typeof loadMoneySettings !== "function") return;
+    viewRefreshedAt[name] = now;
+    loadMoneySettings();
+  } else if (name === "orders") {
+    if (typeof ordState === "undefined" || !ordState.loaded) return;
+    if (typeof loadOrders !== "function") return;
+    viewRefreshedAt[name] = now;
+    loadOrders();
+  } else if (name === "chats") {
+    if (typeof chatState === "undefined" || !chatState.loaded) return;
+    if (chatState.openRef) return;
+    if (typeof loadChats !== "function") return;
+    viewRefreshedAt[name] = now;
+    loadChats();
+  } else if (name === "prices") {
+    if (typeof pricesState === "undefined" || !pricesState.loaded) return;
+    if (typeof loadPrices !== "function") return;
+    viewRefreshedAt[name] = now;
+    loadPrices();
+    if (typeof loadExecState === "function") loadExecState();
+  } else if (name === "catalog") {
+    if (typeof catalogState === "undefined" || !catalogState.loaded) return;
+    if (typeof loadCatalog !== "function") return;
+    viewRefreshedAt[name] = now;
+    loadCatalog();
+    if (typeof loadIdentity === "function") loadIdentity();
+  } else if (name === "events") {
+    if (typeof evState === "undefined" || !evState.loaded) return;
+    if (typeof loadEvents !== "function") return;
+    viewRefreshedAt[name] = now;
+    loadEvents();
+  } else if (name === "channel") {
+    if (typeof channelState === "undefined" || !channelState.loaded) return;
+    if (typeof loadChannel !== "function") return;
+    viewRefreshedAt[name] = now;
+    loadChannel();
+  } else if (name === "coupons") {
+    if (typeof couponsState === "undefined" || !couponsState.loaded) return;
+    if (typeof loadCoupons !== "function") return;
+    viewRefreshedAt[name] = now;
+    loadCoupons();
+  } else if (name === "merchants") {
+    if (typeof merchantsState === "undefined" || !merchantsState.loaded) return;
+    if (typeof loadMerchants !== "function") return;
+    viewRefreshedAt[name] = now;
+    loadMerchants();
+  } else if (name === "site") {
+    if (typeof siteState === "undefined" || !siteState.loaded) return;
+    if (typeof loadSiteMethods !== "function") return;
+    viewRefreshedAt[name] = now;
+    loadSiteMethods();
+    if (typeof loadSiteContent === "function") loadSiteContent();
+  } else if (name === "preview") {
+    if (typeof catalogState === "undefined" || !catalogState.loaded) return;
+    if (typeof loadPreviewMenu !== "function") return;
+    viewRefreshedAt[name] = now;
+    loadPreviewMenu();
+  } else if (name === "health") {
+    if (typeof healthState === "undefined" || !healthState.loaded) return;
+    if (typeof loadHealth !== "function") return;
+    viewRefreshedAt[name] = now;
+    loadHealth();
+  } else if (name === "reviews") {
+    if (typeof revState === "undefined" || !revState.loaded) return;
+    if (typeof loadReviews !== "function") return;
+    viewRefreshedAt[name] = now;
+    loadReviews();
+  } else if (name === "adminUsers") {
+    if (typeof admState === "undefined" || !admState.loaded) return;
+    if (typeof loadAdminUsers !== "function") return;
+    viewRefreshedAt[name] = now;
+    loadAdminUsers();
   }
 }
 document.addEventListener("visibilitychange", function(){
@@ -3497,7 +3573,10 @@ function loadChats(){
   $("chatList").innerHTML = '<div class="sub" style="color:var(--muted)">بيحمّل المحادثات…</div>';
   api("/control/bot-chats").then(function(d){
     chatState.active = pickArr(d, ["active", "chats", "conversations"]);
-    chatState.unanswered = pickArr(d, ["unanswered"]);
+    // البوت ما بيبعتش قائمة «من غير رد» لوحدها: كل محادثة شايلة
+    // علمها بنفسها (unanswered)، فالقائمة بتتولد من الأعلام دي.
+    var flagged = chatState.active.filter(function(c){ return c && c.unanswered; });
+    chatState.unanswered = flagged.length ? flagged : pickArr(d, ["unanswered"]);
     renderChatList();
   }).catch(function(e){
     if (e && e.noKey) { $("chatList").innerHTML = ""; return; }
@@ -3506,13 +3585,18 @@ function loadChats(){
 }
 function chatRowHtml(c, unanswered){
   var ref = chatRefOf(c);
-  var age = relTime(c.last_at || c.updated_at || c.created_at);
+  // المُرسل ووقت آخر رسالة عايشين جوه last_message عند البوت،
+  // مش في حقول لوحدهم على المحادثة.
+  var lm = (c.last_message && typeof c.last_message === "object") ? c.last_message : null;
+  var age = relTime(c.last_at || (lm && lm.created_at) || c.updated_at || c.created_at);
+  var lastSender = c.last_sender || (lm && lm.sender);
+  var isUn = unanswered || !!(c && c.unanswered);
   var last = chatLastOf(c);
   return '<div class="result-row"><div class="who"><b class="num">' + esc(ref) + "</b>" +
     '<small>' + (last ? esc(last) : "—") + "</small>" +
-    '<small>' + (c.last_sender ? "آخر رسالة من " + esc(CHAT_SENDER[c.last_sender] || c.last_sender) : "") +
+    '<small>' + (lastSender ? "آخر رسالة من " + esc(CHAT_SENDER[lastSender] || lastSender) : "") +
     (age ? " · " + esc(age) : "") + "</small></div>" +
-    (unanswered ? '<span class="badge unans">من غير رد</span>' : "") +
+    (isUn ? '<span class="badge unans">من غير رد</span>' : "") +
     (c.mode === "human" ? '<span class="badge store">أنت بترد</span>' : "") +
     '<button class="btn small" type="button" data-chat-open="' + esc(ref) + '">افتح</button></div>';
 }
