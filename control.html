@@ -5207,9 +5207,14 @@ function evAmountText(it){
 function storeEventCard(it){
   var isDep = it.source === "binance" || it.source === "bybit";
   var age = relTime(it.created_at);
+  // إيداع اتسوّى يدويًا برّه المنصة: الشارة بتقول كده بالحرف
+  // بدل شارة «تم» العامة — التسوية دي مش شحن ائتماني.
+  var badge = isDep && it.outcome === "manually_settled"
+    ? '<span class="badge ok">اتسوّى يدويًا</span>'
+    : evStatusBadge(it.status);
   var html = '<div class="ev-row"><div class="who">' +
     '<b class="num">' + esc(evAmountText(it)) + "</b> " +
-    evStatusBadge(it.status) + " " + evConfBadge(it.confidence) +
+    badge + " " + evConfBadge(it.confidence) +
     "<small>" + esc(EV_SOURCE_LABELS[it.source] || it.source) +
     (age ? " · " + esc(age) : "");
   if (!isDep && it.sender_masked) {
@@ -5238,6 +5243,10 @@ function storeEventCard(it){
     }
     acts += '<button class="btn ghost small" type="button" data-ev-act="rematch" data-ev-id="' +
       esc(it.id) + '" data-ev-source="' + esc(it.source) + '">إعادة معالجة</button>';
+    if (isDep) {
+      acts += '<button class="btn ghost small" type="button" data-ev-act="settle_manually" data-ev-id="' +
+        esc(it.id) + '" data-ev-source="' + esc(it.source) + '">تسوية يدوية</button>';
+    }
   } else if (it.status === "ignored" && !isDep) {
     acts += '<button class="btn ghost small" type="button" data-ev-act="unignore" data-ev-id="' +
       esc(it.id) + '" data-ev-source="' + esc(it.source) + '">إلغاء التجاهل</button>';
@@ -5384,6 +5393,19 @@ function runStoreEventAction(source, id, action, btn){
           showEventsMsg("ok", d.event && d.event.status === "done"
             ? "الحدث اتطابق واتنفذ."
             : "إعادة المطابقة اتشغّلت — الحدث لسه بينتظر لو ما اتطابقش.");
+          loadEvents();
+        });
+      }, "events");
+    return;
+  }
+  if (action === "settle_manually") {
+    openActSheet("تسوية إيداع يدويًا",
+      '<div class="preview">الإيداع ده اتسوّى برّه المنصة (العميل دفع وخد خدمته يدويًا بقرارك). القفل هنا بيعلّم الحدث «اتسوّى يدويًا» وبيشيله من المعلّق — من غير ما يشحن أي محفظة ولا يربط الحدث بأي مطالبة أو نية أو شحنة.</div>',
+      "سوّي وقفل", function(){
+        return api("/control/store-event-action", { method: "POST", body: {
+          source: source, event_id: id, action: "settle_manually"
+        } }).then(function(){
+          showEventsMsg("ok", "الحدث اتسوّى يدويًا واتقفل — من غير أي شحن.");
           loadEvents();
         });
       }, "events");

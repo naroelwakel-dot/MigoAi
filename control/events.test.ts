@@ -53,6 +53,7 @@ const DEP_1 = "66666666-6666-6666-6666-666666666666";
 const CLAIM_1 = "77777777-7777-7777-7777-777777777777";
 const DEP_2 = "88888888-8888-8888-8888-888888888888";
 const DEP_3 = "99999999-9999-9999-9999-999999999999";
+const DEP_4 = "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb";
 const INTENT_1 = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa";
 
 function smsRow(p: Partial<SmsEventRow>): SmsEventRow {
@@ -101,6 +102,8 @@ class FakeEventsClient implements ControlEventsClient {
   settings = new Map<string, string>();
   stateWrites: { id: string; from: string; to: string }[] = [];
   stateRowsOverride: number | null = null;
+  settleCalls: { id: string; from: string | null }[] = [];
+  settleRowsOverride: number | null = null;
   resolveCalls: Record<string, unknown>[] = [];
   autoCreditCalls: Record<string, unknown>[] = [];
   ingestCalls: IngestSmsArgs[] = [];
@@ -134,7 +137,8 @@ class FakeEventsClient implements ControlEventsClient {
     if (f.status === "ignored") return [];
     return this.depRows.filter((r) => {
       if (f.source && r.rail !== f.source) return false;
-      const done = r.outcome === "credited" || !!r.matched_intent_id ||
+      const done = r.outcome === "credited" ||
+        r.outcome === "manually_settled" || !!r.matched_intent_id ||
         !!r.claim_id || !!r.matched_bot_topup_id;
       if (f.status === "pending" && done) return false;
       if (f.status === "done" && !done) return false;
@@ -195,6 +199,21 @@ class FakeEventsClient implements ControlEventsClient {
     if (!row || row.match_state !== from) return Promise.resolve(0);
     row.match_state = to;
     this.stateWrites.push({ id, from, to });
+    return Promise.resolve(1);
+  }
+  settleDepositEvent(id: string, from: string | null) {
+    if (this.settleRowsOverride !== null) {
+      return Promise.resolve(this.settleRowsOverride);
+    }
+    const row = this.depRows.find((r) => r.id === id);
+    if (!row) return Promise.resolve(0);
+    // نفس حراس الكتابة الحقيقية: النتيجة الحالية + كل الروابط فاضية.
+    if ((row.outcome ?? null) !== from) return Promise.resolve(0);
+    if (row.matched_intent_id || row.claim_id || row.matched_bot_topup_id) {
+      return Promise.resolve(0);
+    }
+    row.outcome = "manually_settled";
+    this.settleCalls.push({ id, from });
     return Promise.resolve(1);
   }
   getSetting(key: string) {
@@ -779,6 +798,166 @@ Deno.test("فعل الحدث: حراس المصدر والهدف والسباق"
   eq(res?.status, 409, "cas race status");
   eq((await bodyOf(res)).error, "event_consumed", "cas race error");
   eq(client.stateWrites.length, 0, "no write on race");
+});
+
+Deno.test("التسوية اليدوية: خريطة الحالة — متسوّي = تمّ ونتيجته ظاهرة", async () => {
+  const client = seedClient();
+  client.depRows.push(depRow({
+    id: DEP_4,
+    rail: "bybit",
+    exchange_ref: "DEP4",
+    amount_usdt: 7,
+    outcome: "manually_settled",
+    created_at: "2026-11-20T04:00:00Z",
+  }));
+  const d = depsOf(new FakeBotClient(), client);
+
+  const b = await bodyOf(
+    await handleControlEventsRequest(req("/control/store-events"), d),
+  );
+  const items = b.items as Record<string, unknown>[];
+  const settled = items.find((i) => i.id === DEP_4);
+  ok(settled !== undefined, "settled item present");
+  eq(settled?.status, "done", "manually_settled maps to done");
+  eq(settled?.outcome, "manually_settled", "outcome exposed on the event");
+  eq(
+    (items.find((i) => i.id === SMS_1))?.outcome,
+    null,
+    "sms events carry outcome null",
+  );
+  eq(b.counts, {
+    by_source: { sms: 4, app_notification: 1, binance: 2, bybit: 2 },
+    by_status: { pending: 5, done: 3, ignored: 1 },
+  }, "settled counted as done, never pending");
+
+  const bp = await bodyOf(
+    await handleControlEventsRequest(
+      req("/control/store-events?status=pending"), d),
+  );
+  ok(
+    !(bp.items as Record<string, unknown>[]).some((i) => i.id === DEP_4),
+    "settled excluded from pending filter",
+  );
+  const bd = await bodyOf(
+    await handleControlEventsRequest(
+      req("/control/store-events?status=done"), d),
+  );
+  ok(
+    (bd.items as Record<string, unknown>[]).some((i) => i.id === DEP_4),
+    "settled included in done filter",
+  );
+});
+
+Deno.test("فعل الإيداع: تسوية يدوية ناجحة على معلّق — بلا أي مسار ائتمان", async () => {
+  const bot = new FakeBotClient();
+  const client = seedClient();
+  const d = depsOf(bot, client);
+
+  const res = await handleControlEventsRequest(
+    req("/control/store-event-action", "POST", {
+      source: "bybit",
+      event_id: DEP_2,
+      action: "settle_manually",
+    }),
+    d,
+  );
+  eq(res?.status, 200, "settle status");
+  const b = await bodyOf(res);
+  eq(b.action, "settle_manually", "action echoed");
+  eq(b.result, { outcome: "manually_settled" }, "settle result");
+  const ev = b.event as Record<string, unknown>;
+  eq(ev.status, "done", "event done after settle");
+  eq(ev.outcome, "manually_settled", "event outcome after settle");
+  eq(b.audit_failed, false, "audit ok");
+  eq(
+    client.settleCalls,
+    [{ id: DEP_2, from: "no_matching_intent" }],
+    "guarded settle write with the read outcome",
+  );
+  eq(client.resolveCalls.length, 0, "zero resolve_claim calls");
+  eq(client.autoCreditCalls.length, 0, "zero auto-credit calls");
+  eq(client.rematchCalls + client.orderRematchCalls, 0, "zero rematch calls");
+  eq(client.stateWrites.length, 0, "zero sms state writes");
+  ok(
+    bot.calls.some((c) =>
+      c.path === "/api/control/audit-log" &&
+      c.body?.action === "store_event_action"
+    ),
+    "audit recorded with store_event_action",
+  );
+  eq(
+    client.depRows.find((r) => r.id === DEP_2)?.outcome,
+    "manually_settled",
+    "row flipped in place",
+  );
+});
+
+Deno.test("فعل الإيداع: تسوية مرفوضة على مستهلَك ومربوط ورسالة وسباق", async () => {
+  const client = seedClient();
+  const d = depsOf(new FakeBotClient(), client);
+
+  // credited = مستهلَك: 409 قبل أي كتابة
+  let res = await handleControlEventsRequest(
+    req("/control/store-event-action", "POST", {
+      source: "binance",
+      event_id: DEP_3,
+      action: "settle_manually",
+    }),
+    d,
+  );
+  eq(res?.status, 409, "credited settle status");
+  eq((await bodyOf(res)).error, "event_consumed", "credited settle error");
+  eq(client.settleCalls.length, 0, "no settle write on credited");
+
+  // مربوط بنية لكن مش credited: حالته done بالربط — 409 برضه
+  client.depRows.push(depRow({
+    id: DEP_4,
+    rail: "bybit",
+    exchange_ref: "DEP4",
+    matched_intent_id: INTENT_1,
+  }));
+  res = await handleControlEventsRequest(
+    req("/control/store-event-action", "POST", {
+      source: "bybit",
+      event_id: DEP_4,
+      action: "settle_manually",
+    }),
+    d,
+  );
+  eq(res?.status, 409, "linked settle status");
+  eq((await bodyOf(res)).error, "event_consumed", "linked settle error");
+  eq(client.settleCalls.length, 0, "no settle write on linked");
+
+  // حدث رسالة: التسوية فعل إيداعات بس — رفض صريح مش صامت
+  res = await handleControlEventsRequest(
+    req("/control/store-event-action", "POST", {
+      source: "sms",
+      event_id: SMS_1,
+      action: "settle_manually",
+    }),
+    d,
+  );
+  eq(res?.status, 400, "sms settle status");
+  eq((await bodyOf(res)).error, "bad_action", "sms settle error");
+  eq(client.stateWrites.length, 0, "no sms write on settle");
+
+  // سباق على الكتابة المحروسة: صفر صفوف = مستهلَك
+  client.settleRowsOverride = 0;
+  res = await handleControlEventsRequest(
+    req("/control/store-event-action", "POST", {
+      source: "bybit",
+      event_id: DEP_2,
+      action: "settle_manually",
+    }),
+    d,
+  );
+  eq(res?.status, 409, "settle race status");
+  eq((await bodyOf(res)).error, "event_consumed", "settle race error");
+  eq(
+    client.depRows.find((r) => r.id === DEP_2)?.outcome,
+    "no_matching_intent",
+    "row untouched on race",
+  );
 });
 
 // ------------------------------------------------------- اللصق
