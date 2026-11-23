@@ -37,6 +37,12 @@
     cursor:pointer; color:var(--text); min-height:44px;
   }
   .dot{width:9px; height:9px; border-radius:50%; background:var(--muted); flex:none;}
+  .notif-count{
+    display:inline-flex; align-items:center; justify-content:center;
+    min-width:20px; height:20px; border-radius:999px; padding:0 6px;
+    background:var(--red); color:#fff; font-size:11px; font-weight:700; line-height:1; flex:none;
+  }
+  .notif-count[hidden]{display:none;}
   .dot.ok{background:var(--green);} .dot.bad{background:var(--red);} .dot.warn{background:var(--amber);}
   main{padding:16px 16px 8px; display:flex; flex-direction:column; gap:16px; max-width:640px; margin:0 auto;}
   .card{background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px;}
@@ -236,6 +242,7 @@
 
 <header class="top">
   <h1 id="pageTitle">مهامي</h1>
+  <button class="pill" id="notifBtn" type="button">الإشعارات<span class="notif-count num" id="notifCount" hidden></span></button>
   <button class="pill" id="storePill" type="button"><span class="dot" id="storeDot"></span><span id="storePillText">بيحمّل…</span></button>
 </header>
 
@@ -1399,6 +1406,13 @@ function load(){
 
 $("refreshBtn").addEventListener("click", load);
 $("storePill").addEventListener("click", load);
+$("notifBtn").addEventListener("click", function(){
+  closeSheet();
+  showView("home");
+  loadNotifications();
+  var nc = $("notifCard");
+  if (nc) nc.scrollIntoView({ behavior: "smooth", block: "start" });
+});
 $("homeEventsBtn").addEventListener("click", function(){
   showView("events");
   ensureEventsLoaded();
@@ -2255,6 +2269,17 @@ function actionHelpOf(key){
   return ACTION_HELP[key] || null;
 }
 /*PURE-WAVE3UI-END*/
+
+/*PURE-NOTIFBTN-BEGIN*/
+/* شارة عدّاد زر «الإشعارات» في الترويسة: بتظهر بس بعد قراءة ناجحة
+   وفيه حالات مفتوحة فعلًا. قراءة فاشلة أو عدّاد صفر = مفيش شارة —
+   غياب الشارة أصدق من رقم غلط. */
+function notifBadgeOf(readOk, count){
+  if (!readOk) return { show: false, text: "" };
+  var n = (typeof count === "number" && isFinite(count) && count > 0) ? Math.floor(count) : 0;
+  return n > 0 ? { show: true, text: String(n) } : { show: false, text: "" };
+}
+/*PURE-NOTIFBTN-END*/
 
 
 // ---------------- حالات الأقسام الصريحة (بند ٩) ----------------
@@ -10778,6 +10803,13 @@ var NOTIF_UNAVAILABLE_WORDS = {
   store_topups: "شحنات الموقع", bot_home: "رئيسية البوت",
   store_home: "رئيسية الموقع", payment_components: "مكونات الدفع"
 };
+function updateNotifBadge(readOk){
+  var el = $("notifCount");
+  if (!el) return;
+  var b = notifBadgeOf(readOk, notifState.items.length);
+  el.hidden = !b.show;
+  el.textContent = b.text;
+}
 function loadNotifications(){
   if (!getKey()) return;
   sectionBegin("notifs");
@@ -10788,12 +10820,14 @@ function loadNotifications(){
     renderNotifications();
   }).catch(function(e){
     sectionFail("notifs");
+    updateNotifBadge(false);
     if (e && e.noKey) return;
     if (!sectionState.notifs.hasData)
       $("notifBody").innerHTML = '<div class="sub" style="color:var(--red)">مش قادرين نجيب التنبيهات دلوقتي.</div>';
   });
 }
 function renderNotifications(){
+  updateNotifBadge(true);
   var box = $("notifBody");
   var html = "";
   if (!notifState.items.length) {
