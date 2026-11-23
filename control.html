@@ -882,6 +882,25 @@ function relTime(iso){
   var day = Math.floor(hr / 24);
   return "منذ " + day + (day === 1 ? " يوم" : " يوم");
 }
+function relWhen(iso){
+  // إصلاح W10 #2: relTime بيقص المستقبل على صفر فبيقول «دلوقتي» —
+  // وده صح للماضي لكنه كذب لوقت تنفيذ مجدول لسه جاي (قايمة
+  // التغييرات المجدولة كانت بتعلّم كل اللي لسه ما اتنفذش
+  // «التنفيذ: دلوقتي»). دي النسخة الواعية بالمستقبل لأسطح
+  // المواعيد الجاية بس؛ relTime الأصلية زي ما هي لباقي الأسطح.
+  if (!iso) return null;
+  var t = new Date(iso).getTime();
+  if (!isFinite(t)) return null;
+  var diff = Math.floor((t - Date.now()) / 1000);
+  if (diff <= 0) return relTime(iso);
+  if (diff < 60) return "بعد ثواني";
+  var min = Math.floor(diff / 60);
+  if (min < 60) return "بعد " + min + " دقيقة";
+  var hr = Math.floor(min / 60);
+  if (hr < 24) return "بعد " + hr + " ساعة";
+  var day = Math.floor(hr / 24);
+  return "بعد " + day + " يوم";
+}
 
 function showMsg(kind, html, withKeyBtn){
   var box = $("msgBox");
@@ -7071,7 +7090,7 @@ function renderSchedules(){
     var label = entry ? setLabelOf(entry) : "إعداد لسه مالوش شرح";
     var st = SCHED_STATUS[s.status] || [String(s.status || "—"), "st-mut"];
     var at = s.run_at || s.at;
-    var when = at ? (relTime(at) || "") : "";
+    var when = at ? (relWhen(at) || "") : "";
     var full = at ? new Date(at).toLocaleString("en-GB") : "";
     var cancelBtn = (s.status === "pending" && s.id !== null && s.id !== undefined)
       ? '<button class="btn small" type="button" data-sched-cancel="' +
@@ -8749,6 +8768,11 @@ function renderSiteFaqEditor(items){
   });
 }
 function readSiteFaqEditor(){
+  // إصلاح W10 #1: القراءة بترجع الصفوف الخام زي ما هي مرسومة —
+  // التنضيف (faqItemsClean) كان بيحصل هنا، فحذف صف أو إضافة صف
+  // كانوا بيبنوا على قايمة منضّفة فهارسها مختلفة عن فهارس الصفوف
+  // المرسومة: الحذف بيطير صف غلط والصفوف نصف المكتوبة بتختفي.
+  // التنضيف بيحصل وقت الحفظ بس (زرار الحفظ تحت).
   var items = [];
   $("siteFaqList").querySelectorAll("[data-faq-row]").forEach(function(row){
     items.push({
@@ -8756,7 +8780,7 @@ function readSiteFaqEditor(){
       a: row.querySelector("[data-faq-a]").value
     });
   });
-  return faqItemsClean(items);
+  return items;
 }
 $("siteFaqAddBtn").addEventListener("click", function(){
   var items = readSiteFaqEditor();
@@ -8792,7 +8816,7 @@ $("siteAnnSaveBtn").addEventListener("click", function(){
   saveSiteContent("announcement", value, "اتحفظ شريط الإعلان.");
 });
 $("siteFaqSaveBtn").addEventListener("click", function(){
-  var items = readSiteFaqEditor();
+  var items = faqItemsClean(readSiteFaqEditor());
   if (!items.length){
     showSiteMsg("err", "لازم سؤال واحد كامل على الأقل (سؤال وإجابة).");
     return;
