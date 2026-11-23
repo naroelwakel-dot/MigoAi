@@ -141,6 +141,7 @@
   .btn.go{background:var(--green); color:#FFFFFF;}
   .btn.ghost{background:var(--surface2); color:var(--text); border:1px solid var(--border);}
   .btn.back{margin-bottom:2px;}
+  .sheet .btn.back{margin:0 0 12px;}
   .status-txt{font-weight:600; font-size:12px;}
   .st-pending{color:var(--amber);} .st-bad{color:var(--red);} .st-ok{color:var(--green);} .st-mut{color:var(--muted);}
   .sheet.form{text-align:right; max-height:88vh; overflow-y:auto;}
@@ -430,6 +431,7 @@
 </main>
 
 <main id="pricesMain" class="hidden">
+  <button class="btn secondary back view-back-btn" type="button" data-back-from="prices">رجوع</button>
   <div class="msg" id="pricesMsg"></div>
 
   <section class="card">
@@ -453,6 +455,7 @@
 </main>
 
 <main id="catalogMain" class="hidden">
+  <button class="btn secondary back view-back-btn" type="button" data-back-from="catalog">رجوع</button>
   <div class="msg" id="catalogMsg"></div>
 
   <section class="card">
@@ -485,6 +488,7 @@
 </main>
 
 <main id="suppliersMain" class="hidden">
+  <button class="btn secondary back view-back-btn" type="button" data-back-from="suppliers">رجوع</button>
   <div class="msg" id="supMsg"></div>
 
   <section class="card">
@@ -509,6 +513,7 @@
 </main>
 
 <main id="eventsMain" class="hidden">
+  <button class="btn secondary back view-back-btn" type="button" data-back-from="events">رجوع</button>
   <div class="msg" id="eventsMsg"></div>
   <div class="sec-status" id="sectionStatus-events"></div>
 
@@ -567,6 +572,7 @@
 </main>
 
 <main id="settingsMain" class="hidden">
+  <button class="btn secondary back view-back-btn" type="button" data-back-from="settings">رجوع</button>
   <div class="msg" id="settingsMsg"></div>
 
   <section class="card">
@@ -687,6 +693,7 @@
 </main>
 
 <main id="channelMain" class="hidden">
+  <button class="btn secondary back view-back-btn" type="button" data-back-from="channel">رجوع</button>
   <div class="msg" id="chnMsg"></div>
 
   <section class="card">
@@ -720,6 +727,7 @@
 </main>
 
 <main id="visitorsMain" class="hidden">
+  <button class="btn secondary back view-back-btn" type="button" data-back-from="visitors">رجوع</button>
   <div class="msg" id="visMsg"></div>
 
   <section class="card">
@@ -731,6 +739,7 @@
 </main>
 
 <main id="previewMain" class="hidden">
+  <button class="btn secondary back view-back-btn" type="button" data-back-from="preview">رجوع</button>
   <div class="msg" id="pvMsg"></div>
 
   <section class="card">
@@ -766,6 +775,7 @@
 </main>
 
 <main id="healthMain" class="hidden">
+  <button class="btn secondary back view-back-btn" type="button" data-back-from="health">رجوع</button>
   <div class="msg" id="hlthMsg"></div>
 
   <section class="card">
@@ -778,6 +788,7 @@
 </main>
 
 <main id="guardsMain" class="hidden">
+  <button class="btn secondary back view-back-btn" type="button" data-back-from="guards">رجوع</button>
   <div class="msg" id="grdMsg"></div>
 
   <section class="card">
@@ -796,6 +807,7 @@
 </main>
 
 <main id="reviewsMain" class="hidden">
+  <button class="btn secondary back view-back-btn" type="button" data-back-from="reviews">رجوع</button>
   <div class="msg" id="revMsg"></div>
 
   <section class="card">
@@ -813,6 +825,7 @@
 </main>
 
 <main id="adminUsersMain" class="hidden">
+  <button class="btn secondary back view-back-btn" type="button" data-back-from="adminUsers">رجوع</button>
   <div class="msg" id="admMsg"></div>
 
   <section class="card">
@@ -824,6 +837,7 @@
 </main>
 
 <main id="couponsMain" class="hidden">
+  <button class="btn secondary back view-back-btn" type="button" data-back-from="coupons">رجوع</button>
   <div class="msg" id="cpnMsg"></div>
 
   <section class="card">
@@ -851,6 +865,7 @@
 </main>
 
 <main id="merchantsMain" class="hidden">
+  <button class="btn secondary back view-back-btn" type="button" data-back-from="merchants">رجوع</button>
   <div class="msg" id="mchMsg"></div>
 
   <section class="card">
@@ -865,6 +880,7 @@
   </section>
 
   <section class="card hidden" id="mchDetailCard">
+    <button class="btn secondary back" id="mchBack" type="button">رجوع لقائمة التجار</button>
     <h2 id="mchDetailTitle">تفاصيل التاجر</h2>
     <div id="mchNewSecretBox" class="hidden" style="border:1px solid var(--border); border-radius:14px; padding:12px; margin-top:8px;">
       <b>مفتاح الدخول الجديد — انسخه دلوقتي، مش هيظهر تاني.</b>
@@ -880,6 +896,7 @@
 </main>
 
 <main id="siteMain" class="hidden">
+  <button class="btn secondary back view-back-btn" type="button" data-back-from="site">رجوع</button>
   <div class="msg" id="siteMsg"></div>
 
   <section class="card">
@@ -963,6 +980,7 @@
 
 <div class="sheet-veil" id="sheetVeil"></div>
 <div class="sheet" id="sheet">
+  <button class="btn secondary back" id="sheetBack" type="button">رجوع</button>
   <p id="sheetTitle"></p>
   <div id="sheetBody"><small>اختر قسمًا من تحت.</small></div>
   <button class="btn secondary" id="sheetClose" type="button">إغلاق</button>
@@ -970,6 +988,7 @@
 
 <div class="sheet-veil" id="actVeil"></div>
 <div class="sheet form" id="actSheet">
+  <button class="btn secondary back" id="actBack" type="button">رجوع</button>
   <p id="actTitle"></p>
   <div id="actBody"></div>
   <div class="msg" id="actMsg"></div>
@@ -1427,10 +1446,14 @@ $("homeChatsBtn").addEventListener("click", function(){
 // (م٣-ب) والأحداث والمكونات (م٤).
 var navNames = { more: "المزيد" };
 var viewTitles = { home: "مهامي", customers: "العملاء", orders: "الطلبات", chats: "المحادثات", prices: "أسعار الموقع", catalog: "الكتالوج", suppliers: "الموردون", events: "الأحداث", settings: "إعدادات البوت", channel: "قناة التليجرام", coupons: "الكوبونات", merchants: "التجار", site: "الموقع", visitors: "زوار البوت", preview: "شوف كما يراه العميل", health: "صحة النظام", guards: "الحراس", reviews: "التقييمات", adminUsers: "حسابات الموقع" };
+var viewBackTo = {};
+var viewNavBack = false;
 function showView(name){
   if (typeof currentViewName !== "undefined" && currentViewName && currentViewName !== name) {
     navMemory[currentViewName] = navEntryOf(currentViewName, {}, window.scrollY || 0);
   }
+  var brec = backRecordOf(typeof currentViewName !== "undefined" ? currentViewName : "", name, viewNavBack);
+  if (brec) viewBackTo[brec.view] = brec.backTo;
   $("homeMain").classList.toggle("hidden", name !== "home");
   $("customersMain").classList.toggle("hidden", name !== "customers");
   $("ordersMain").classList.toggle("hidden", name !== "orders");
@@ -1661,6 +1684,7 @@ $("sheetBody").addEventListener("click", function(ev){
 });
 function closeSheet(){ $("sheet").classList.remove("open"); $("sheetVeil").classList.remove("open"); }
 $("sheetClose").addEventListener("click", closeSheet);
+$("sheetBack").addEventListener("click", closeSheet);
 $("sheetVeil").addEventListener("click", closeSheet);
 
 // ============================================================
@@ -2281,6 +2305,32 @@ function notifBadgeOf(readOk, count){
 }
 /*PURE-NOTIFBTN-END*/
 
+/*PURE-BACKBTN-BEGIN*/
+/* زر «رجوع» المرئي (طلب المالك ٢٠٢٦-١١-٢٣): الشاشات اللي
+   بره الشريط السفلي (بتتفتح من «المزيد» أو من اختصارات) كان
+   مفيهاش أي رجوع مرئي — بند ٨ كان بيحفظ حالة القوائم بس من
+   غير زر. الخريطة دي بتقول أنهي شاشة «فرعية» (ليها زر رجوع)
+   ودوالها النقية بتقرر وجهة الرجوع: آخر شاشة فتحتها، وغياب
+   تسجيل = «مهامي» شاشة بداية الشغل. التنقّل بالرجوع نفسه مش
+   بيسجّل وجهة جديدة — فمفيش لفة رجوع-لقدام. */
+var SUB_VIEWS = {
+  prices: 1, catalog: 1, suppliers: 1, events: 1, settings: 1,
+  channel: 1, visitors: 1, preview: 1, health: 1, guards: 1,
+  reviews: 1, adminUsers: 1, coupons: 1, merchants: 1, site: 1
+};
+function backRecordOf(from, to, isBackNav){
+  if (isBackNav) return null;
+  if (typeof from !== "string" || typeof to !== "string") return null;
+  if (!from || !to || from === to) return null;
+  if (!SUB_VIEWS[to]) return null;
+  return { view: to, backTo: from };
+}
+function backTargetOf(map, view){
+  var t = map ? map[view] : null;
+  return (typeof t === "string" && t && t !== view) ? t : "home";
+}
+/*PURE-BACKBTN-END*/
+
 
 // ---------------- حالات الأقسام الصريحة (بند ٩) ----------------
 // حالة كل قسم أساسي لوحده: تحميله وفشله وآخر قراءة ناجحة
@@ -2387,6 +2437,28 @@ function restoreListScroll(kind){
   return !!r;
 }
 
+// ---------------- زر الرجوع المرئي (طلب المالك ٢٠٢٦-١١-٢٣) ----------------
+// كل شاشة فرعية فيها زر «رجوع» ثابت في أولها: بيرجع لآخر
+// شاشة فتحتها (أو «مهامي») وبيستعيد موضع تمريرها المحفوظ
+// في ذاكرة بند ٨ — نفس مكان الرجوع بتاع القوائم، فمفيش
+// مسارين للرجوع يضربوا في بعض. أزرار رجوع التفاصيل القائمة
+// (ملف العميل/تفاصيل الطلب/المحادثة) زي ما هي: نفس الشكل
+// والمكان والسلوك.
+function goBackFrom(view){
+  var target = backTargetOf(viewBackTo, view);
+  viewNavBack = true;
+  showView(target);
+  viewNavBack = false;
+  var e = navMemory[target];
+  if (e && e.scroll) {
+    setTimeout(function(){ window.scrollTo({ top: e.scroll }); }, 60);
+    setTimeout(function(){ window.scrollTo({ top: e.scroll }); }, 450);
+  }
+}
+document.querySelectorAll(".view-back-btn").forEach(function(b){
+  b.addEventListener("click", function(){ goBackFrom(b.getAttribute("data-back-from")); });
+});
+
 // ---------------- ورقة الأفعال (تعديل/نقل/عكس/قرار) ----------------
 var actCtx = null;
 function openActSheet(title, bodyHtml, confirmLabel, onConfirm, errCtx){
@@ -2414,6 +2486,7 @@ function actError(text){
   m.textContent = text;
 }
 $("actCancel").addEventListener("click", closeActSheet);
+$("actBack").addEventListener("click", closeActSheet);
 $("actCheck").addEventListener("click", function(){
   var ctx = actCtx;
   closeActSheet();
@@ -9416,6 +9489,18 @@ function loadMerchants(){
 function ensureMerchantsLoaded(){ if (!merchantsState.loaded) loadMerchants(); }
 $("mchReloadBtn").addEventListener("click", loadMerchants);
 $("mchGrantBtn").addEventListener("click", function(){ askGrantMerchantKey(""); });
+// رجوع من تفاصيل التاجر لقائمته: بيقفل بطاقة التفاصيل بس
+// ويرجع لأول شاشة التجار — القائمة نفسها ما اتلمستش.
+function closeMerchantDetail(){
+  merchantsState.detail = null;
+  merchantsState.keys = [];
+  merchantsState.orders = [];
+  merchantsState.detailFailed = false;
+  hideMerchantSecret();
+  renderMerchantDetail();
+  window.scrollTo({ top: 0 });
+}
+$("mchBack").addEventListener("click", closeMerchantDetail);
 
 function keyIdOf(k){
   if (!k || typeof k !== "object") return null;
