@@ -56,6 +56,7 @@ import {
 import { SheeridService, findVerifyUrl } from "./service.ts";
 import type { CustomerState, EmailOutcome } from "./service.ts";
 import * as texts from "./texts.ts";
+import { clientIp } from "../client_ip.ts";
 import { PostgrestStoreDb } from "../store_executor/store_db.ts";
 import { PostgrestRefundClient } from "../store_executor/refund.ts";
 import {
@@ -442,8 +443,7 @@ export async function handleSheeridRequest(
   const json = (body: unknown, status = 200) =>
     new Response(JSON.stringify(body), { status, headers });
   const limiter = deps.rateLimiter || defaultRateLimiter();
-  const ip = (req.headers.get("x-forwarded-for") || "").split(",")[0].trim() ||
-    "unknown";
+  const ip = clientIp(req);
 
   // إشعار المورد: الجسم مش مصدر قرار أبدًا — لكن النداء نفسه بقى
   // محمي (إصلاح اللجنة #6): حدّ معدل + ترويسة سر مشترك لما السر

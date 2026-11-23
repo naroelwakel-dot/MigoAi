@@ -31,6 +31,7 @@
 import { handleSmsRequest, PostgrestSmsClient, type SmsDeps } from "./sms_bridge/mod.ts";
 import { handleBotSmsRequest, PostgrestBotSmsClient, type BotSmsDeps } from "./bot_sms/mod.ts";
 import { handleBotExchangeRequest, PostgrestBotExchangeClient, type BotExchangeDeps } from "./bot_exchange/mod.ts";
+import { clientIp } from "./client_ip.ts";
 import {
   handlePriceFloorRequest,
   PostgrestPriceFloorClient,
@@ -1096,7 +1097,7 @@ const RATE_WINDOW = 60_000;     // في الدقيقة لكل IP
 const RATE_MAP = new Map<string, { n: number; t: number }>();
 function rateLimited(req: Request): boolean {
   try {
-    const ip = (req.headers.get("x-forwarded-for") || "").split(",")[0].trim() || "unknown";
+    const ip = clientIp(req);
     const now = Date.now();
     if (RATE_MAP.size > 5000) RATE_MAP.clear(); // تخلص من النمو الزايد
     const rec = RATE_MAP.get(ip);
@@ -2098,7 +2099,7 @@ async function handleChat(req: Request): Promise<Response> {
 const clientErrorBuckets = new Map<string, { windowStart: number; count: number }>();
 
 async function handleClientError(req: Request): Promise<Response> {
-  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+  const ip = clientIp(req);
   const now = Date.now();
   if (clientErrorBuckets.size > 5000) clientErrorBuckets.clear(); // تخلص من النمو الزايد (نفس قاعدة RATE_MAP)
   const bucket = clientErrorBuckets.get(ip);
