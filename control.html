@@ -82,6 +82,8 @@
   .msg.warn{display:block; background:#2A2110; border:1px solid var(--amber); color:#FFE1B0;}
   .msg .btn{margin-top:12px;}
   .updated{color:var(--muted); font-size:12px; text-align:center;}
+  .sec-status{color:var(--muted); font-size:12px; padding:2px 0;}
+  .sec-status button{background:none; border:none; color:var(--gold); font:inherit; font-weight:700; cursor:pointer; padding:0;}
   .hidden{display:none !important;}
   nav.bottom{
     position:fixed; bottom:0; right:0; left:0; z-index:30;
@@ -214,6 +216,7 @@
 
 <main id="homeMain">
   <div class="msg" id="msgBox"></div>
+  <div class="sec-status" id="sectionStatus-home"></div>
 
   <section class="card hidden" id="compCard">
     <h2>حالة البوت والموقع</h2>
@@ -239,6 +242,7 @@
     <button class="btn" id="salesToggleBtn" type="button" style="margin-top:12px;">إيقاف البيع</button>
   </section>
 
+  <div class="sec-status" id="sectionStatus-topups"></div>
   <section class="card hidden" id="topupCard">
     <h2>شحنات موقع مستنية قرارك</h2>
     <div id="topupRows"></div>
@@ -255,6 +259,7 @@
 
 <main id="customersMain" class="hidden">
   <div class="msg" id="custMsg"></div>
+  <div class="sec-status" id="sectionStatus-customers"></div>
 
   <section class="card" id="custSearchCard">
     <h2>بحث عن عميل</h2>
@@ -276,6 +281,11 @@
     <h2>شحنة ضايعة</h2>
     <div class="field"><label>رقم العملية أو رقم العميل</label><input id="lostQ" type="text" placeholder="رقم عملية، بصمة تحويل، أو رقم عميل"></div>
     <div class="field"><label>المبلغ (اختياري)</label><input id="lostAmt" type="number" inputmode="decimal" min="0" step="0.01"></div>
+    <div class="field"><label>مدة البحث</label><div class="seg" id="lostDaysSeg">
+      <button type="button" data-lost-days="7">آخر أسبوع</button>
+      <button type="button" data-lost-days="30" class="on">آخر شهر</button>
+      <button type="button" data-lost-days="custom">مدة بالأيام</button></div></div>
+    <div class="field hidden" id="lostDaysCustomWrap"><label>عدد الأيام (من ١ لـ ٣٦٥)</label><input id="lostDaysCustom" type="number" inputmode="numeric" min="1" max="365" step="1" value="30"></div>
     <div class="sub" style="color:var(--muted); font-size:12px;">المبلغ بالجنيه لشحنات البوت ورسائل البنك، وبالدولار لإيداعات المنصات.</div>
     <button class="btn" id="lostSearchBtn" type="button" style="margin-top:12px;">بحث</button>
     <div id="lostResults" style="margin-top:8px;"></div>
@@ -286,6 +296,7 @@
 
 <main id="ordersMain" class="hidden">
   <div class="msg" id="ordMsg"></div>
+  <div class="sec-status" id="sectionStatus-botOrders"></div>
 
   <div id="ordLists" style="display:flex; flex-direction:column; gap:16px;">
     <section class="card">
@@ -317,6 +328,16 @@
 
     <section class="card">
       <h2>طلبات الموقع</h2>
+      <div class="seg" id="storeOrdStatusSeg">
+        <button type="button" data-sostatus="" class="on">الكل</button>
+        <button type="button" data-sostatus="new">جديد</button>
+        <button type="button" data-sostatus="payment_confirmed">مدفوع</button>
+        <button type="button" data-sostatus="fulfilled">منفذ</button>
+        <button type="button" data-sostatus="cancelled">ملغي</button>
+        <button type="button" data-sostatus="refunded">مسترد</button>
+      </div>
+      <div class="sub" style="color:var(--muted); font-size:12px; margin-top:8px;">دي أحدث طلبات مطابقة للحالة المختارة.</div>
+      <div class="sec-status" id="sectionStatus-storeOrders"></div>
       <div id="storeOrdList"></div>
       <button class="btn secondary" id="storeOrdReloadBtn" type="button" style="margin-top:12px;">تحديث</button>
     </section>
@@ -327,6 +348,7 @@
 
 <main id="chatsMain" class="hidden">
   <div class="msg" id="chatMsg"></div>
+  <div class="sec-status" id="sectionStatus-chats"></div>
 
   <section class="card" id="chatListCard">
     <h2>المحادثات</h2>
@@ -417,6 +439,7 @@
 
 <main id="eventsMain" class="hidden">
   <div class="msg" id="eventsMsg"></div>
+  <div class="sec-status" id="sectionStatus-events"></div>
 
   <section class="card">
     <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;">
@@ -446,6 +469,8 @@
         <button class="btn secondary" id="evSearchBtn" type="button">ابحث</button>
       </div>
       <div id="evTimeline" style="margin-top:8px;"></div>
+      <div id="evPageLine" class="sub" style="color:var(--muted); font-size:12px; margin-top:8px;"></div>
+      <button class="btn ghost" id="evMoreBtn" type="button" style="display:none; margin-top:8px;">أحداث أقدم</button>
       <div class="row-actions" style="margin-top:12px;">
         <button class="btn secondary" id="evReloadBtn" type="button">تحديث</button>
         <button class="btn ghost" id="evPasteBtn" type="button">ألصق رسالة</button>
@@ -838,6 +863,7 @@
   <p id="actTitle"></p>
   <div id="actBody"></div>
   <div class="msg" id="actMsg"></div>
+  <button class="btn secondary hidden" id="actCheck" type="button">تحقق من الحالة</button>
   <button class="btn" id="actConfirm" type="button">تأكيد</button>
   <button class="btn secondary" id="actCancel" type="button">إلغاء</button>
 </div>
@@ -1152,6 +1178,7 @@ function load(){
   var key = getKey();
   if (!key) { askKey(); return; }
   hideMsg();
+  sectionBegin("home"); sectionBegin("topups");
   var btn = $("refreshBtn");
   btn.disabled = true; btn.textContent = "بيحمّل…";
   fetch(API_HOME, { headers: { "x-migo-admin": key } })
@@ -1167,14 +1194,16 @@ function load(){
       return res.json();
     })
     .then(function(data){
-      if (!data) return;
+      if (!data) { sectionFail("home"); sectionFail("topups"); return; }
       if (!data.ok) throw new Error("bad response");
       render(data);
+      sectionOk("home"); sectionOk("topups");
       if (data.bot_unavailable) {
         showMsg("warn", "أرقام الموقع ظاهرة، بس البوت مش بيرد دلوقتي — أرقامه مكتوبة «غير متاح» بدل ما تتخترع.", false);
       }
     })
     .catch(function(){
+      sectionFail("home"); sectionFail("topups");
       $("storeDot").className = "dot bad";
       $("storePillText").textContent = "مفيش اتصال";
       showMsg("err", "مش عارف أوصل للخادم. اتأكد من النت واضغط تحديث.", false);
@@ -1193,6 +1222,9 @@ $("storePill").addEventListener("click", load);
 var navNames = { events: "الأحداث", more: "المزيد" };
 var viewTitles = { home: "مهامي الآن", customers: "العملاء", orders: "الطلبات", chats: "المحادثات", prices: "أسعار الموقع", catalog: "الكتالوج", suppliers: "الموردون", events: "الأحداث", settings: "إعدادات البوت", channel: "قناة التليجرام", coupons: "الكوبونات", merchants: "التجار", site: "الموقع: الدفع والمحتوى", visitors: "زوار البوت", preview: "شوف كما يراه العميل", health: "صحة النظام", guards: "الحراس", reviews: "التقييمات", adminUsers: "حسابات الموقع" };
 function showView(name){
+  if (typeof currentViewName !== "undefined" && currentViewName && currentViewName !== name) {
+    navMemory[currentViewName] = navEntryOf(currentViewName, {}, window.scrollY || 0);
+  }
   $("homeMain").classList.toggle("hidden", name !== "home");
   $("customersMain").classList.toggle("hidden", name !== "customers");
   $("ordersMain").classList.toggle("hidden", name !== "orders");
@@ -1637,17 +1669,203 @@ function senderName(s){
   return s || "—";
 }
 
+
+/*PURE-WAVE1-BEGIN*/
+// منطق الموجة الأولى النقي (بنود ٨/٩/١٠/٢٥/٢٦/٢٧): دوال من
+// غير أي لمس للصفحة، والاختبارات (control/wave1.test.ts)
+// بتقراها من هنا حرفيًا وبتشغّلها.
+// دمج صفحة أحداث أقدم فوق المعروض: بيمنع التكرار بمعرّف
+// الحدث، والعنصر اللي من غير معرّف بيعدّي زي ما هو.
+function mergeEventsPage(existing, incoming){
+  var seen = {};
+  (existing || []).forEach(function(it){
+    if (it && it.id !== null && it.id !== undefined && it.id !== "") seen[String(it.id)] = true;
+  });
+  var out = (existing || []).slice();
+  (incoming || []).forEach(function(it){
+    if (it && it.id !== null && it.id !== undefined && it.id !== "") {
+      if (seen[String(it.id)]) return;
+      seen[String(it.id)] = true;
+    }
+    out.push(it);
+  });
+  return out;
+}
+// لسه فيه أحداث أقدم؟ المقارنة بعدد اللي الخادم قال إنه
+// جابه فعلًا (offset + اللي وصل) مش بعدد المعروض بعد الدمج.
+function eventsHasMore(fetched, total){
+  var f = Number(fetched), t = Number(total);
+  if (!isFinite(f) || !isFinite(t)) return false;
+  return f < t;
+}
+function eventsPageLine(shown, total){
+  return "اتعرض " + (Number(shown) || 0) + " من " + (Number(total) || 0);
+}
+// مدة بحث الشحنة الضايعة بالأيام: أسبوع/شهر جاهزين، أو مدة
+// مكتوبة بتتظبط على حدود الخادم (١..٣٦٥)، وأي قيمة فاسدة
+// بترجع لشهر.
+function lostDaysFromChoice(choice, custom){
+  if (choice === "custom") {
+    var n = Number(custom);
+    if (!isFinite(n)) return 30;
+    n = Math.floor(n);
+    if (n < 1) return 1;
+    if (n > 365) return 365;
+    return n;
+  }
+  var d = Number(choice);
+  if (d === 7 || d === 30) return d;
+  if (isFinite(d) && d >= 1 && d <= 365) return Math.floor(d);
+  return 30;
+}
+// فلتر حالة طلبات الموقع: قيمة معروفة بس اللي بتتبعت،
+// والكل = فاضي (الباراميتر ما بيتبعتش أصلًا).
+var STORE_ORDER_FILTER_KEYS = ["new", "payment_confirmed", "fulfilled", "cancelled", "refunded"];
+function storeOrderStatusParam(key){
+  return STORE_ORDER_FILTER_KEYS.indexOf(key) >= 0 ? key : "";
+}
+// نوع حالة القسم لواجهة «حالات الأقسام الصريحة»: تحميل،
+// فشل من غير بيانات، بيانات قديمة (فشل بعد نجاح)، أو ناجح.
+function sectionStatusKind(st){
+  if (!st) return "idle";
+  if (st.loading) return "loading";
+  if (st.failed) return st.hasData ? "stale" : "failed";
+  if (st.lastOk) return "ok";
+  return "idle";
+}
+// هل نتيجة الفعل مش مؤكدة؟ (الرد ضاع: مفيش حالة HTTP، أو
+// خطأ خادم/بوابة) — في الحالة دي إعادة التنفيذ خطر خصوصًا
+// في أفعال الفلوس، فالورقة بتقدّم «تحقق من الحالة» بدلها.
+// الأخطاء المعرفة (٤xx) والتحقق المحلي نتائجها مؤكدة.
+function isUnknownOutcome(e){
+  if (!e) return true;
+  if (e.userText || e.noKey) return false;
+  if (e.status === 401) return false;
+  if (e.status === null || e.status === undefined) return true;
+  if (typeof e.status === "number" && e.status >= 500) return true;
+  return false;
+}
+// لقطة تنقّل لقائمة: الشاشة + فلاترها + موضع التمرير، عشان
+// الرجوع من تفصيلة يرجّع نفس المكان بالظبط.
+function navEntryOf(view, filters, scroll){
+  return { view: view || "", filters: filters || {}, scroll: Number(scroll) || 0 };
+}
+/*PURE-WAVE1-END*/
+
+// ---------------- حالات الأقسام الصريحة (بند ٩) ----------------
+// حالة كل قسم أساسي لوحده: تحميله وفشله وآخر قراءة ناجحة
+// له، من غير ما فشل جهة يمسح بيانات جهة تانية. الفشل بعد
+// نجاح بيخلّي البيانات المعروضة زي ما هي وبيعلّمها قديمة.
+var sectionState = {};
+function sectionBegin(key){
+  var st = sectionState[key] || (sectionState[key] = { loading: false, failed: false, hasData: false, lastOk: 0 });
+  st.loading = true;
+  renderSectionStatus(key);
+}
+function sectionOk(key){
+  var st = sectionState[key] || (sectionState[key] = { loading: false, failed: false, hasData: false, lastOk: 0 });
+  st.loading = false; st.failed = false; st.hasData = true; st.lastOk = Date.now();
+  renderSectionStatus(key);
+}
+function sectionFail(key){
+  var st = sectionState[key] || (sectionState[key] = { loading: false, failed: false, hasData: false, lastOk: 0 });
+  st.loading = false; st.failed = true;
+  renderSectionStatus(key);
+}
+function fmtClock(ts){
+  if (!ts) return "";
+  return new Date(ts).toLocaleString("en-GB");
+}
+function renderSectionStatus(key){
+  var el = $("sectionStatus-" + key);
+  if (!el) return;
+  var st = sectionState[key];
+  var kind = sectionStatusKind(st);
+  if (kind === "loading") {
+    el.innerHTML = "بيحمّل القسم ده…";
+  } else if (kind === "failed") {
+    el.innerHTML = 'القسم ده ما اتقراش دلوقتي. <button type="button" data-section-retry="' + esc(key) + '">حاول تاني</button>';
+  } else if (kind === "stale") {
+    el.innerHTML = "المعروض قديم — آخر قراءة ناجحة " + esc(fmtClock(st.lastOk)) +
+      '. <button type="button" data-section-retry="' + esc(key) + '">حاول تاني</button>';
+  } else if (kind === "ok") {
+    el.innerHTML = "آخر قراءة ناجحة " + esc(fmtClock(st.lastOk)) + ".";
+  } else {
+    el.innerHTML = "";
+  }
+}
+// إعادة محاولة قسم واحد بس — فشل البوت ما يعيدش قراءة
+// الموقع والعكس.
+function sectionRetry(key){
+  if (key === "home" || key === "topups") { load(); return; }
+  if (key === "events") { loadEvents(); return; }
+  if (key === "botOrders") { loadOrders(); return; }
+  if (key === "storeOrders") { loadStoreOrders(); return; }
+  if (key === "customers") {
+    loadMoneySettings();
+    if (typeof custState !== "undefined" && custState.searched) doSearch();
+    return;
+  }
+  if (key === "chats") { loadChats(); return; }
+}
+document.addEventListener("click", function(ev){
+  var b = ev.target && ev.target.closest ? ev.target.closest("[data-section-retry]") : null;
+  if (b) sectionRetry(b.getAttribute("data-section-retry"));
+});
+// قراءة الحالة الحالية من الخادم بعد فعل نتيجته مش مؤكدة:
+// بنعيد قراءة الكيان المفتوح نفسه (ملف عميل/تفاصيل طلب)
+// أو قسم الشاشة الحالية — من غير أي إعادة تنفيذ للفعل.
+function verifyCurrentState(){
+  var done = false;
+  if (typeof ordState !== "undefined" && ordState && ordState.detail) { refreshOrdDetail(); done = true; }
+  if (typeof custFile !== "undefined" && custFile && custFile.botRef) { reloadSurface("bot"); done = true; }
+  else if (typeof custFile !== "undefined" && custFile && (custFile.storeId || custFile.storeEmail)) { reloadSurface("store"); done = true; }
+  if (!done) {
+    var map = { home: "home", events: "events", orders: "botOrders", chats: "chats", customers: "customers" };
+    sectionRetry(map[currentViewName] || "home");
+  }
+  var note = "بنقرا الحالة الحالية من الخادم — راجع الأرقام الظاهرة دلوقتي قبل أي خطوة تانية.";
+  if (currentViewName === "customers") showCustMsg("warn", note);
+  else if (currentViewName === "orders") showOrdMsg("warn", note);
+  else if (currentViewName === "events") showEventsMsg("warn", note);
+  else if (currentViewName === "chats") showChatMsg("warn", note);
+  else showMsg("warn", note, false);
+}
+
+// ---------------- ذاكرة التنقّل (بند ٨) ----------------
+// مواضع القوائم وفلاترها بتفضل في حالات الشاشات نفسها
+// (ordState وevState وcustState) — الذاكرة دي بتضيف موضع
+// التمرير ونقطة الرجوع من أي تفصيلة لقائمتها. أرقام الفلوس
+// ما بتتخزّنش هنا: أوراق التأكيد بتقرا من بيانات الخادم
+// المُعادة تحميلها زي ما هي النهاردة.
+var navMemory = {};
+var lastListReturn = {};
+function rememberListReturn(kind, view){
+  lastListReturn[kind] = navEntryOf(view, {}, window.scrollY || 0);
+}
+function restoreListScroll(kind){
+  var r = lastListReturn[kind];
+  if (r && r.scroll) {
+    // محاولتين: واحدة فورية وواحدة بعد ما القائمة تترسم من
+    // رد الخادم، عشان الطول يبقى كامل قبل الرجوع للمكان.
+    setTimeout(function(){ window.scrollTo({ top: r.scroll }); }, 60);
+    setTimeout(function(){ window.scrollTo({ top: r.scroll }); }, 450);
+  }
+  return !!r;
+}
+
 // ---------------- ورقة الأفعال (تعديل/نقل/عكس/قرار) ----------------
 var actCtx = null;
 function openActSheet(title, bodyHtml, confirmLabel, onConfirm, errCtx){
   $("actTitle").textContent = title;
   $("actBody").innerHTML = bodyHtml;
   var m = $("actMsg"); m.className = "msg"; m.innerHTML = "";
+  var chk0 = $("actCheck"); if (chk0) chk0.classList.add("hidden");
   var c = $("actConfirm");
   c.textContent = confirmLabel || "تأكيد"; c.disabled = false;
   // مفتاح منع التكرار بيتولد مع فتح الورقة وبيفضل ثابت مع إعادة
   // المحاولة لنفس النية، فالضغطة التانية ما تعملش العملية مرتين.
-  actCtx = { idem: newIdem(), onConfirm: onConfirm, errCtx: errCtx || "", confirmLabel: confirmLabel || "تأكيد" };
+  actCtx = { idem: newIdem(), onConfirm: onConfirm, errCtx: errCtx || "", confirmLabel: confirmLabel || "تأكيد", checkFn: null };
   $("actSheet").classList.add("open");
   $("actVeil").classList.add("open");
   return actCtx;
@@ -1663,6 +1881,12 @@ function actError(text){
   m.textContent = text;
 }
 $("actCancel").addEventListener("click", closeActSheet);
+$("actCheck").addEventListener("click", function(){
+  var ctx = actCtx;
+  closeActSheet();
+  if (ctx && typeof ctx.checkFn === "function") { ctx.checkFn(); return; }
+  verifyCurrentState();
+});
 $("actVeil").addEventListener("click", closeActSheet);
 $("actConfirm").addEventListener("click", function(){
   if (!actCtx || !actCtx.onConfirm) return;
@@ -1670,12 +1894,23 @@ $("actConfirm").addEventListener("click", function(){
   var c = $("actConfirm");
   c.disabled = true; c.textContent = "بيتنفذ…";
   Promise.resolve().then(ctx.onConfirm).then(function(){
+    // النجاح هنا نجاح مؤكد من الخادم بس: onConfirm ما بيكملش
+    // غير بعد رد سليم، ورسائل النتيجة في كل فعل بتتكتب بعد
+    // إعادة قراءة البيانات من الخادم.
     closeActSheet();
   }).catch(function(e){
     if (e && e.noKey) { closeActSheet(); return; }
     if (e && e.status === 401) {
       closeActSheet();
       showCustMsg("err", "مفتاح الأدمن غلط أو مش مكتوب. اكتبه تاني عشان تكمل.", true);
+      return;
+    }
+    if (isUnknownOutcome(e)) {
+      // الرد ضاع: النتيجة مش مؤكدة، فإعادة التنفيذ ممنوعة من
+      // الورقة (خصوصًا أفعال الفلوس) — البديل قراءة الحالة.
+      c.disabled = true; c.textContent = "لسه مش متأكدين";
+      var chk = $("actCheck"); if (chk) chk.classList.remove("hidden");
+      actError("لسه مش متأكدين النتيجة وصلت ولا لأ — رد الخادم ضاع قبل التأكيد. ما تعيدش التنفيذ؛ دوس «تحقق من الحالة» عشان نقرا الحالة الحالية من الخادم.");
       return;
     }
     c.disabled = false; c.textContent = ctx.confirmLabel;
@@ -1695,6 +1930,7 @@ function doSearch(){
   var q = $("custQ").value.trim();
   if (!q) { showCustMsg("err", "اكتب معرّف الأول: رقم عميل، إيميل، رقم عملية، أو رقم طلب."); return; }
   hideCustMsg();
+  sectionBegin("customers");
   custState.query = q;
   custState.searched = true;
   $("custResults").innerHTML = '<div class="sub" style="color:var(--muted)">بندوّر…</div>';
@@ -1704,6 +1940,7 @@ function doSearch(){
     .then(function(data){
       custState.bot = Array.isArray(data.bot) ? data.bot : [];
       custState.store = Array.isArray(data.store) ? data.store : [];
+      sectionOk("customers");
       renderResults(data);
     })
     .catch(function(e){
@@ -1713,7 +1950,8 @@ function doSearch(){
         $("custResults").innerHTML = "";
         return;
       }
-      $("custResults").innerHTML = "";
+      sectionFail("customers");
+      if (!sectionState.customers.hasData) $("custResults").innerHTML = "";
       showCustMsg("err", errText(e, "search"));
     })
     .finally(function(){ btn.disabled = false; });
@@ -1765,6 +2003,7 @@ var custFile = { bot: null, store: null, botRef: "", storeId: "", storeEmail: ""
 
 function openCustomer(surface, item){
   if (!item) return;
+  rememberListReturn("customer", "customers");
   custFile = { bot: null, store: null, botRef: "", storeId: "", storeEmail: "", control: null, storeBan: null };
   hideCustMsg();
   var wrap = $("custFile");
@@ -2059,7 +2298,11 @@ function renderFile(){
     wrap.classList.add("hidden");
     wrap.innerHTML = "";
     custFile = { bot: null, store: null, botRef: "", storeId: "", storeEmail: "", control: null, storeBan: null };
-    $("custSearchCard").scrollIntoView({ behavior: "smooth", block: "start" });
+    // رجوع لمكانك: نفس نتائج البحث وفلاترها زي ما كانت،
+    // ونفس موضع التمرير — من غير إعادة تحميل أي شاشة تانية.
+    if (!restoreListScroll("customer")) {
+      $("custSearchCard").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
   });
   wrap.querySelectorAll("[data-adjust]").forEach(function(b){
     b.addEventListener("click", function(){ openAdjust(b.getAttribute("data-adjust"), null); });
@@ -2224,7 +2467,7 @@ function openFlagSheet(flag, turnOn){
 }
 function openHoldSheet(){
   var c = custFile.control || {};
-  var body = '<div class="preview">التعليق بيقلّل «المتاح للصرف» بس — الرصيد نفسه ما بيتحركش.<br>الرصيد الحالي: <b class="num">' + fmtNum(egpFromMinor(c.balance_minor)) + ' ج.م</b></div>' +
+  var body = '<div class="preview">العميل: <b class="num">' + esc(custFile.botRef || "—") + '</b><br>المحفظة: محفظة البوت — جنيه مصري<br>التعليق بيقلّل «المتاح للصرف» بس — الرصيد نفسه ما بيتحركش.<br>الرصيد الحالي: <b class="num">' + fmtNum(egpFromMinor(c.balance_minor)) + ' ج.م</b></div>' +
     '<div class="field"><label>المبلغ (ج.م)</label><input id="holdAmt" type="number" min="0" step="0.01"></div>' +
     '<div class="field"><label>السبب (مطلوب)</label><input id="holdReason" type="text"></div>';
   var ctx = openActSheet("تعليق مبلغ", body, "علّق المبلغ", function(){
@@ -2241,7 +2484,7 @@ function openHoldSheet(){
 }
 function openHoldRelease(hold){
   if (!hold) return;
-  var body = '<div class="preview">فكّ تعليق <b class="num">' + fmtNum(egpFromMinor(hold.amount_minor)) + ' ج.م</b>؟ المبلغ هيرجع متاح للصرف فورًا.</div>' +
+  var body = '<div class="preview">العميل: <b class="num">' + esc(custFile.botRef || "—") + '</b><br>المحفظة: محفظة البوت — جنيه مصري<br>فكّ تعليق <b class="num">' + fmtNum(egpFromMinor(hold.amount_minor)) + ' ج.م</b>؟ المبلغ هيرجع متاح للصرف فورًا.</div>' +
     '<div class="field"><label>ملحوظة (اختياري)</label><input id="relReason" type="text"></div>';
   openActSheet("فكّ التعليق", body, "فكّ التعليق", function(){
     return api("/control/bot-wallet-hold-release", { method: "POST", body: {
@@ -2314,18 +2557,28 @@ function openStoreBanSheet(ban){
 
 // ---------------- قرار شحنة ----------------
 var DECIDE_LABEL = { approve: "قبول الشحنة", reject: "رفض الشحنة", needs_info: "طلب بيانات أكتر" };
+var DECIDE_CONFIRM = { approve: "أكّد الاعتماد", reject: "أكّد الرفض", needs_info: "أكّد طلب البيانات" };
 function openDecide(surface, t, action){
   if (!t) return;
   var isBot = surface === "bot";
   var amt = isBot ? egpFromMinor(t.amount) : Number(t.amount_egp);
   var method = isBot ? (t.method_label || "") : (t.payment_method || "");
-  var body = '<div class="preview">المبلغ: <b class="num">' + fmtNum(amt) + " ج.م</b>" +
+  var custRef = isBot
+    ? (t.customer_ref || custFile.botRef || "—")
+    : (custFile.storeEmail || custFile.storeId || "—");
+  var refLine = isBot
+    ? (t.operation_ref ? '<br>رقم العملية المرتبط: <b class="num">' + esc(t.operation_ref) + "</b>" : "")
+    : (t.transfer_ref ? '<br>رقم العملية المرتبط: <b class="num">' + esc(t.transfer_ref) + "</b>" : "") +
+      (t.sender_account ? '<br>المُرسل: <b class="num">' + esc(t.sender_account) + "</b>" : "");
+  var body = '<div class="preview">العميل: <b class="num">' + esc(custRef) + "</b>" +
+    '<br>المحفظة: ' + (isBot ? "محفظة البوت" : "محفظة الموقع") + " — جنيه مصري" +
+    '<br>المبلغ: <b class="num">' + fmtNum(amt) + " ج.م</b>" +
     (method ? " · " + esc(method) : "") +
-    (isBot && t.operation_ref ? '<br>رقم العملية: <b class="num">' + esc(t.operation_ref) + "</b>" : "") +
-    (!isBot && t.sender_account ? '<br>المُرسل: <b class="num">' + esc(t.sender_account) + "</b>" : "") +
+    refLine +
     "</div>" +
-    '<div class="field"><label>ملحوظة (اختياري)</label><input id="decNote" type="text"></div>';
-  openActSheet(DECIDE_LABEL[action] || "قرار شحنة", body, "تنفيذ القرار", function(){
+    '<div class="field"><label>السبب / ملحوظة القرار (اختياري)</label><input id="decNote" type="text"></div>' +
+    '<div class="preview" id="decSummary"></div>';
+  var dctx = openActSheet(DECIDE_LABEL[action] || "قرار شحنة", body, DECIDE_CONFIRM[action] || "أكّد القرار", function(){
     var note = $("decNote").value.trim();
     var payload, path;
     if (isBot) {
@@ -2342,6 +2595,17 @@ function openDecide(surface, t, action){
       showCustMsg("ok", "اتنفذ: " + (DECIDE_LABEL[action] || "القرار") + " — دي الأرقام النهائية بعد التنفيذ.");
     });
   }, "decide");
+  var decNoteEl = $("decNote"), decSumEl = $("decSummary");
+  function updDecSummary(){
+    if (!decSumEl) return;
+    var n = decNoteEl ? decNoteEl.value.trim() : "";
+    decSumEl.innerHTML = n
+      ? "السبب اللي هيتسجل مع القرار: " + esc(n)
+      : "مفيش سبب مكتوب — القرار هيتنفذ من غير ملحوظة.";
+  }
+  if (decNoteEl) decNoteEl.addEventListener("input", updDecSummary);
+  updDecSummary();
+  return dctx;
 }
 
 // ---------------- تعديل الرصيد ----------------
@@ -2352,7 +2616,7 @@ function openAdjust(surface, preset){
   var bal = Number(data.customer.balance_egp);
   var who = isBot ? ("عميل البوت " + (data.customer.ref || custFile.botRef)) : ("حساب الموقع " + (data.customer.email || data.customer.id || ""));
   var body =
-    '<div class="preview">العميل: <b>' + esc(who) + '</b><br>الرصيد دلوقتي: <b class="num">' + fmtNum(bal) + ' ج.م</b></div>' +
+    '<div class="preview">العميل: <b>' + esc(who) + '</b><br>المحفظة: ' + (isBot ? "محفظة البوت" : "محفظة الموقع") + ' — جنيه مصري<br>الرصيد دلوقتي: <b class="num">' + fmtNum(bal) + ' ج.م</b></div>' +
     '<div class="field"><label>نوع التعديل</label><div class="seg" id="adjSeg">' +
     '<button type="button" data-mode="add">إضافة</button>' +
     '<button type="button" data-mode="deduct">خصم</button>' +
@@ -2362,7 +2626,9 @@ function openAdjust(surface, preset){
     '<option value="deposit">إيداع</option><option value="compensation">تعويض</option><option value="correction">تصحيح</option></select></div>' +
     '<div class="field"><label>السبب (إلزامي)</label><input id="adjReason" type="text"></div>' +
     '<div class="preview" id="adjPreview"></div>';
-  var ctx = openActSheet(isBot ? "تعديل رصيد محفظة البوت" : "تعديل رصيد محفظة الموقع", body, "تنفيذ التعديل", function(){
+  var ADJ_CONFIRM = { deposit: "أكّد الإيداع", compensation: "أكّد التعويض", correction: "أكّد التصحيح" };
+  var initKind = (preset && preset.kind) || "deposit";
+  var ctx = openActSheet(isBot ? "تعديل رصيد محفظة البوت" : "تعديل رصيد محفظة الموقع", body, ADJ_CONFIRM[initKind] || "أكّد الإيداع", function(){
     var amt = parseFloat($("adjAmt").value);
     var kind = $("adjKind").value;
     var reason = $("adjReason").value.trim();
@@ -2416,6 +2682,7 @@ function openAdjust(surface, preset){
     }
     var after = mode === "add" ? bal + amt : (mode === "deduct" ? bal - amt : amt);
     el.innerHTML = 'قبل: <b class="num">' + fmtNum(bal) + ' ج.م</b> ← بعد: <b class="num">' + fmtNum(after) + ' ج.م</b>' +
+      '<br>الرصيد بعد التنفيذ تقديري — الرقم النهائي بيأكده الخادم.' +
       (after < 0 ? '<br><span class="warn">الرصيد مش هيكفي — الخادم هيرفض العملية.</span>' : "");
   }
   segBtns.forEach(function(b){
@@ -2428,6 +2695,11 @@ function openAdjust(surface, preset){
     if (preset.kind) $("adjKind").value = preset.kind;
     if (preset.reason) $("adjReason").value = preset.reason;
   }
+  $("adjKind").addEventListener("change", function(){
+    var lbl = ADJ_CONFIRM[$("adjKind").value] || "أكّد الإيداع";
+    ctx.confirmLabel = lbl;
+    $("actConfirm").textContent = lbl;
+  });
   paintSeg();
 }
 
@@ -2438,12 +2710,12 @@ function openTransfer(){
   var bal = Number(data.customer.balance_egp);
   var fromRef = data.customer.ref || custFile.botRef;
   var body =
-    '<div class="preview">من عميل البوت: <b class="num">' + esc(fromRef) + '</b><br>رصيده دلوقتي: <b class="num">' + fmtNum(bal) + ' ج.م</b></div>' +
+    '<div class="preview">من عميل البوت: <b class="num">' + esc(fromRef) + '</b><br>المحفظة: محفظة البوت — جنيه مصري<br>رصيده دلوقتي: <b class="num">' + fmtNum(bal) + ' ج.م</b></div>' +
     '<div class="field"><label>رقم العميل التاني (تليجرام)</label><input id="trTo" type="text" inputmode="numeric"></div>' +
     '<div class="field"><label>المبلغ (ج.م)</label><input id="trAmt" type="number" inputmode="decimal" min="0" step="0.01"></div>' +
     '<div class="field"><label>السبب (إلزامي)</label><input id="trReason" type="text"></div>' +
     '<div class="preview" id="trPreview"></div>';
-  var ctx = openActSheet("نقل رصيد لعميل تاني", body, "تنفيذ النقل", function(){
+  var ctx = openActSheet("نقل رصيد لعميل تاني", body, "أكّد النقل", function(){
     var to = $("trTo").value.trim();
     var amt = parseFloat($("trAmt").value);
     var reason = $("trReason").value.trim();
@@ -2465,6 +2737,7 @@ function openTransfer(){
     if (!isFinite(amt)) { el.innerHTML = "اكتب مبلغ عشان تشوف رصيد العميل ده بعد النقل."; return; }
     var after = bal - amt;
     el.innerHTML = 'رصيد العميل ده بعد النقل: <b class="num">' + fmtNum(after) + ' ج.م</b>' +
+      '<br>الرصيد بعد التنفيذ تقديري — الرقم النهائي بيأكده الخادم.' +
       (after < 0 ? '<br><span class="warn">الرصيد مش هيكفي — الخادم هيرفض العملية.</span>' : "");
   }
   $("trAmt").addEventListener("input", upd);
@@ -2477,11 +2750,15 @@ function openBotReverse(tx){
   var data = custFile.bot;
   var amt = egpFromMinor(tx.amount);
   var body =
-    '<div class="preview">الحركة: <b>' + esc(BOT_KIND[tx.kind] || tx.kind || "") + '</b> بمبلغ <b class="num">' + fmtNum(amt) + ' ج.م</b>' +
+    '<div class="preview">العميل: <b class="num">' + esc(data && data.customer ? (data.customer.ref || custFile.botRef) : (custFile.botRef || "—")) + '</b>' +
+    '<br>المحفظة: محفظة البوت — جنيه مصري' +
+    '<br>الحركة: <b>' + esc(BOT_KIND[tx.kind] || tx.kind || "") + '</b> بمبلغ <b class="num">' + fmtNum(amt) + ' ج.م</b>' +
+    (tx.operation_ref ? '<br>رقم العملية المرتبط: <b class="num">' + esc(tx.operation_ref) + "</b>" : "") +
+    (tx.id ? '<br>مرجع الحركة: <b class="num">' + esc(tx.id) + "</b>" : "") +
     (tx.note ? "<br>" + esc(tx.note) : "") +
     "<br>التراجع هيعمل حركة معاكسة بنفس المبلغ على محفظة العميل.</div>" +
     '<div class="field"><label>سبب التراجع (إلزامي)</label><input id="revReason" type="text"></div>';
-  var ctx = openActSheet("تراجع عن حركة محفظة البوت", body, "تنفيذ التراجع", function(){
+  var ctx = openActSheet("تراجع عن حركة محفظة البوت", body, "أكّد العكس", function(){
     var reason = $("revReason").value.trim();
     if (!reason) failValidation("سبب التراجع إلزامي.");
     return api("/control/bot-wallet-reverse", { method: "POST", body: {
@@ -2662,6 +2939,8 @@ function loadMoneySettings(){
   return Promise.all([pStore, pBot]).then(function(){
     moneyState.loading = false;
     moneyState.loaded = true;
+    if (!moneyState.storeFailed || !moneyState.botUnavailable) sectionOk("customers");
+    else sectionFail("customers");
     renderMoneySettings();
     if (unauthorized) {
       showCustMsg("err", "مفتاح الأدمن غلط أو مش مكتوب. اكتبه تاني عشان تكمل.", true);
@@ -2762,8 +3041,12 @@ function openSettingEdit(surface, row){
 var lostState = {
   topups: [], events: [], claims: [], intents: [],
   selTopup: -1, selEvent: -1, searched: false,
-  botUnavailable: false, storeFailed: false
+  botUnavailable: false, storeFailed: false, daysChoice: "30"
 };
+function lostDays(){
+  var el = $("lostDaysCustom");
+  return lostDaysFromChoice(lostState.daysChoice, el ? el.value : "");
+}
 
 function storeRate(){
   var row = moneyState.store.find(function(r){ return r.key === "usdt_egp_rate"; });
@@ -2807,10 +3090,11 @@ function doLostSearch(){
   $("lostResults").innerHTML = '<div class="sub" style="color:var(--muted)">بندوّر…</div>';
   var btn = $("lostSearchBtn");
   btn.disabled = true;
+  var days = lostDays();
   var botPath = "/control/bot-lost-topups?q=" + encodeURIComponent(q) +
-    (amt !== null ? "&amount_egp=" + encodeURIComponent(amt) : "") + "&days=30";
+    (amt !== null ? "&amount_egp=" + encodeURIComponent(amt) : "") + "&days=" + days;
   var storePath = "/control/lost-events?q=" + encodeURIComponent(q) +
-    (amt !== null ? "&amount=" + encodeURIComponent(amt) : "") + "&days=30";
+    (amt !== null ? "&amount=" + encodeURIComponent(amt) : "") + "&days=" + days;
   var unauthorized = false;
   var pBot = api(botPath).then(function(d){
     var arr = [d.results, d.topups, d.matches, d.requests].find(function(v){ return Array.isArray(v); });
@@ -2863,7 +3147,7 @@ function renderLost(){
   if (lostState.botUnavailable) {
     html += '<div class="sub" style="color:var(--amber)">البوت مش بيرد دلوقتي — شحناته مش ظاهرة.</div>';
   } else if (!lostState.topups.length) {
-    html += '<div class="sub" style="color:var(--muted)">مفيش شحنات بوت مطابقة.</div>';
+    html += '<div class="sub" style="color:var(--muted)">مفيش نتائج في المدة دي — مفيش شحنات بوت مطابقة في مدة البحث المختارة.</div>';
   }
   lostState.topups.forEach(function(t, i){
     var age = relTime(t.created_at);
@@ -2884,7 +3168,7 @@ function renderLost(){
   if (lostState.storeFailed) {
     html += '<div class="sub" style="color:var(--red)">مش عارف أقرا أحداث الموقع دلوقتي.</div>';
   } else if (!lostState.events.length) {
-    html += '<div class="sub" style="color:var(--muted)">مفيش إيداعات أو رسائل مطابقة لسه متربطتش.</div>';
+    html += '<div class="sub" style="color:var(--muted)">مفيش نتائج في المدة دي — مفيش إيداعات أو رسائل مطابقة لسه متربطتش في مدة البحث المختارة.</div>';
   }
   lostState.events.forEach(function(ev, i){
     var age = relTime(ev.time || ev.created_at);
@@ -2980,6 +3264,7 @@ function openMatchConfirm(){
     '<div class="preview">شحنة البوت: <b class="num">' + fmtNum(tAmt) + " ج.م</b>" +
     (t.method_label ? " · " + esc(t.method_label) : "") +
     '<br>العميل: <b class="num">' + esc(t.customer_ref || "—") + "</b>" +
+    '<br>المحفظة: محفظة البوت — جنيه مصري' +
     (t.operation_ref ? '<br>رقم العملية: <b class="num">' + esc(t.operation_ref) + "</b>" : "") +
     "<br>وقت الشحنة: " + esc(tTime) + "</div>" +
     '<div class="preview">' + esc(lostEventLabel(ev)) + ': <b class="num">' + evAmtTxt + "</b>" +
@@ -3010,6 +3295,13 @@ function openMatchConfirm(){
   }
 }
 $("lostSearchBtn").addEventListener("click", doLostSearch);
+$("lostDaysSeg").querySelectorAll("button").forEach(function(b){
+  b.addEventListener("click", function(){
+    lostState.daysChoice = b.getAttribute("data-lost-days") || "30";
+    $("lostDaysSeg").querySelectorAll("button").forEach(function(x){ x.classList.toggle("on", x === b); });
+    $("lostDaysCustomWrap").classList.toggle("hidden", lostState.daysChoice !== "custom");
+  });
+});
 $("lostQ").addEventListener("keydown", function(ev){
   if (ev.key === "Enter") { ev.preventDefault(); doLostSearch(); }
 });
@@ -3062,7 +3354,7 @@ var STORE_ORD_STATUS = {
 var STORE_ORD_STATUS_KEYS = ["new", "payment_confirmed", "fulfilled", "cancelled", "refunded"];
 
 var ordState = {
-  loaded: false, queue: "intervention", surface: "",
+  loaded: false, queue: "intervention", surface: "", storeStatus: "",
   orders: [], counts: {}, manual: [], storeOrders: [], detail: null
 };
 function ensureOrdersLoaded(){ if (!ordState.loaded) loadOrders(); }
@@ -3087,6 +3379,7 @@ function ordErrorOf(o){ return o.supplier_error || o.last_error || o.error || ""
 
 function loadOrders(){
   ordState.loaded = true;
+  sectionBegin("botOrders");
   hideOrdMsg();
   $("ordList").innerHTML = '<div class="sub" style="color:var(--muted)">بيحمّل الطلبات…</div>';
   var q = "/control/bot-orders?queue=" + encodeURIComponent(ordState.queue) + "&limit=50";
@@ -3094,10 +3387,14 @@ function loadOrders(){
   api(q).then(function(d){
     ordState.orders = pickArr(d, ["orders", "items", "rows"]);
     if (d && d.counts) ordState.counts = d.counts;
+    sectionOk("botOrders");
     renderOrdCounts();
     renderOrdList();
   }).catch(function(e){
+    sectionFail("botOrders");
     if (e && e.noKey) { $("ordList").innerHTML = ""; return; }
+    // فشل بعد نجاح: القائمة المعروضة بتفضل زي ما هي وبتتعلّم قديمة.
+    if (sectionState.botOrders.hasData) return;
     $("ordList").innerHTML = '<div class="sub" style="color:var(--red)">' + esc(errText(e, "order")) + "</div>";
   });
   loadManualTasks();
@@ -3278,11 +3575,17 @@ function openManualCancelSheet(t){
 
 // ---------------- طلبات الموقع ----------------
 function loadStoreOrders(){
-  api("/control/store-orders?limit=50").then(function(d){
+  sectionBegin("storeOrders");
+  var stParam = storeOrderStatusParam(ordState.storeStatus);
+  var path = "/control/store-orders?limit=50" + (stParam ? "&status=" + encodeURIComponent(stParam) : "");
+  api(path).then(function(d){
     ordState.storeOrders = Array.isArray(d.orders) ? d.orders : [];
+    sectionOk("storeOrders");
     renderStoreOrdList();
   }).catch(function(e){
+    sectionFail("storeOrders");
     if (e && e.noKey) return;
+    if (sectionState.storeOrders.hasData) return;
     $("storeOrdList").innerHTML = '<div class="sub" style="color:var(--red)">' + esc(errText(e, "order")) + "</div>";
   });
 }
@@ -3290,7 +3593,8 @@ function renderStoreOrdList(){
   var wrap = $("storeOrdList");
   var list = ordState.storeOrders;
   if (!list.length) {
-    wrap.innerHTML = '<div class="sub" style="color:var(--muted)">مفيش طلبات موقع.</div>';
+    wrap.innerHTML = '<div class="sub" style="color:var(--muted)">' +
+      (ordState.storeStatus ? "مفيش طلبات موقع بالحالة دي." : "مفيش طلبات موقع.") + "</div>";
     return;
   }
   var rows = "";
@@ -3315,6 +3619,13 @@ function renderStoreOrdList(){
   });
 }
 $("storeOrdReloadBtn").addEventListener("click", loadStoreOrders);
+$("storeOrdStatusSeg").querySelectorAll("button").forEach(function(b){
+  b.addEventListener("click", function(){
+    ordState.storeStatus = b.getAttribute("data-sostatus") || "";
+    $("storeOrdStatusSeg").querySelectorAll("button").forEach(function(x){ x.classList.toggle("on", x === b); });
+    loadStoreOrders();
+  });
+});
 function openStoreOrderStatusSheet(o){
   if (!o) return;
   var opts = STORE_ORD_STATUS_KEYS.map(function(s){
@@ -3322,10 +3633,14 @@ function openStoreOrderStatusSheet(o){
       esc((STORE_ORD_STATUS[s] || [s])[0]) + "</option>";
   }).join("");
   var body = '<div class="preview">طلب <b class="num">' + esc(o.order_ref || "") + '</b> — حالته الحالية: ' + esc((STORE_ORD_STATUS[o.status] || [o.status])[0]) + '.<br>' +
+    'العميل: <b>' + esc(o.customer_email || "—") + '</b><br>' +
+    'مبلغ الطلب: <b class="num">' + esc(o.total_text || (fmtNum(o.server_total) + " ج.م")) + '</b><br>' +
+    'المحفظة: محفظة الموقع — جنيه مصري<br>' +
     'لو الطلب مدفوع من محفظة الموقع واخترت «ملغي» أو «مسترد»، مبلغ الطلب بيرجع لمحفظة العميل تلقائيًا مع تغيير الحالة.</div>' +
     '<div class="field"><label>الحالة الجديدة</label><select id="soStatus">' + opts + "</select></div>" +
     '<div class="field"><label>السبب (مطلوب عند الإلغاء أو الاسترداد)</label><input id="soReason" type="text"></div>';
-  openActSheet("تغيير حالة طلب موقع", body, "غيّر الحالة", function(){
+  function soLabel(st){ return (st === "cancelled" || st === "refunded") ? "أكّد الإلغاء والاسترداد" : "أكّد تغيير الحالة"; }
+  var soCtx = openActSheet("تغيير حالة طلب موقع", body, soLabel(o.status), function(){
     var newStatus = $("soStatus").value;
     var reason = $("soReason").value.trim();
     if ((newStatus === "cancelled" || newStatus === "refunded") &&
@@ -3345,10 +3660,16 @@ function openStoreOrderStatusSheet(o){
         loadStoreOrders();
       });
   }, "order");
+  $("soStatus").addEventListener("change", function(){
+    var lbl = soLabel($("soStatus").value);
+    soCtx.confirmLabel = lbl;
+    $("actConfirm").textContent = lbl;
+  });
 }
 
 // ---------------- تفاصيل الطلب ----------------
 function openOrderDetail(kind, id){
+  rememberListReturn("order", "orders");
   ordState.detail = { kind: kind, id: String(id), data: null };
   $("ordLists").classList.add("hidden");
   var wrap = $("ordDetail");
@@ -3378,7 +3699,10 @@ function closeOrderDetail(){
   wrap.classList.add("hidden");
   wrap.innerHTML = "";
   $("ordLists").classList.remove("hidden");
+  // الفلاتر (الطابور/السطح/حالة طلبات الموقع) زي ما هي في
+  // ordState فالقائمة بترجع بنفس شكلها، وبنرجّع موضع التمرير.
   loadOrders();
+  restoreListScroll("order");
 }
 function refreshOrdDetail(){
   var d = ordState.detail;
@@ -3503,6 +3827,7 @@ function renderOrdDetail(){
     '<button class="btn secondary" type="button" data-oa="cancel-refund">إلغاء باسترداد</button>' +
     '<button class="btn secondary" type="button" data-oa="force">إجبار حالة بسبب</button>' +
     (ordCustomerOf(o) ? '<button class="btn secondary" type="button" data-oa="open-chat">افتح محادثة العميل</button>' : "") +
+    (/^\d+$/.test(String(ordCustomerOf(o) || "")) ? '<button class="btn secondary" type="button" data-oa="open-customer">ملف العميل</button>' : "") +
     "</div></div>";
 
   wrap.innerHTML = html;
@@ -3539,15 +3864,19 @@ function ordDetailAction(act){
   } else if (act === "to-manual") {
     openToManualSheet();
   } else if (act === "cancel-refund") {
-    var preview = 'إلغاء طلب «' + prod + '» واسترداد فلوس العميل.<br><span class="warn">الاسترداد بيتم بس بعد تأكيد المورد إن العملية فشلت ورجّع الفلوس</span> — لو المورد نفّذ واخد المقابل، الاسترداد هيترفض.';
+    var preview = 'إلغاء طلب «' + prod + '» واسترداد فلوس العميل.<br>' +
+      'العميل: <b class="num">' + esc(ordCustomerOf(o) || "—") + '</b><br>' +
+      'المبلغ: <b class="num">' + fmtNum(ordAmountOf(o)) + ' ج.م</b> · المحفظة: محفظة البوت — جنيه مصري<br>' +
+      'رقم الطلب المرتبط: <b class="num">' + esc(d.id) + '</b><br>' +
+      '<span class="warn">الاسترداد بيتم بس بعد تأكيد المورد إن العملية فشلت ورجّع الفلوس</span> — لو المورد نفّذ واخد المقابل، الاسترداد هيترفض.';
     if (d.kind === "shop") {
-      ordConfirm("إلغاء باسترداد", preview, "أكّد الإلغاء",
+      ordConfirm("إلغاء باسترداد", preview, "أكّد الإلغاء والاسترداد",
         "/control/bot-order-shop-decide", function(){ return { order_id: d.id, action: "cancel" }; });
     } else if (d.kind === "provider") {
-      ordConfirm("إلغاء باسترداد", preview, "أكّد الإلغاء",
+      ordConfirm("إلغاء باسترداد", preview, "أكّد الإلغاء والاسترداد",
         "/control/bot-order-provider-action", function(){ return { order_id: d.id, action: "refund" }; });
     } else {
-      ordConfirm("إلغاء باسترداد", preview + "<br>الحالة هتتأكد من المورد الأول: الاسترداد بيتم بس لو المورد رجّع الفلوس فعلًا.", "أكّد الإلغاء",
+      ordConfirm("إلغاء باسترداد", preview + "<br>الحالة هتتأكد من المورد الأول: الاسترداد بيتم بس لو المورد رجّع الفلوس فعلًا.", "أكّد الإلغاء والاسترداد",
         "/control/bot-order-sheerid-resolve", function(){ return { job_id: d.id, action: "mark_refunded" }; });
     }
   } else if (act === "force") {
@@ -3555,6 +3884,9 @@ function ordDetailAction(act){
   } else if (act === "open-chat") {
     var ref = ordCustomerOf(o);
     if (ref) { showView("chats"); openChat(ref); }
+  } else if (act === "open-customer") {
+    var cref = ordCustomerOf(o);
+    if (cref) { showView("customers"); openCustomer("bot", { ref: cref }); }
   }
 }
 function openToManualSheet(){
@@ -3631,6 +3963,7 @@ function chatLastOf(c){
 }
 function loadChats(){
   chatState.loaded = true;
+  sectionBegin("chats");
   hideChatMsg();
   $("chatList").innerHTML = '<div class="sub" style="color:var(--muted)">بيحمّل المحادثات…</div>';
   api("/control/bot-chats").then(function(d){
@@ -3639,9 +3972,12 @@ function loadChats(){
     // علمها بنفسها (unanswered)، فالقائمة بتتولد من الأعلام دي.
     var flagged = chatState.active.filter(function(c){ return c && c.unanswered; });
     chatState.unanswered = flagged.length ? flagged : pickArr(d, ["unanswered"]);
+    sectionOk("chats");
     renderChatList();
   }).catch(function(e){
+    sectionFail("chats");
     if (e && e.noKey) { $("chatList").innerHTML = ""; return; }
+    if (sectionState.chats.hasData) return;
     $("chatList").innerHTML = '<div class="sub" style="color:var(--red)">' + esc(errText(e, "chat")) + "</div>";
   });
 }
@@ -3688,6 +4024,7 @@ $("chatReloadBtn").addEventListener("click", loadChats);
 
 function openChat(ref){
   if (!ref) return;
+  rememberListReturn("chat", "chats");
   chatState.openRef = String(ref);
   chatState.history = [];
   chatState.mode = "";
@@ -3708,6 +4045,7 @@ function closeChat(){
   scr.innerHTML = "";
   $("chatListCard").classList.remove("hidden");
   loadChats();
+  restoreListScroll("chat");
 }
 function startChatPolling(){
   stopChatPolling();
@@ -5058,7 +5396,7 @@ var EV_REPORT_LABELS = {
 var evState = {
   loaded: false, loading: false, tab: "events",
   source: "", status: "", q: "",
-  items: [], counts: null, total: 0, storeFailed: false,
+  items: [], counts: null, total: 0, offset: 0, received: 0, loadingMore: false, storeFailed: false,
   smsLast: null, depLast: {},
   topups: [], topupsFailed: false, topupCounts: null, reloadQueued: false,
   components: null, componentsFailed: false,
@@ -5072,17 +5410,23 @@ function showEventsMsg(kind, text){
   m.textContent = text || "";
 }
 
-function loadEvents(){
+function loadEvents(append){
+  if (append) return loadMoreEvents();
   if (evState.loading) { evState.reloadQueued = true; return Promise.resolve(); }
   evState.loading = true;
+  // تحديث أو فلتر جديد = رجوع لأول صفحة دايمًا، من غير خلط
+  // صفحات قديمة وجديدة.
+  evState.offset = 0; evState.received = 0;
+  sectionBegin("events");
   var unauthorized = false;
-  var qs = "?limit=100" +
+  var qs = "?limit=100&offset=0" +
     (evState.source && evState.source !== "bot_topups"
       ? "&source=" + encodeURIComponent(evState.source) : "") +
     (evState.status ? "&status=" + encodeURIComponent(evState.status) : "") +
     (evState.q ? "&q=" + encodeURIComponent(evState.q) : "");
   var pStore = api("/control/store-events" + qs).then(function(d){
     evState.items = Array.isArray(d.items) ? d.items : [];
+    evState.received = evState.items.length;
     evState.counts = d.counts || null;
     evState.total = Number(d.total) || 0;
     evState.smsLast = d.sms_last_ingested_at || null;
@@ -5092,7 +5436,8 @@ function loadEvents(){
     if (e && e.status === 401) { unauthorized = true; return; }
     if (e && e.noKey) return;
     evState.storeFailed = true;
-    evState.items = [];
+    // فشل بعد نجاح: الأحداث المعروضة بتفضل وبتتعلّم قديمة.
+    if (!sectionState.events.hasData) evState.items = [];
   });
   var pTop = api("/control/bot-events-topups?limit=100" +
     (evState.q ? "&q=" + encodeURIComponent(evState.q) : "")).then(function(d){
@@ -5104,7 +5449,7 @@ function loadEvents(){
   }).catch(function(e){
     if (e && e.status === 401) { unauthorized = true; return; }
     if (e && e.noKey) return;
-    evState.topups = [];
+    if (!sectionState.events.hasData) evState.topups = [];
     evState.topupsFailed = true;
   });
   var pComp = api("/control/bot-events-components").then(function(d){
@@ -5128,9 +5473,14 @@ function loadEvents(){
   return Promise.all([pStore, pTop, pComp, pRep]).then(function(){
     evState.loading = false;
     evState.loaded = true;
+    // نجاح أي جهة بيحدّث وقت القسم، وفشل جهة ما بيمسحش
+    // بيانات الجهة التانية (أعلام الفشل الجزئية فوق).
+    if (!evState.storeFailed || !evState.topupsFailed) sectionOk("events");
+    else sectionFail("events");
     renderEventsHead();
     renderSourceChips();
     renderTimeline();
+    renderEvPaging();
     renderComponents();
     renderMatchReport();
     if (evState.reloadQueued) {
@@ -5145,6 +5495,56 @@ function loadEvents(){
   });
 }
 function ensureEventsLoaded(){ if (!evState.loaded) loadEvents(); }
+
+// أحداث أقدم (بند ٢٥): الصفحة الجاية بنفس الفلاتر الحالية،
+// بتتلحق على المعروض وبتتخصم المكررات بمعرّف الحدث.
+function loadMoreEvents(){
+  if (evState.loading || evState.loadingMore) return Promise.resolve();
+  if (evState.source === "bot_topups") return Promise.resolve();
+  if (!eventsHasMore(evState.offset + evState.received, evState.total)) return Promise.resolve();
+  evState.loadingMore = true;
+  renderEvPaging();
+  var nextOffset = evState.offset + evState.received;
+  var qs = "?limit=100&offset=" + nextOffset +
+    (evState.source ? "&source=" + encodeURIComponent(evState.source) : "") +
+    (evState.status ? "&status=" + encodeURIComponent(evState.status) : "") +
+    (evState.q ? "&q=" + encodeURIComponent(evState.q) : "");
+  return api("/control/store-events" + qs).then(function(d){
+    var incoming = Array.isArray(d.items) ? d.items : [];
+    evState.items = mergeEventsPage(evState.items, incoming);
+    evState.offset = nextOffset;
+    evState.received = incoming.length;
+    evState.total = Number(d.total) || evState.total;
+    evState.counts = d.counts || evState.counts;
+    evState.storeFailed = false;
+    sectionOk("events");
+  }).catch(function(e){
+    if (e && e.status === 401) {
+      showEventsMsg("err", "مفتاح الأدمن غلط أو مش مكتوب. اكتبه تاني عشان تكمل.");
+      return;
+    }
+    if (e && e.noKey) return;
+    sectionFail("events");
+    showEventsMsg("err", errText(e, "events"));
+  }).then(function(){
+    evState.loadingMore = false;
+    renderSourceChips();
+    renderTimeline();
+    renderEvPaging();
+    renderMatchReport();
+  });
+}
+function renderEvPaging(){
+  var line = $("evPageLine");
+  var btn = $("evMoreBtn");
+  if (!line || !btn) return;
+  if (evState.source === "bot_topups") { line.textContent = ""; btn.style.display = "none"; return; }
+  line.textContent = eventsPageLine(evState.items.length, evState.total);
+  var more = eventsHasMore(evState.offset + evState.received, evState.total) && !evState.storeFailed;
+  btn.style.display = more ? "" : "none";
+  btn.disabled = !!evState.loadingMore;
+  btn.textContent = evState.loadingMore ? "بيحمّل…" : "أحداث أقدم";
+}
 
 function renderEventsHead(){
   var d = evState.components;
@@ -5305,6 +5705,8 @@ function botTopupCard(t, idx){
     (t.operation_ref
       ? ' · رقم العملية: <span class="num">' + esc(t.operation_ref) + "</span>" : "") +
     "</small></div>";
+  html += '<div class="row-actions">' +
+    '<button class="btn ghost small" type="button" data-ev-cust="' + idx + '">ملف العميل</button></div>';
   if (t.status === "pending") {
     html += '<div class="row-actions">' +
       '<button class="btn ghost small" type="button" data-ev-link-toggle="' + idx + '">اربط بحدث</button></div>' +
@@ -5366,6 +5768,16 @@ function renderTimeline(){
       );
     });
   });
+  box.querySelectorAll("[data-ev-cust]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var t = evState.topups[Number(b.getAttribute("data-ev-cust"))];
+      if (t && t.customer_ref) {
+        rememberListReturn("events", "events");
+        showView("customers");
+        openCustomer("bot", { ref: t.customer_ref });
+      }
+    });
+  });
   box.querySelectorAll("[data-ev-link-toggle]").forEach(function(b){
     b.addEventListener("click", function(){
       var f = $("evLinkForm" + b.getAttribute("data-ev-link-toggle"));
@@ -5403,9 +5815,15 @@ function runStoreEventAction(source, id, action, btn){
     return;
   }
   if (action === "approve") {
+    var evPrev = it
+      ? '<div class="preview">الحدث: <b class="num">' + esc(evAmountText(it)) + "</b> على " +
+        esc(EV_SOURCE_LABELS[it.source] || it.source) +
+        (it.ref ? '<br>رقم العملية المرتبط: <b class="num">' + esc(it.ref) + "</b>" : "") +
+        '<br>المحفظة: محفظة الموقع — جنيه مصري</div>'
+      : "";
     openActSheet("اعتماد حدث رسالة",
-      '<div class="preview">الاعتماد هنا بيشغّل إعادة مطابقة الرسائل على الحدث ده وباقي المعلّق المستحق، بنفس قواعد المطابقة الحالية. لو الرسالة اتطابقت مع شحنة أو طلب، الشحن بيتم بقواعد القاعدة نفسها.</div>',
-      "شغّل المطابقة", function(){
+      evPrev + '<div class="preview">الاعتماد هنا بيشغّل إعادة مطابقة الرسائل على الحدث ده وباقي المعلّق المستحق، بنفس قواعد المطابقة الحالية. لو الرسالة اتطابقت مع شحنة أو طلب، الشحن بيتم بقواعد القاعدة نفسها.</div>',
+      "أكّد الاعتماد", function(){
         return api("/control/store-event-action", { method: "POST", body: {
           source: source, event_id: id, action: "approve"
         } }).then(function(d){
@@ -5418,8 +5836,13 @@ function runStoreEventAction(source, id, action, btn){
     return;
   }
   if (action === "settle_manually") {
+    var stPrev = it
+      ? '<div class="preview">الحدث: <b class="num">' + esc(evAmountText(it)) + "</b> على " +
+        esc(EV_SOURCE_LABELS[it.source] || it.source) +
+        (it.ref ? '<br>رقم العملية المرتبط: <b class="num">' + esc(it.ref) + "</b>" : "") + "</div>"
+      : "";
     openActSheet("تسوية إيداع يدويًا",
-      '<div class="preview">الإيداع ده اتسوّى برّه المنصة (العميل دفع وخد خدمته يدويًا بقرارك). القفل هنا بيعلّم الحدث «اتسوّى يدويًا» وبيشيله من المعلّق — من غير ما يشحن أي محفظة ولا يربط الحدث بأي مطالبة أو نية أو شحنة.</div>',
+      stPrev + '<div class="preview">الإيداع ده اتسوّى برّه المنصة (العميل دفع وخد خدمته يدويًا بقرارك). القفل هنا بيعلّم الحدث «اتسوّى يدويًا» وبيشيله من المعلّق — من غير ما يشحن أي محفظة ولا يربط الحدث بأي مطالبة أو نية أو شحنة.</div>',
       "سوّي وقفل", function(){
         return api("/control/store-event-action", { method: "POST", body: {
           source: source, event_id: id, action: "settle_manually"
@@ -5448,14 +5871,15 @@ function openEvApproveSheet(it){
   var body =
     '<div class="preview">إيداع <b class="num">' + esc(evAmountText(it)) + "</b>" +
     " على " + esc(EV_SOURCE_LABELS[it.source] || it.source) +
-    (it.ref ? '<br>رقم العملية: <b class="num">' + esc(it.ref) + "</b>" : "") +
+    '<br>المحفظة: محفظة الموقع — الاعتماد بيروح لهدف معروف (مطالبة أو نية) زي ما هو مكتوب تحت' +
+    (it.ref ? '<br>رقم العملية المرتبط: <b class="num">' + esc(it.ref) + "</b>" : "") +
     "</div>" +
     '<div class="field"><label>رقم مطالبة الإيداع (لو العميل قدّم مطالبة)</label>' +
     '<input id="evClaimId" type="text" placeholder="رقم المطالبة"></div>' +
     '<div class="field"><label>أو رقم نية شحن مفتوحة</label>' +
     '<input id="evIntentId" type="text" placeholder="رقم النية"></div>' +
     '<div class="preview">لازم هدف واحد على الأقل: مفيش اعتماد من غير مطالبة أو نية — الفلوس لازم تروح لشحنة معروفة.</div>';
-  openActSheet("اعتماد إيداع", body, "اعتمد الإيداع", function(){
+  openActSheet("اعتماد إيداع", body, "أكّد الإيداع", function(){
     var claim = $("evClaimId").value.trim();
     var intent = $("evIntentId").value.trim();
     if (!claim && !intent) {
@@ -5732,8 +6156,9 @@ $("evSearchBtn").addEventListener("click", function(){
 $("evQ").addEventListener("keydown", function(e){
   if (e.key === "Enter") { evState.q = $("evQ").value.trim(); loadEvents(); }
 });
-$("evReloadBtn").addEventListener("click", loadEvents);
-$("evCompReloadBtn").addEventListener("click", loadEvents);
+$("evReloadBtn").addEventListener("click", function(){ loadEvents(); });
+$("evMoreBtn").addEventListener("click", function(){ loadEvents(true); });
+$("evCompReloadBtn").addEventListener("click", function(){ loadEvents(); });
 $("evPasteBtn").addEventListener("click", openEvPaste);
 $("evExclusionsBtn").addEventListener("click", openEvExclusions);
 
