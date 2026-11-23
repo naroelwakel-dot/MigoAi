@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0E1621">
-<title>لوحة تحكم Migo — مهامي الآن</title>
+<title>لوحة تحكم Migo — مهامي</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -34,7 +34,7 @@
     display:inline-flex; align-items:center; gap:8px;
     border:1px solid var(--border); background:var(--surface);
     border-radius:999px; padding:4px 12px; font-size:13px; font-weight:600;
-    cursor:pointer; color:var(--text); min-height:36px;
+    cursor:pointer; color:var(--text); min-height:44px;
   }
   .dot{width:9px; height:9px; border-radius:50%; background:var(--muted); flex:none;}
   .dot.ok{background:var(--green);} .dot.bad{background:var(--red);} .dot.warn{background:var(--amber);}
@@ -92,7 +92,7 @@
   }
   nav.bottom button{
     flex:1; background:none; border:none; color:var(--muted); font-family:inherit;
-    font-size:12px; font-weight:600; padding:10px 2px 12px; cursor:pointer; min-height:58px;
+    font-size:13px; font-weight:600; padding:10px 2px 12px; cursor:pointer; min-height:58px;
   }
   nav.bottom button .ic{display:block; font-size:20px; line-height:1.25;}
   nav.bottom button.active{color:var(--gold);}
@@ -110,7 +110,7 @@
   .sheet small{color:var(--muted); display:block; margin-bottom:16px;}
   .msg.ok{display:block; background:#0F2A1A; border:1px solid var(--green); color:#C9F5DC;}
   .badge.bot{color:var(--blue); border-color:var(--blue);}
-  .badge.store{color:var(--gold); border-color:var(--gold);}
+  .badge.store{color:var(--purple); border-color:var(--purple);}
   .search-row{display:flex; gap:8px;}
   .search-row input{
     flex:1; background:var(--surface2); border:1px solid var(--border); border-radius:10px;
@@ -130,7 +130,7 @@
   .wallet-card .bal-big{font-size:30px; font-weight:700; line-height:1.3;}
   .wallet-card .bal-big small{font-size:14px; color:var(--muted); font-weight:500;}
   .row-actions{display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;}
-  .btn.small{display:inline-block; width:auto; min-height:40px; padding:8px 16px; font-size:14px; border-radius:12px;}
+  .btn.small{display:inline-block; width:auto; min-height:44px; padding:8px 16px; font-size:14px; border-radius:12px;}
   .btn.danger{background:var(--red); color:#FFFFFF;}
   .btn.go{background:var(--green); color:#FFFFFF;}
   .btn.ghost{background:var(--surface2); color:var(--text); border:1px solid var(--border);}
@@ -165,11 +165,11 @@
   .switch input:checked + .track:before{transform:translateX(-22px); background:var(--gold);}
   .addr{overflow-wrap:anywhere; word-break:break-word; max-width:100%; direction:ltr; text-align:left; font-size:14px;}
   .result-row.sel{outline:2px solid var(--gold); outline-offset:-2px; border-radius:10px; background:var(--surface2);}
-  .group-title{font-weight:700; font-size:14px; margin:16px 0 4px; color:var(--gold);}
+  .group-title{font-weight:700; font-size:14px; margin:16px 0 4px; color:var(--text);}
   .group-title:first-child{margin-top:4px;}
   .badge.kind{color:var(--muted); border-color:var(--border);}
   .badge.unans{color:#FFD7D5; border-color:var(--red); background:#2A1416;}
-  .seg .cnt{color:var(--gold); font-weight:700;}
+  .seg .cnt{color:inherit; font-weight:700;}
   .actbar{
     position:sticky; bottom:70px; display:flex; gap:8px; background:var(--surface);
     border:1px solid var(--border); border-radius:14px; padding:12px; z-index:5;
@@ -183,7 +183,7 @@
   .bubble{max-width:88%; padding:8px 12px; border-radius:14px; margin:8px 0; font-size:14px; overflow-wrap:anywhere; white-space:pre-wrap; background:var(--surface2);}
   .bubble .who{display:block; font-size:12px; color:var(--muted); font-weight:700; margin-bottom:4px;}
   .bubble.cust{margin-inline-start:auto;}
-  .bubble.ours{margin-inline-end:auto; border:1px solid var(--gold);}
+  .bubble.ours{margin-inline-end:auto; border:1px solid var(--blue);}
   .bubble.botm{margin-inline-end:auto; border:1px solid var(--border);}
   .ptable{width:100%; min-width:520px; border-collapse:collapse; font-size:13px;}
   .ptable th, .ptable td{padding:8px; border-top:1px solid var(--border); text-align:right; vertical-align:top; overflow-wrap:anywhere;}
@@ -198,19 +198,33 @@
   .cnt-chips{display:flex; gap:8px; flex-wrap:wrap;}
   .cnt-chips .chip{background:var(--surface2); border:1px solid var(--border); border-radius:999px; padding:4px 12px; font-size:12px; font-weight:600;}
   .cnt-chips .chip b{font-weight:700;}
-  .cnt-chips button.chip{cursor:pointer; font:inherit; color:inherit;}
+  .cnt-chips button.chip{cursor:pointer; font:inherit; color:inherit; min-height:44px; display:inline-flex; align-items:center;}
   .cnt-chips button.chip.on{border-color:var(--gold); background:#3A2E10;}
   .badge{display:inline-block; font-size:12px; font-weight:700; border-radius:999px; padding:2px 10px; background:var(--surface2); border:1px solid var(--border); color:var(--muted); vertical-align:middle;}
-  .badge.gold{border-color:var(--gold); color:var(--gold);}
   .badge.ok{border-color:#2E7D4F; color:#7BD88F;}
   .badge.warn{border-color:#8A6D1F; color:var(--amber);}
   .badge.mut{color:var(--muted);}
+  /* موجة ٢: إيقاع مسافات ثابت (عنوان ← شرح ← فعل) ولمس آمن */
+  .sec-title{font-size:16px; font-weight:700; margin:4px 0 0;}
+  .card .sub{line-height:1.6;}
+  .ltr{direction:ltr; unicode-bidi:isolate; text-align:left; display:inline-block; max-width:100%; overflow-wrap:anywhere;}
+  .more-details{margin-top:8px;}
+  .more-details>summary{min-height:44px; display:flex; align-items:center; cursor:pointer; font-weight:600; font-size:14px; color:var(--text); list-style:none; padding:4px 0;}
+  .more-details>summary::-webkit-details-marker{display:none;}
+  .queue-card .qbtn{flex:none;}
+  .home-shortcut{background:var(--surface2);}
+  .chip-del{min-width:44px; min-height:44px; background:none; border:none; color:inherit; cursor:pointer; font:inherit; font-weight:700; padding:0 6px;}
+  .more-search{margin-bottom:12px; text-align:right;}
+  .more-search label{display:block; font-size:14px; color:var(--muted); margin-bottom:4px; font-weight:600;}
+  .more-search input{width:100%; background:var(--surface2); border:1px solid var(--border); border-radius:10px; color:var(--text); font-family:inherit; font-size:15px; padding:12px; min-height:50px;}
+  button:disabled.btn{opacity:.55;}
+  .btn[disabled]{cursor:default;}
 </style>
 </head>
 <body>
 
 <header class="top">
-  <h1 id="pageTitle">مهامي الآن</h1>
+  <h1 id="pageTitle">مهامي</h1>
   <button class="pill" id="storePill" type="button"><span class="dot" id="storeDot"></span><span id="storePillText">بيحمّل…</span></button>
 </header>
 
@@ -218,29 +232,14 @@
   <div class="msg" id="msgBox"></div>
   <div class="sec-status" id="sectionStatus-home"></div>
 
-  <section class="card hidden" id="compCard">
-    <h2>حالة البوت والموقع</h2>
-    <div id="compRows"></div>
+  <section class="card home-shortcut" id="eventsShortcutCard">
+    <h2>الأحداث</h2>
+    <div class="sub" style="color:var(--muted); font-size:12px;">أحداث فلوس الموقع وشحنات البوت المعلّقة في خط زمني واحد — اعتماد الإيداعات والشحنات بيبدأ من هنا.</div>
+    <button class="btn" id="homeEventsBtn" type="button" style="margin-top:12px;">افتح الأحداث</button>
   </section>
 
-  <section class="card" id="sysHealthCard" style="cursor:pointer;">
-    <h2>صحة النظام والحراس</h2>
-    <div class="sub" id="sysHealthStrip" style="color:var(--muted); font-size:12px;">بيحمّل حالة النظام…</div>
-  </section>
-
+  <h2 class="sec-title">حالات محتاجة قرارك دلوقتي</h2>
   <div id="queueWrap" class="hidden" style="display:flex; flex-direction:column; gap:12px;"></div>
-
-  <section class="card" id="visitorsEntryCard">
-    <h2>زوار البوت <span class="num" id="visitorsCount" style="color:var(--gold);"></span></h2>
-    <div class="sub" style="color:var(--muted); font-size:12px;">الناس اللي كلّموا البوت، مرتبين بآخر نشاط — آخر رسالة، وعدد الرسائل والطلبات، والرصيد.</div>
-    <button class="btn" id="visitorsOpenBtn" type="button" style="margin-top:12px;">عرض الزوار</button>
-  </section>
-
-  <section class="card hidden" id="salesCard">
-    <h2>البيع في البوت</h2>
-    <div class="sub" id="salesState" style="color:var(--muted); font-size:12px;"></div>
-    <button class="btn" id="salesToggleBtn" type="button" style="margin-top:12px;">إيقاف البيع</button>
-  </section>
 
   <div class="sec-status" id="sectionStatus-topups"></div>
   <section class="card hidden" id="topupCard">
@@ -251,6 +250,35 @@
   <section class="card hidden" id="botTopupCard">
     <h2>شحنات بوت مستنية قرارك</h2>
     <div id="botTopupRows"></div>
+  </section>
+
+  <section class="card" id="homeChatsCard">
+    <h2>محادثات من غير رد</h2>
+    <div class="sub" id="homeChatsBody" style="color:var(--muted); font-size:12px;">بيحمّل حالة المحادثات…</div>
+    <button class="btn secondary" id="homeChatsBtn" type="button" style="margin-top:12px;">راجع الحالة</button>
+  </section>
+
+  <h2 class="sec-title">حالة التشغيل باختصار</h2>
+  <section class="card hidden" id="compCard">
+    <h2>حالة البوت والموقع</h2>
+    <div id="compRows"></div>
+  </section>
+
+  <section class="card" id="sysHealthCard" style="cursor:pointer;">
+    <h2>صحة النظام</h2>
+    <div class="sub" id="sysHealthStrip" style="color:var(--muted); font-size:12px;">بيحمّل حالة النظام…</div>
+  </section>
+
+  <section class="card hidden" id="salesCard">
+    <h2>البيع في البوت</h2>
+    <div class="sub" id="salesState" style="color:var(--muted); font-size:12px;"></div>
+    <button class="btn" id="salesToggleBtn" type="button" style="margin-top:12px;">إيقاف البيع</button>
+  </section>
+
+  <section class="card" id="visitorsEntryCard">
+    <h2>زوار البوت <span class="num" id="visitorsCount"></span></h2>
+    <div class="sub" style="color:var(--muted); font-size:12px;">الناس اللي كلّموا البوت، مرتبين بآخر نشاط — آخر رسالة، وعدد الرسائل والطلبات، والرصيد.</div>
+    <button class="btn" id="visitorsOpenBtn" type="button" style="margin-top:12px;">عرض الزوار</button>
   </section>
 
   <button class="btn" id="refreshBtn" type="button">تحديث</button>
@@ -444,7 +472,7 @@
   <section class="card">
     <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;">
       <h2 style="margin:0;">الأحداث</h2>
-      <span class="badge gold">تسجيل فقط</span>
+      <span class="badge mut">تسجيل فقط</span>
     </div>
     <div class="sub" id="eventsPeriodLine" style="color:var(--muted); font-size:12px; margin-top:8px;">دلوقتي بنسجّل الأحداث وبنعرضها هنا من غير ما نغيّر حاجة: الشحن التلقائي شغال زي ما هو، وأي شحن من هنا بيتم يدويًا وبقرارك أنت.</div>
     <div class="seg" id="eventsTabs" style="margin-top:12px;">
@@ -460,7 +488,7 @@
       <div class="cnt-chips" id="evSourceChips" style="margin-top:12px;"></div>
       <div class="seg" id="evStatusSeg" style="margin-top:12px;">
         <button type="button" data-evstatus="" class="on">الكل</button>
-        <button type="button" data-evstatus="pending">ينتظر</button>
+        <button type="button" data-evstatus="pending">مستني مراجعة</button>
         <button type="button" data-evstatus="done">تم</button>
         <button type="button" data-evstatus="ignored">متجاهل</button>
       </div>
@@ -497,6 +525,11 @@
 
 <main id="settingsMain" class="hidden">
   <div class="msg" id="settingsMsg"></div>
+
+  <section class="card">
+    <h2>إعدادات البوت</h2>
+    <div class="sub" style="color:var(--muted); font-size:12px;">الشاشة دي بتغيّر سلوك البوت ومحتواه اللي العميل بيشوفه — مش إعدادات فلوس. إعدادات الفلوس مكانها شاشة العملاء في قسم «إعدادات الفلوس» بس.</div>
+  </section>
 
   <section class="card">
     <h2>وسائل شحن البوت</h2>
@@ -546,7 +579,7 @@
     <div id="totpEnrollBox" style="margin-top:12px;">
       <button class="btn" id="totpEnrollBtn" type="button">تفعيل التحقق بخطوتين</button>
     </div>
-    <div id="totpSecretBox" class="hidden" style="margin-top:12px; border:1px solid var(--gold, #c9a227); border-radius:14px; padding:12px;">
+    <div id="totpSecretBox" class="hidden" style="margin-top:12px; border:1px solid var(--border); border-radius:14px; padding:12px;">
       <b>اكتب الرمز ده في تطبيق المصادقة (زي Google Authenticator) — مش هيظهر تاني.</b>
       <div class="row-actions" style="margin-top:8px;">
         <input id="totpSecret" type="text" readonly dir="ltr" style="flex:1;">
@@ -628,7 +661,7 @@
 
   <section class="card">
     <h2>زوار البوت</h2>
-    <div class="sub" style="color:var(--muted); font-size:12px;">الناس اللي كلّموا البوت، مرتبين بآخر نشاط. اللي ليه محادثة تقدر تفتحها من زرار «افتح المحادثة» في صفه.</div>
+    <div class="sub" style="color:var(--muted); font-size:12px;">الناس اللي كلّموا البوت، مرتبين بآخر نشاط بس — دي شاشة نشاط تشغيلي، مش ترتيب عملاء ولا متابعة إنفاق. اللي ليه محادثة تقدر تفتحها من زرار «افتح المحادثة» في صفه.</div>
     <div id="visList" style="margin-top:8px;"></div>
     <button class="btn secondary" id="visReloadBtn" type="button" style="margin-top:12px;">تحديث</button>
   </section>
@@ -661,8 +694,8 @@
   <div class="msg" id="hlthMsg"></div>
 
   <section class="card">
-    <h2>صحة النظام والحراس</h2>
-    <div class="sub" style="color:var(--muted); font-size:12px;">قراءة بس — حالة البوت وحلقات السيرفر وأرصدة الموردين والحراس زي ما هي دلوقتي. الحراس بيتصرفوا لوحدهم وبيبعتوا تنبيهات؛ الشاشة دي عشان تشوف الصورة كاملة في أي وقت.</div>
+    <h2>صحة النظام</h2>
+    <div class="sub" style="color:var(--muted); font-size:12px;">الشاشة دي بتقول الخدمة شغالة ولا لأ وإيه التدخل المطلوب لو فيه مشكلة — قراءة بس. حالة كل حارس وآخر فحص ليه في شاشة «الحراس».</div>
     <div id="hlthBody" style="margin-top:8px;"></div>
     <button class="btn secondary" id="hlthReloadBtn" type="button" style="margin-top:12px;">تحديث</button>
     <div class="updated" id="hlthUpdated"></div>
@@ -709,7 +742,7 @@
 
   <section class="card">
     <h2>حسابات الموقع</h2>
-    <div class="sub" style="color:var(--muted); font-size:12px;">حسابات الدخول للموقع — الحظر بيمنع تسجيل الدخول فورًا. حساب الدخول بتاعك وآخر حساب غير محظور محميين من الحظر عشان الدخول ما يتقفلش على الكل.</div>
+    <div class="sub" style="color:var(--muted); font-size:12px;">دي حسابات دخول عملاء الموقع اللي بيدخلوا بيها المتجر — مش حسابات مسؤولي اللوحة دي، وحظر حساب هنا ما بيأثرش على دخولك للوحة. الحظر بيمنع تسجيل الدخول للموقع فورًا. حساب الدخول بتاعك وآخر حساب غير محظور محميين من الحظر عشان الدخول ما يتقفلش على الكل.</div>
     <div id="admList" style="margin-top:8px;"></div>
     <button class="btn secondary" id="admReloadBtn" type="button" style="margin-top:12px;">تحديث</button>
   </section>
@@ -757,7 +790,7 @@
 
   <section class="card hidden" id="mchDetailCard">
     <h2 id="mchDetailTitle">تفاصيل التاجر</h2>
-    <div id="mchNewSecretBox" class="hidden" style="border:1px solid var(--gold, #c9a227); border-radius:14px; padding:12px; margin-top:8px;">
+    <div id="mchNewSecretBox" class="hidden" style="border:1px solid var(--border); border-radius:14px; padding:12px; margin-top:8px;">
       <b>مفتاح الدخول الجديد — انسخه دلوقتي، مش هيظهر تاني.</b>
       <div class="sub" style="color:var(--muted); font-size:12px; margin-top:4px;">المفتاح القديم اتوقف خلاص. ادّي المفتاح الجديد للتاجر في قناة آمنة، وبعدين اخفي الصندوق ده.</div>
       <div class="row-actions" style="margin-top:8px;">
@@ -855,7 +888,7 @@
 <div class="sheet" id="sheet">
   <p id="sheetTitle"></p>
   <div id="sheetBody"><small>اختر قسمًا من تحت.</small></div>
-  <button class="btn secondary" id="sheetClose" type="button">تمام</button>
+  <button class="btn secondary" id="sheetClose" type="button">إغلاق</button>
 </div>
 
 <div class="sheet-veil" id="actVeil"></div>
@@ -869,12 +902,11 @@
 </div>
 
 <nav class="bottom" id="bottomNav">
-  <button type="button" class="active" data-nav="home"><span class="ic">🏠</span>مهامي الآن</button>
-  <button type="button" data-nav="events"><span class="ic">🔔</span>الأحداث</button>
-  <button type="button" data-nav="orders"><span class="ic">📦</span>الطلبات</button>
-  <button type="button" data-nav="customers"><span class="ic">👥</span>العملاء</button>
-  <button type="button" data-nav="chats"><span class="ic">💬</span>المحادثات</button>
-  <button type="button" data-nav="more"><span class="ic">☰</span>المزيد</button>
+  <button type="button" class="active" data-nav="home">مهامي</button>
+  <button type="button" data-nav="orders">الطلبات</button>
+  <button type="button" data-nav="customers">العملاء</button>
+  <button type="button" data-nav="chats">المحادثات</button>
+  <button type="button" data-nav="more">المزيد</button>
 </nav>
 
 <script>
@@ -1029,16 +1061,55 @@ function compRow(name, okState, metaHtml){
     '<span class="meta">' + word + "<br>" + metaHtml + "</span></div>";
 }
 
-function queueCard(label, sub, count, sev){
+function queueCard(label, sub, count, sev, badge, targetKey, sinceIso){
+  var badgeHtml = badge === "store" ? ' <span class="badge store">موقع</span>'
+    : badge === "bot" ? ' <span class="badge bot">بوت</span>' : "";
+  var since = sinceIso ? relTime(sinceIso) : null;
+  var subHtml = (sub ? esc(sub) : "") + (since ? (sub ? " · " : "") + "أقدم حالة " + esc(since) : "");
   if (count === null) {
-    return '<div class="queue-card sev-' + sev + '"><div class="lbl">' + esc(label) +
-      (sub ? "<small>" + esc(sub) + "</small>" : "") +
+    return '<div class="queue-card sev-' + sev + '"><div class="lbl">' + esc(label) + badgeHtml +
+      (subHtml ? "<small>" + subHtml + "</small>" : "") +
       '</div><div class="cnt na">غير متاح</div></div>';
   }
   if (count === 0) return "";
-  return '<div class="queue-card sev-' + sev + '"><div class="lbl">' + esc(label) +
-    (sub ? "<small>" + esc(sub) + "</small>" : "") +
-    '</div><div class="cnt num">' + fmtNum(count) + "</div></div>";
+  var btn = targetKey
+    ? '<button class="btn small qbtn" type="button" data-queue-target="' + esc(targetKey) + '">راجع الحالة</button>'
+    : "";
+  return '<div class="queue-card sev-' + sev + '"><div class="lbl">' + esc(label) + badgeHtml +
+    (subHtml ? "<small>" + subHtml + "</small>" : "") +
+    '</div><div class="cnt num">' + fmtNum(count) + "</div>" + btn + "</div>";
+}
+// تنفيذ وجهة «راجع الحالة»: مرساة على نفس الشاشة (شحنات
+// معروضة في مهامي نفسها) أو شاشة تانية بفلاترها.
+function goQueueTarget(key){
+  var t = homeQueueTarget(key);
+  if (!t) return;
+  if (t.anchor) {
+    var el = $(t.anchor);
+    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    return;
+  }
+  if (t.view === "orders") {
+    showView("orders");
+    if (t.queue) {
+      ordState.queue = t.queue;
+      $("ordQueueSeg").querySelectorAll("button").forEach(function(x){
+        x.classList.toggle("on", x.getAttribute("data-queue") === t.queue);
+      });
+    }
+    if (t.surface != null) {
+      ordState.surface = t.surface;
+      $("ordSurfaceSeg").querySelectorAll("button").forEach(function(x){
+        x.classList.toggle("on", (x.getAttribute("data-surface") || "") === t.surface);
+      });
+    }
+    ensureOrdersLoaded();
+    if (ordState.loaded) loadOrders();
+    return;
+  }
+  if (t.view === "events") { showView("events"); ensureEventsLoaded(); return; }
+  if (t.view === "merchants") { showView("merchants"); ensureMerchantsLoaded(); return; }
+  if (t.view === "chats") { showView("chats"); ensureChatsLoaded(); return; }
 }
 
 function render(data){
@@ -1071,45 +1142,63 @@ function render(data){
   $("compRows").innerHTML = rows;
   $("compCard").classList.remove("hidden");
 
-  // طوابير «محتاج قرار الآن»
-  var cards = "";
-  cards += queueCard("شحنات منتظرة القرار", "شحنات محفظة البوت", botCount(bot, "pending_topups"), "amber");
-  cards += queueCard("شحنات متعلمة بمشكلة", "رقم العملية اتستخدم قبل كده", botCount(bot, "flagged_topups"), "red");
-  cards += queueCard("طلبات تحقق محتاجة مراجعة", "واقفة على قرار منك", botCount(bot, "sheerid_needs_review"), "red");
-  cards += queueCard("طلبات فاشلة", "طلبات بوت محتاجة تدخل", botCount(bot, "failed_orders"), "red");
-  cards += queueCard("محادثات من غير رد", "عملاء مستنيين رد", botCount(bot, "unanswered_chats"), "blue");
-  cards += queueCard("طلبات يدوية", "تنفيذ يدوي عند مورد", botCount(bot, "manual_orders"), "purple");
-  cards += queueCard("شحنات محفظة الموقع منتظرة القرار", "من صفحة المحفظة", (typeof store.pending_topups_count === "number") ? store.pending_topups_count : null, "amber");
-  cards += queueCard("رسائل دفع لسه متربطتش", "وصلت ومتربطتش بشحنة ولا طلب", (typeof store.unmatched_sms === "number") ? store.unmatched_sms : null, "amber");
-  cards += queueCard("إيداعات منصات لسه متربطتش", "وصلت ومتربطتش بشحنة ولا طلب", (typeof store.unmatched_exchange === "number") ? store.unmatched_exchange : null, "amber");
-  cards += queueCard("طلبات موقع جديدة", "لسه ما اتنفذتش", (typeof store.new_orders === "number") ? store.new_orders : null, "blue");
-
-  // مهام التجار (م٦-د): بطاقات على نفس نمط الطوابير، وبتظهر
+  // حالات «محتاجة قرار دلوقتي»: بتترتب بخطر التأخير (لون
+  // الخطورة) وبعده بالأقدم — عمر أقدم حالة معروفة في قوائم
+  // الشحنات المعروضة تحت — ومفيش أي ترتيب بإنفاق العميل.
+  function oldestOf(list){
+    var best = null;
+    (list || []).forEach(function(it){
+      if (it && it.created_at && (!best || String(it.created_at) < String(best))) best = it.created_at;
+    });
+    return best;
+  }
+  var botLatest = (bot && Array.isArray(bot.latest_topups)) ? bot.latest_topups : [];
+  var storePending = Array.isArray(store.pending_topups) ? store.pending_topups : [];
+  var cases = [
+    { key: "bot_pending_topups", label: "شحنات منتظرة القرار", sub: "شحنات محفظة البوت مستنية قرارك", count: botCount(bot, "pending_topups"), sev: "amber", badge: "bot", oldestAt: oldestOf(botLatest) },
+    { key: "bot_flagged_topups", label: "شحنات متعلمة بمشكلة", sub: "رقم العملية اتستخدم قبل كده", count: botCount(bot, "flagged_topups"), sev: "red", badge: "bot", oldestAt: oldestOf(botLatest) },
+    { key: "sheerid_needs_review", label: "طلبات تحقق محتاجة مراجعة", sub: "واقفة على قرار منك", count: botCount(bot, "sheerid_needs_review"), sev: "red", badge: "bot", oldestAt: null },
+    { key: "failed_orders", label: "طلبات فاشلة", sub: "طلبات بوت محتاجة تدخل", count: botCount(bot, "failed_orders"), sev: "red", badge: "bot", oldestAt: null },
+    { key: "manual_orders", label: "طلبات يدوية", sub: "تنفيذ يدوي عند مورد", count: botCount(bot, "manual_orders"), sev: "purple", badge: "bot", oldestAt: null },
+    { key: "store_pending_topups", label: "شحنات محفظة الموقع منتظرة القرار", sub: "من صفحة المحفظة", count: (typeof store.pending_topups_count === "number") ? store.pending_topups_count : null, sev: "amber", badge: "store", oldestAt: oldestOf(storePending) },
+    { key: "unmatched_sms", label: "رسائل دفع لسه متربطتش", sub: "وصلت ومتربطتش بشحنة ولا طلب", count: (typeof store.unmatched_sms === "number") ? store.unmatched_sms : null, sev: "amber", badge: "store", oldestAt: null },
+    { key: "unmatched_exchange", label: "إيداعات منصات لسه متربطتش", sub: "وصلت ومتربطتش بشحنة ولا طلب", count: (typeof store.unmatched_exchange === "number") ? store.unmatched_exchange : null, sev: "amber", badge: "store", oldestAt: null },
+    { key: "new_site_orders", label: "طلبات موقع جديدة", sub: "لسه ما اتنفذتش", count: (typeof store.new_orders === "number") ? store.new_orders : null, sev: "blue", badge: "store", oldestAt: null }
+  ];
+  // مهام التجار (م٦-د): بطاقات على نفس نمط الحالات، وبتظهر
   // بس لما العدّاد أكبر من صفر.
   var mt = (bot && bot.merchant_tasks && typeof bot.merchant_tasks === "object") ? bot.merchant_tasks : {};
   function mtCount(k){
     var v = mt[k];
     return (typeof v === "number" && isFinite(v) && v > 0) ? v : 0;
   }
-  var failedMtCard = queueCard("توصيلات تجار فاشلة", "إشعارات تجار معرفناش نوصلها", mtCount("failed_deliveries"), "red");
-  if (failedMtCard) {
-    failedMtCard = failedMtCard.replace('<div class="queue-card',
-      '<div data-goto="merchants" style="cursor:pointer" class="queue-card');
-  }
-  cards += failedMtCard;
-  cards += queueCard("مفاتيح تجار لم تُستخدم بعد", "مفاتيح اتعملت ولسه محدش استخدمها", mtCount("unused_keys"), "amber");
-  cards += queueCard("تدويرات مفاتيح تجار هذا الأسبوع", "مفاتيح اتغيّرت في آخر ٧ أيام", mtCount("recent_rotations"), "blue");
+  cases.push({ key: "merchant_failed", label: "توصيلات تجار فاشلة", sub: "إشعارات تجار معرفناش نوصلها", count: mtCount("failed_deliveries"), sev: "red", badge: "bot", oldestAt: null });
+  cases.push({ key: "merchant_unused_keys", label: "مفاتيح تجار لم تُستخدم بعد", sub: "مفاتيح اتعملت ولسه محدش استخدمها", count: mtCount("unused_keys"), sev: "amber", badge: "bot", oldestAt: null });
+  cases.push({ key: "merchant_rotations", label: "تدويرات مفاتيح تجار هذا الأسبوع", sub: "مفاتيح اتغيّرت في آخر ٧ أيام", count: mtCount("recent_rotations"), sev: "blue", badge: "bot", oldestAt: null });
+
+  var cards = "";
+  sortHomeCases(cases).forEach(function(c){
+    cards += queueCard(c.label, c.sub, c.count, c.sev, c.badge, c.key, c.oldestAt);
+  });
 
   var wrap = $("queueWrap");
   if (cards) {
     wrap.innerHTML = cards;
   } else {
-    wrap.innerHTML = '<div class="empty"><b>مفيش حاجة محتاجة تدخل</b>كل الطوابير فاضية دلوقتي.</div>';
+    wrap.innerHTML = '<div class="empty"><b>مفيش حاجة مستنية قرارك</b>كل الطوابير فاضية دلوقتي.</div>';
   }
-  wrap.querySelectorAll("[data-goto]").forEach(function(el){
-    el.addEventListener("click", function(){ showView(el.getAttribute("data-goto")); });
+  wrap.querySelectorAll("[data-queue-target]").forEach(function(el){
+    el.addEventListener("click", function(){ goQueueTarget(el.getAttribute("data-queue-target")); });
   });
   wrap.classList.remove("hidden");
+
+  // (٢) المحادثات من غير رد — قسم لوحده بعد حالات القرار.
+  var unans = botCount(bot, "unanswered_chats");
+  $("homeChatsBody").textContent = unans === null
+    ? "حالة المحادثات غير متاحة دلوقتي — البوت مش بيرد."
+    : unans === 0
+      ? "مفيش محادثات مستنية رد دلوقتي."
+      : "فيه " + fmtNum(unans) + " محادثة مستنية رد منك.";
 
   // أحدث شحنات المحفظة المنتظرة
   var items = Array.isArray(store.pending_topups) ? store.pending_topups : [];
@@ -1117,33 +1206,56 @@ function render(data){
   if (!items.length) {
     html = '<div class="sub">مفيش شحنات منتظرة.</div>';
   } else {
-    items.forEach(function(t){
+    items.forEach(function(t, ti){
       var age = relTime(t.created_at);
       html += '<div class="topup-row">' +
         '<div class="amt num">' + fmtNum(t.amount_egp) + ' ج.م <small>' + esc(t.payment_method || "") + "</small></div>" +
-        '<div class="sub">المُرسل: <b class="num">' + esc(t.sender_account || "—") + "</b>" +
-        (t.transfer_ref ? ' · رقم العملية: <b class="num">' + esc(t.transfer_ref) + "</b>" : "") +
-        (age ? " · " + esc(age) : "") + "</div></div>";
+        '<div class="sub">المُرسل: ' + ltrWrap(t.sender_account || "—") +
+        (t.transfer_ref ? ' · رقم العملية: ' + ltrWrap(t.transfer_ref) : "") +
+        (age ? " · " + esc(age) : "") + "</div>" +
+        '<div class="row-actions"><button class="btn small" type="button" data-home-store-topup="' + ti + '">راجع الحالة</button></div></div>';
     });
   }
   $("topupRows").innerHTML = html;
   $("topupCard").classList.remove("hidden");
+  $("topupRows").querySelectorAll("[data-home-store-topup]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var t = items[Number(b.getAttribute("data-home-store-topup"))];
+      if (!t) return;
+      // الحالة نفسها بتتقرر من ملف العميل — البحث برقم العملية
+      // أو حساب المُرسل بيوصّل لملفه على طول.
+      showView("customers");
+      ensureMoneyLoaded();
+      $("custQ").value = t.transfer_ref || t.sender_account || "";
+      if ($("custQ").value) doSearch();
+    });
+  });
 
   // أحدث شحنات البوت المنتظرة (من نقطة البوت نفسها)
   var bItems = (bot && Array.isArray(bot.latest_topups)) ? bot.latest_topups : [];
   if (bItems.length) {
     var bHtml = "";
-    bItems.forEach(function(t){
+    bItems.forEach(function(t, ti){
       var bAge = relTime(t.created_at);
       bHtml += '<div class="topup-row">' +
         '<div class="amt num">' + fmtNum(egpFromMinor(t.amount)) + ' ج.م <small>' +
         (t.method_label ? esc(t.method_label) : "") + "</small></div>" +
-        '<div class="sub">العميل: <b class="num">' + esc(t.customer_ref || "—") + "</b>" +
+        '<div class="sub">العميل: ' + ltrWrap(t.customer_ref || "—") +
         (t.ref_seen_before ? ' · <b style="color:var(--red)">رقم العملية اتشاف قبل كده</b>' : "") +
-        (bAge ? " · " + esc(bAge) : "") + "</div></div>";
+        (bAge ? " · " + esc(bAge) : "") + "</div>" +
+        '<div class="row-actions"><button class="btn small" type="button" data-home-bot-topup="' + ti + '">راجع الحالة</button></div></div>';
     });
     $("botTopupRows").innerHTML = bHtml;
     $("botTopupCard").classList.remove("hidden");
+    $("botTopupRows").querySelectorAll("[data-home-bot-topup]").forEach(function(b){
+      b.addEventListener("click", function(){
+        var t = bItems[Number(b.getAttribute("data-home-bot-topup"))];
+        if (t && t.customer_ref) {
+          showView("customers");
+          openCustomer("bot", { ref: t.customer_ref });
+        }
+      });
+    });
   }
 
   // بطاقة البيع في البوت (م٦-د): الحالة من أعلام البوت في رد
@@ -1215,12 +1327,20 @@ function load(){
 
 $("refreshBtn").addEventListener("click", load);
 $("storePill").addEventListener("click", load);
+$("homeEventsBtn").addEventListener("click", function(){
+  showView("events");
+  ensureEventsLoaded();
+});
+$("homeChatsBtn").addEventListener("click", function(){
+  showView("chats");
+  ensureChatsLoaded();
+});
 
 // التنقل السفلي: الرئيسية والعملاء والطلبات والمحادثات والأحداث
 // شغالين، و«المزيد» فيها أسعار الموقع (م٣) والكتالوج والموردون
 // (م٣-ب) والأحداث والمكونات (م٤).
-var navNames = { events: "الأحداث", more: "المزيد" };
-var viewTitles = { home: "مهامي الآن", customers: "العملاء", orders: "الطلبات", chats: "المحادثات", prices: "أسعار الموقع", catalog: "الكتالوج", suppliers: "الموردون", events: "الأحداث", settings: "إعدادات البوت", channel: "قناة التليجرام", coupons: "الكوبونات", merchants: "التجار", site: "الموقع: الدفع والمحتوى", visitors: "زوار البوت", preview: "شوف كما يراه العميل", health: "صحة النظام", guards: "الحراس", reviews: "التقييمات", adminUsers: "حسابات الموقع" };
+var navNames = { more: "المزيد" };
+var viewTitles = { home: "مهامي", customers: "العملاء", orders: "الطلبات", chats: "المحادثات", prices: "أسعار الموقع", catalog: "الكتالوج", suppliers: "الموردون", events: "الأحداث", settings: "إعدادات البوت", channel: "قناة التليجرام", coupons: "الكوبونات", merchants: "التجار", site: "الموقع", visitors: "زوار البوت", preview: "شوف كما يراه العميل", health: "صحة النظام", guards: "الحراس", reviews: "التقييمات", adminUsers: "حسابات الموقع" };
 function showView(name){
   if (typeof currentViewName !== "undefined" && currentViewName && currentViewName !== name) {
     navMemory[currentViewName] = navEntryOf(currentViewName, {}, window.scrollY || 0);
@@ -1248,7 +1368,7 @@ function showView(name){
   document.querySelectorAll("#bottomNav button").forEach(function(b){
     var nav = b.getAttribute("data-nav");
     // أسعار الموقع والكتالوج والموردون والإعدادات والقناة والكوبونات والتجار بيتفتحوا من «المزيد» فزرها هو اللي بيتلوّن وهم مفتوحين.
-    b.classList.toggle("active", nav === name || ((name === "prices" || name === "catalog" || name === "suppliers" || name === "settings" || name === "channel" || name === "coupons" || name === "merchants" || name === "site" || name === "preview" || name === "health" || name === "guards" || name === "reviews" || name === "adminUsers") && nav === "more"));
+    b.classList.toggle("active", nav === name || ((name === "prices" || name === "catalog" || name === "suppliers" || name === "settings" || name === "channel" || name === "coupons" || name === "merchants" || name === "site" || name === "preview" || name === "health" || name === "guards" || name === "reviews" || name === "adminUsers" || name === "events" || name === "visitors") && nav === "more"));
   });
   if (name !== "chats" && typeof stopChatPolling === "function") stopChatPolling();
   window.scrollTo({ top: 0 });
@@ -1383,101 +1503,38 @@ document.querySelectorAll("#bottomNav button").forEach(function(b){
     if (nav === "customers") { showView("customers"); ensureMoneyLoaded(); return; }
     if (nav === "orders") { showView("orders"); ensureOrdersLoaded(); return; }
     if (nav === "chats") { showView("chats"); ensureChatsLoaded(); return; }
-    if (nav === "events") { showView("events"); ensureEventsLoaded(); return; }
     if (nav === "more") {
       $("sheetTitle").textContent = "المزيد";
-      $("sheetBody").innerHTML =
-        '<div class="menu-list">' +
-        '<div class="group-title">البيع</div>' +
-        '<button class="btn" id="moreCatalogBtn" type="button">الكتالوج</button>' +
-        '<button class="btn" id="morePricesBtn" type="button">أسعار الموقع</button>' +
-        '<button class="btn" id="moreCouponsBtn" type="button">الكوبونات</button>' +
-        '<div class="group-title">التشغيل</div>' +
-        '<button class="btn" id="moreSuppliersBtn" type="button">الموردون</button>' +
-        '<button class="btn" id="moreEventsBtn" type="button">الأحداث</button>' +
-        '<button class="btn" id="moreHealthBtn" type="button">صحة النظام والحراس</button>' +
-        '<button class="btn" id="moreGuardsBtn" type="button">الحراس</button>' +
-        '<div class="group-title">النشر والموقع</div>' +
-        '<button class="btn" id="moreChannelBtn" type="button">قناة التليجرام</button>' +
-        '<button class="btn" id="moreSiteBtn" type="button">الموقع: الدفع والمحتوى</button>' +
-        '<button class="btn" id="morePreviewBtn" type="button">شوف كما يراه العميل</button>' +
-        '<div class="group-title">الإدارة</div>' +
-        '<button class="btn" id="moreSettingsBtn" type="button">إعدادات البوت</button>' +
-        '<button class="btn" id="moreMerchantsBtn" type="button">التجار</button>' +
-        '<button class="btn" id="moreReviewsBtn" type="button">التقييمات</button>' +
-        '<button class="btn" id="moreAdminUsersBtn" type="button">حسابات الموقع</button>' +
-        "</div>";
+      var moreHtml = '<div class="more-search"><label for="moreSearch">دور على شاشة</label>' +
+        '<input id="moreSearch" type="text" placeholder="اسم الشاشة"></div><div class="menu-list">';
+      MORE_GROUPS.forEach(function(g, gi){
+        moreHtml += '<div class="group-title" data-more-group="' + gi + '">' + esc(g.title) + "</div>";
+        g.screens.forEach(function(pair){
+          moreHtml += '<button class="btn secondary" type="button" data-more-view="' + esc(pair[0]) +
+            '" data-more-name="' + esc(pair[1]) + '" data-more-group="' + gi + '">' + esc(pair[1]) + "</button>";
+        });
+      });
+      moreHtml += "</div>";
+      $("sheetBody").innerHTML = moreHtml;
       $("sheet").classList.add("open");
       $("sheetVeil").classList.add("open");
-      $("morePricesBtn").addEventListener("click", function(){
-        closeSheet();
-        showView("prices");
-        ensurePricesLoaded();
-      });
-      $("moreCatalogBtn").addEventListener("click", function(){
-        closeSheet();
-        showView("catalog");
-        ensureCatalogLoaded();
-      });
-      $("moreSuppliersBtn").addEventListener("click", function(){
-        closeSheet();
-        showView("suppliers");
-        ensureSuppliersLoaded();
-      });
-      $("moreEventsBtn").addEventListener("click", function(){
-        closeSheet();
-        showView("events");
-        ensureEventsLoaded();
-      });
-      $("moreHealthBtn").addEventListener("click", function(){
-        closeSheet();
-        showView("health");
-        ensureHealthLoaded();
-      });
-      $("moreGuardsBtn").addEventListener("click", function(){
-        closeSheet();
-        showView("guards");
-        ensureGuardsLoaded();
-      });
-      $("moreSettingsBtn").addEventListener("click", function(){
-        closeSheet();
-        showView("settings");
-        ensureSettingsLoaded();
-      });
-      $("moreChannelBtn").addEventListener("click", function(){
-        closeSheet();
-        showView("channel");
-        ensureChannelLoaded();
-      });
-      $("moreCouponsBtn").addEventListener("click", function(){
-        closeSheet();
-        showView("coupons");
-        ensureCouponsLoaded();
-      });
-      $("moreMerchantsBtn").addEventListener("click", function(){
-        closeSheet();
-        showView("merchants");
-        ensureMerchantsLoaded();
-      });
-      $("moreSiteBtn").addEventListener("click", function(){
-        closeSheet();
-        showView("site");
-        ensureSiteLoaded();
-      });
-      $("moreReviewsBtn").addEventListener("click", function(){
-        closeSheet();
-        showView("reviews");
-        ensureReviewsLoaded();
-      });
-      $("moreAdminUsersBtn").addEventListener("click", function(){
-        closeSheet();
-        showView("adminUsers");
-        ensureAdminUsersLoaded();
-      });
-      $("morePreviewBtn").addEventListener("click", function(){
-        closeSheet();
-        showView("preview");
-        ensurePreviewLoaded();
+      var searchInp = $("moreSearch");
+      if (searchInp) searchInp.addEventListener("input", function(){
+        var keep = {};
+        filterMoreScreens(searchInp.value).forEach(function(sc){ keep[sc.view] = true; });
+        $("sheetBody").querySelectorAll("[data-more-view]").forEach(function(b){
+          b.style.display = keep[b.getAttribute("data-more-view")] ? "" : "none";
+        });
+        $("sheetBody").querySelectorAll("[data-more-group]").forEach(function(t){
+          if (!t.getAttribute("data-more-view")) {
+            var gi = t.getAttribute("data-more-group");
+            var any = false;
+            $("sheetBody").querySelectorAll('[data-more-view][data-more-group="' + gi + '"]').forEach(function(b){
+              if (b.style.display !== "none") any = true;
+            });
+            t.style.display = any ? "" : "none";
+          }
+        });
       });
       return;
     }
@@ -1486,6 +1543,24 @@ document.querySelectorAll("#bottomNav button").forEach(function(b){
     $("sheet").classList.add("open");
     $("sheetVeil").classList.add("open");
   });
+});
+$("sheetBody").addEventListener("click", function(ev){
+  var b = ev.target && ev.target.closest ? ev.target.closest("[data-more-view]") : null;
+  if (!b) return;
+  var view = b.getAttribute("data-more-view");
+  closeSheet();
+  showView(view);
+  var ensureMap = {
+    prices: ensurePricesLoaded, catalog: ensureCatalogLoaded,
+    suppliers: ensureSuppliersLoaded, coupons: ensureCouponsLoaded,
+    merchants: ensureMerchantsLoaded, events: ensureEventsLoaded,
+    channel: ensureChannelLoaded, site: ensureSiteLoaded,
+    reviews: ensureReviewsLoaded, adminUsers: ensureAdminUsersLoaded,
+    preview: ensurePreviewLoaded, visitors: ensureVisitorsLoaded,
+    health: ensureHealthLoaded, guards: ensureGuardsLoaded,
+    settings: ensureSettingsLoaded
+  };
+  if (ensureMap[view]) ensureMap[view]();
 });
 function closeSheet(){ $("sheet").classList.remove("open"); $("sheetVeil").classList.remove("open"); }
 $("sheetClose").addEventListener("click", closeSheet);
@@ -1752,6 +1827,193 @@ function navEntryOf(view, filters, scroll){
 }
 /*PURE-WAVE1-END*/
 
+/*PURE-WAVE2-BEGIN*/
+// منطق الموجة التانية النقي (بنود ١/٢/٣/٥/٦/١١/١٢/١٣): دوال
+// من غير أي لمس للصفحة، والاختبارات (control/wave2.test.ts)
+// بتقراها من هنا حرفيًا وبتشغّلها.
+// خريطة «المزيد» الرسمية: ٣ مجموعات بالترتيب ده بالظبط، وكل
+// شاشة من الـ١٥ اللي بره الشريط السفلي ليها وصلة صريحة هنا —
+// والشريط نفسه بيغطي مهامي/الطلبات/العملاء/المحادثات، فالـ١٩
+// شاشة كلهم ليهم مكان صريح.
+var MORE_GROUPS = [
+  { title: "البيع", screens: [
+    ["prices", "الأسعار"], ["catalog", "الكتالوج"], ["suppliers", "الموردون"],
+    ["coupons", "الكوبونات"], ["merchants", "التجار"] ] },
+  { title: "العملاء والمحتوى", screens: [
+    ["events", "الأحداث"], ["channel", "القناة"], ["site", "الموقع"],
+    ["reviews", "التقييمات"], ["adminUsers", "حسابات الموقع"],
+    ["preview", "شوف كما يراه العميل"], ["visitors", "الزوار"] ] },
+  { title: "التشغيل والحماية", screens: [
+    ["health", "صحة النظام"], ["guards", "الحراس"], ["settings", "إعدادات البوت"] ] }
+];
+function moreScreensFlat(){
+  var out = [];
+  MORE_GROUPS.forEach(function(g){
+    g.screens.forEach(function(pair){ out.push({ view: pair[0], name: pair[1], group: g.title }); });
+  });
+  return out;
+}
+// بحث «المزيد»: بيقارن اسم الشاشة بس — مش بحث في بيانات النظام.
+function filterMoreScreens(query){
+  var q = String(query || "").trim();
+  var all = moreScreensFlat();
+  if (!q) return all;
+  return all.filter(function(sc){ return sc.name.indexOf(q) >= 0; });
+}
+// وجهة «راجع الحالة» لكل طابور في مهامي: الشاشة اللي فيها
+// القائمة الحقيقية للحالة دي، وبفلاترها لما الشاشة تدعمها.
+var HOME_QUEUE_TARGETS = {
+  bot_pending_topups: { anchor: "botTopupCard" },
+  bot_flagged_topups: { anchor: "botTopupCard" },
+  store_pending_topups: { anchor: "topupCard" },
+  sheerid_needs_review: { view: "orders", queue: "intervention", surface: "sheerid" },
+  failed_orders: { view: "orders", queue: "intervention", surface: "" },
+  manual_orders: { view: "orders", queue: "all", surface: "" },
+  unmatched_sms: { view: "events" },
+  unmatched_exchange: { view: "events" },
+  new_site_orders: { view: "orders", queue: "all", surface: "" },
+  merchant_failed: { view: "merchants" },
+  merchant_unused_keys: { view: "merchants" },
+  merchant_rotations: { view: "merchants" }
+};
+function homeQueueTarget(key){
+  return HOME_QUEUE_TARGETS[key] || null;
+}
+// ترتيب حالات مهامي: خطر التأخير الأول (لون الخطورة)، وبعده
+// الأقدم فالأقدم. الإنفاق مش مدخل في الترتيب أبدًا — الدالة
+// ما بتقراش أي مبلغ.
+var HOME_SEV_RANK = { red: 0, amber: 1, purple: 2, blue: 3, green: 4 };
+function sortHomeCases(cases){
+  return (cases || []).slice().sort(function(a, b){
+    var ra = HOME_SEV_RANK[a.sev] != null ? HOME_SEV_RANK[a.sev] : 9;
+    var rb = HOME_SEV_RANK[b.sev] != null ? HOME_SEV_RANK[b.sev] : 9;
+    if (ra !== rb) return ra - rb;
+    var ta = a.oldestAt ? new Date(a.oldestAt).getTime() : NaN;
+    var tb = b.oldestAt ? new Date(b.oldestAt).getTime() : NaN;
+    if (isFinite(ta) && isFinite(tb)) return ta - tb;
+    if (isFinite(ta)) return -1;
+    if (isFinite(tb)) return 1;
+    return 0;
+  });
+}
+// قيود الكوبون بكلام مفهوم — بتتقال قبل الحفظ وفي التفاصيل.
+function couponRestrictionsText(c){
+  if (!c) return "مفيش قيود إضافية.";
+  var parts = [];
+  var d = Number(c.discount);
+  if (isFinite(d)) parts.push("خصم " + d + "٪ على الطلب");
+  if (c.expires_at) parts.push("ينتهي في " + new Date(c.expires_at).toLocaleString("en-GB"));
+  else parts.push("ملوش تاريخ انتهاء");
+  if (c.max_uses != null && c.max_uses !== "") parts.push("أقصى عدد استخدامات: " + Number(c.max_uses));
+  else parts.push("عدد الاستخدامات مفتوح");
+  if (c.min_order_egp != null && c.min_order_egp !== "") parts.push("بيشتغل على طلبات من " + Number(c.min_order_egp) + " ج.م وطالع");
+  else parts.push("ملوش حد أدنى لقيمة الطلب");
+  parts.push(c.active === false ? "الكوبون متوقف دلوقتي" : "الكوبون شغال");
+  return parts.join(" · ");
+}
+// معاينة المنشور قبل الحفظ: النص والتوقيت والحالة زي ما
+// هيتحفظوا بالظبط.
+function channelPreviewLines(body, isEdit){
+  var lines = [];
+  lines.push(isEdit ? "تعديل منشور موجود — الحفظ بيبدّل النسخة دي." : "منشور جديد.");
+  lines.push("النص: " + String((body && body.text) || ""));
+  if (body && body.scheduled_at) lines.push("وقت النشر: مجدول — " + new Date(body.scheduled_at).toLocaleString("en-GB"));
+  else lines.push("وقت النشر: على طول بعد الحفظ");
+  lines.push(body && body.photo_url ? "الصورة: موجودة (" + body.photo_url + ")" : "الصورة: مفيش");
+  var nb = body && Array.isArray(body.buttons) ? body.buttons.length : 0;
+  lines.push(nb ? "الأزرار: " + nb + " زر مكتوب" : "الأزرار: شبكة الأزرار الافتراضية بتاعة القناة");
+  lines.push(body && body.pin ? "التثبيت: هيتثبّت في القناة بعد النشر" : "التثبيت: مش هيتثبّت");
+  return lines;
+}
+// معاينة محتوى الموقع قبل الحفظ: النص والحالة زي ما هيتحفظوا.
+function sitePreviewLines(kind, value){
+  var v = value || {};
+  if (kind === "announcement") return [
+    "النص: " + (v.text ? "«" + v.text + "»" : "فاضي — الشريط مش هيظهر"),
+    v.url ? "الرابط عند الضغط: " + v.url : "الرابط عند الضغط: مفيش",
+    "الحالة: " + (v.enabled ? "ظاهر للعملاء" : "مخفي عن العملاء") ];
+  if (kind === "faq") {
+    var items = Array.isArray(v.items) ? v.items : [];
+    var lines = ["عدد الأسئلة اللي هتتحفظ: " + items.length];
+    items.forEach(function(it, i){ lines.push((i + 1) + ") " + (it.q || "") + " — " + (it.a || "")); });
+    return lines;
+  }
+  if (kind === "sections") {
+    var on = [], off = [];
+    (typeof SITE_SECTION_LABELS !== "undefined" ? SITE_SECTION_LABELS : []).forEach(function(pair){
+      (v[pair[0]] === false ? off : on).push(pair[1]);
+    });
+    return [ "أقسام ظاهرة: " + (on.join("، ") || "مفيش"),
+      "أقسام مخفية: " + (off.join("، ") || "مفيش") ];
+  }
+  if (kind === "terms") return [
+    v.text ? "نص الشروط البديل هيتحفظ وهيظهر بدل النص المنسّق الحالي."
+           : "النص فاضي — صفحة الشروط الحالية هتفضل هي اللي ظاهرة." ];
+  if (kind === "maintenance") return [
+    "الحالة: " + (v.enabled ? "الصيانة شغالة — العملاء هيشوفوا الرسالة بدل المتجر" : "الصيانة متوقفة — المتجر شغال عادي"),
+    "الرسالة: " + (v.message ? "«" + v.message + "»" : "فاضية") ];
+  return [];
+}
+// أفعال تفاصيل الطلب الصالحة لحالته بس: أي فعل مش صالح بيرجع
+// بسبب مفهوم عشان يتعرض معطّل جنب سببه، مش يختفي من غير شرح.
+var ORDER_TERMINAL = ["fulfilled", "delivered", "completed", "cancelled", "canceled", "refunded"];
+function orderActionsForState(kind, status){
+  var st = String(status || "");
+  var term = ORDER_TERMINAL.indexOf(st) >= 0;
+  var out = {};
+  function set(act, ok, reason){ out[act] = { ok: ok, reason: ok ? "" : reason }; }
+  if (kind === "shop") {
+    set("shop-done", !term && st !== "", term ? "الطلب اتقفل خلاص — التسليم اتسجل أو اتلغى." : "");
+    set("shop-proc", st === "pending", st === "processing" ? "الطلب بيتنفذ بالفعل دلوقتي." : (term ? "الطلب اتقفل خلاص." : "التعليم ده للطلبات المنتظرة بس."));
+  } else if (kind === "provider") {
+    set("prov-check", !term, "الطلب اتقفل خلاص — مفيش تنفيذ نتحقق منه.");
+    set("prov-refresh", !term, "الطلب اتقفل خلاص.");
+  } else if (kind === "sheerid") {
+    set("sh-settle", !term, "طلب التحقق اتقفل خلاص.");
+    var delivered = st === "fulfilled" || st === "delivered" || st === "completed";
+    set("sh-resend", delivered, "التسليم لسه ما حصلش — مفيش رابط جاهز يتبعت.");
+  }
+  set("to-manual", !term, "الطلب اتقفل خلاص — التحويل ليدوي للطلبات المفتوحة بس.");
+  set("cancel-refund", !term, term ? "الطلب اتقفل خلاص — الإلغاء والاسترداد مش متاحين." : "");
+  set("force", true, "");
+  return out;
+}
+// «المطلوب من المسؤول دلوقتي» في تفاصيل الطلب حسب حالته.
+function adminNextStep(kind, status){
+  var st = String(status || "");
+  if (st === "fulfilled" || st === "delivered" || st === "completed") return "مفيش حاجة مطلوبة — الطلب اتسلّم واتقفل.";
+  if (st === "cancelled" || st === "canceled") return "مفيش حاجة مطلوبة — الطلب اتلغى واتقفل.";
+  if (st === "refunded") return "مفيش حاجة مطلوبة — الطلب اتسترد واتقفل.";
+  if (st === "failed") return "راجع سبب الفشل تحت، وبعدين قرر: تحقق من حالة التنفيذ عند المورد، أو حوّل ليدوي، أو إلغاء باسترداد.";
+  if (st === "needs_review" || st === "manual_review") return "الطلب مستني مراجعتك وقرارك.";
+  if (st === "awaiting_funds") return "الطلب مستني تمويل المورد — راجع رصيد المورد قبل أي خطوة.";
+  if (st === "pending" || st === "queued") return "الطلب مستني التنفيذ — تابع حالته، ولو اتأخر اتدخل من الأفعال اللي تحت.";
+  if (st === "processing" || st === "submitted") return "الطلب بيتنفذ دلوقتي — تابع لحد ما يتأكد التسليم.";
+  return "راجع حالة الطلب والأفعال المتاحة لحالته تحت.";
+}
+// كلمة حالة التشغيل/الإيقاف الموحدة في كل الشاشات.
+function stopWord(active, feminine){
+  if (feminine) return active ? "شغالة" : "متوقفة";
+  return active ? "شغال" : "متوقف";
+}
+// تقييم النجوم كنص مفهوم بدل رموز.
+function ratingText(rating){
+  var n = Math.round(Number(rating) || 0);
+  if (n < 0) n = 0;
+  if (n > 5) n = 5;
+  return "التقييم: " + n + " من 5";
+}
+// التفاف اتجاه من الشمال لليمين للمعرّفات الطويلة (إيميل/مرجع)
+// عشان ما تتقلبش في واجهة عربية — مع هروب HTML كامل.
+function ltrWrap(s){
+  var t = String(s == null ? "" : s)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+  return '<span class="ltr">' + t + "</span>";
+}
+/*PURE-WAVE2-END*/
+
+
 // ---------------- حالات الأقسام الصريحة (بند ٩) ----------------
 // حالة كل قسم أساسي لوحده: تحميله وفشله وآخر قراءة ناجحة
 // له، من غير ما فشل جهة يمسح بيانات جهة تانية. الفشل بعد
@@ -1784,9 +2046,10 @@ function renderSectionStatus(key){
   if (kind === "loading") {
     el.innerHTML = "بيحمّل القسم ده…";
   } else if (kind === "failed") {
-    el.innerHTML = 'القسم ده ما اتقراش دلوقتي. <button type="button" data-section-retry="' + esc(key) + '">حاول تاني</button>';
+    el.innerHTML = (key === "home" ? "مش قادرين نجيب الحالات دلوقتي. " : "القسم ده ما اتقراش دلوقتي. ") +
+      '<button type="button" data-section-retry="' + esc(key) + '">حاول تاني</button>';
   } else if (kind === "stale") {
-    el.innerHTML = "المعروض قديم — آخر قراءة ناجحة " + esc(fmtClock(st.lastOk)) +
+    el.innerHTML = (key === "home" ? "مش قادرين نجيب الحالات دلوقتي — المعروض قديم، آخر قراءة ناجحة " : "المعروض قديم — آخر قراءة ناجحة ") + esc(fmtClock(st.lastOk)) +
       '. <button type="button" data-section-retry="' + esc(key) + '">حاول تاني</button>';
   } else if (kind === "ok") {
     el.innerHTML = "آخر قراءة ناجحة " + esc(fmtClock(st.lastOk)) + ".";
@@ -1972,7 +2235,7 @@ function renderResults(data){
   custState.store.forEach(function(r, i){
     var label = r.email || r.id || r.customer_id || "—";
     html += '<div class="result-row" data-open-store="' + i + '">' +
-      '<div class="who"><b>' + esc(label) + ' <span class="badge store">موقع</span></b>' +
+      '<div class="who"><b>' + ltrWrap(label) + ' <span class="badge store">موقع</span></b>' +
       "<small>حساب موقع</small></div>" +
       ((r.balance_egp !== null && r.balance_egp !== undefined && r.balance_egp !== "")
         ? '<div class="bal num">' + fmtNum(r.balance_egp) + ' <small>ج.م</small></div>' : "") +
@@ -2073,12 +2336,12 @@ function statusTxt(map, s){
   return '<span class="status-txt st-mut">' + esc(s || "—") + "</span>";
 }
 var BOT_TOPUP_STATUS = {
-  pending: ["منتظرة", "st-pending"], needs_info: ["محتاج بيانات", "st-pending"],
+  pending: ["مستني مراجعة", "st-pending"], needs_info: ["محتاج بيانات", "st-pending"],
   approved: ["مقبولة", "st-ok"], rejected: ["مرفوضة", "st-bad"],
   invoiced: ["فاتورة مستنية الدفع", "st-pending"]
 };
 var STORE_TOPUP_STATUS = {
-  pending: ["منتظرة", "st-pending"], credited: ["معتمدة", "st-ok"], rejected: ["مرفوضة", "st-bad"]
+  pending: ["مستني مراجعة", "st-pending"], credited: ["معتمدة", "st-ok"], rejected: ["مرفوضة", "st-bad"]
 };
 var BOT_KIND = { credit: "إضافة", debit: "خصم" };
 var STORE_KIND = {
@@ -2116,18 +2379,19 @@ function botTopupsHtml(){
     rows += '<div class="topup-row">' +
       '<div class="amt num">' + fmtNum(amt) + ' ج.م <small>' + esc(t.method_label || "") + "</small></div>" +
       '<div class="sub">' +
-      (t.operation_ref ? 'رقم العملية: <b class="num">' + esc(t.operation_ref) + "</b> · " : "") +
+      (t.operation_ref ? 'رقم العملية: ' + ltrWrap(t.operation_ref) + " · " : "") +
       statusTxt(BOT_TOPUP_STATUS, t.status) +
       (age ? " · " + esc(age) : "") +
       (t.ref_seen_before ? ' · <b style="color:var(--red)">رقم العملية اتشاف قبل كده</b>' : "") +
       "</div>";
     if (t.status === "pending" || t.status === "needs_info") {
       rows += '<div class="row-actions">' +
-        '<button class="btn go small" type="button" data-bdecide="approve" data-bidx="' + i + '">قبول</button>' +
+        '<button class="btn go small" type="button" data-bdecide="approve" data-bidx="' + i + '">قبول</button></div>' +
+        '<details class="more-details"><summary>إجراءات أخرى</summary><div class="row-actions">' +
         '<button class="btn danger small" type="button" data-bdecide="reject" data-bidx="' + i + '">رفض</button>';
       if (t.status === "pending")
         rows += '<button class="btn ghost small" type="button" data-bdecide="needs_info" data-bidx="' + i + '">محتاج بيانات</button>';
-      rows += "</div>";
+      rows += "</div></details>";
     }
     rows += "</div>";
   });
@@ -2143,15 +2407,16 @@ function storeTopupsHtml(){
     var age = relTime(t.created_at);
     rows += '<div class="topup-row">' +
       '<div class="amt num">' + fmtNum(t.amount_egp) + ' ج.م <small>' + esc(t.payment_method || "") + "</small></div>" +
-      '<div class="sub">المُرسل: <b class="num">' + esc(t.sender_account || "—") + "</b>" +
-      (t.transfer_ref ? ' · رقم العملية: <b class="num">' + esc(t.transfer_ref) + "</b>" : "") +
+      '<div class="sub">المُرسل: ' + ltrWrap(t.sender_account || "—") +
+      (t.transfer_ref ? ' · رقم العملية: ' + ltrWrap(t.transfer_ref) : "") +
       " · " + statusTxt(STORE_TOPUP_STATUS, t.status) +
       (age ? " · " + esc(age) : "") + "</div>";
     if (t.status === "pending") {
       rows += '<div class="row-actions">' +
-        '<button class="btn go small" type="button" data-sdecide="approve" data-sidx="' + i + '">قبول</button>' +
+        '<button class="btn go small" type="button" data-sdecide="approve" data-sidx="' + i + '">قبول</button></div>' +
+        '<details class="more-details"><summary>إجراءات أخرى</summary><div class="row-actions">' +
         '<button class="btn danger small" type="button" data-sdecide="reject" data-sidx="' + i + '">رفض</button>' +
-        "</div>";
+        "</div></details>";
     }
     rows += "</div>";
   });
@@ -2248,6 +2513,20 @@ function botSheerHtml(){
   return '<section class="card"><h2>طلبات تحقق أخيرة</h2>' + rows + "</section>";
 }
 
+function chatSectionHtml(){
+  if (!custFile.bot) return "";
+  var conv = custFile.bot.conversation || {};
+  var lastAge = relTime(conv.last_at);
+  var html = '<section class="card"><h2>المحادثة</h2>';
+  if (conv.last_at) {
+    html += '<div class="sub">آخر تفاعل: رسالة من ' + esc(senderName(conv.last_sender)) + (lastAge ? " · " + esc(lastAge) : "") + "</div>";
+  } else {
+    html += '<div class="sub">مفيش محادثات مسجلة مع العميل ده.</div>';
+  }
+  html += '<div class="row-actions"><button class="btn small" type="button" data-open-chat="1">افتح محادثة</button></div></section>';
+  return html;
+}
+
 function renderFile(){
   var wrap = $("custFile");
   var bot = custFile.bot, store = custFile.store;
@@ -2257,39 +2536,35 @@ function renderFile(){
   // رأسيّة الهوية من السطح المحمّل
   html += '<section class="card"><h2>ملف العميل</h2>';
   if (bot) {
-    html += '<div class="sub">رقم العميل (تليجرام): <b class="num">' + esc(bot.customer.ref || custFile.botRef) + '</b> <span class="badge bot">بوت</span></div>';
-    var conv = bot.conversation || {};
-    var lastAge = relTime(conv.last_at);
-    if (conv.last_at) {
-      html += '<div class="sub">آخر تفاعل: رسالة من ' + esc(senderName(conv.last_sender)) + (lastAge ? " · " + esc(lastAge) : "") + "</div>";
-    } else {
-      html += '<div class="sub">آخر تفاعل: مفيش محادثات مسجلة.</div>';
-    }
+    html += '<div class="sub">رقم العميل (تليجرام): ' + ltrWrap(bot.customer.ref || custFile.botRef) + ' <span class="badge bot">بوت</span></div>';
     if (bot.customer.wallet_created_at) {
       var wc = relTime(bot.customer.wallet_created_at);
       html += '<div class="sub">المحفظة اتعملت: ' + esc(wc || "") + "</div>";
     }
-    html += '<div class="row-actions"><button class="btn small" type="button" data-open-chat="1">افتح محادثة</button></div>';
   }
   if (store) {
-    html += '<div class="sub">حساب الموقع: <b>' + esc(store.customer.email || store.customer.id || "") + '</b> <span class="badge store">موقع</span></div>';
+    html += '<div class="sub">حساب الموقع: ' + ltrWrap(store.customer.email || store.customer.id || "") + ' <span class="badge store">موقع</span></div>';
     if (store.customer.email && store.customer.id) {
-      html += '<div class="sub">رقم الحساب: <b class="num">' + esc(store.customer.id) + "</b></div>";
+      html += '<div class="sub">رقم الحساب: ' + ltrWrap(store.customer.id) + "</div>";
     }
   }
   html += "</section>";
 
+  // ترتيب ملف العميل (بند ١١): المحفظتين منفصلتين الأول —
+  // ومفيش أي رقم بيجمعهم أبدًا — وبعدها الطلبات، الشحنات،
+  // المحادثة، ومهام التحقق، وبعدها التحكم والحظر.
   html += walletCardHtml("bot");
-  html += customerControlHtml();
   html += walletCardHtml("store");
-  html += storeBanHtml();
-  html += botTopupsHtml();
-  html += storeTopupsHtml();
   html += botLedgerHtml();
   html += storeLedgerHtml();
   html += botOrdersHtml();
   html += storeOrdersHtml();
+  html += botTopupsHtml();
+  html += storeTopupsHtml();
+  html += chatSectionHtml();
   html += botSheerHtml();
+  html += customerControlHtml();
+  html += storeBanHtml();
 
   wrap.innerHTML = html;
   wrap.classList.remove("hidden");
@@ -2422,7 +2697,7 @@ function customerControlHtml(){
   });
   html += '<div class="sub" style="margin-top:12px"><b>الوسوم:</b> ' +
     ((c.tags && c.tags.length) ? c.tags.map(function(t){
-      return '<span class="badge bot">' + esc(t) + ' <a href="#" data-tag-del="' + esc(t) + '" style="color:inherit">✕</a></span>';
+      return '<span class="badge bot">' + esc(t) + '</span> <button class="btn ghost small" type="button" data-tag-del="' + esc(t) + '">إزالة الوسم</button>';
     }).join(' ') : 'مفيش وسوم') +
     ' <button class="btn secondary" type="button" data-tag-new>أضف وسم</button></div>';
   html += '<div class="sub"><b>حساب الموقع المرتبط:</b> ' +
@@ -2816,7 +3091,7 @@ var moneyState = { store: [], bot: [], botUnavailable: false, storeFailed: false
 
 function settingValueText(meta, v){
   if (v === null || v === undefined || v === "") return "مش متظبط";
-  if (meta && meta.kind === "bool") return (v === true || v === "true") ? "شغال" : "واقف";
+  if (meta && meta.kind === "bool") return (v === true || v === "true") ? "شغال" : "متوقف";
   if (meta && meta.kind === "words") {
     var wordsList = null;
     try { var parsedWords = JSON.parse(v); if (Array.isArray(parsedWords)) wordsList = parsedWords; } catch (e) {}
@@ -2972,7 +3247,7 @@ function openSettingEdit(surface, row){
     var on = cur === true || cur === "true";
     body += '<div class="field"><label>الحالة</label><div style="display:flex; align-items:center; gap:8px;">' +
       '<label class="switch"><input type="checkbox" id="setVal"' + (on ? " checked" : "") + '><span class="track"></span></label>' +
-      '<span id="setValWord">' + (on ? "شغال" : "واقف") + "</span></div></div>";
+      '<span id="setValWord">' + (on ? "شغال" : "متوقف") + "</span></div></div>";
   } else if (meta.kind === "packages") {
     body += '<div class="field"><label>أسماء التطبيقات (بين كل اسم والتاني فاصلة)</label>' +
       '<textarea id="setVal" rows="3">' + esc(cur == null ? "" : cur) + "</textarea>" +
@@ -3024,7 +3299,7 @@ function openSettingEdit(surface, row){
 
   if (meta.kind === "bool") {
     $("setVal").addEventListener("change", function(){
-      $("setValWord").textContent = $("setVal").checked ? "شغال" : "واقف";
+      $("setValWord").textContent = $("setVal").checked ? "شغال" : "متوقف";
     });
   }
   if (meta.kind === "address") {
@@ -3425,7 +3700,7 @@ function renderOrdList(){
       statusTxt(ORD_STATUS, o.status) +
       (ordCustomerOf(o) ? ' · العميل: <b class="num">' + esc(ordCustomerOf(o)) + "</b>" : "") +
       (age ? " · " + esc(age) : "") + "</div>" +
-      (err ? '<div class="sub" style="color:var(--red)">خطأ المورد: ' + esc(err) + "</div>" : "") +
+      (err ? '<details class="more-details"><summary>تفاصيل</summary><div class="sub" style="color:var(--red)">خطأ المورد: ' + esc(err) + "</div></details>" : "") +
       '<div class="row-actions"><button class="btn small" type="button" data-ord-open="' + i + '">التفاصيل</button></div></div>';
   });
   wrap.innerHTML = rows;
@@ -3500,14 +3775,15 @@ function renderManualList(){
       (age ? " · " + esc(age) : "") + "</div>" +
       (t.amount_note ? '<div class="sub">' + esc(t.amount_note) + "</div>" : "") +
       (t.stars_ref ? '<div class="sub">مرجع الدفع: <b class="num">' + esc(t.stars_ref) + "</b></div>" : "");
-    var acts = "";
+    var primary = "";
     if (t.status === "waiting_payment")
-      acts += '<button class="btn go small" type="button" data-mt-pay="' + i + '">تسجيل الدفع</button>';
+      primary = '<button class="btn go small" type="button" data-mt-pay="' + i + '">تسجيل الدفع</button>';
     if (t.status === "waiting_execution")
-      acts += '<button class="btn go small" type="button" data-mt-deliver="' + i + '">تسليم للعميل</button>';
+      primary = '<button class="btn go small" type="button" data-mt-deliver="' + i + '">تسليم للعميل</button>';
+    if (primary) rows += '<div class="row-actions">' + primary + "</div>";
     if (t.status !== "delivered" && t.status !== "cancelled")
-      acts += '<button class="btn danger small" type="button" data-mt-cancel="' + i + '">إلغاء المهمة</button>';
-    if (acts) rows += '<div class="row-actions">' + acts + "</div>";
+      rows += '<details class="more-details"><summary>إجراءات أخرى</summary><div class="row-actions">' +
+        '<button class="btn danger small" type="button" data-mt-cancel="' + i + '">إلغاء المهمة</button></div></details>';
     rows += "</div>";
   });
   wrap.innerHTML = rows;
@@ -3609,6 +3885,7 @@ function renderStoreOrdList(){
       (firstItem ? ' · ' + esc(firstItem) : "") +
       (o.payment ? ' · الدفع: ' + esc(o.payment) : "") +
       (age ? " · " + esc(age) : "") + "</div>" +
+      (o.created_at ? '<details class="more-details"><summary>تفاصيل</summary><div class="sub">اتعمل: ' + esc(fmtDT(o.created_at)) + "</div></details>" : "") +
       '<div class="row-actions"><button class="btn ghost small" type="button" data-so-status="' + i + '">تغيير الحالة</button></div></div>';
   });
   wrap.innerHTML = rows;
@@ -3744,12 +4021,26 @@ function renderOrdDetail(){
   var o = d.data.order || d.data;
   var kind = d.kind || ordKindOf(o);
   var err = ordErrorOf(o);
+  var tl0 = pickArr(d.data, ["timeline", "attempts"]);
+  if (!tl0.length && Array.isArray(o.timeline)) tl0 = o.timeline;
+  if (!tl0.length && Array.isArray(o.attempts)) tl0 = o.attempts;
+  var lastStep = "";
+  if (tl0.length) {
+    var lt = tl0[tl0.length - 1];
+    var ltText = lt.detail || lt.text || lt.label || lt.status || lt.action || "";
+    if (ltText && ORD_STATUS[ltText]) ltText = ORD_STATUS[ltText][0];
+    var ltEv = ORD_TIMELINE_EVENT[lt.event] || "";
+    lastStep = ltEv && ltText ? ltEv + " — " + ltText : (ltEv || ltText);
+  }
+  if (!lastStep) lastStep = "الحالة الحالية: " + ((ORD_STATUS[o.status] || [o.status || "—"])[0]);
   html += '<section class="card"><h2>' + esc(ordProductOf(o)) + ' <span class="badge kind">' + esc(ORD_KIND[kind] || "طلب") + "</span></h2>" +
     '<div class="kv"><span class="k">الحالة</span><span class="v">' + statusTxt(ORD_STATUS, o.status) + "</span></div>" +
+    '<div class="kv"><span class="k">آخر خطوة مؤكدة</span><span class="v">' + esc(lastStep) + "</span></div>" +
+    '<div class="kv"><span class="k">المطلوب منك دلوقتي</span><span class="v">' + esc(adminNextStep(kind, o.status)) + "</span></div>" +
     '<div class="kv"><span class="k">السعر وقت الطلب</span><span class="v num">' + fmtNum(ordAmountOf(o)) + " ج.م</span></div>" +
-    (ordCustomerOf(o) ? '<div class="kv"><span class="k">العميل</span><span class="v num">' + esc(ordCustomerOf(o)) + "</span></div>" : "") +
-    (o.created_at ? '<div class="kv"><span class="k">اتعمل</span><span class="v">' + esc(relTime(o.created_at) || "") + "</span></div>" : "") +
-    ((o.operation_ref || o.external_ref) ? '<div class="kv"><span class="k">رقم عملية المورد</span><span class="v num">' + esc(o.operation_ref || o.external_ref) + "</span></div>" : "") +
+    (ordCustomerOf(o) ? '<div class="kv"><span class="k">العميل</span><span class="v">' + ltrWrap(ordCustomerOf(o)) + "</span></div>" : "") +
+    (o.created_at ? '<div class="kv"><span class="k">اتعمل</span><span class="v">' + esc(relTime(o.created_at) || "") + " · " + esc(fmtDT(o.created_at)) + "</span></div>" : "") +
+    ((o.operation_ref || o.external_ref) ? '<div class="kv"><span class="k">رقم عملية المورد</span><span class="v">' + ltrWrap(o.operation_ref || o.external_ref) + "</span></div>" : "") +
     ((o.provider_name || o.provider) ? '<div class="kv"><span class="k">المورد</span><span class="v">' + esc(o.provider_name || o.provider) + "</span></div>" : "") +
     (err ? '<div class="kv"><span class="k">خطأ المورد</span><span class="v" style="color:var(--red)">' + esc(err) + "</span></div>" : "") +
     (o.note ? '<div class="kv"><span class="k">ملحوظة</span><span class="v">' + esc(o.note) + "</span></div>" : "") +
@@ -3807,25 +4098,41 @@ function renderOrdDetail(){
     html += "</section>";
   }
 
-  // شريط الإجراءات الأساسي حسب نوع الطلب
+  // أفعال الطلب: الأساسي منها الصالح لحالة الطلب بس، والباقي
+  // في «إجراءات أخرى» — والفعل غير الصالح بيظهر معطّل وجنبه
+  // سببه المفهوم بدل ما يتنفذ ويترفض من الخادم.
+  var acts = orderActionsForState(kind, o.status);
+  function oaPrimary(act, label, cls){
+    var a = acts[act];
+    if (!a || !a.ok) return "";
+    return '<button class="btn ' + cls + '" type="button" data-oa="' + act + '">' + label + "</button>";
+  }
+  function oaMenu(act, label, cls){
+    var a = acts[act];
+    if (!a) return "";
+    if (a.ok) return '<button class="btn ' + (cls || "secondary") + '" type="button" data-oa="' + act + '">' + label + "</button>";
+    return '<button class="btn secondary" type="button" disabled>' + label + '</button>' +
+      '<div class="sub" style="color:var(--muted); font-size:12px;">' + esc(a.reason) + "</div>";
+  }
   var bar = "";
   if (kind === "shop") {
-    bar = '<button class="btn go" type="button" data-oa="shop-done">تم التسليم</button>' +
-      '<button class="btn secondary" type="button" data-oa="shop-proc">قيد التنفيذ</button>';
+    bar = oaPrimary("shop-done", "تم التسليم", "go") +
+      oaPrimary("shop-proc", "قيد التنفيذ", "secondary");
   } else if (kind === "provider") {
-    bar = '<button class="btn go" type="button" data-oa="prov-exec">أعد المحاولة</button>' +
-      '<button class="btn secondary" type="button" data-oa="to-manual">مورد آخر</button>';
+    bar = oaPrimary("prov-check", "تحقق من الحالة", "go");
   } else if (kind === "sheerid") {
-    bar = '<button class="btn go" type="button" data-oa="sh-settle">أعد فحص التسوية</button>' +
-      '<button class="btn secondary" type="button" data-oa="sh-resend">أعد إرسال التسليم</button>';
+    bar = oaPrimary("sh-settle", "أعد فحص التسوية", "go") +
+      oaPrimary("sh-resend", "أعد إرسال التسليم", "secondary");
   }
-  bar += '<button class="btn ghost" type="button" id="ordMenuBtn" style="flex:0 0 64px;">⋯</button>';
+  bar += '<button class="btn ghost" type="button" id="ordMenuBtn" style="flex:0 0 auto;">إجراءات أخرى</button>';
   html += '<div class="actbar">' + bar + "</div>";
-  html += '<div class="card hidden" id="ordMenu"><h2>إجراءات تانية</h2><div class="menu-list">' +
-    (kind === "provider" ? '<button class="btn secondary" type="button" data-oa="prov-refresh">تحديث الحالة من المورد</button>' : "") +
-    '<button class="btn secondary" type="button" data-oa="to-manual">تحويل ليدوي</button>' +
-    '<button class="btn secondary" type="button" data-oa="cancel-refund">إلغاء باسترداد</button>' +
-    '<button class="btn secondary" type="button" data-oa="force">إجبار حالة بسبب</button>' +
+  html += '<div class="card hidden" id="ordMenu"><h2>إجراءات أخرى</h2><div class="menu-list">' +
+    (kind === "provider" ? oaMenu("prov-refresh", "تحديث الحالة من المورد") : "") +
+    (kind === "shop" ? oaMenu("shop-done", "تم التسليم") + oaMenu("shop-proc", "قيد التنفيذ") : "") +
+    (kind === "sheerid" ? oaMenu("sh-settle", "أعد فحص التسوية") + oaMenu("sh-resend", "أعد إرسال التسليم") : "") +
+    oaMenu("to-manual", "تحويل ليدوي") +
+    oaMenu("cancel-refund", "إلغاء باسترداد", "danger") +
+    oaMenu("force", "إجبار حالة بسبب") +
     (ordCustomerOf(o) ? '<button class="btn secondary" type="button" data-oa="open-chat">افتح محادثة العميل</button>' : "") +
     (/^\d+$/.test(String(ordCustomerOf(o) || "")) ? '<button class="btn secondary" type="button" data-oa="open-customer">ملف العميل</button>' : "") +
     "</div></div>";
@@ -3849,8 +4156,8 @@ function ordDetailAction(act){
   } else if (act === "shop-proc") {
     ordConfirm("تعليم الطلب قيد التنفيذ", "تعليم طلب «" + prod + "» إنه بيتنفذ دلوقتي.", "قيد التنفيذ",
       "/control/bot-order-shop-decide", function(){ return { order_id: d.id, action: "processing" }; });
-  } else if (act === "prov-exec") {
-    ordConfirm("إعادة محاولة التنفيذ", "إعادة تنفيذ طلب «" + prod + "» عند المورد. النظام بيفحص حالة العملية الأصلية الأول — مش هيشتري مرتين.", "أعد المحاولة",
+  } else if (act === "prov-check") {
+    ordConfirm("التحقق من حالة التنفيذ", "هنسأل المورد عن حالة عملية طلب «" + prod + "» الأصلية الأول — ولو التنفيذ ما حصلش فعلًا، النظام هيكمله من غير ما يشتري مرتين.", "تحقق من الحالة",
       "/control/bot-order-provider-action", function(){ return { order_id: d.id, action: "execute" }; });
   } else if (act === "prov-refresh") {
     ordConfirm("تحديث الحالة من المورد", "سؤال المورد عن حالة طلب «" + prod + "» دلوقتي وتحديث حالته هنا.", "حدّث الحالة",
@@ -3916,7 +4223,7 @@ function openForceStatusSheet(){
     sheerid: ["needs_review", "failed"]
   };
   var opts = (optsByKind[d.kind] || []).map(function(s){
-    return '<option value="' + s + '">' + esc((ORD_STATUS[s] || [s])[0]) + " (" + s + ")</option>";
+    return '<option value="' + s + '">' + esc((ORD_STATUS[s] || [s])[0]) + "</option>";
   }).join("");
   var body = '<div class="preview"><span class="warn">تغيير الحالة بالإجبار بيعدّي خطوات النظام العادية.</span> استخدمه بس لو متأكد من حالة الطلب الحقيقية بره النظام — والسبب مطلوب وهيتسجل.</div>' +
     '<div class="field"><label>الحالة الجديدة</label><select id="forceStatus">' + opts + "</select></div>" +
@@ -4261,7 +4568,7 @@ function fmtPrice(v){
   if (v === null || v === undefined) return "—";
   var n = Number(v);
   if (!isFinite(n)) return "—";
-  return '<span class="num">' + n.toLocaleString("en-US", { maximumFractionDigits: 2 }) + "</span>";
+  return '<span class="num">' + n.toLocaleString("en-US", { maximumFractionDigits: 2 }) + " ج.م</span>";
 }
 function ensurePricesLoaded(){
   if (pricesState.loaded) return;
@@ -4517,6 +4824,7 @@ function openProductSheet(p){
   var egpNow = egpFromMinor(p.sell_egp_minor);
   var priceEgp = egpNow !== null ? String(egpNow) : "";
   var body =
+    '<div class="group-title">تغيير بيانات</div>' +
     '<div class="field"><label>اسم المنتج</label><input id="pfName" type="text" value="' + esc(p.name || "") + '"></div>' +
     '<div class="field"><label>الوصف</label><textarea id="pfDesc" rows="2">' + esc(p.description || "") + "</textarea></div>" +
     '<div class="field"><label>الفئة</label><select id="pfCategory">' + productCategoryOptions(p.category_id) + "</select></div>" +
@@ -4525,6 +4833,7 @@ function openProductSheet(p){
       (p.stock === null || p.stock === undefined ? "—" : fmtNum(Number(p.stock))) +
       " — " + esc((AVAILABILITY_LABEL[p.availability] || [p.availability || "—"])[0]) + "</div>") +
     '<div class="field"><label>ترتيب العرض</label><input id="pfSort" type="number" step="1" value="' + esc(p.sort_order !== null && p.sort_order !== undefined ? p.sort_order : 0) + '"></div>' +
+    '<div class="group-title">تشغيل تنفيذ</div>' +
     '<div class="field"><label>التسعير</label><div class="seg" id="pfModeSeg">' +
     '<button type="button" data-mode="none" class="on">من غير تغيير</button>' +
     '<button type="button" data-mode="formula">بالمعادلة</button>' +
@@ -4622,7 +4931,7 @@ function loadProductSuppliers(productId){
           opts += '<option value="' + esc(a.supplier_key) + '">' + esc(a.supplier_key) +
             " (" + esc(a.state || "") + ")</option>";
         });
-        html += '<div class="group-title">انقل لمورد آخر</div>' +
+        html += '<div class="group-title">تشغيل تنفيذ — انقل لمورد آخر</div>' +
           '<div class="field"><label>المورد الهدف</label><select id="pfFailoverTarget">' + opts + "</select></div>" +
           '<div class="field"><label>سبب النقل (مطلوب)</label><input id="pfFailoverReason" type="text"></div>' +
           '<div class="msg" id="pfFailoverMsg"></div>' +
@@ -5092,7 +5401,7 @@ function renderEngineList(){
         : "مفيش مفاتيح محفوظة") + "</small>" +
       (active ? "<small>" + esc(supplierBalanceLine(s.slug)) + "</small>" : "") + "</div>" +
       '<div class="bal"><span class="status-txt ' + (active ? "st-ok" : "st-mut") + '">' +
-      (active ? "شغال" : "واقف") + "</span>" +
+      (active ? "شغال" : "متوقف") + "</span>" +
       (s.dry_run ? '<small class="status-txt st-pending">وضع التجربة شغال</small>' : "") +
       "</div></div>";
   });
@@ -5143,13 +5452,14 @@ function openEngineSheet(s){
   var body =
     '<div class="kv"><span>الحالة</span><span class="status-txt ' +
     (s.status === "active" ? "st-ok" : "st-mut") + '">' +
-    (s.status === "active" ? "شغال" : "واقف") + "</span></div>" +
+    (s.status === "active" ? "شغال" : "متوقف") + "</span></div>" +
     '<div class="kv"><span>وضع التجربة (الشراء بيتحاكى بس)</span><span>' +
-    (s.dry_run ? "شغال" : "واقف") + "</span></div>" +
+    (s.dry_run ? "شغال" : "متوقف") + "</span></div>" +
     '<div class="kv"><span>آخر مزامنة</span><span>' +
     esc(s.last_sync_at ? relTime(s.last_sync_at) : "لسه") + "</span></div>" +
     '<div class="kv"><span>المفاتيح المحفوظة (الأسماء بس)</span><span>' +
     esc(s.has_secrets ? ((s.secrets_set || []).join("، ") || "—") : "مفيش") + "</span></div>" +
+    '<div class="group-title">تشغيل تنفيذ</div>' +
     '<div class="row-actions" style="margin-top:12px;">' +
     (s.status === "active"
       ? '<button class="btn danger small" type="button" data-eng-op="disable">إيقاف المورد</button>'
@@ -5160,8 +5470,9 @@ function openEngineSheet(s){
     '<button class="btn secondary small" type="button" data-eng-op="sync">مزامنة دلوقتي</button>' +
     '<button class="btn secondary small" type="button" data-eng-op="test">اختبار الاتصال</button>' +
     '<button class="btn secondary small" type="button" data-eng-op="balance">قراءة الرصيد</button>' +
-    '<button class="btn ghost small" type="button" id="engLinksBtn">روابط المورد</button>' +
     "</div>" +
+    '<div class="group-title">بيانات وروابط</div>' +
+    '<div class="row-actions"><button class="btn ghost small" type="button" id="engLinksBtn">روابط المورد</button></div>' +
     '<div id="engResult" style="margin-top:12px;"></div>';
   openActSheet("مورد: " + (s.name || s.slug), body, "تمام", function(){}, "suppliers");
   document.querySelectorAll("[data-eng-op]").forEach(function(b){
@@ -5222,6 +5533,7 @@ function openRegistrySheet(r){
   var isNew = !r;
   r = r || { name: "", kind: "manual", status: "prospective", account: "", contact: "", notes: "" };
   var body =
+    '<div class="group-title">تغيير بيانات</div>' +
     (isNew
       ? '<div class="field"><label>اسم المورد</label><input id="rgName" type="text"></div>'
       : '<div class="kv" style="margin-bottom:10px;"><span>اسم المورد</span><span><b>' +
@@ -5383,7 +5695,7 @@ $("registryNewBtn").addEventListener("click", function(){ openRegistrySheet(null
 // ============================================================
 
 var EV_SOURCE_LABELS = { sms: "رسالة بنك", app_notification: "إشعار تطبيق", binance: "Binance", bybit: "Bybit" };
-var EV_STATUS_LABELS = { pending: "ينتظر", done: "تم", ignored: "متجاهل", closed: "منتهي" };
+var EV_STATUS_LABELS = { pending: "مستني مراجعة", done: "تم", ignored: "متجاهل", closed: "منتهي" };
 var EV_CONF_LABELS = { high: "ثقة عالية", medium: "ثقة متوسطة", low: "ثقة قليلة" };
 var EV_REPORT_LABELS = {
   matched: "اتطابق واتشحن", auto_credited: "اتشحن تلقائي",
@@ -5634,36 +5946,41 @@ function storeEventCard(it){
   var html = '<div class="ev-row"><div class="who">' +
     '<b class="num">' + esc(evAmountText(it)) + "</b> " +
     badge + " " + evConfBadge(it.confidence) +
-    "<small>" + esc(EV_SOURCE_LABELS[it.source] || it.source) +
+    "<small>مصدر الفلوس: " + esc(EV_SOURCE_LABELS[it.source] || it.source) +
     (age ? " · " + esc(age) : "");
   if (!isDep && it.sender_masked) {
-    html += '<br>المُرسل: <span class="num">' + esc(it.sender_masked) + "</span>";
+    html += '<br>المُرسل: ' + ltrWrap(it.sender_masked);
   }
   if (it.body) {
     html += "<br>" + esc(String(it.body).slice(0, 300));
   }
   if (it.ref) {
-    html += '<br>رقم العملية: <span class="num">' + esc(it.ref) + "</span>";
+    html += '<br>رقم العملية: ' + ltrWrap(it.ref);
   }
   var matchedKeys = it.matched ? Object.keys(it.matched) : [];
   if (matchedKeys.length) {
-    html += "<br>اتربط بـ: " + matchedKeys.map(function(k){
-      return esc(k) + ' <span class="num">' + esc(it.matched[k]) + "</span>";
+    html += "<br>اتستخدم: أيوه — اتربط بـ: " + matchedKeys.map(function(k){
+      return esc(k) + " " + ltrWrap(it.matched[k]);
     }).join(" · ");
+  } else if (it.status === "done") {
+    html += "<br>اتستخدم: أيوه — الحدث اتقفل كمستخدم";
+  } else {
+    html += "<br>اتستخدم: لسه ما اتستخدمش";
   }
   html += "</small></div>";
   var acts = "";
+  var otherActs = "";
   if (it.status === "pending") {
     acts += '<button class="btn small" type="button" data-ev-act="approve" data-ev-id="' +
       esc(it.id) + '" data-ev-source="' + esc(it.source) + '">اعتماد</button>';
     if (!isDep) {
-      acts += '<button class="btn ghost small" type="button" data-ev-act="ignore" data-ev-id="' +
+      otherActs += '<button class="btn ghost small" type="button" data-ev-act="ignore" data-ev-id="' +
         esc(it.id) + '" data-ev-source="' + esc(it.source) + '">تجاهل</button>';
     }
-    acts += '<button class="btn ghost small" type="button" data-ev-act="rematch" data-ev-id="' +
+    otherActs += '<button class="btn ghost small" type="button" data-ev-act="rematch" data-ev-id="' +
       esc(it.id) + '" data-ev-source="' + esc(it.source) + '">إعادة معالجة</button>';
     if (isDep) {
-      acts += '<button class="btn ghost small" type="button" data-ev-act="settle_manually" data-ev-id="' +
+      otherActs += '<button class="btn ghost small" type="button" data-ev-act="settle_manually" data-ev-id="' +
         esc(it.id) + '" data-ev-source="' + esc(it.source) + '">تسوية يدوية</button>';
     }
   } else if (it.status === "ignored" && !isDep) {
@@ -5671,6 +5988,7 @@ function storeEventCard(it){
       esc(it.id) + '" data-ev-source="' + esc(it.source) + '">إلغاء التجاهل</button>';
   }
   if (acts) html += '<div class="row-actions">' + acts + "</div>";
+  if (otherActs) html += '<details class="more-details"><summary>إجراءات أخرى</summary><div class="row-actions">' + otherActs + "</div></details>";
   html += "</div>";
   return html;
 }
@@ -5701,14 +6019,14 @@ function botTopupCard(t, idx){
     (t.method_label ? " · " + esc(t.method_label) : "") +
     " · " + statusTxt(BOT_TOPUP_STATUS, t.status) +
     (age ? " · " + esc(age) : "") +
-    '<br>العميل: <span class="num">' + esc(t.customer_ref || "—") + "</span>" +
+    '<br>العميل: ' + ltrWrap(t.customer_ref || "—") +
     (t.operation_ref
-      ? ' · رقم العملية: <span class="num">' + esc(t.operation_ref) + "</span>" : "") +
+      ? ' · رقم العملية: ' + ltrWrap(t.operation_ref) : "") +
     "</small></div>";
   html += '<div class="row-actions">' +
     '<button class="btn ghost small" type="button" data-ev-cust="' + idx + '">ملف العميل</button></div>';
   if (t.status === "pending") {
-    html += '<div class="row-actions">' +
+    html += '<details class="more-details"><summary>إجراءات أخرى</summary><div class="row-actions">' +
       '<button class="btn ghost small" type="button" data-ev-link-toggle="' + idx + '">اربط بحدث</button></div>' +
       '<div class="hidden" id="evLinkForm' + idx + '" style="margin-top:8px;">' +
       '<div class="row-actions">' +
@@ -5720,7 +6038,7 @@ function botTopupCard(t, idx){
       "</div>" +
       '<button class="btn small" type="button" data-ev-link-go="' + idx +
       '" data-ev-topup="' + esc(t.id) + '" style="margin-top:8px;">اربط</button>' +
-      "</div>";
+      "</div></details>";
   }
   html += "</div>";
   return html;
@@ -5923,7 +6241,7 @@ function renderExclSheetBody(){
   var chips = evState.exclusions.map(function(w, i){
     return '<span class="chip">' + esc(w) +
       ' <button type="button" data-excl-del="' + i +
-      '" style="background:none;border:none;color:inherit;cursor:pointer;font:inherit;">✕</button></span>';
+      '" class="chip-del">حذف</button></span>';
   }).join(" ");
   $("actBody").innerHTML =
     '<div class="preview">أي رسالة بتوصل أو بتتلصق وفيها كلمة من دول بتتخطى ومش بتتدخل صندوق الأحداث أصلًا.</div>' +
@@ -6030,15 +6348,15 @@ function renderComponents(){
   }
   html += evComponentRow("طريق رسائل البوت",
     "شحنات البوت من رسائل البنك: " +
-    (evLaneOn("sms_auto") === null ? "مش معروف" : evLaneOn("sms_auto") ? "شغال" : "واقف") + ".",
+    (evLaneOn("sms_auto") === null ? "مش معروف" : evLaneOn("sms_auto") ? "شغال" : "متوقف") + ".",
     "sms_auto");
   html += evComponentRow("طريق منصات البوت",
     "شحنات البوت من إيداعات المنصات: " +
-    (evLaneOn("exchange_auto") === null ? "مش معروف" : evLaneOn("exchange_auto") ? "شغال" : "واقف") + ".",
+    (evLaneOn("exchange_auto") === null ? "مش معروف" : evLaneOn("exchange_auto") ? "شغال" : "متوقف") + ".",
     "exchange_auto");
   html += evComponentRow("النجوم",
     "شحن البوت بالنجوم: " +
-    (evLaneOn("stars") === null ? "مش معروف" : evLaneOn("stars") ? "شغال" : "واقف") + ".",
+    (evLaneOn("stars") === null ? "مش معروف" : evLaneOn("stars") ? "شغال" : "متوقف") + ".",
     "stars");
   // العناوين عرض فقط من إعدادات الفلوس (قسم العملاء) — تعديلها من هناك.
   var addrB = moneyState.store.find(function(r){ return r.key === "deposit_address_binance"; });
@@ -6325,16 +6643,16 @@ var MENU_BUTTON_SCREENS = [
   { value: "mrc:home", name: "قسم التجار" }
 ];
 var MENU_CORE_BUTTONS = [
-  { key: "shop", name: "المتجر والمنتجات", emoji: "🛍️", noHide: false },
-  { key: "webapp", name: "المتجر بالصور", emoji: "🖼️", noHide: false },
-  { key: "wallet", name: "محفظتي", emoji: "💰", noHide: true },
-  { key: "orders", name: "طلباتي وحالتها", emoji: "🧾", noHide: false },
-  { key: "topup", name: "شحن المحفظة", emoji: "💳", noHide: true },
-  { key: "history", name: "سجل المعاملات", emoji: "📜", noHide: false },
-  { key: "support", name: "الدعم وخدمة العملاء", emoji: "💬", noHide: false },
-  { key: "merchant", name: "Merchant API", emoji: "🔌", noHide: false },
-  { key: "report", name: "الإبلاغ عن مشكلة", emoji: "🚨", noHide: false },
-  { key: "channel", name: "انضم لقناتنا", emoji: "🔗", noHide: false }
+  { key: "shop", name: "المتجر والمنتجات", emoji: "", noHide: false },
+  { key: "webapp", name: "المتجر بالصور", emoji: "", noHide: false },
+  { key: "wallet", name: "محفظتي", emoji: "", noHide: true },
+  { key: "orders", name: "طلباتي وحالتها", emoji: "", noHide: false },
+  { key: "topup", name: "شحن المحفظة", emoji: "", noHide: true },
+  { key: "history", name: "سجل المعاملات", emoji: "", noHide: false },
+  { key: "support", name: "الدعم وخدمة العملاء", emoji: "", noHide: false },
+  { key: "merchant", name: "Merchant API", emoji: "", noHide: false },
+  { key: "report", name: "الإبلاغ عن مشكلة", emoji: "", noHide: false },
+  { key: "channel", name: "انضم لقناتنا", emoji: "", noHide: false }
 ];
 function menuScreenOptions(){ return MENU_BUTTON_SCREENS; }
 function menuCoreButtons(){ return MENU_CORE_BUTTONS; }
@@ -6962,7 +7280,7 @@ function renderContentButtons(){
         '<input type="checkbox" data-mov-field="hidden" data-mov-key="' + c.key + '"' +
         (ov.hidden ? " checked" : "") + "> إخفاء الزر ده من القائمة</label>";
     return '<div class="result-row" style="cursor:default"><div style="flex:1;">' +
-      "<b>" + esc(c.emoji) + " " + esc(c.name) + '</b> <span class="sub">(الشكل الافتراضي)</span>' +
+      "<b>" + (c.emoji ? esc(c.emoji) + " " : "") + esc(c.name) + '</b> <span class="sub">(الشكل الافتراضي)</span>' +
       '<div class="field" style="margin-top:8px;"><label>اسم جديد (سيبه فاضي لو عايز الافتراضي)</label>' +
       '<input type="text" data-mov-field="label" data-mov-key="' + c.key + '" value="' + esc(ov.label || "") + '"></div>' +
       '<div class="field"><label>إيموجي جديد (سيبه فاضي لو عايز الافتراضي)</label>' +
@@ -7187,7 +7505,7 @@ function renderSettingRows(){
     var head = '<div class="result-row" style="cursor:default"><div style="flex:1;"><b>' +
       label + "</b>" + setNoLabelBadge(e);
     if (kind === "secret") {
-      return head + '<div style="margin-top:8px;"><span class="badge gold">محفوظ</span>' +
+      return head + '<div style="margin-top:8px;"><span class="badge mut">محفوظ</span>' +
         ' <span class="sub">القيمة ما بتظهرش ولا بتتعدل من اللوحة.</span></div></div></div>';
     }
     if (e.editable === false) {
@@ -7199,7 +7517,7 @@ function renderSettingRows(){
       return head + '<div style="display:flex; align-items:center; gap:8px; margin-top:8px;">' +
         '<label class="switch"><input type="checkbox" data-set-bool="' + i + '"' +
         (on ? " checked" : "") + '><span class="track"></span></label>' +
-        "<span>" + (on ? "شغال" : "واقف") + "</span></div></div></div>";
+        "<span>" + (on ? "شغال" : "متوقف") + "</span></div></div></div>";
     }
     if (kind === "json") {
       var txt = typeof e.value === "string" ? e.value
@@ -7556,7 +7874,7 @@ function renderSchedValueControl(){
   if (!entry) { wrap.innerHTML = ""; return; }
   var kind = setKindOf(entry);
   if (kind === "bool") {
-    wrap.innerHTML = '<select id="schedValue"><option value="true">شغال</option><option value="false">واقف</option></select>';
+    wrap.innerHTML = '<select id="schedValue"><option value="true">شغال</option><option value="false">متوقف</option></select>';
   } else if (kind === "number") {
     wrap.innerHTML = '<input id="schedValue" type="number" step="any">';
   } else if ((entry.kind || entry.type) === "text") {
@@ -7759,9 +8077,11 @@ function channelActionsHtml(it, st){
   if (st.key === "posting") return '<span class="sub" style="color:var(--muted);">النشر شغال دلوقتي — حدّث القائمة بعد شوية.</span>';
   if (st.key === "published")
     return '<button class="btn ghost small" type="button" data-chn-editpub="' + esc(it.id) + '">تعديل النص</button>' +
-      '<button class="btn ghost small" type="button" data-chn-delpub="' + esc(it.id) + '">حذف المنشور</button>';
+      '<details class="more-details"><summary>إجراءات أخرى</summary><div class="row-actions">' +
+      '<button class="btn danger small" type="button" data-chn-delpub="' + esc(it.id) + '">حذف المنشور من القناة</button></div></details>';
   return '<button class="btn ghost small" type="button" data-chn-edit="' + esc(it.id) + '">تعديل</button>' +
-    '<button class="btn ghost small" type="button" data-chn-del="' + esc(it.id) + '">حذف</button>';
+    '<details class="more-details"><summary>إجراءات أخرى</summary><div class="row-actions">' +
+    '<button class="btn danger small" type="button" data-chn-del="' + esc(it.id) + '">حذف</button></div></details>';
 }
 // خطأ نشر القناة: لو النص الخام كود معروف عند errText نعرض ترجمته
 // الواضحة، والنص الخام بيظهر صغير تحته للتشخيص بس.
@@ -7879,7 +8199,7 @@ $("chnOfferBtn").addEventListener("click", function(){
   var price = egpFromMinor(p.sell_egp_minor);
   $("chnText").value = (p.name || "") +
     (price !== null ? "\nالسعر: " + fmtNum(price) + " ج.م" : "") +
-    "\nاطلبه دلوقتي من البوت 👇";
+    "\nاطلبه دلوقتي من البوت";
   showChannelMsg("ok", "اتملأ النص من المنتج — راجعه وعدّله قبل الحفظ.");
 });
 
@@ -7927,17 +8247,19 @@ $("chnSaveBtn").addEventListener("click", function(){
   var isEdit = channelState.editingId !== null && channelState.editingId !== undefined;
   var body = built.body;
   if (isEdit) body.id = channelState.editingId;
-  var btn = $("chnSaveBtn");
-  btn.disabled = true;
-  api(isEdit ? "/control/bot-channel-update" : "/control/bot-channel-post",
-    { method: "POST", body: body }).then(function(){
-    showChannelMsg("ok", isEdit ? "اتحفظ التعديل." : "اتحفظ المنشور — هيتنشر حسب وقته.");
-    resetChannelForm();
-    loadChannel();
-  }).catch(function(e){
-    if (e && e.noKey) showChannelMsg("err", "لازم تكتب مفتاح الأدمن الأول.", true);
-    else showChannelMsg("err", esc(errText(e, "channel")));
-  }).finally(function(){ btn.disabled = false; });
+  // معاينة قبل الحفظ (بند ١٢): النص والتوقيت والحالة زي ما
+  // هيتحفظوا بالظبط — الحفظ الفعلي بيحصل من ورقة التأكيد بس.
+  var lines = channelPreviewLines(body, isEdit);
+  openActSheet("معاينة المنشور قبل الحفظ",
+    '<div class="preview">' + lines.map(function(l){ return esc(l); }).join("<br>") + "</div>",
+    isEdit ? "حفظ التعديل" : "حفظ المنشور", function(){
+      return api(isEdit ? "/control/bot-channel-update" : "/control/bot-channel-post",
+        { method: "POST", body: body }).then(function(){
+        showChannelMsg("ok", isEdit ? "اتحفظ التعديل." : "اتحفظ المنشور — هيتنشر حسب وقته.");
+        resetChannelForm();
+        loadChannel();
+      });
+    }, "channel");
 });
 function askDeleteChannelDraft(it){
   openActSheet("حذف المنشور",
@@ -8250,7 +8572,7 @@ function renderCouponsList(){
     html += '<div class="result-row" style="flex-direction:column; align-items:stretch;">' +
       '<div style="display:flex; justify-content:space-between; gap:8px;">' +
         '<b dir="ltr">' + esc(c.code) + "</b>" +
-        "<span>" + (c.active ? "شغال" : "واقف") + "</span>" +
+        "<span>" + (c.active ? "شغال" : "متوقف") + "</span>" +
       "</div>" +
       '<div class="sub" style="color:var(--muted); font-size:12px; margin-top:4px;">' +
         "خصم " + esc(fmtNum(c.discount)) + "٪ · الاستخدام: " + esc(couponUsesText(c)) +
@@ -8258,11 +8580,15 @@ function renderCouponsList(){
         (c.min_order_egp !== null && c.min_order_egp !== undefined && c.min_order_egp !== ""
           ? " · أقل طلب " + esc(fmtNum(c.min_order_egp)) + " ج.م" : "") +
       "</div>" +
+      '<details class="more-details"><summary>تفاصيل</summary><div class="sub" style="color:var(--muted); font-size:12px;">' +
+        esc(couponRestrictionsText(c)) + "</div></details>" +
       '<div class="row-actions" style="margin-top:8px;">' +
         '<button class="btn ghost small" type="button" data-cpn-edit="' + esc(c.code) + '">تعديل</button>' +
-        '<button class="btn ghost small" type="button" data-cpn-toggle="' + esc(c.code) + '">' + (c.active ? "إيقاف" : "تفعيل") + "</button>" +
-        (uses <= 0 ? '<button class="btn ghost small" type="button" data-cpn-del="' + esc(c.code) + '">حذف</button>' : "") +
       "</div>" +
+      '<details class="more-details"><summary>إجراءات أخرى</summary><div class="row-actions">' +
+        '<button class="btn ghost small" type="button" data-cpn-toggle="' + esc(c.code) + '">' + (c.active ? "إيقاف الكوبون" : "تفعيل الكوبون") + "</button>" +
+        (uses <= 0 ? '<button class="btn danger small" type="button" data-cpn-del="' + esc(c.code) + '">حذف الكوبون</button>' : "") +
+      "</div></details>" +
     "</div>";
   });
   box.innerHTML = html;
@@ -8376,19 +8702,20 @@ $("cpnSaveBtn").addEventListener("click", function(){
     min_order_egp: $("cpnMinOrder").value === "" ? null : Number($("cpnMinOrder").value),
   };
   if (couponsState.editingCode) body.original_code = couponsState.editingCode;
-  var btn = $("cpnSaveBtn");
-  btn.disabled = true;
-  api("/control/store-coupons-save", { method: "POST", body: body }).then(function(d){
-    if (d.audit_failed)
-      showCouponsMsg("warn", "اتحفظ الكوبون. (ملحوظة: ما اتسجلش في سجل التغييرات — التغيير نفسه نافذ.)");
-    else
-      showCouponsMsg("ok", "اتحفظ الكوبون.");
-    resetCouponForm();
-    loadCoupons();
-  }).catch(function(e){
-    if (e && e.noKey) showCouponsMsg("err", "لازم تكتب مفتاح الأدمن الأول.", true);
-    else showCouponsMsg("err", esc(errText(e, "coupons")));
-  }).finally(function(){ btn.disabled = false; });
+  // معاينة قبل الحفظ (بند ١٢): قيود الكوبون بكلام مفهوم.
+  openActSheet("معاينة الكوبون قبل الحفظ",
+    '<div class="preview">الكود: <b dir="ltr">' + esc(body.code) + "</b><br>" +
+    esc(couponRestrictionsText(body)) + "</div>",
+    "حفظ الكوبون", function(){
+      return api("/control/store-coupons-save", { method: "POST", body: body }).then(function(d){
+        if (d.audit_failed)
+          showCouponsMsg("warn", "اتحفظ الكوبون. (ملحوظة: ما اتسجلش في سجل التغييرات — التغيير نفسه نافذ.)");
+        else
+          showCouponsMsg("ok", "اتحفظ الكوبون.");
+        resetCouponForm();
+        loadCoupons();
+      });
+    }, "coupons");
 });
 function askDeleteCoupon(c){
   openActSheet("حذف الكوبون",
@@ -8628,7 +8955,7 @@ function renderMerchantsList(){
     html += '<div class="result-row" style="flex-direction:column; align-items:stretch;">' +
       '<div style="display:flex; justify-content:space-between; gap:8px;">' +
         "<b>" + esc(merchantNameOf(m)) + "</b>" +
-        "<span>" + (active ? "شغال" : "واقف") + "</span>" +
+        "<span>" + (active ? "شغال" : "متوقف") + "</span>" +
       "</div>" +
       (bits.length ? '<div class="sub" style="color:var(--muted); font-size:12px; margin-top:4px;">' + esc(bits.join(" · ")) + "</div>" : "") +
       (m.id !== null && m.id !== undefined
@@ -8685,7 +9012,7 @@ function renderMerchantDetail(){
   }
   var active = merchantActiveOf(m);
   var html = '<div style="display:flex; justify-content:space-between; gap:8px; align-items:center;">' +
-    "<span>الحالة: <b>" + (active ? "شغال" : "واقف") + "</b></span>" +
+    "<span>الحالة: <b>" + (active ? "شغال" : "متوقف") + "</b></span>" +
     '<button class="btn ghost small" type="button" id="mchToggleBtn">' + (active ? "إيقاف التاجر" : "تفعيل التاجر") + "</button>" +
   "</div>";
   if (!m.activated || !merchantsState.keys.length){
@@ -8704,7 +9031,7 @@ function renderMerchantDetail(){
     html += '<div class="result-row" style="flex-direction:column; align-items:stretch;">' +
       '<div style="display:flex; justify-content:space-between; gap:8px;">' +
         '<b dir="ltr">' + esc(maskedKeyText(k)) + "</b>" +
-        "<span>" + (kActive ? "شغال" : "واقف") + "</span>" +
+        "<span>" + (kActive ? "شغال" : "متوقف") + "</span>" +
       "</div>" +
       '<div class="sub" style="color:var(--muted); font-size:12px; margin-top:4px;">' +
         (lastUsed ? "آخر استخدام: " + esc(fmtDT(lastUsed)) : "لسه ما اتستخدمش") +
@@ -8714,9 +9041,11 @@ function renderMerchantDetail(){
         esc(allowlistText(keyAllowlistOf(k))) + "</textarea></div>" +
       '<div class="row-actions" style="margin-top:8px;">' +
         '<button class="btn ghost small" type="button" data-mch-allowsave="' + idx + '">حفظ العناوين المسموحة</button>' +
-        '<button class="btn ghost small" type="button" data-mch-keytoggle="' + idx + '">' + (kActive ? "إيقاف المفتاح" : "تفعيل المفتاح") + "</button>" +
-        '<button class="btn ghost small" type="button" data-mch-rotate="' + idx + '">تغيير المفتاح (القديم هيتوقف فورًا)</button>' +
       "</div>" +
+      '<details class="more-details"><summary>إجراءات أخرى</summary><div class="row-actions">' +
+        '<button class="btn ghost small" type="button" data-mch-keytoggle="' + idx + '">' + (kActive ? "إيقاف مفتاح التاجر" : "تفعيل مفتاح التاجر") + "</button>" +
+        '<button class="btn danger small" type="button" data-mch-rotate="' + idx + '">تغيير المفتاح (القديم هيتوقف فورًا)</button>' +
+      "</div></details>" +
     "</div>";
   });
 
@@ -8797,47 +9126,54 @@ function toggleMerchant(){
   var m = merchantsState.detail;
   if (!m) return;
   var next = !merchantActiveOf(m);
-  var body = { id: merchantsState.selectedId, active: next };
-  // إيقاف التاجر محروس بالرقم السري (م٦-د) — التفعيل لأ.
-  var ready = next ? Promise.resolve(body) : withPin(body);
-  ready.then(function(b){
-    return api("/control/bot-merchant-set", { method: "POST", body: b });
-  })
-    .then(function(d){
-      if (d && d.audit_failed)
-        showMerchantsMsg("warn", "اتغيّرت حالة التاجر، بس تسجيلها في سجل التغييرات فشل.");
-      else
-        showMerchantsMsg("ok", next ? "اتفعّل التاجر." : "اتوقّف التاجر.");
-      loadMerchants();
-      reloadMerchantDetail();
-    }).catch(function(e){
-      var t = pinGateText(e) || (e && e.userText);
-      if (t) { showMerchantsMsg("err", t); return; }
-      merchantsErr(e);
-    });
+  var name = merchantNameOf(m);
+  var bodyHtml = next
+    ? "<p>تفعيل التاجر «" + esc(name) + "» — هيرجع يقدر يستخدم واجهة التجار بمفاتيحه الشغالة.</p>" +
+      "<p>تفعيل التاجر مش بيفعّل مفتاح متوقف — كل مفتاح حالته لوحده من «إجراءات أخرى» في صف المفتاح.</p>"
+    : "<p>إيقاف التاجر «" + esc(name) + "» — التاجر نفسه هيتوقف عن استخدام واجهة التجار فورًا بكل مفاتيحه.</p>" +
+      "<p>حالة كل مفتاح لوحده مش هتتغير من الفعل ده — لإيقاف مفتاح بعينه استخدم «إيقاف مفتاح التاجر» في صف المفتاح.</p>";
+  openActSheet(next ? "تفعيل التاجر" : "إيقاف التاجر", bodyHtml,
+    next ? "أكّد تفعيل التاجر" : "أكّد إيقاف التاجر", function(){
+      var body = { id: merchantsState.selectedId, active: next };
+      // إيقاف التاجر محروس بالرقم السري (م٦-د) — التفعيل لأ.
+      var ready = next ? Promise.resolve(body) : withPin(body);
+      return ready.then(function(b){
+        return api("/control/bot-merchant-set", { method: "POST", body: b });
+      }).then(function(d){
+        if (d && d.audit_failed)
+          showMerchantsMsg("warn", "اتغيّرت حالة التاجر، بس تسجيلها في سجل التغييرات فشل.");
+        else
+          showMerchantsMsg("ok", next ? "اتفعّل التاجر." : "اتوقّف التاجر.");
+        loadMerchants();
+        reloadMerchantDetail();
+      }).catch(throwPinGate);
+    }, "merchants");
 }
 function toggleMerchantKey(k){
   var kid = keyIdOf(k);
   if (kid === null){ showMerchantsMsg("err", "المفتاح ده معرّفه مش باين — حدّث القائمة وحاول تاني."); return; }
   var next = !merchantActiveOf(k);
-  var body = { merchant_id: merchantsState.selectedId, key_id: kid,
-    id: kid, active: next };
-  // إيقاف المفتاح محروس بالرقم السري (م٦-د) — التفعيل لأ.
-  var ready = next ? Promise.resolve(body) : withPin(body);
-  ready.then(function(b){
-    return api("/control/bot-merchant-key-set", { method: "POST", body: b });
-  })
-    .then(function(d){
-      if (d && d.audit_failed)
-        showMerchantsMsg("warn", "اتغيّرت حالة المفتاح، بس تسجيلها في سجل التغييرات فشل.");
-      else
-        showMerchantsMsg("ok", next ? "اتفعّل مفتاح الدخول." : "اتوقّف مفتاح الدخول.");
-      reloadMerchantDetail();
-    }).catch(function(e){
-      var t = pinGateText(e) || (e && e.userText);
-      if (t) { showMerchantsMsg("err", t); return; }
-      merchantsErr(e);
-    });
+  var bodyHtml = next
+    ? "<p>تفعيل مفتاح التاجر ده — المفتاح هيرجع يشتغل من العناوين المسموحة له.</p>" +
+      "<p>حالة التاجر نفسه مش هتتغير من الفعل ده.</p>"
+    : "<p>إيقاف مفتاح التاجر ده بس — المفتاح هيتوقف فورًا وأي نظام بيستخدمه هيقف.</p>" +
+      "<p>التاجر نفسه ومفاتيحه التانية مش هيتأثروا — لإيقاف التاجر كله استخدم «إيقاف التاجر» فوق.</p>";
+  openActSheet(next ? "تفعيل مفتاح التاجر" : "إيقاف مفتاح التاجر", bodyHtml,
+    next ? "أكّد تفعيل مفتاح التاجر" : "أكّد إيقاف مفتاح التاجر", function(){
+      var body = { merchant_id: merchantsState.selectedId, key_id: kid,
+        id: kid, active: next };
+      // إيقاف المفتاح محروس بالرقم السري (م٦-د) — التفعيل لأ.
+      var ready = next ? Promise.resolve(body) : withPin(body);
+      return ready.then(function(b){
+        return api("/control/bot-merchant-key-set", { method: "POST", body: b });
+      }).then(function(d){
+        if (d && d.audit_failed)
+          showMerchantsMsg("warn", "اتغيّرت حالة المفتاح، بس تسجيلها في سجل التغييرات فشل.");
+        else
+          showMerchantsMsg("ok", next ? "اتفعّل مفتاح الدخول." : "اتوقّف مفتاح الدخول.");
+        reloadMerchantDetail();
+      }).catch(throwPinGate);
+    }, "merchants");
 }
 function saveKeyAllowlist(k, idx){
   var kid = keyIdOf(k);
@@ -9212,7 +9548,7 @@ $("siteFaqAddBtn").addEventListener("click", function(){
   items.push({ q: "", a: "" });
   renderSiteFaqEditor(items);
 });
-function saveSiteContent(key, value, okText){
+function saveSiteContentNow(key, value, okText){
   return api("/control/site-content-save", { method: "POST",
     body: { key: key, value: value } })
     .then(function(d){
@@ -9223,6 +9559,16 @@ function saveSiteContent(key, value, okText){
       loadSiteContent();
     })
     .catch(siteErr);
+}
+// حفظ محتوى الموقع بيعدّي على معاينة الأول (بند ١٢): النص
+// والحالة اللي هيتحفظوا بيظهروا في ورقة تأكيد قبل أي كتابة.
+function saveSiteContent(key, value, okText){
+  var lines = sitePreviewLines(key, value);
+  openActSheet("معاينة قبل الحفظ",
+    '<div class="preview">' + lines.map(function(l){ return esc(l); }).join("<br>") + "</div>",
+    "حفظ", function(){
+      return saveSiteContentNow(key, value, okText);
+    }, "site");
 }
 $("siteAnnSaveBtn").addEventListener("click", function(){
   var value = {
@@ -9277,7 +9623,7 @@ $("siteMaintSaveBtn").addEventListener("click", function(){
     "<p>اللوحة دي هتفضل شغالة عادي وانت تقدر توقّف الصيانة في أي وقت.</p>" +
     "<p>الرسالة: «" + esc(value.message) + "»</p>",
     "شغّل الصيانة", function(){
-      return saveSiteContent("maintenance", value, "الصيانة اشتغلت — المتجر مقفول للعملاء دلوقتي.");
+      return saveSiteContentNow("maintenance", value, "الصيانة اشتغلت — المتجر مقفول للعملاء دلوقتي.");
     }, "site");
 });
 function loadSiteContent(){
@@ -9475,7 +9821,7 @@ function reviewStars(rating){
   if (n < 0) n = 0;
   if (n > 5) n = 5;
   var s = "";
-  for (var i = 0; i < 5; i++) s += i < n ? "★" : "☆";
+  for (var i = 0; i < 5; i++) s += i < n ? "\u2605" : "\u2606";
   return s;
 }
 /*PURE-REVIEWS-END*/
@@ -9505,7 +9851,7 @@ function loadSystemStrip(){
     .then(function(d){
       var s = healthStripSummary(d);
       el.textContent = s.text;
-      el.style.color = s.ok ? "var(--muted)" : "var(--gold)";
+      el.style.color = s.ok ? "var(--muted)" : "var(--amber)";
     })
     .catch(function(){
       el.textContent = "حالة النظام غير متاحة الآن";
@@ -9553,6 +9899,13 @@ function renderHealth(){
   var d = healthState.data;
   var html = "";
   var bot = d.bot || {};
+  var need = [];
+  if (!bot.ok) need.push("البوت مش بيرد — راجع اتصال البوت والسيرفر");
+  (healthLoopsDown(d) || []).forEach(function(n){ need.push("حلقة واقفة: " + healthLoopLabel(n)); });
+  (healthGuardProblems(d) || []).forEach(function(pr){ need.push("مشكلة عند حارس: " + pr); });
+  html += '<div class="preview">' + (need.length
+    ? "محتاج تدخل: " + need.map(function(x){ return esc(x); }).join(" · ")
+    : "مفيش تدخل مطلوب دلوقتي — كل حاجة شغالة.") + "</div>";
   html += healthSection("البوت",
     compRow("بوت التليجرام", bot.ok ? "ok" : "bad",
       bot.ok ? "بيرد وتمام" : "مش بيرد دلوقتي") +
@@ -9585,7 +9938,7 @@ function renderHealth(){
     var meta;
     if (bal !== null) meta = "الرصيد: <b>" + bal + "</b>";
     else {
-      var st = (p.active === false) ? "واقف"
+      var st = (p.active === false) ? "متوقف"
         : (p.dry_run ? "شغال بوضع التجربة — بيقرا الأسعار بس ومش بينفّذ شراء حقيقي" : "شغال");
       var sync = p.last_sync_at ? relTime(p.last_sync_at) : null;
       meta = st + (sync ? " · آخر مزامنة: " + esc(sync) : "");
@@ -9793,7 +10146,7 @@ function renderRevList(){
     var age = relTime(r.created_at);
     html += '<div class="result-row" style="flex-direction:column; align-items:stretch;">' +
       '<div style="display:flex; justify-content:space-between; gap:8px;">' +
-        "<b>" + esc(reviewStars(r.rating)) + ' <span class="num">' + esc(r.rating) + "/5</span></b>" +
+        "<b>" + esc(ratingText(r.rating)) + "</b>" +
         '<small style="color:var(--muted);">' + esc(st.label) + (age ? " · " + esc(age) : "") + "</small>" +
       "</div>" +
       '<div style="white-space:pre-wrap; margin-top:8px;">' + esc(r.body || "") + "</div>" +
@@ -9827,7 +10180,7 @@ function askReviewDecision(id, decision){
       : "التقييم ده هيفضل مخفي ومش هيظهر في الموقع.") + "</div>" +
       '<div style="white-space:pre-wrap; margin-top:8px;">' + esc(r.body || "") + "</div>" +
       '<div class="sub" style="color:var(--muted); font-size:12px; margin-top:4px;">' +
-        esc(reviewStars(r.rating)) + " · " + esc(r.display_name || "") +
+        esc(ratingText(r.rating)) + " · " + esc(r.display_name || "") +
         (r.product_label ? " · " + esc(r.product_label) : "") + "</div>",
     approve ? "موافقة ونشر" : "رفض التقييم",
     function(){
