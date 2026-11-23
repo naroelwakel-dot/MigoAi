@@ -540,6 +540,7 @@ function removeFromCart(cartId) {
     cart = cart.filter(i => i.cartId !== cartId);
     saveCartToStorage();
     showToast('تم حذف العنصر من السلة');
+    try { revalidateAppliedCoupon(); } catch (e) {}
 }
 
 // [gemini-fix-4] Quantity controls for the cart drawer.
@@ -594,6 +595,7 @@ function changeCartQty(groupIdx, delta) {
         cart.splice(g.indexes[g.indexes.length - 1], 1);
     }
     saveCartToStorage();
+    try { revalidateAppliedCoupon(); } catch (e) {}
 }
 
 function removeCartLine(groupIdx) {
@@ -604,6 +606,7 @@ function removeCartLine(groupIdx) {
     cart = cart.filter((_, i) => !drop[i]);
     saveCartToStorage();
     showToast('تم حذف العنصر من السلة');
+    try { revalidateAppliedCoupon(); } catch (e) {}
 }
 
 function openCartModal() {
@@ -635,6 +638,9 @@ function restoreLastOrder() {
         appliedCoupon = snap.coupon || null;
         saveCartToStorage();
         updateCartUI();
+        // كوبون الطلب المستعاد ما اتحققش منه وقت الحفظ — بيتراجع دلوقتي
+        // بالإجمالي الحالي قبل ما يفضل مطبّق (W1 #5).
+        try { revalidateAppliedCoupon(); } catch (e) {}
         showToast('تمت استعادة آخر طلب', 'success');
     } catch (e) {}
 }
@@ -712,6 +718,43 @@ async function applyCartCoupon() {
         statusEl.innerText = `✅ تم تطبيق خصم ${(discount * 100)}% بنجاح`;
     }
     calculateCartTotal();
+}
+
+// إعادة التحقق من الكوبون المطبّق بعد أي تعديل على السلة (إصلاح
+// مراجعة W1 #5): الكوبون اتحقق منه وقت التطبيق بإجمالي السلة وقتها،
+// وتعديل السلة بعد كده (حذف عنصر/سطر، تغيير كمية، استعادة طلب قديم)
+// كان بيخلّي النسبة تتطبق على أي إجمالي جديد من غير ما الحد الأدنى
+// أو الصلاحية يتراجعوا. أي فشل في إعادة التحقق — بما فيه فشل النداء
+// نفسه — بيلغي الكوبون (فشل مغلق، زي وقت التطبيق وزي دالة التحقق
+// في القاعدة)، والسيرفر كمان بيراجع الحد الأدنى وقت إنشاء الطلب.
+var __couponRevalidating = false;
+async function revalidateAppliedCoupon() {
+    if (!appliedCoupon || __couponRevalidating) return;
+    __couponRevalidating = true;
+    try {
+        var code = appliedCoupon.code;
+        var subtotal = cart.reduce((sum, item) => sum + Number(item.price), 0);
+        var discount = null;
+        if (subtotal > 0) {
+            try {
+                var c = await __sbClient();
+                var res = await c.rpc('validate_coupon', { p_code: code, p_subtotal: subtotal });
+                if (!res.error && res.data != null) discount = Number(res.data);
+            } catch (e) { discount = null; }
+        }
+        if (!appliedCoupon || appliedCoupon.code !== code) return;
+        if (discount == null || isNaN(discount) || discount <= 0) {
+            appliedCoupon = null;
+            var statusEl = document.getElementById('cartCouponStatus');
+            if (statusEl) statusEl.classList.add('hidden');
+            showToast('تم إلغاء كود الخصم — لم يعد صالحًا لإجمالي السلة الحالي', 'error');
+        } else {
+            appliedCoupon.discount = discount;
+        }
+        calculateCartTotal();
+    } finally {
+        __couponRevalidating = false;
+    }
 }
 
 function calculateCartTotal() {
@@ -1521,6 +1564,36 @@ function populateModalGamesList() {
     select.innerHTML = optionsHtml;
 }
 
+// شريحة البطل (بابجي 3850 UC): الاسم والسعر بييجوا من بيانات الألعاب
+// نفسها وقت الرسم/الضغط — بعد تطبيق أسعار القاعدة عليها — بدل رقم
+// مكتوب يدويًا في الصفحة كان ممكن يختلف عن سعر الكارت والقاعدة
+// (إصلاح مراجعة W1 #6). مفيش سعر احتياطي مكتوب: لو الباقة مش موجودة
+// في البيانات الزر ما بيفتحش حاجة بدل ما يخترع سعر.
+function heroPubgSelection() {
+    if (typeof gamesData === 'undefined') return null;
+    var game = null;
+    for (var i = 0; i < gamesData.length; i++) {
+        if (gamesData[i].id === 'pubg') { game = gamesData[i]; break; }
+    }
+    if (!game || !game.packages) return null;
+    var pkg = null;
+    for (var j = 0; j < game.packages.length; j++) {
+        if (game.packages[j].id === 'pubg_3850') { pkg = game.packages[j]; break; }
+    }
+    if (!pkg) return null;
+    return { game: game, pkg: pkg };
+}
+function refreshHeroPubgPrice() {
+    var el = document.getElementById('heroPubgPrice');
+    var sel = heroPubgSelection();
+    if (el && sel) el.innerText = Number(sel.pkg.price).toLocaleString() + ' ج.م';
+}
+function openHeroPubgModal() {
+    var sel = heroPubgSelection();
+    if (!sel) return;
+    openPlayerIdModal(sel.game.name, sel.pkg.name, sel.pkg.price, true, 'pubg');
+}
+
 function openPlayerIdModal(targetName, pkgLabel, price, isExpress = false, iconKey = 'pubg') {
     currentModalItem = { name: `${targetName} - ${pkgLabel}`, price: price, targetName: targetName, pkgLabel: pkgLabel, gameKey: iconKey };
     isExpressModal = isExpress;
@@ -1843,7 +1916,12 @@ function searchMatch(name, query) {
     if (!q) return false;
     if (n.includes(q)) return true;
     // Loose pass: drop long-vowel ا from both sides (ببجي <-> بابجي).
-    return n.replace(/ا/g, '').includes(q.replace(/ا/g, ''));
+    // لو الاستعلام كله ألفات (زي «ا») النسخة المخففة بتبقى فاضية، و
+    // includes('') دايمًا صح — فالبحث كان بيرجّع الكتالوج كله. استعلام
+    // مخفف فاضي = مفيش تطابق (إصلاح مراجعة W1 #4).
+    var looseQ = q.replace(/ا/g, '');
+    if (!looseQ) return false;
+    return n.replace(/ا/g, '').includes(looseQ);
 }
 
 function handleLiveSearch(query) {
@@ -2590,12 +2668,40 @@ function renderStoreSections(force) {
     try { renderLiveApps(); } catch (e) {}
     try { renderVccCards(); } catch (e) {}
     try { renderGames(); } catch (e) {}
+    try { refreshHeroPubgPrice(); } catch (e) {}
     try { renderProductivity(); } catch (e) {}
     try { renderEntertainment(); } catch (e) {}
     try { renderAI(); } catch (e) {}
     try {
+        // اختيار العميل في قسم SMM (منصة/تصنيف/خدمة) بيتحفظ قبل إعادة
+        // الرسم القسرية وبيترجع بعدها — إعادة الرسم بتحصل عند تحميل
+        // الصفحة ووصول أسعار القاعدة، وكانت بترجّع الاختيار لتيك توك
+        // دايمًا فالطلب ممكن يتبني على خدمة غير اللي العميل اختارها
+        // (إصلاح مراجعة W1 #1). أول رسم بس بيبدأ بتيك توك زي قبل كده.
+        var smmPrev = null;
+        if (currentSMMPlatform) {
+            var prevCatEl = document.getElementById('smmCategorySelect');
+            var prevSrvEl = document.getElementById('smmServiceSelect');
+            smmPrev = {
+                platform: currentSMMPlatform.id,
+                category: prevCatEl ? prevCatEl.value : null,
+                service: prevSrvEl ? prevSrvEl.value : null
+            };
+        }
         renderSMMPlatforms();
-        selectSMMPlatform('tiktok');
+        selectSMMPlatform(smmPrev ? smmPrev.platform : 'tiktok');
+        if (smmPrev) {
+            var catEl2 = document.getElementById('smmCategorySelect');
+            if (catEl2 && smmPrev.category && Array.prototype.some.call(catEl2.options, function (o) { return o.value === smmPrev.category; })) {
+                catEl2.value = smmPrev.category;
+                onSMMCategoryChange();
+            }
+            var srvEl2 = document.getElementById('smmServiceSelect');
+            if (srvEl2 && smmPrev.service && Array.prototype.some.call(srvEl2.options, function (o) { return o.value === smmPrev.service; })) {
+                srvEl2.value = smmPrev.service;
+                onSMMServiceChange();
+            }
+        }
     } catch (e) {}
     try { renderReviews(); } catch (e) {}
 }
