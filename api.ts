@@ -141,6 +141,11 @@ import {
   GoTrueAdminUsersClient,
   handleControlAdminUsersRequest,
 } from "./control/admin_users.ts";
+import {
+  type ControlWave3Deps,
+  handleControlWave3Request,
+  PostgrestWave3Client,
+} from "./control/wave3.ts";
 import { bridgeBaseUrl } from "./sheerid/config.ts";
 import {
   isSessionShaped,
@@ -887,6 +892,42 @@ function getControlAdminUsersDeps(): ControlAdminUsersDeps {
 }
 
 // ---------------------------------------------------------------------------
+// لوحة التحكم (موجة Instinct التالتة، البنود ١٥–٢٢): التنبيهات
+// والبحث الموحد والمتابعات والتشخيص والمسودات وأثر التغيير
+// والجماعي المحدود والمعاينة المترابطة — معالج واحد بيجمّع
+// عملاء الوحدات القائمة نفسهم (رئيسية/عملاء/طلبات/أحداث/
+// كوبونات/موقع/أسعار) + عميل جداول اللوحة الجديدة (هجرة 038).
+// اعتماد الجسر والمصادقة زي باقي الوحدات بالظبط.
+// ---------------------------------------------------------------------------
+let _controlWave3Deps: ControlWave3Deps | null = null;
+function getControlWave3Deps(): ControlWave3Deps {
+  if (_controlWave3Deps) return _controlWave3Deps;
+  const env = (n: string) => Deno.env.get(n) || "";
+  _controlWave3Deps = {
+    store: new PostgrestWave3Client({
+      baseUrl: SB_URL,
+      keyOf: () => env("SUPABASE_SERVICE_ROLE_KEY"),
+    }),
+    homeStore: getControlDeps().client,
+    botHome: getControlDeps().botClient,
+    botClient: new BridgeBotControlProxyClient({
+      baseUrlOf: () => bridgeBaseUrl((n) => Deno.env.get(n)),
+      bridgeTokenOf: controlBridgeTokenOf(),
+    }),
+    customers: getControlCustomersDeps().client,
+    orders: getControlOrdersDeps().client,
+    events: getControlEventsDeps().client,
+    coupons: getControlCouponsDeps().client,
+    site: getControlSiteDeps().client,
+    prices: getControlPricesDeps().client,
+    isAdmin,
+    corsOf: (r: Request) => corsHeaders(r),
+    logError,
+  };
+  return _controlWave3Deps;
+}
+
+// ---------------------------------------------------------------------------
 // منفّذ حدّ الأسعار الأدنى للمتجر (Price-Floor Applier) — نقطة إدارية
 // POST /catalog/apply-price-floors بيندهها مجدول خارجي (نفس نمط
 // /exec/sweep ومسارات المحفظة): بترفع سعر كتالوج المتجر لأرضية سجل
@@ -1082,7 +1123,7 @@ function corsHeaders(req?: Request): Record<string, string> {
   return {
     "Content-Type": "application/json; charset=utf-8",
     "Access-Control-Allow-Origin": allow,
-    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type, x-migo-admin",
     "Vary": "Origin",
   };
@@ -2616,6 +2657,11 @@ Deno.serve(async (req: Request) => {
         getControlAdminUsersDeps(),
       );
       if (adminUsersRes) return adminUsersRes;
+      const wave3Res = await handleControlWave3Request(
+        req,
+        getControlWave3Deps(),
+      );
+      if (wave3Res) return wave3Res;
     } catch (e) {
       logError("control.customers.route", "unhandled customers route error", e);
     }
