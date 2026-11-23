@@ -265,18 +265,22 @@ export class PostgrestControlMoneyClient implements ControlMoneyClient {
   }
 
   async updateSetting(key: string, value: string): Promise<number> {
+    // إصلاح W7 #4: الكتابة كانت PATCH مشروط بوجود الصف — مفتاح
+    // إعدادات لسه ما اتكتبش قبل كده (صف مفقود من wallet_settings)
+    // كان بيكتب صفر صفوف والمعالج يفشل 500 بدل ما ينشئ الصف.
+    // Upsert على المفتاح الأساسي: موجود = تحديث، مفقود = إنشاء،
+    // والتمثيل الراجع صف واحد في الحالتين.
     const res = await fetch(
-      `${this.opts.baseUrl}/rest/v1/wallet_settings?key=eq.${
-        encodeURIComponent(key)
-      }`,
+      `${this.opts.baseUrl}/rest/v1/wallet_settings`,
       {
-        method: "PATCH",
+        method: "POST",
         headers: {
           ...this.headers(),
           "Content-Type": "application/json",
-          "Prefer": "return=representation",
+          "Prefer": "resolution=merge-duplicates,return=representation",
         },
         body: JSON.stringify({
+          key,
           value,
           updated_at: new Date().toISOString(),
         }),
@@ -312,7 +316,7 @@ export class PostgrestControlMoneyClient implements ControlMoneyClient {
     return await this.get(
       "wallet_deposit_events?select=id,rail,exchange_ref,asset,amount_usdt," +
         "tx_hash,matched_intent_id,outcome,claim_id,matched_bot_topup_id,created_at" +
-        `&${filters.join("&")}&order=created_at.desc&limit=50`,
+        `&${filters.join("&")}&order=created_at.desc&limit=51`,
     );
   }
 
@@ -330,7 +334,7 @@ export class PostgrestControlMoneyClient implements ControlMoneyClient {
       "wallet_sms_events?select=id,received_at,ingested_at,sender_id," +
         "amount_egp,sender_account,transfer_ref,match_state,matched_topup_id," +
         "matched_order_id,matched_bot_topup_id,source,package_name" +
-        `&${filters.join("&")}&order=ingested_at.desc&limit=50`,
+        `&${filters.join("&")}&order=ingested_at.desc&limit=51`,
     );
   }
 
@@ -341,10 +345,18 @@ export class PostgrestControlMoneyClient implements ControlMoneyClient {
       `created_at=gte.${encodeURIComponent(query.since)}`,
     ];
     if (query.q) filters.push(orIlike(["exchange_ref"], query.q));
+    if (query.amount !== null) {
+      // إصلاح W7 #5: المطالبات كانت المصدر الوحيد من غير مرشّح مبلغ
+      // أصلًا — بحث بمبلغ كان بيرجع أول 50 مطالبة بغض النظر عنه.
+      // المبلغ ممكن يكون متخزن بالجنيه أو بالدولار حسب مصدر المطالبة.
+      filters.push(
+        `or=(amount_egp.eq.${query.amount},amount_usdt.eq.${query.amount})`,
+      );
+    }
     return await this.get(
       "wallet_deposit_claims?select=id,customer_id,rail,exchange_ref,tx_id," +
         "status,amount_usdt,amount_egp,created_at,resolved_at,resolve_note" +
-        `&${filters.join("&")}&order=created_at.desc&limit=50`,
+        `&${filters.join("&")}&order=created_at.desc&limit=51`,
     );
   }
 
@@ -355,7 +367,12 @@ export class PostgrestControlMoneyClient implements ControlMoneyClient {
       `created_at=gte.${encodeURIComponent(query.since)}`,
     ];
     if (query.amount !== null) {
-      filters.push(`amount_egp=eq.${query.amount}`);
+      // إصلاح W7 #6: العميل بيبحث بالمبلغ اللي شافه (المبلغ الفريد
+      // اللي اتبعت له) — المرشّح كان على amount_egp الاسمي بس، فبحث
+      // بالمبلغ الفريد كان بيرجع فاضي حتى لو النية موجودة.
+      filters.push(
+        `or=(amount_egp.eq.${query.amount},unique_amount.eq.${query.amount})`,
+      );
     }
     if (query.q) {
       if (INTENT_STATUSES.includes(query.q)) {
@@ -372,7 +389,7 @@ export class PostgrestControlMoneyClient implements ControlMoneyClient {
       "wallet_topup_intents?select=id,customer_id,rail,amount_egp," +
         "amount_usdt,unique_amount,status,expires_at,credited_event_id," +
         "credited_at,created_at" +
-        `&${filters.join("&")}&order=created_at.desc&limit=50`,
+        `&${filters.join("&")}&order=created_at.desc&limit=51`,
     );
   }
 }
@@ -688,6 +705,16 @@ export async function handleControlMoneyRequest(
         sms_events: smsEvents.slice(0, 50).map(shapeSmsEvent),
         deposit_claims: depositClaims.slice(0, 50).map(shapeDepositClaim),
         topup_intents: topupIntents.slice(0, 50).map(shapeTopupIntent),
+        // إصلاح W7 #5: المصادر بتتجاب بحد 51 والرد بيقص على 50 —
+        // أي مصدر رجّع 51 يبقى عنده صفوف أزيد من المعروض، وده
+        // بيتصرح بيه بدل ما القص يعدّي صامتًا والمشغّل يفتكر إن
+        // اللي شايفه هو كل اللي موجود.
+        truncated: {
+          deposit_events: depositEvents.length > 50,
+          sms_events: smsEvents.length > 50,
+          deposit_claims: depositClaims.length > 50,
+          topup_intents: topupIntents.length > 50,
+        },
       });
     } catch (e) {
       deps.logError("control.money", "lost events read failed", e);

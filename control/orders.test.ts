@@ -61,10 +61,19 @@ class FakeOrdersClient implements ControlOrdersClient {
     [];
   refundedRefs = new Set<string>();
   failRefund = false;
+  failLookup = false;
+  // صفوف قيد ردّ بمرجع اللوحة كما في wallet_transactions الحقيقية:
+  // نجاح الـ RPC بيكتب واحد، وممكن يتبذر يدويًا لمحاكاة قيد اتكتب
+  // من مسار تاني (W7 #2).
+  panelCreditRows = new Set<string>();
+  async hasWalletRefund(orderRef: string) {
+    return this.panelCreditRows.has(orderRef);
+  }
   // محاكاة سباق: أول كتابة بتقلب حالة الصف لقيمة تانية قبل شرط
   // الحالة المتوقعة، فالكتابة المشروطة ما بتلاقيش صف ترجّعه.
   flipOnWrite: string | null = null;
   async findWalletPayDebit(orderRef: string) {
+    if (this.failLookup) throw new Error("lookup down");
     return this.payDebits.get(orderRef) ?? null;
   }
   async refundWalletPay(
@@ -77,6 +86,7 @@ class FakeOrdersClient implements ControlOrdersClient {
     // محاكاة عدم تكرار الدالة الحقيقية: نفس المرجع = already بلا حركة.
     if (this.refundedRefs.has(orderRef)) return { already: true };
     this.refundedRefs.add(orderRef);
+    this.panelCreditRows.add(orderRef);
     return { already: false };
   }
   async listOrders(
@@ -489,4 +499,82 @@ Deno.test("store orders: audit failure is disclosed, change still succeeds", asy
   eq(body.ok, true, "change ok");
   eq(body.status, "fulfilled", "status applied");
   eq(body.audit_failed, true, "audit_failed disclosed");
+});
+
+// =====================================================================
+// إصلاحات مراجعة الموقع W7 (طلبات اللوحة)
+// =====================================================================
+
+Deno.test("W7#1: wallet lookup failure still audits the status change, then returns the original 502", async () => {
+  const { deps, bot, orders } = makeDeps();
+  orders.payDebits.set("MG-100099", {
+    customerId: "123e4567-e89b-12d3-a456-426614174001",
+    amountEgp: 100,
+  });
+  orders.failLookup = true;
+  const res = await handleControlOrdersRequest(
+    req("/control/store-orders", "POST", {
+      order_id: ORDER_ID, status: "cancelled", reason: "إلغاء",
+    }), deps);
+  eq(res?.status, 502, "original error status preserved");
+  const body = await res!.json();
+  eq(body.error, "store_failed", "original error body preserved");
+  eq(orders.writes.length, 1, "status was claimed first");
+  const audit = bot.calls.find((c) => c.path === "/api/control/audit-log");
+  ok(audit, "audit written despite the refund-step failure");
+  const after = audit!.body?.after as {
+    status: string;
+    refund?: { applied: boolean; reason?: string };
+  };
+  eq(after.status, "cancelled", "audit carries the transition");
+  eq(after.refund?.applied, false, "audit refund not applied");
+  eq(after.refund?.reason, "wallet_lookup_failed", "audit refund carries the failure reason");
+});
+
+Deno.test("W7#1: refund RPC failure still audits the status change, then returns the original 502", async () => {
+  const { deps, bot, orders } = makeDeps();
+  orders.payDebits.set("MG-100099", {
+    customerId: "123e4567-e89b-12d3-a456-426614174001",
+    amountEgp: 100,
+  });
+  orders.failRefund = true;
+  const res = await handleControlOrdersRequest(
+    req("/control/store-orders", "POST", {
+      order_id: ORDER_ID, status: "cancelled", reason: "إلغاء",
+    }), deps);
+  eq(res?.status, 502, "original error status preserved");
+  const body = await res!.json();
+  eq(body.error, "refund_failed", "original error body preserved");
+  eq(body.order_id, ORDER_ID, "order id disclosed");
+  eq(body.status, "cancelled", "new status disclosed");
+  const audit = bot.calls.find((c) => c.path === "/api/control/audit-log");
+  ok(audit, "audit written despite the refund failure");
+  const after = audit!.body?.after as {
+    refund?: { applied: boolean; reason?: string };
+  };
+  eq(after.refund?.applied, false, "audit refund not applied");
+  eq(after.refund?.reason, "refund_failed", "audit refund carries the failure reason");
+});
+
+Deno.test("W7#2: same-status retry with an existing panel credit row never re-issues the refund", async () => {
+  const { deps, orders } = makeDeps();
+  // الطلب اتلغى قبل كده وقيد الردّ بمرجع اللوحة موجود في المحفظة —
+  // لكن سجل الـ RPC نفسه فاضي (القيد اتكتب من مسار تاني)، فمن غير
+  // الفحص المسبق الـ RPC كان هيطبّق من جديد.
+  orders.rows.get(ORDER_ID)!.status = "cancelled";
+  orders.payDebits.set("MG-100099", {
+    customerId: "123e4567-e89b-12d3-a456-426614174001",
+    amountEgp: 100,
+  });
+  orders.panelCreditRows.add("MG-100099");
+  const res = await handleControlOrdersRequest(
+    req("/control/store-orders", "POST", {
+      order_id: ORDER_ID, status: "cancelled",
+    }), deps);
+  eq(res?.status, 200, "retry succeeds");
+  const body = await res!.json();
+  eq(body.refund.applied, true, "refund reported applied");
+  eq(body.refund.already, true, "reported as already-refunded");
+  eq(body.refund.amount_egp, 100, "amount from the original debit");
+  eq(orders.refundCalls.length, 0, "refund RPC never re-issued");
 });

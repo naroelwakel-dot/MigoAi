@@ -49,6 +49,9 @@ export interface ControlOrdersClient {
   // قيد دفع المحفظة الأصلي للطلب (ref = wallet-pay:<order_ref>) —
   // هو الدليل الوحيد إن الطلب اتدفع من محفظة الموقع وبكام.
   findWalletPayDebit(orderRef: string): Promise<WalletPayDebit | null>;
+  // قيد ردّ موجود أصلًا بمرجع اللوحة الثابت (panel-order-cancel:<ref>)
+  // — دليل إن مبلغ الطلب ده اتردّ للمحفظة خلاص، أيًا كان مين كتبه.
+  hasWalletRefund(orderRef: string): Promise<boolean>;
   // رجوع المبلغ لمحفظة العميل عبر دالة المحفظة الداخلية الحالية،
   // بمرجع عدم تكرار ثابت لكل طلب: التكرار بيرجع already من غير حركة.
   refundWalletPay(
@@ -208,6 +211,15 @@ export class PostgrestControlOrdersClient implements ControlOrdersClient {
     const amount = Math.abs(Number(row.amount_egp));
     if (!customerId || !Number.isFinite(amount) || amount <= 0) return null;
     return { customerId, amountEgp: amount };
+  }
+
+  async hasWalletRefund(orderRef: string): Promise<boolean> {
+    const rows = await this.get(
+      `wallet_transactions?select=id` +
+        `&ref=eq.${encodeURIComponent("panel-order-cancel:" + orderRef)}` +
+        `&limit=1`,
+    );
+    return rows.length > 0;
   }
 
   async refundWalletPay(
@@ -497,36 +509,69 @@ export async function handleControlOrdersRequest(
   // انتقال مسموح وبيعيد تشغيل الرجوع، واللي اترجّع قبل كده بيرجع
   // already من غير حركة تانية.
   let refund: Record<string, unknown> | null = null;
+  // إصلاح W7 #1: فشل خطوة الرجوع ما بقاش يرجّع قبل التدقيق — تغيير
+  // الحالة الأصلي (اللي اتكتب واتحجز خلاص) لازم يتسجّل في سجل
+  // التدقيق الموحد في كل الأحوال، ونتيجة الرجوع الفاشلة بتتحط في
+  // حمولة التدقيق نفسها. رد الخطأ الأصلي بيتبعت بعد التدقيق بنفس
+  // جسمه بالحرف.
+  let refundError: Response | null = null;
   if (status === "cancelled" || status === "refunded") {
     refund = { applied: false, reason: "not_wallet_paid" };
     if (before.order_ref) {
-      let debit: WalletPayDebit | null;
+      let debit: WalletPayDebit | null = null;
       try {
         debit = await deps.client.findWalletPayDebit(before.order_ref);
       } catch (e) {
         deps.logError("control.orders", "wallet pay lookup failed", e);
-        return json({ ok: false, error: "store_failed" }, 502);
+        refund = { applied: false, reason: "wallet_lookup_failed" };
+        refundError = json({ ok: false, error: "store_failed" }, 502);
       }
       if (debit) {
-        try {
-          const r = await deps.client.refundWalletPay(
-            debit.customerId,
-            debit.amountEgp,
-            before.order_ref,
-          );
+        // إصلاح W7 #2: إعادة محاولة نفس الحالة (before == target)
+        // بتفحص قيد الردّ القائم بمرجع اللوحة قبل ما تنادي الـ RPC
+        // تاني — الـ RPC بيحسب سقوفه تراكميًا وممكن يطبّق من جديد
+        // لو قيد الردّ الأولاني اتكتب بمرجع مختلف أو فحص already
+        // بتاعه ما لقاش صف النجاح. قيد موجود = الرجوع حصل خلاص.
+        let alreadyRefunded = false;
+        if (before.status === status) {
+          try {
+            alreadyRefunded = await deps.client.hasWalletRefund(
+              before.order_ref,
+            );
+          } catch (e) {
+            // فشل الفحص نفسه مش دليل على حاجة: بنكمّل للـ RPC
+            // (فحص already بتاعه هو خط الدفاع التاني زي ما هو).
+            deps.logError("control.orders", "wallet refund check failed", e);
+          }
+        }
+        if (alreadyRefunded) {
           refund = {
             applied: true,
-            already: r.already,
+            already: true,
             amount_egp: debit.amountEgp,
           };
-        } catch (e) {
-          deps.logError("control.orders", "wallet refund failed", e);
-          return json({
-            ok: false,
-            error: "refund_failed",
-            order_id: orderId,
-            status: after.status,
-          }, 502);
+        } else {
+          try {
+            const r = await deps.client.refundWalletPay(
+              debit.customerId,
+              debit.amountEgp,
+              before.order_ref,
+            );
+            refund = {
+              applied: true,
+              already: r.already,
+              amount_egp: debit.amountEgp,
+            };
+          } catch (e) {
+            deps.logError("control.orders", "wallet refund failed", e);
+            refund = { applied: false, reason: "refund_failed" };
+            refundError = json({
+              ok: false,
+              error: "refund_failed",
+              order_id: orderId,
+              status: after.status,
+            }, 502);
+          }
         }
       }
     }
@@ -551,6 +596,10 @@ export async function handleControlOrdersRequest(
     auditFailed = true;
     deps.logError("control.orders", "order status audit failed", e);
   }
+
+  // إصلاح W7 #1: التدقيق اتكتب خلاص — رد خطأ الرجوع الأصلي بيتبعت
+  // دلوقتي بنفس جسمه (العميل/اللوحة بيشوفوا نفس النتيجة بالحرف).
+  if (refundError) return refundError;
 
   return json({
     ok: true,

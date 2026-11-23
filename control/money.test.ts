@@ -833,3 +833,110 @@ Deno.test("lost events q cannot break out of the PostgREST or filter", async () 
   const decoded = decodeURIComponent(rawPattern);
   ok(!/[(),"*]/.test(decoded), "decoded pattern has no structural chars");
 });
+
+// =====================================================================
+// إصلاحات مراجعة الموقع W7 (فلوس اللوحة)
+// =====================================================================
+
+Deno.test("W7#5: lost events disclose per-source truncation instead of silently capping", async () => {
+  const client = new FakeMoneyClient();
+  client.depositEvents = Array.from({ length: 51 }, (_, i) => ({
+    id: `d${i}`,
+    amount_usdt: 1,
+    asset: "USDT",
+    outcome: "received",
+    created_at: "2026-11-20T00:00:00.000Z",
+  }));
+  client.topupIntents = Array.from({ length: 50 }, (_, i) => ({
+    id: `t${i}`,
+    amount_egp: 10,
+    status: "open",
+    created_at: "2026-11-20T00:00:00.000Z",
+  }));
+  const res = await handleControlMoneyRequest(
+    req("/control/lost-events", { key: ADMIN_KEY }),
+    deps(client, new FakeBotProxy()),
+  );
+  eq(res?.status, 200, "status");
+  const body = await res!.json();
+  eq(body.deposit_events.length, 50, "display still capped at 50");
+  eq(body.truncated.deposit_events, true, "51st row disclosed as truncation");
+  eq(body.truncated.topup_intents, false, "exactly 50 is not truncation");
+  eq(body.truncated.sms_events, false, "empty source not truncated");
+  eq(body.truncated.deposit_claims, false, "empty claims not truncated");
+});
+
+// عميل PostgREST الحقيقي على نقل مثبّت: بيصوّر الطلبات بس.
+function pgMoneyClient(capture: { url: string; method: string; prefer: string }[]) {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = ((input: unknown, init?: RequestInit) => {
+    capture.push({
+      url: String(input),
+      method: init?.method ?? "GET",
+      prefer: new Headers(init?.headers).get("Prefer") ?? "",
+    });
+    return Promise.resolve(new Response(JSON.stringify([{ key: "k", value: "1" }]), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    }));
+  }) as typeof fetch;
+  const client = new PostgrestControlMoneyClient({
+    baseUrl: "https://db.invalid",
+    keyOf: () => "k",
+  });
+  return { client, restore: () => { globalThis.fetch = originalFetch; } };
+}
+
+Deno.test("W7#4: updateSetting upserts — a missing settings row is created, not a 500", async () => {
+  const capture: { url: string; method: string; prefer: string }[] = [];
+  const { client, restore } = pgMoneyClient(capture);
+  try {
+    const rows = await client.updateSetting("intent_expiry_minutes", "60");
+    eq(rows, 1, "one row written by the upsert");
+    eq(capture.length, 1, "one request");
+    eq(capture[0].method, "POST", "upsert is a POST, not a conditional PATCH");
+    ok(
+      capture[0].prefer.includes("resolution=merge-duplicates"),
+      "merge-duplicates preference set",
+    );
+    ok(!capture[0].url.includes("key=eq."), "no existence filter on the write");
+  } finally {
+    restore();
+  }
+});
+
+Deno.test("W7#5/#6: lost-event fetchers filter amounts on every stored column and page at 51", async () => {
+  const capture: { url: string; method: string; prefer: string }[] = [];
+  const { client, restore } = pgMoneyClient(capture);
+  const query: LostEventsQuery = {
+    q: "",
+    amount: 200,
+    days: 30,
+    since: "2026-10-24T00:00:00.000Z",
+  };
+  try {
+    await client.fetchDepositClaims(query);
+    await client.fetchTopupIntents(query);
+    await client.fetchDepositEvents(query);
+    await client.fetchSmsEvents(query);
+  } finally {
+    restore();
+  }
+  const [claims, intents, events, sms] = capture.map((c) => c.url);
+  ok(
+    claims.includes("or=(amount_egp.eq.200,amount_usdt.eq.200)"),
+    "claims filter matches EGP and USDT amount columns",
+  );
+  ok(
+    intents.includes("or=(amount_egp.eq.200,unique_amount.eq.200)"),
+    "intents filter matches nominal and unique amounts",
+  );
+  for (const [label, url] of [
+    ["claims", claims],
+    ["intents", intents],
+    ["events", events],
+    ["sms", sms],
+  ] as const) {
+    ok(url.includes("limit=51"), `${label} fetcher pages at 51 (truncation probe)`);
+  }
+});
