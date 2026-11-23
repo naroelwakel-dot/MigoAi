@@ -131,6 +131,32 @@ const aiProducts = [
         ]
     },
 
+    // جوجل ألترا (Google Gemini Ultra): تفعيل يدوي على حساب العميل أو دعوة
+    // عائلة — الأسعار معتمدة من المالك 2026-11-23 (تكلفة المورد + 20% مع
+    // تعديل المالك)، واسم السلة «Google Gemini Ultra 5x (شخصي 30 يوم)» إلخ
+    // هو مفتاح الكتالوج.
+    {
+        id: 'gemini_ultra_5x',
+        name: 'Google Gemini Ultra 5x',
+        tag: 'ضمان 30 يوم ✅',
+        banner: 'images/ai/gemini_pro.webp', bannerAnim: 'images/ai/gemini_pro-anim.webp',
+        desc: 'اشتراك Gemini Ultra 5x لمدة 30 يوم كاملين: تفعيل شخصي على حسابك أو دعوة عائلة. شروط الضمان: الاشتراك 30 يوم كاملين وعليهم ضمان — أي إلغاء لمدة الاشتراك أو سقوطها بنعوضك بكامل الفرق على طول أو بحساب آخر، لكن الضمان لا يشمل حالات حظر الحساب فقط بسبب سوء الاستخدام.',
+        packages: [
+            { id: 'gemini_ultra_5x_personal_30d', name: 'Gemini Ultra 5x — شخصي — 4500 ج.م', duration: 'شخصي 30 يوم', price: 4500 },
+            { id: 'gemini_ultra_5x_family_30d', name: 'Gemini Ultra 5x — دعوة عائلة — 1875 ج.م', duration: 'دعوة عائلة 30 يوم', price: 1875 }
+        ]
+    },
+    {
+        id: 'gemini_ultra_20x',
+        name: 'Google Gemini Ultra 20x',
+        tag: 'ضمان 30 يوم ✅',
+        banner: 'images/ai/gemini_pro.webp', bannerAnim: 'images/ai/gemini_pro-anim.webp',
+        desc: 'اشتراك Gemini Ultra 20x شخصي — تفعيل على حسابك الشخصي لمدة 30 يوم كاملين. شروط الضمان: الاشتراك 30 يوم كاملين وعليهم ضمان — أي إلغاء لمدة الاشتراك أو سقوطها بنعوضك بكامل الفرق على طول أو بحساب آخر، لكن الضمان لا يشمل حالات حظر الحساب فقط بسبب سوء الاستخدام.',
+        packages: [
+            { id: 'gemini_ultra_20x_personal_30d', name: 'Gemini Ultra 20x — شخصي — 8390 ج.م', duration: 'شخصي 30 يوم', price: 8390 }
+        ]
+    },
+
     // المونتاج وبناء المواقع بالذكاء الاصطناعي
     {
         id: 'capcut_pro',
