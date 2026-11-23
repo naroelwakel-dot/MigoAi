@@ -176,9 +176,14 @@ export class PostgrestControlCustomersClient
     const target = email.trim().toLowerCase();
     if (!target) return null;
     // بحث صفحات بمطابقة تامة (GoTrue ما عندوش مرشّح إيميل خادمي
-    // موثوق عبر النسخ): سقف ٢٠ صفحة × ١٠٠ — فوق كده «مش موجود»
-    // صادق بدل تخمين.
-    for (let page = 1; page <= 20; page++) {
+    // موثوق عبر النسخ). إصلاح W9 #3: السقف القديم (٢٠ صفحة × ١٠٠
+    // = ٢٠٠٠ حساب) كان بيرجع «مش موجود» كاذب لعميل حقيقي برّه
+    // أول ٢٠٠٠ حساب، من غير أي إشارة إن المسح اتقص. السقف بقى
+    // ١٠٠ صفحة (١٠٠٠٠ حساب)، ولو اتستنفد والمسح لسه ما خلصش
+    // (آخر صفحة كاملة) بنرمي خطأ صريح بدل «مش موجود» الكاذب —
+    // المعالج بيحوّله لفشل بصوت عالي (502) مش 404.
+    const MAX_PAGES = 100;
+    for (let page = 1; page <= MAX_PAGES; page++) {
       const res = await fetch(
         `${this.opts.baseUrl}/auth/v1/admin/users?page=${page}&per_page=100`,
         { headers: this.headers() },
@@ -197,6 +202,14 @@ export class PostgrestControlCustomersClient
         }
       }
       if (users.length < 100) break;
+      if (page === MAX_PAGES) {
+        // المسح اتقص عند السقف ولسه في صفحات: «مش موجود» هنا
+        // ممكن يكون كاذب — بنفشل بصوت عالي بدل ما نرجّعه.
+        throw new Error(
+          "auth admin scan truncated: email not found within the " +
+            "first 10000 accounts",
+        );
+      }
     }
     return null;
   }

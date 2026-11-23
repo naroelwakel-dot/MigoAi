@@ -9,6 +9,7 @@ import {
   type DepositEventRow,
   handleControlEventsRequest,
   type IngestSmsArgs,
+  PostgrestControlEventsClient,
   type SmsEventRow,
   type StoreEventsFilter,
 } from "./events.ts";
@@ -1068,5 +1069,38 @@ Deno.test("الاستبعادات: قراءة وكتابة بتحقق وتدقي
     );
     eq(res?.status, 400, "bad exclusions status");
     eq((await bodyOf(res)).error, "bad_exclusions", "bad exclusions error");
+  }
+});
+
+// =====================================================================
+// إصلاحات مراجعة الموقع W9 (أحداث اللوحة)
+// =====================================================================
+
+Deno.test("W9#1: NULL match_state guard is is.null, never eq. (real client)", async () => {
+  const urls: string[] = [];
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = ((input: unknown) => {
+    urls.push(String(input));
+    return Promise.resolve(new Response(JSON.stringify([{ id: "e1" }]), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    }));
+  }) as typeof fetch;
+  try {
+    const client = new PostgrestControlEventsClient({
+      baseUrl: "https://db.invalid",
+      keyOf: () => "k",
+    });
+    const rows = await client.updateSmsEventState("e1", "", "ignored");
+    eq(rows, 1, "one row written");
+    ok(urls[0].includes("match_state=is.null"), "NULL state guarded with is.null");
+    ok(!urls[0].includes("match_state=eq."), "no empty eq. filter");
+    await client.updateSmsEventState("e1", "unmatched", "ignored");
+    ok(
+      urls[1].includes("match_state=eq.unmatched"),
+      "non-NULL state keeps the eq. guard",
+    );
+  } finally {
+    globalThis.fetch = originalFetch;
   }
 });

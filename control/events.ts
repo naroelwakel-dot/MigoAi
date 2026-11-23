@@ -664,10 +664,18 @@ export class PostgrestControlEventsClient implements ControlEventsClient {
     fromState: string,
     toState: string,
   ): Promise<number> {
+    // إصلاح W9 #1: المعالج بيحوّل match_state الـ NULL لنص فاضي —
+    // مرشّح eq. الفاضي عمره ما بيطابق NULL في PostgREST، فأحداث
+    // الـ NULL كانت بتاخد 409 event_consumed على طول في التجاهل
+    // وفكّه. الحارس الصح للـ NULL هو is.null (نفس نمط
+    // settleDepositEvent تحت).
+    const stateGuard = fromState === ""
+      ? "match_state=is.null"
+      : `match_state=eq.${encodeURIComponent(fromState)}`;
     const res = await fetch(
       `${this.opts.baseUrl}/rest/v1/wallet_sms_events?id=eq.${
         encodeURIComponent(id)
-      }&match_state=eq.${encodeURIComponent(fromState)}`,
+      }&${stateGuard}`,
       {
         method: "PATCH",
         headers: {

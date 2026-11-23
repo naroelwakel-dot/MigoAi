@@ -18,6 +18,7 @@ import {
   type ControlCustomersClient,
   type ControlCustomersDeps,
   handleControlCustomersRequest,
+  PostgrestControlCustomersClient,
   type SenderAccountMatch,
   type StoreCustomerData,
 } from "./customers.ts";
@@ -823,4 +824,92 @@ Deno.test("unified search by uuid finds the store customer", async () => {
   const body = await res!.json();
   eq(body.store.length, 1, "one store match");
   eq(body.store[0].id, CUSTOMER_ID, "id");
+});
+
+// =====================================================================
+// إصلاحات مراجعة الموقع W9 (عملاء اللوحة)
+// =====================================================================
+
+// نقل GoTrue Admin مثبّت: صفحات مولّدة برمجيًا (١٠٠ حساب/صفحة).
+function stubAuthPages(opts: {
+  targetPage?: number;
+  alwaysFull?: boolean;
+  calls: string[];
+}) {
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = ((input: unknown) => {
+    const url = String(input);
+    opts.calls.push(url);
+    const page = Number(new URL(url).searchParams.get("page") || "1");
+    const users = Array.from({ length: 100 }, (_, i) => ({
+      id: `u-${page}-${i}`,
+      email: `user${page}x${i}@example.com`,
+    }));
+    if (opts.targetPage === page) {
+      users[0] = { id: "u-target", email: "target@example.com" };
+    }
+    const body = opts.alwaysFull || page < (opts.targetPage ?? 1)
+      ? { users }
+      : { users: opts.targetPage === page ? users : users.slice(0, 37) };
+    return Promise.resolve(new Response(JSON.stringify(body), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    }));
+  }) as typeof fetch;
+  return () => { globalThis.fetch = originalFetch; };
+}
+
+Deno.test("W9#3: resolveEmail finds accounts beyond the old 2000-account cap", async () => {
+  const calls: string[] = [];
+  const restore = stubAuthPages({ targetPage: 25, calls });
+  try {
+    const client = new PostgrestControlCustomersClient({
+      baseUrl: "https://db.invalid",
+      keyOf: () => "k",
+    });
+    const user = await client.resolveEmail("target@example.com");
+    eq(user?.id, "u-target", "account on page 25 resolved");
+    eq(user?.email, "target@example.com", "email returned");
+    eq(calls.length, 25, "scan continued past page 20");
+  } finally {
+    restore();
+  }
+});
+
+Deno.test("W9#3: resolveEmail fails loud when the scan truncates, never a false not-found", async () => {
+  const calls: string[] = [];
+  const restore = stubAuthPages({ alwaysFull: true, calls });
+  try {
+    const client = new PostgrestControlCustomersClient({
+      baseUrl: "https://db.invalid",
+      keyOf: () => "k",
+    });
+    let message = "";
+    try {
+      await client.resolveEmail("ghost@example.com");
+    } catch (e) {
+      message = (e as Error).message;
+    }
+    ok(message.includes("truncated"), "truncation is an explicit error");
+    eq(calls.length, 100, "scan stopped at the documented cap");
+  } finally {
+    restore();
+  }
+});
+
+Deno.test("W9#3: resolveEmail still returns null for a genuinely absent email", async () => {
+  const calls: string[] = [];
+  const restore = stubAuthPages({ targetPage: 3, calls });
+  try {
+    const client = new PostgrestControlCustomersClient({
+      baseUrl: "https://db.invalid",
+      keyOf: () => "k",
+    });
+    // الهدف موجود في الصفحة ٣ لكن بنسأل عن إيميل تاني: المسح بيكمل
+    // لآخر صفحة قصيرة وبيرجع null صادق.
+    const user = await client.resolveEmail("absent@example.com");
+    eq(user, null, "absent email resolves to null after a complete scan");
+  } finally {
+    restore();
+  }
 });
