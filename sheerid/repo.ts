@@ -73,12 +73,16 @@ export interface SheeridRepository {
     patch: Partial<SheeridJob>,
     expect: JobUpdateExpect,
   ): Promise<SheeridJob | null>;
+  // إصلاح W6 #1: نوافذ الاسترداد بتتقاس من آخر نشاط (updated_at —
+  // لحظة آخر انتقال: الإرسال/الإكمال) مش من إنشاء العملية. عملية
+  // اتفتحت من ساعات واتقدّمت دلوقتي كانت بتقع برّه نافذة المسح من
+  // أول لحظة، واكتمال قديم الإنشاء كان بيخرج من نافذة التسليم.
   listInflight(
     statuses: readonly string[],
-    createdAfterIso: string,
-    createdBeforeIso: string,
+    updatedAfterIso: string,
+    updatedBeforeIso: string,
   ): Promise<SheeridJob[]>;
-  listUndelivered(createdAfterIso: string): Promise<SheeridJob[]>;
+  listUndelivered(updatedAfterIso: string): Promise<SheeridJob[]>;
   /** عمليات فشل اتسوّت لكن استردادها لسه معلّق (refund_pending). */
   listRefundPending(): Promise<SheeridJob[]>;
 }
@@ -182,24 +186,24 @@ export class MemorySheeridRepository implements SheeridRepository {
   }
   listInflight(
     statuses: readonly string[],
-    createdAfterIso: string,
-    createdBeforeIso: string,
+    updatedAfterIso: string,
+    updatedBeforeIso: string,
   ): Promise<SheeridJob[]> {
     return Promise.resolve(
       [...this.jobs.values()]
         .filter((j) =>
           statuses.includes(j.status) &&
-          j.created_at >= createdAfterIso && j.created_at <= createdBeforeIso
+          j.updated_at >= updatedAfterIso && j.updated_at <= updatedBeforeIso
         )
         .map(clone),
     );
   }
-  listUndelivered(createdAfterIso: string): Promise<SheeridJob[]> {
+  listUndelivered(updatedAfterIso: string): Promise<SheeridJob[]> {
     return Promise.resolve(
       [...this.jobs.values()]
         .filter((j) =>
           j.status === "completed" && !j.delivered_at &&
-          j.created_at >= createdAfterIso
+          j.updated_at >= updatedAfterIso
         )
         .map(clone),
     );
@@ -360,24 +364,24 @@ export class PostgrestSheeridRepository implements SheeridRepository {
   }
   async listInflight(
     statuses: readonly string[],
-    createdAfterIso: string,
-    createdBeforeIso: string,
+    updatedAfterIso: string,
+    updatedBeforeIso: string,
   ): Promise<SheeridJob[]> {
     const list = statuses.map((s) => encodeURIComponent(s)).join(",");
     const { json } = await this.req(
       "GET",
-      `${TABLE_JOBS}?status=in.(${list})&created_at=gte.${
-        encodeURIComponent(createdAfterIso)
-      }&created_at=lte.${encodeURIComponent(createdBeforeIso)}&select=*&order=created_at.asc`,
+      `${TABLE_JOBS}?status=in.(${list})&updated_at=gte.${
+        encodeURIComponent(updatedAfterIso)
+      }&updated_at=lte.${encodeURIComponent(updatedBeforeIso)}&select=*&order=created_at.asc`,
     );
     const rows = Array.isArray(json) ? json : [];
     return rows.map((r) => rowToJob(r as Record<string, unknown>));
   }
-  async listUndelivered(createdAfterIso: string): Promise<SheeridJob[]> {
+  async listUndelivered(updatedAfterIso: string): Promise<SheeridJob[]> {
     const { json } = await this.req(
       "GET",
-      `${TABLE_JOBS}?status=eq.completed&delivered_at=is.null&created_at=gte.${
-        encodeURIComponent(createdAfterIso)
+      `${TABLE_JOBS}?status=eq.completed&delivered_at=is.null&updated_at=gte.${
+        encodeURIComponent(updatedAfterIso)
       }&select=*&order=created_at.asc`,
     );
     const rows = Array.isArray(json) ? json : [];

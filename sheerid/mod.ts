@@ -355,7 +355,20 @@ export class SheeridRateLimiter {
       ? this.limits.submitPerMinute
       : this.limits.callbackPerMinute;
     const now = this.nowFn();
-    if (this.map.size > 5000) this.map.clear();
+    if (this.map.size > 5000) {
+      // إصلاح W6 #8: التفريغ الكلي كان بيصفّر عدّادات كل العملاء
+      // النشطين في نفس اللحظة (نافذة إغراق مفتوحة كل ما الخريطة
+      // تمتلئ). بنشيل السجلات المنتهية الأول، وبعدين الأقدم إدخالًا
+      // بس (الخريطة مرتبة بالإدخال) لحد ما نرجع للحد.
+      for (const [k, rec] of this.map) {
+        if (now - rec.t > 60_000) this.map.delete(k);
+      }
+      while (this.map.size > 5000) {
+        const oldest = this.map.keys().next().value;
+        if (oldest === undefined) break;
+        this.map.delete(oldest);
+      }
+    }
     const key = `${route}:${ip}`;
     const rec = this.map.get(key);
     if (!rec || now - rec.t > 60_000) {

@@ -10,7 +10,11 @@
 
 import { SheerIDClient, SheerIDError } from "./client.ts";
 import type { Transport, TransportRequest } from "./client.ts";
-import { STATUS_AWAITING_LINK, STUDENT_SKU } from "./config.ts";
+import {
+  STATUS_AWAITING_LINK,
+  STATUS_SUBMITTING,
+  STUDENT_SKU,
+} from "./config.ts";
 import {
   MemoryOrderPort,
   MemorySheeridRepository,
@@ -367,12 +371,17 @@ Deno.test("provider not ready → manual fallback, job stays awaiting_link, no v
 // ---------------------------------------------------------------------
 // 9) فشل الإرسال نفسه عند المورد → مسار يدوي نظيف
 // ---------------------------------------------------------------------
-Deno.test("verify call fails → manual fallback, job awaiting_link", async () => {
+Deno.test("verify call fails ambiguously → manual fallback, job stays submitting (W6#3)", async () => {
+  // إصلاح W6 #3: خطأ 502 من المورد مش إثبات إن الطلب ما اتبعتش —
+  // إعادة العملية لـ awaiting_link كانت بتفتح باب إرسال تاني وخصم
+  // مزدوج. العملية بتضل submitting وبتتعلّم مسار يدوي بس.
   const h = harness(makeOrder());
   h.fake.failVerify = true;
   const s = await h.service.submit(makeOrder(), VALID_URL);
   eq(s.state, "manual_fallback", "fallback state");
-  eq((await jobOf(h)).status, STATUS_AWAITING_LINK, "awaiting link again");
+  const job = await jobOf(h);
+  eq(job.status, "submitting", "job NOT reset — request may have reached the provider");
+  eq(job.manual_fallback, true, "fallback flag set");
 });
 
 // ---------------------------------------------------------------------
@@ -1210,4 +1219,238 @@ Deno.test("panel hardening C: validateActivationUrl — scheme gate only, pure p
   ) {
     eq(validateActivationUrl(bad).ok, false, `blocked: ${bad.slice(0, 24)}`);
   }
+});
+
+// =====================================================================
+// إصلاحات مراجعة الموقع W6 (sheerid)
+// =====================================================================
+
+// W6#1: نافذة تحديث المسح بتتقاس من آخر نشاط (الإرسال) مش من إنشاء
+// العملية: عملية اتفتحت من ساعتين واتقدّمت دلوقتي لازم تتسوّى.
+Deno.test("W6#1: sweep refresh window anchors on submission, not job creation", async () => {
+  const h = harness(makeOrder());
+  await h.service.sweep(); // بيفتح العملية (awaiting_link) دلوقتي
+  eq((await jobOf(h)).status, STATUS_AWAITING_LINK, "job opened by sweep");
+  h.clock.t = new Date(h.clock.t.getTime() + 2 * 3600_000); // +ساعتين
+  const s = await h.service.submit(makeOrder(), VALID_URL);
+  eq(s.state, "processing", "submitted two hours after creation");
+  h.clock.t = new Date(h.clock.t.getTime() + 10 * 60_000); // +10 دقايق
+  h.fake.statusQueue = [
+    { status: "completed", activation_url: "https://activate.example/late" },
+  ];
+  await h.service.sweep();
+  const job = await jobOf(h);
+  eq(job.status, "completed", "sweep settled a job created >20min ago but submitted recently");
+  eq(job.activation_url, "https://activate.example/late", "activation stored");
+});
+
+// W6#1: سقف العالقين 24 ساعة من آخر نشاط: عملية اتقدّمت من ساعتين
+// (وإنشاؤها من 25 ساعة) مش عالقة.
+Deno.test("W6#1: stuck cap anchors on last activity, not creation", async () => {
+  const h = harness(makeOrder());
+  await h.service.sweep();
+  h.clock.t = new Date(h.clock.t.getTime() + 23 * 3600_000); // +23 ساعة
+  await h.service.submit(makeOrder(), VALID_URL);
+  h.clock.t = new Date(h.clock.t.getTime() + 2 * 3600_000); // +ساعتين كمان
+  await h.service.sweep();
+  const job = await jobOf(h);
+  eq(job.manual_fallback, false, "recently-submitted job is not stuck");
+  eq(job.status, "processing", "job still processing normally");
+});
+
+// W6#2: فشل حفظ معرّف عملية المورد بعد قبوله — إعادة محاولة واحدة،
+// وبعدها مسار يدوي بالمعرّف نفسه للاسترجاع، والعملية ما ترجعش
+// «كأنها ما اتبعتتش».
+Deno.test("W6#2: job_id save failure → retry, then manual fallback carrying the provider id", async () => {
+  const h = harness(makeOrder());
+  const orig = h.repo.updateJobIf.bind(h.repo);
+  let throwsLeft = 2;
+  h.repo.updateJobIf = (id, patch, expect) => {
+    if ((patch as { status?: string }).status === "processing" && throwsLeft > 0) {
+      throwsLeft--;
+      return Promise.reject(new Error("db write down"));
+    }
+    return orig(id, patch, expect);
+  };
+  const s = await h.service.submit(makeOrder(), VALID_URL);
+  eq(s.state, "manual_fallback", "manual fallback after save failure");
+  const job = await jobOf(h);
+  eq(job.status, STATUS_SUBMITTING, "job stays submitting — provider accepted it");
+  eq(job.manual_fallback, true, "fallback flag set");
+  eq(h.fake.count("/verify"), 1, "exactly one verify call");
+  ok(
+    h.adminNotes.some((t) => t.includes("JOB-TEST-1")),
+    "admin note carries the provider job id for manual recovery",
+  );
+});
+
+Deno.test("W6#2: job_id save succeeds on the immediate retry", async () => {
+  const h = harness(makeOrder());
+  const orig = h.repo.updateJobIf.bind(h.repo);
+  let throwsLeft = 1;
+  h.repo.updateJobIf = (id, patch, expect) => {
+    if ((patch as { status?: string }).status === "processing" && throwsLeft > 0) {
+      throwsLeft--;
+      return Promise.reject(new Error("db write down"));
+    }
+    return orig(id, patch, expect);
+  };
+  const s = await h.service.submit(makeOrder(), VALID_URL);
+  eq(s.state, "processing", "submission completes after one retry");
+  const job = await jobOf(h);
+  eq(job.job_id, "JOB-TEST-1", "provider job id saved");
+  eq(job.manual_fallback, false, "no fallback flag");
+});
+
+// W6#3: الخطأ الوحيد المثبت إنه «ما اتبعتش» هو غياب التهيئة محليًا
+// (notSent) — ده بس اللي بيرجع العملية لـ awaiting_link. العميل هنا
+// بديل بيرمي خطأ التهيئة من verify نفسه (الميزانية بتعدّي).
+Deno.test("W6#3: not-configured verify error still resets to awaiting_link", async () => {
+  const h = harness(makeOrder());
+  const stubClient = {
+    balance: () =>
+      Promise.resolve({ service_available: true, possible_verifications: 5 }),
+    verify: () =>
+      Promise.reject(
+        new SheerIDError("مفتاح خدمة التحقق مش مضبوط", { notSent: true }),
+      ),
+    status: () => Promise.resolve({ status: "processing" }),
+  } as unknown as SheerIDClient;
+  const svc = new SheeridService({
+    repo: h.repo,
+    client: stubClient,
+    orders: h.orders,
+    sendEmail: () => Promise.resolve("sent" as EmailOutcome),
+    alertAdmin: (t) => h.adminNotes.push(t),
+    log: () => {},
+    sleeper: () => Promise.resolve(),
+    now: () => new Date(h.clock.t),
+    paidStatuses: ["paid", "payment_confirmed"],
+  });
+  const s = await svc.submit(makeOrder(), VALID_URL);
+  eq(s.state, "manual_fallback", "fallback state");
+  const job = await jobOf(h);
+  eq(job.status, STATUS_AWAITING_LINK, "provably-unsent resets to awaiting_link");
+  eq(job.manual_fallback, true, "fallback flag set");
+});
+
+// W6#3: رد من غير job_id = حالة غامضة (ممكن يكون اتخصم) — مفيش reset.
+Deno.test("W6#3: verify response without job_id does not reset", async () => {
+  const h = harness(makeOrder());
+  h.fake.verifyData = { charged_usd: 1.99, status: "processing" };
+  const s = await h.service.submit(makeOrder(), VALID_URL);
+  eq(s.state, "manual_fallback", "fallback state");
+  const job = await jobOf(h);
+  eq(job.status, STATUS_SUBMITTING, "job stays submitting");
+  eq(job.manual_fallback, true, "fallback flag set");
+});
+
+// W6#3: عملية متعلّمة مسار يدوي ما تتقدّمش تاني من submit أبدًا.
+Deno.test("W6#3: manual_fallback job is never resubmitted by submit", async () => {
+  const h = harness(makeOrder());
+  h.fake.verifyData = { charged_usd: 1.99, status: "processing" };
+  await h.service.submit(makeOrder(), VALID_URL);
+  eq(h.fake.count("/verify"), 1, "one verify so far");
+  await h.service.submit(makeOrder(), VALID_URL);
+  eq(h.fake.count("/verify"), 1, "no second verify for a manual-fallback job");
+});
+
+// W6#4 + W6#7 + W6#1 (قايمة غير المسلّمة): اكتمال عند المورد لطلب
+// بقى غير مدفوع = مفيش تسليم ومفيش fulfilled؛ ولما الدفع يتأكد،
+// المسح بيسلّم — حتى لو إنشاء العملية عدى عليه أكتر من 24 ساعة،
+// وأول محاولة تسليم (attempts=0) بتتحسب من لحظة الإكمال.
+Deno.test("W6#4/#7/#1: unpaid completion delivers nothing; sweep delivers after payment, attempts=0 due from completion", async () => {
+  const h = harness(makeOrder());
+  await h.service.sweep(); // فتح العملية عند T0
+  h.clock.t = new Date(h.clock.t.getTime() + 25 * 3600_000); // +25 ساعة
+  await h.service.submit(makeOrder(), VALID_URL); // processing دلوقتي
+  await h.orders.setOrderStatus("MG-200001", "new"); // الدفع اتسحب/اتلغى
+  h.fake.statusQueue = [
+    { status: "completed", activation_url: "https://activate.example/xyz" },
+  ];
+  await h.service.refresh("JOB-TEST-1");
+  let job = await jobOf(h);
+  eq(job.status, "completed", "supplier-side completion recorded");
+  eq(job.delivered_at, null, "nothing delivered while unpaid");
+  eq(Number(job.delivery_attempts) || 0, 0, "no delivery attempt while unpaid");
+  eq(h.emails.filter((e) => e.kind === "completed").length, 0, "no completion email while unpaid");
+  eq(h.store.orders.get("MG-200001")?.status, "new", "order not fulfilled while unpaid");
+  ok(h.adminNotes.length > 0, "admin alerted about unpaid completion");
+  // الدفع اتأكد — المسح بعد 61 ثانية من الإكمال بيسلّم.
+  await h.orders.setOrderStatus("MG-200001", "paid");
+  h.clock.t = new Date(h.clock.t.getTime() + 61_000);
+  await h.service.sweep();
+  job = await jobOf(h);
+  ok(!!job.delivered_at, "delivered by the sweep after payment");
+  eq(h.emails.filter((e) => e.kind === "completed").length, 1, "exactly one completion email");
+});
+
+// W6#5: حالة العملية الحقيقية بتتقال قبل بوابة الدفع — طلب اتسوّى
+// واتسلّم ما يتقالش عليه «مستني الدفع» عشان لقطة الطلب قديمة.
+Deno.test("W6#5: settled job state wins over a stale unpaid order snapshot", async () => {
+  const h = harness(makeOrder());
+  h.fake.statusQueue = [
+    { status: "completed", activation_url: "https://activate.example/xyz" },
+  ];
+  const done = await h.service.submit(makeOrder(), VALID_URL);
+  eq(done.state, "completed", "happy path completed");
+  const stale = await h.service.submit(makeOrder({ status: "new" }), VALID_URL);
+  eq(stale.state, "completed", "terminal job state reported, not awaiting_payment");
+  eq(h.fake.count("/verify"), 1, "no new verify");
+});
+
+// W6#6: «اكتمل» من غير رابط تفعيل = مسار يدوي، مش نجاح فاضي.
+Deno.test("W6#6: completed without activation_url routes to manual fallback", async () => {
+  const h = harness(makeOrder());
+  h.fake.statusQueue = [{ status: "completed" }];
+  const s = await h.service.submit(makeOrder(), VALID_URL);
+  eq(s.state, "manual_fallback", "customer gets manual-fallback state");
+  const job = await jobOf(h);
+  eq(job.status, "processing", "job NOT closed as completed");
+  eq(job.manual_fallback, true, "fallback flag set");
+  eq(job.activation_url, "", "no activation stored");
+  eq(h.emails.filter((e) => e.kind === "completed").length, 0, "no completion email");
+  eq(h.store.orders.get("MG-200001")?.status, "paid", "order not fulfilled");
+  ok(h.emails.some((e) => e.kind === "fallback"), "fallback email sent");
+});
+
+// W6#7: فشل قراءة الطلب وقت التسليم ما يعلّمش delivered_at من غير إيميل.
+Deno.test("W6#7: unreadable order at delivery time does not mark delivered", async () => {
+  const h = harness(makeOrder());
+  await h.service.submit(makeOrder(), VALID_URL); // processing
+  const origGet = h.orders.getOrder.bind(h.orders);
+  h.orders.getOrder = () => Promise.reject(new Error("db down"));
+  h.fake.statusQueue = [
+    { status: "completed", activation_url: "https://activate.example/xyz" },
+  ];
+  await h.service.refresh("JOB-TEST-1");
+  const job = await jobOf(h);
+  eq(job.status, "completed", "job completed");
+  eq(job.delivered_at, null, "delivered_at NOT marked without an order read");
+  eq(h.emails.filter((e) => e.kind === "completed").length, 0, "no email sent");
+  h.orders.getOrder = origGet;
+});
+
+// W6#8: تفريغ محدّد المعدل عند الامتلاء بيشيل المنتهي/الأقدم بس —
+// عدّادات العملاء النشطين ما بتتصفّرش.
+Deno.test("W6#8: rate limiter overflow evicts oldest only, active counters survive", () => {
+  let nowMs = 1_000_000;
+  const limiter = new SheeridRateLimiter(
+    { statusPerMinute: 1, submitPerMinute: 1, callbackPerMinute: 1 },
+    () => nowMs,
+  );
+  eq(limiter.allow("status", "ip-0"), true, "first ip allowed");
+  for (let i = 1; i <= 5000; i++) limiter.allow("status", `ip-${i}`);
+  nowMs += 30_000; // لسه جوه نافذة الدقيقة
+  eq(limiter.allow("status", "ip-new"), true, "overflow call allowed (evicts oldest)");
+  eq(
+    limiter.allow("status", "ip-5000"),
+    false,
+    "recently-active ip keeps its counter (not wiped)",
+  );
+  eq(
+    limiter.allow("status", "ip-0"),
+    true,
+    "oldest ip was evicted — its counter starts fresh",
+  );
 });

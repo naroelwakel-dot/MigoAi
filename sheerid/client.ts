@@ -36,14 +36,22 @@ export class SheerIDError extends Error {
    * الرابط) — المعالج بيعدّي message للعميل للحالات دي بس.
    */
   readonly customerSafe: boolean;
+  /**
+   * true بس لما الخطأ حصل محليًا قبل أي إرسال للمورد (التهيئة
+   * ناقصة) — ده الخطأ الوحيد المثبت إن الطلب ما وصلش المورد أصلًا
+   * (إصلاح W6 #3). أي خطأ تاني (شبكة/مهلة/رفض/رد غامض) ممكن يكون
+   * الطلب وصل واتخصم، فإعادة الإرسال بعده خصم مزدوج محتمل.
+   */
+  readonly notSent: boolean;
   constructor(
     message: string,
-    opts?: { detail?: string; customerSafe?: boolean },
+    opts?: { detail?: string; customerSafe?: boolean; notSent?: boolean },
   ) {
     super(message);
     this.name = "SheerIDError";
     this.detail = opts?.detail || "";
     this.customerSafe = opts?.customerSafe === true;
+    this.notSent = opts?.notSent === true;
   }
 }
 
@@ -114,7 +122,9 @@ export class SheerIDClient {
     path: string,
     body?: Record<string, unknown>,
   ): Promise<Record<string, unknown>> {
-    if (!this.key) throw new SheerIDError("مفتاح خدمة التحقق مش مضبوط");
+    if (!this.key) {
+      throw new SheerIDError("مفتاح خدمة التحقق مش مضبوط", { notSent: true });
+    }
     const headers: Record<string, string> = {
       "X-API-Key": this.key,
       "Accept": "application/json",
@@ -137,7 +147,7 @@ export class SheerIDClient {
     body: Record<string, unknown>,
   ): Promise<Record<string, unknown>> {
     if (!this.bridgeToken) {
-      throw new SheerIDError("مفتاح خدمة التحقق مش مضبوط");
+      throw new SheerIDError("مفتاح خدمة التحقق مش مضبوط", { notSent: true });
     }
     return this.execute({
       url: this.base + BRIDGE_PATH,
