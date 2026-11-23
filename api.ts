@@ -1778,6 +1778,11 @@ function handoffReply(currentId: string): { reply: string; persona: string } {
 
 let __catalog: { sku: string; price: number; kind: string }[] | null = null;
 let __catalogAt = 0;
+// نتيجة آخر محاولة جلب فعلية (null = لسه مفيش محاولة): getCatalog
+// نفسه ما بيرميش أبدًا — بيرجّع الكاش أو [] — فمسار /catalog/prices
+// بيقرأ العَلَم ده مع عُمر الكاش عشان يفرّق «بيانات سليمة» عن
+// «فشل قراءة» ويرد 502 زي ما هو موثّق عنده (مراجعة W3 #1).
+let __catalogLastFetchOk: boolean | null = null;
 async function getCatalog(): Promise<{ sku: string; price: number; kind: string }[]> {
   const now = Date.now();
   if (__catalog && now - __catalogAt < 10 * 60 * 1000) return __catalog;
@@ -1789,6 +1794,9 @@ async function getCatalog(): Promise<{ sku: string; price: number; kind: string 
   if (Array.isArray(rows) && rows.length) {
     __catalog = rows.map((r: any) => ({ sku: String(r.sku), price: Number(r.price), kind: String(r.kind || "") }));
     __catalogAt = now;
+    __catalogLastFetchOk = true;
+  } else {
+    __catalogLastFetchOk = false;
   }
   return __catalog || [];
 }
@@ -1980,6 +1988,16 @@ async function groqChat(
   return { text: "", model, note };
 }
 
+// تنقيح سرّ من نص تشخيصي قبل حفظه: split على سرّ فاضي في JS
+// بيفتّت النص ويدخل البديل بين كل حرف والتاني، فالدالة دي ما
+// بتعملش حاجة خالص لو السرّ فاضي/غير مضبوط (مراجعة W3 #2 —
+// في وضع Groq بس مفيش GEMINI_API_KEY، وسجلّات chat_debug كانت
+// بتتحفظ مفتّتة وغير قابلة للقراءة).
+function redactSecret(text: string, secret: string, replacement = "[key]"): string {
+  if (!secret) return text;
+  return text.split(secret).join(replacement);
+}
+
 async function handleChat(req: Request): Promise<Response> {
   const key = Deno.env.get("GEMINI_API_KEY") || "";
   const groqKey = envKey("GROQ_API_KEY", "GROQ_KEY");
@@ -2058,7 +2076,7 @@ async function handleChat(req: Request): Promise<Response> {
   }
   if (!text) {
     try {
-      const dbg = (attempts.join("\n") || gBody || "").split(key).join("[key]").slice(0, 1900);
+      const dbg = redactSecret(attempts.join("\n") || gBody || "", key).slice(0, 1900);
       const lp = fetch(`${SB_URL}/rest/v1/chat_debug`, {
         method: "POST",
         headers: { "apikey": SB_KEY, "Authorization": `Bearer ${SB_KEY}`, "Content-Type": "application/json", "Prefer": "return=minimal" },
@@ -2409,6 +2427,19 @@ Deno.serve(async (req: Request) => {
   ) {
     try {
       const cat = await getCatalog();
+      // فشل القراءة ما يرجعش 200 بأسعار فاضية (مراجعة W3 #1):
+      // getCatalog ما بيرميش — بيرجّع الكاش القديم أو [] — فالحالتين
+      // دول بيتحولوا هنا للـ 502 الموثّق فوق: مفيش بيانات خالص، أو
+      // آخر جلب فشل والكاش أقدم من سقف 60 دقيقة. كاش أحدث من السقف
+      // بعد فشل جلب بيُقدَّم زي ما هو (تقديم أسعار قديمة شوية أهون
+      // من تعطيل المسار، والسقف بيمنع تقديمها لأجل غير مسمى).
+      if (!cat.length) throw new Error("catalog_empty");
+      if (
+        __catalogLastFetchOk === false &&
+        Date.now() - __catalogAt > 60 * 60 * 1000
+      ) {
+        throw new Error("catalog_stale");
+      }
       const prices: Record<string, number> = {};
       const smmPrices: Record<string, number> = {};
       for (const r of cat) {
