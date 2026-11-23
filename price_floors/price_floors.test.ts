@@ -384,3 +384,94 @@ Deno.test("handler: unauthorized caller → 401 and zero RPC calls", async () =>
   eq(client.calls.length, 0, "no RPC call without auth");
   eq(client.catalog.get("Duolingo Super (12 شهر)"), 100, "price untouched");
 });
+
+// ------------------------------------------------------------ تدقيق W4: فشل RPC الكلي
+
+/** عميل بيفشل في كل نداء (مفتاح خدمة غايب/قاعدة واقعة). */
+class ThrowingPriceFloorClient implements PriceFloorClient {
+  calls = 0;
+  applyPriceFloor(_args: ApplyPriceFloorArgs): Promise<ApplyOutcome> {
+    this.calls++;
+    return Promise.reject(new Error("SUPABASE_SERVICE_ROLE_KEY is not set"));
+  }
+}
+
+Deno.test("W4: a round where EVERY apply RPC fails is not ok — nothing written, errors kept", async () => {
+  const client = new ThrowingPriceFloorClient();
+  const deps: PriceFloorDeps = {
+    registry: {
+      snapshot: () =>
+        Promise.resolve({
+          feed: "migo-provenance",
+          version: 1,
+          generated_at: "2026-11-18T08:11:56Z",
+          records: [
+            rec({ product_key: "a", store_sku: "SKU-A", cost_usd: 1.49 }),
+            rec({ product_key: "b", store_sku: "SKU-B", cost_usd: 4.65 }),
+          ],
+        } as RegistrySnapshot),
+    },
+    client,
+    logError: () => {},
+  };
+  const report = await runPriceFloorApplier(deps);
+  eq(client.calls, 2, "both records attempted");
+  eq(report.ok, false, "all-fail round is NOT ok");
+  eq(report.aborted, "all_apply_rpc_failed", "abort reason");
+  eq(report.raised.length, 0, "nothing raised");
+  eq(report.errors.length, 2, "both failures recorded");
+});
+
+Deno.test("W4: handler answers 503 (not 200) when every apply RPC fails", async () => {
+  const client = new ThrowingPriceFloorClient();
+  const deps: PriceFloorDeps = {
+    registry: {
+      snapshot: () =>
+        Promise.resolve({
+          feed: "migo-provenance",
+          version: 1,
+          generated_at: "2026-11-18T08:11:56Z",
+          records: [rec({ product_key: "a", store_sku: "SKU-A", cost_usd: 1.49 })],
+        } as RegistrySnapshot),
+    },
+    client,
+    logError: () => {},
+  };
+  const res = await handlePriceFloorRequest(pfReq({}), deps, pfAuth);
+  eq(res!.status, 503, "status");
+  const body = await res!.json();
+  eq(body.ok, false, "body ok flag");
+  eq(body.errors.length, 1, "error visible in body");
+});
+
+Deno.test("W4: partial RPC failure stays ok=true with the failure listed", async () => {
+  const good = new FakePriceFloorClient();
+  good.catalog.set("SKU-A", 100);
+  const flaky: PriceFloorClient = {
+    applyPriceFloor: (args) =>
+      args.p_sku === "SKU-B"
+        ? Promise.reject(new Error("rpc apply_price_floor http 500"))
+        : good.applyPriceFloor(args),
+  };
+  const deps: PriceFloorDeps = {
+    registry: {
+      snapshot: () =>
+        Promise.resolve({
+          feed: "migo-provenance",
+          version: 1,
+          generated_at: "2026-11-18T08:11:56Z",
+          records: [
+            rec({ product_key: "a", store_sku: "SKU-A", cost_usd: 1.49 }),
+            rec({ product_key: "b", store_sku: "SKU-B", cost_usd: 4.65 }),
+          ],
+        } as RegistrySnapshot),
+    },
+    client: flaky,
+    logError: () => {},
+  };
+  const report = await runPriceFloorApplier(deps);
+  eq(report.ok, true, "partial failure keeps ok");
+  eq(report.aborted, null, "no abort on partial failure");
+  eq(report.raised.length, 1, "the good SKU still raised");
+  eq(report.errors.length, 1, "the failed SKU is listed");
+});

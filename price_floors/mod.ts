@@ -135,7 +135,7 @@ export interface RaisedRecord {
 
 export interface PriceFloorRunReport {
   ok: boolean;
-  /** سبب الإجهاض الكامل (التغذية) — موجود بس لما ok=false. */
+  /** سبب الإجهاض الكامل (التغذية، أو فشل كل نداءات RPC) — موجود بس لما ok=false. */
   aborted: string | null;
   feed_generated_at: string | null;
   raised: RaisedRecord[];
@@ -251,6 +251,7 @@ export async function runPriceFloorApplier(
     bySku.set(sku, arr);
   }
 
+  let applyAttempts = 0;
   for (const [sku, recs] of bySku) {
     if (recs.length > 1) {
       for (const r of recs) {
@@ -278,6 +279,7 @@ export async function runPriceFloorApplier(
       });
       continue;
     }
+    applyAttempts++;
     try {
       const outcome = await deps.client.applyPriceFloor({
         p_sku: sku,
@@ -320,6 +322,20 @@ export async function runPriceFloorApplier(
         product_key: rec.product_key,
       });
     }
+  }
+  // جولة فشلت كل نداءات RPC بتاعتها (مفتاح الخدمة غايب أو القاعدة
+  // واقعة) مش جولة ناجحة: صفر نجاحات من محاولات حقيقية = ok=false
+  // فالمعالج بيرد 503، بدل 200 ok:true اللي كان بيخلي الفشل الكلي
+  // شبه النجاح الكامل لأي مستدعٍ بيبص على ok بس (تدقيق W4).
+  // الفشل الجزئي بيضل ok=true مع errors زي ما هو — فيه كتابات
+  // حصلت فعلًا والتقرير شايل تفاصيل اللي فشل.
+  if (
+    applyAttempts > 0 &&
+    report.raised.length + report.already_at_or_above === 0 &&
+    report.errors.length === applyAttempts
+  ) {
+    report.ok = false;
+    report.aborted = "all_apply_rpc_failed";
   }
   return report;
 }

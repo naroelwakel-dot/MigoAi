@@ -147,12 +147,27 @@ const AMOUNT_WORD_RE = /(?:مبلغ|بقيمة|قيمة)\s*:?\s*([0-9]{1,3}(?:,[
 // ⚠️ الحروف هنا مكتوبة بالأبجدية المطوية (ا مش إ/أ، والى مش إلى) ومن
 // غير تشكيل، لأن العلامات دي بتشتغل على النص بعد normalizeDigits بس —
 // أي صيغة غير مطوية هنا مش هتطابق أي نص حقيقي أبدًا.
-const RECEIVED_MARKERS = /(?:استلام|استلمت|استقبلت|تم\s*(?:اضافة|ايداع)|وصل(?:ك|ت)?|تحويل وارد|اضيف|اضيف الى حسابك|received|credited|deposit(?:ed)?)/i;
+const RECEIVED_MARKERS = /(?:استلام|استلمت|استقبلت|تم\s*(?:اضافة|ايداع)|(?<![\p{L}])وصل(?:ك|ت)?(?![\p{L}])|تحويل وارد|اضيف|اضيف الى حسابك|received|credited|deposit(?:ed)?)/iu;
 const SENT_MARKERS = /(?:تم تحويل مبلغ.*(?:الى|لرقم)|قمت بتحويل|تم ارسال|you (?:have )?sent|payment (?:of|sent))/i;
 
+// عبارات نفي الاستلام وصيغ المستقبل — دي مش إيصالات واردة أبدًا،
+// وكانت بتتلقط كإيداع (تدقيق W4): «لم يتم استلام مبلغ 500» رسالة
+// فشل، و«اشحن 50 وهتوصلك رسالة بالهدية» إعلان. بنخفيها من النص
+// قبل اختبار علامات الاتجاه، وبنقيّد «وصل» بحدود كلمة كمان عشان
+// ما تطابقش جوه «توصلك/هتوصلك» حتى من غير إخفاء.
+const NEGATED_RECEIPT_RE = /(?:لم|لن)\s+(?:يتم\s+)?(?:استلام|استلم|اضافة|ايداع|وصول)/g;
+const FUTURE_RECEIPT_RE = /(?:هتوصلك|هتوصل(?:ك)?|هيوصلك|سيصلك|سوف\s+يصلك)/g;
+
+function maskNonReceipts(body: string): string {
+  return body
+    .replace(NEGATED_RECEIPT_RE, " ")
+    .replace(FUTURE_RECEIPT_RE, " ");
+}
+
 function detectDirection(body: string): "received" | "sent" | "unknown" {
-  if (RECEIVED_MARKERS.test(body)) return "received";
-  if (SENT_MARKERS.test(body)) return "sent";
+  const b = maskNonReceipts(body);
+  if (RECEIVED_MARKERS.test(b)) return "received";
+  if (SENT_MARKERS.test(b)) return "sent";
   return "unknown";
 }
 
@@ -166,10 +181,17 @@ function extractRef(body: string): string | null {
   if (m) return m[1].replace(/[\s-]/g, "");
   const hx = body.match(HEX_REF_RE);
   if (hx && /[0-9]/.test(hx[1]) && /[a-fA-F]/.test(hx[1])) return hx[1];
-  // احتياطي: أطول سلسلة أرقام (8+) مش رقم موبايل — مرشّح مرجع.
+  // احتياطي: أول سلسلة أرقام (8+) مش رقم موبايل — مرشّح مرجع.
+  // بس مش من سياق حساب/محفظة/بطاقة: أرقام الحسابات والمحافظ
+  // ثابتة وبتتطبع في كل رسالة من نفس المرسل، واعتبارها «مرجع
+  // عملية» بيخلي إيداعات مختلفة تتشارك نفس المرجع (تدقيق W4).
   const runs = body.match(/\d{8,}/g) || [];
   for (const run of runs) {
-    if (!/^01[0125]\d{8}$/.test(run)) return run;
+    if (/^01[0125]\d{8}$/.test(run)) continue;
+    const idx = body.indexOf(run);
+    const before = body.slice(Math.max(0, idx - 24), idx);
+    if (/(?:حساب|محفظة|بطاقة|account|wallet)/i.test(before)) continue;
+    return run;
   }
   return null;
 }
@@ -183,9 +205,28 @@ function extractSender(body: string): string | null {
 }
 
 function extractAmount(body: string): number | null {
-  const byWord = body.match(AMOUNT_WORD_RE);
-  if (byWord) {
-    const v = toAmount(byWord[1]);
+  // مسار «كلمة المبلغ»: بنعدّي على كل المرشّحين مش أول واحد بس —
+  // مرشّح في جملة رسوم/خصم/رصيد (من آخر فاصل جُمَل قبله لحد
+  // المرشّح) مش مبلغ الإيداع فبنتخطاه للي بعده. الحادثة (تدقيق
+  // W4): «تم خصم رسوم بقيمة 2 جنيه. تم ايداع مبلغ 498 جنيه» كانت
+  // بترجع 2 (الرسوم) بدل 498 (الإيداع) لأن أول مرشّح كان بيترجع
+  // فورًا من غير أي فحص سياق.
+  const isFeeOrBalanceCtx = (idx: number) => {
+    const before = body.slice(0, idx);
+    const cut = Math.max(
+      before.lastIndexOf("."),
+      before.lastIndexOf("،"),
+      before.lastIndexOf("؛"),
+      before.lastIndexOf("\n"),
+    );
+    return /(?:رسوم|خصم|مصاريف|عمولة|رصيد|balance)/i.test(before.slice(cut + 1));
+  };
+  const wordFlags = AMOUNT_WORD_RE.flags.includes("g")
+    ? AMOUNT_WORD_RE.flags
+    : AMOUNT_WORD_RE.flags + "g";
+  for (const m of body.matchAll(new RegExp(AMOUNT_WORD_RE.source, wordFlags))) {
+    if (isFeeOrBalanceCtx(m.index ?? 0)) continue;
+    const v = toAmount(m[1]);
     if (v != null) return v;
   }
   // أرقام «الرصيد» لازم تتبعد: أي مرشّح من جملة رصيد بيتخطى للي بعده.
@@ -356,7 +397,12 @@ export function parseSms(senderId: string, rawBody: string): SmsParseResult {
 /**
  * مفتاح منع التكرار (بيتحسب على الخادم — والموبايل بيحسب نظيره
  * المحلي لإدارة طابوره هو؛ شوف NOTES عن الطبقتين):
- *   • فيه مرجع: بصمة (sender_id + transfer_ref)
+ *   • فيه مرجع: بصمة (sender_id + transfer_ref + المبلغ + بصمة
+ *     النص) — المبلغ والنص جوه البصمة قصدًا (تدقيق W4): مرجع
+ *     ثابت/مكرر عبر رسائل مختلفة (رقم حساب اتلقط كمرجع مثلًا)
+ *     ما يقدرش يخلي إيداعين مختلفين يتصادموا على نفس المفتاح.
+ *     إعادة تسليم نفس الرسالة حرفيًا لسه بتتصادم (نفس النص
+ *     والمبلغ والمرجع) فمنع التكرار الحقيقي ما اتلمسش.
  *   • مفيش: بصمة (sender_id + المبلغ + دقيقة الوصول + بصمة النص)
  */
 export async function computeDedupeKey(input: {
@@ -372,7 +418,11 @@ export async function computeDedupeKey(input: {
     return [...new Uint8Array(buf)].map((b) => b.toString(16).padStart(2, "0")).join("");
   };
   if (input.transfer_ref) {
-    return "ref:" + (await digest(input.sender_id + "|" + input.transfer_ref));
+    const bodyHash = await digest(input.body);
+    return "ref:" + (await digest(
+      input.sender_id + "|" + input.transfer_ref + "|" +
+        (input.amount_egp ?? "") + "|" + bodyHash,
+    ));
   }
   const minute = (input.received_at_iso || "").slice(0, 16); // لحد الدقيقة
   const bodyHash = await digest(input.body);

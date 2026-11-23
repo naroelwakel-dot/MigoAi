@@ -217,7 +217,7 @@ Deno.test("vodafone irsal: «تم إرسال» بالهمزة تفضل صادر 
   eq(r.matchable, false, "matchable");
 });
 
-Deno.test("dedupe: بمرجع ثابت لنفس (مرسل+مرجع)، وبيختلف باختلاف المرجع", async () => {
+Deno.test("dedupe: بمرجع ثابت لنفس الرسالة حرفيًا، وبيختلف باختلاف النص/المبلغ/المرجع", async () => {
   const base = {
     sender_id: "VodafoneCash",
     body: FIXTURE_VODAFONE_AR,
@@ -226,8 +226,14 @@ Deno.test("dedupe: بمرجع ثابت لنفس (مرسل+مرجع)، وبيخت
     transfer_ref: "123456789012",
   };
   const k1 = await computeDedupeKey(base);
+  const k1b = await computeDedupeKey({ ...base });
+  eq(k1, k1b, "identical redelivery → same key (true duplicate)");
+  // تدقيق W4: المفتاح بقى بيضم المبلغ وبصمة النص — إيداع مختلف
+  // بنفس المرجع (مرجع ثابت/مكرر) ما يتصادمش مع الأول.
   const k2 = await computeDedupeKey({ ...base, body: "نص مختلف تمامًا" });
-  eq(k1, k2, "ref-based key ignores body");
+  ok(k1 !== k2, "different body → different key even with same ref");
+  const k2b = await computeDedupeKey({ ...base, amount_egp: 700 });
+  ok(k1 !== k2b, "different amount → different key even with same ref");
   const k3 = await computeDedupeKey({ ...base, transfer_ref: "999" });
   ok(k1 !== k3, "different ref → different key");
   const k4 = await computeDedupeKey({ ...base, transfer_ref: null });
