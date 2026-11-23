@@ -1527,6 +1527,14 @@ async function recordOrder(snapshot) {
         });
         if (!r.ok) throw new Error('create_order HTTP ' + r.status);
         data = await r.json();
+        // رفيق هجرة 033 (W12 #2): create_order بقى بيرجّع جسم خطأ
+        // بحالة 200 بدل رفع HTTP 400 لما الكوبون يترفض، عشان
+        // محاولة الكوبون الفاشلة تعيش وتتحسب على خنق التخمين.
+        // بنرمي الجسم ده لنفس مسار الفشل اللي تحت (rpc_failure +
+        // إعادة لعب)، فالنتيجة اللي العميل بيشوفها متطابقة مع
+        // سلوك الرفض الحالي بالحرف. السطر ده خامل قبل تطبيق 033:
+        // مفيش رد ناجح حالي بيحمل مفتاح error.
+        if (data && data.error) throw new Error('create_order refused: ' + data.error);
       } catch (sendErr) {
         queueBackup({ t: Date.now(), kind: 'rpc_failure',
                       attempt: attempt, snapshot: snapshot });
