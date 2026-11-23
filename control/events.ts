@@ -149,6 +149,7 @@ export interface ControlEventsClient {
     p_asset: string;
     p_amount_usdt: string;
     p_tx_hash: string | null;
+    intentId?: string;
   }): Promise<Record<string, unknown>>;
   callSmsRematch(limit: number): Promise<Record<string, unknown>>;
   callOrderRematch(limit: number): Promise<Record<string, unknown>>;
@@ -813,8 +814,13 @@ export class PostgrestControlEventsClient implements ControlEventsClient {
     p_asset: string;
     p_amount_usdt: string;
     p_tx_hash: string | null;
+    intentId?: string;
   }): Promise<Record<string, unknown>> {
-    return this.rpc("wallet_auto_credit_deposit", { ...args });
+    const { intentId, ...rpcArgs } = args;
+    return this.rpc("wallet_auto_credit_deposit", {
+      ...rpcArgs,
+      ...(intentId ? { p_intent_id: intentId } : {}),
+    });
   }
 
   callSmsRematch(limit: number): Promise<Record<string, unknown>> {
@@ -1390,6 +1396,7 @@ export async function handleControlEventsRequest(
             p_asset: row.asset ? String(row.asset) : "",
             p_amount_usdt: amountStr,
             p_tx_hash: row.tx_hash ? String(row.tx_hash) : null,
+            intentId,
           });
         } else if (action === "approve") {
           // اعتماد بلا هدف (لا مطالبة ولا نية) ممنوع: مش هنخترع
