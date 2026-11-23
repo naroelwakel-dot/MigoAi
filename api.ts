@@ -146,6 +146,11 @@ import {
   handleControlWave3Request,
   PostgrestWave3Client,
 } from "./control/wave3.ts";
+import {
+  type ControlAdminsDeps,
+  handleControlAdminsRequest,
+  PostgrestAdminsClient,
+} from "./control/admins.ts";
 import { bridgeBaseUrl } from "./sheerid/config.ts";
 import {
   isSessionShaped,
@@ -925,6 +930,29 @@ function getControlWave3Deps(): ControlWave3Deps {
     logError,
   };
   return _controlWave3Deps;
+}
+
+// ---------------------------------------------------------------------------
+// لوحة التحكم (موجة Instinct الرابعة، البند ٢٣): هويات مسؤولي
+// اللوحة وأدوارهم — سجل control_admins (هجرة 039) بمفتاح الخدمة.
+// خاملة بالتصميم: currentRoleOf مش مربوط، فالمسؤول المصادَق
+// الحالي بيتحلّ دوره لـ owner ضمنيًا جوه المعالج، والدخول
+// والجلسات القائمة ما بيقروش الجدول ده أصلًا.
+// ---------------------------------------------------------------------------
+let _controlAdminsDeps: ControlAdminsDeps | null = null;
+function getControlAdminsDeps(): ControlAdminsDeps {
+  if (_controlAdminsDeps) return _controlAdminsDeps;
+  const env = (n: string) => Deno.env.get(n) || "";
+  _controlAdminsDeps = {
+    client: new PostgrestAdminsClient({
+      baseUrl: SB_URL,
+      keyOf: () => env("SUPABASE_SERVICE_ROLE_KEY"),
+    }),
+    isAdmin,
+    corsOf: (r: Request) => corsHeaders(r),
+    logError,
+  };
+  return _controlAdminsDeps;
 }
 
 // ---------------------------------------------------------------------------
@@ -2662,6 +2690,11 @@ Deno.serve(async (req: Request) => {
         getControlWave3Deps(),
       );
       if (wave3Res) return wave3Res;
+      const adminsRes = await handleControlAdminsRequest(
+        req,
+        getControlAdminsDeps(),
+      );
+      if (adminsRes) return adminsRes;
     } catch (e) {
       logError("control.customers.route", "unhandled customers route error", e);
     }
