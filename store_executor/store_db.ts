@@ -425,12 +425,18 @@ export class PostgrestStoreDb implements StoreDb {
     orderRef: string,
     status: string,
   ): Promise<void> {
-    await this.req(
+    // إصلاح W5 #4: حالة HTTP كانت بتتبلع — كتابة فاشلة كانت بتعدّي
+    // كأنها نجحت (fulfilled وهمي + تحديث أدمن «ناجح» ما حصلش). نفس
+    // انضباط updateExecution/transitionExecution: غير 2xx = رمي.
+    const { status: httpStatus } = await this.req(
       "PATCH",
       `orders?order_ref=eq.${encodeURIComponent(orderRef)}`,
       { status },
       "return=minimal",
     );
+    if (httpStatus < 200 || httpStatus >= 300) {
+      throw new Error(`setOrderStatus failed with status ${httpStatus}`);
+    }
   }
   async listExecutions(limit: number): Promise<ExecutionRecord[]> {
     const { json } = await this.req(

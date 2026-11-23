@@ -39,6 +39,13 @@ export function extractDeliveryItems(payload: unknown): string[] {
       for (const item of value) take(item);
       return;
     }
+    if (value && typeof value === "object") {
+      // إصلاح W5 #3: عنصر قايمة على شكل كائن ({code: "…"}) — الاستخراج
+      // بيتعاد عليه بمفاتيح التسليم المعروفة بس، مش String(value)
+      // اللي كانت بتنتج "[object Object]" كعنصر تسليم للعميل.
+      for (const item of extractDeliveryItems(value)) take(item);
+      return;
+    }
     const text = String(value ?? "").trim();
     if (text && !seen.has(text)) {
       seen.add(text);
@@ -67,7 +74,11 @@ export function deliveryFromRaw(raw: unknown): DeliveryItem[] {
   const seen = new Set<string>();
   for (const [key, label] of DELIVERY_KEYS) {
     const value = lowered.get(key);
-    const text = value != null ? String(value).trim() : "";
+    // إصلاح W5 #3: قيمة كائنية تحت مفتاح معروف ما تتحولش لـ
+    // "[object Object]" — بتتساب للاستخراج الاحتياطي تحت.
+    const text = value != null && typeof value !== "object"
+      ? String(value).trim()
+      : "";
     if (!text || seen.has(text)) continue;
     seen.add(text);
     out.push({ label, value: text });
@@ -104,10 +115,20 @@ export const SUPPLIER_FINGERPRINTS: string[] = [
 /** أنماط بصمات: معرّفات وظائف/طلبات داخلية عند الموردين وأسعار تكلفة. */
 const FINGERPRINT_PATTERNS: RegExp[] = [
   /\bBNY-[A-Za-z0-9_-]+\b/g, // بصمة وظائف Bunny/SheerID الموثّقة
-  /\bjob[_-]?id\s*[:=]?\s*\S+/gi,
-  /\bcustom_id\s*[:=]?\s*\S+/gi,
   /https?:\/\/[^\s"']*(?:drayik|tunvn|wasmou|bunnytoolsbot)[^\s"']*/gi,
 ];
+
+/**
+ * نمط قيم معرّفات الوظائف (إصلاح W5 #1): بيقنّع القيمة بس وبيسيب
+ * المفتاح والفاصل زي ما هما. النمط القديم (\S+ لآخر السطر) كان بياكل
+ * بقية الـ JSON المضغوط كله («custom_id":"B-1","status":"ok"») فتنقية
+ * الرد كانت بتفشل في التحليل وترجع {text} والاستخراج يرجع فاضي.
+ * الصيغة دي بتتعامل مع المفتاح المقتبس والقيمة المقتبسة/الرقمية:
+ *   "custom_id":"B-1"  →  "custom_id":"***"
+ *   job_id: BNY-9      →  job_id: "***"
+ */
+const ID_VALUE_PATTERN =
+  /\b(job[_-]?id|custom_id)("?\s*[:=]?\s*)("[^"]*"|'[^']*'|[^\s,}\]]+)/gi;
 
 export interface SanitizeOptions {
   /** قيم سرية معروفة لازم تتشال حرفيًا (مفاتيح API ونحوها). */
@@ -122,6 +143,8 @@ export function sanitizeText(text: string, opts: SanitizeOptions = {}): string {
   for (const secret of opts.secrets ?? []) {
     if (secret && secret.length >= 4) out = out.split(secret).join("***");
   }
+  // قيم معرّفات الوظائف الأول: تقنيع القيمة بس (W5 #1) قبل الأنماط العامة.
+  out = out.replace(ID_VALUE_PATTERN, '$1$2"***"');
   for (const pattern of FINGERPRINT_PATTERNS) out = out.replace(pattern, "***");
   const prints = [...SUPPLIER_FINGERPRINTS, ...(opts.extraFingerprints ?? [])];
   for (const print of prints) {
@@ -163,7 +186,7 @@ export function findLeaks(
     for (const print of prints) {
       if (print && hay.includes(print.toLowerCase())) leaks.push(print);
     }
-    for (const pattern of FINGERPRINT_PATTERNS) {
+    for (const pattern of [...FINGERPRINT_PATTERNS, ID_VALUE_PATTERN]) {
       pattern.lastIndex = 0;
       if (pattern.test(item.value)) leaks.push(pattern.source);
     }

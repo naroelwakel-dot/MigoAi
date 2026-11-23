@@ -19,9 +19,16 @@ const CACHE_MS = 30_000;
 
 type Loader = () => Promise<unknown>;
 
+/** سماحية انحراف ساعة بين منتج التغذية وقارئها — مش ثقة مفتوحة. */
+const CLOCK_SKEW_MS = 60_000;
+
 function isFresh(generatedAt: string, now: Date): boolean {
   const t = Date.parse(generatedAt || "");
   if (!t) return false;
+  // إصلاح W5 #5: تاريخ توليد في المستقبل البعيد كان بيعدّي «طازج»
+  // للأبد (الفرق السالب أصغر من أي حد) — تغذية مسمومة/ساعة خربانة
+  // كانت هتجمّد قرارات التوفر. المستقبل مسموح في حدود انحراف الساعة بس.
+  if (t - now.getTime() > CLOCK_SKEW_MS) return false;
   return now.getTime() - t <= MAX_FEED_AGE_MS;
 }
 
@@ -61,7 +68,9 @@ export class JsonRegistrySource implements RegistrySource {
     if (
       !snap || snap.feed !== "migo-provenance" || snap.version !== 1 ||
       !Array.isArray(snap.records) || !generated ||
-      now.getTime() - generated > this.maxAgeMs
+      now.getTime() - generated > this.maxAgeMs ||
+      // إصلاح W5 #5: لقطة بتاريخ مستقبلي بعيد مرفوضة زي التغذية بالحرف.
+      generated - now.getTime() > CLOCK_SKEW_MS
     ) {
       return null;
     }

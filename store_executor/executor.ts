@@ -96,6 +96,11 @@ export class StoreExecutor {
   async executeOrder(orderRef: string): Promise<ItemResult[]> {
     const order = await this.deps.store.getOrder(orderRef);
     if (!order) return [];
+    // إصلاح W5 #2: طلب اتلغى أو اتردّ تمنه برّه التنفيذ من الباب —
+    // ممنوع حجز تنفيذ جديد له أصلًا.
+    if (order.status === "cancelled" || order.status === "refunded") {
+      return [];
+    }
     const results: ItemResult[] = [];
     for (const item of order.items) {
       results.push(await this.executeItem(order, item));
@@ -207,6 +212,38 @@ export class StoreExecutor {
     if (!adapter) return execution;
     let ex = execution;
     try {
+    // بوابة حالة الطلب (إصلاح W5 #2): حالة الطلب بتتقرأ طازجة هنا —
+    // النسخة اللي جت مع النداء ممكن تكون أقدم من إلغاء/ردّ حصل بعد
+    // الحجز. ملغي/مسترد = قفل يدوي معلَن من غير شراء (مش failed:
+    // الفشل بيحرّك مسار التزام الاسترداد في RPC الاسترداد، والطلب
+    // ده استرداده اتحسم خلاص من مسار الإلغاء نفسه). وأي حالة غير
+    // مدفوعة أصلًا = التنفيذ بيضل زي ما هو لحد ما الدفع يتأكد.
+    const freshOrder = await store.getOrder(execution.order_ref);
+    const currentOrder = freshOrder ?? order;
+    if (
+      currentOrder.status === "cancelled" ||
+      currentOrder.status === "refunded"
+    ) {
+      const closed = await store.updateExecution(ex.id, {
+        status: "manual_review",
+        last_error: "order_cancelled_after_claim",
+      });
+      await this.alert(
+        "طلب اتلغى أو اتردّ تمنه بعد حجز التنفيذ — اتقفل للمراجعة اليدوية من غير شراء",
+        {
+          order_ref: ex.order_ref,
+          product_key: ex.product_key,
+        },
+      );
+      return closed;
+    }
+    if (
+      currentOrder.status !== "paid" &&
+      currentOrder.status !== "payment_confirmed"
+    ) {
+      return ex;
+    }
+    order = currentOrder;
       // --- فحص التوفر من التغذية (حقيقة مخزون الحزمة 3) — Fail-Closed.
       const orderable = await this.deps.availability.isOrderable(record.product_key);
       if (!orderable) {
@@ -240,20 +277,26 @@ export class StoreExecutor {
       if (!record.margin_exception) {
         const floor = liveCost * FLOOR_PER_USD;
         if (ex.sell_egp + 1e-9 < floor) {
+          // إصلاح W5 #6: التنبيه عند الانتقال لحالة الحظر بس — الكنس
+          // بيعدّي هنا كل 20 ثانية، والتكرار كان بيغرق الأدمن بنفس
+          // التنبيه. التكلفة والعلامة بيتحدّثوا كل مرة زي ما هما.
+          const alreadyBlocked = ex.last_error === "margin_blocked";
           ex = await store.updateExecution(ex.id, {
             cost_usd: liveCost,
             last_error: "margin_blocked",
           });
-          this.log("store_exec.margin", "execution blocked: sell below live floor", undefined, {
-            order_ref: ex.order_ref,
-            product_key: ex.product_key,
-            sell_egp: ex.sell_egp,
-            floor_egp: floor,
-          });
-          await this.alert("منتج سعره تحت حد هامشه بالتكلفة الحية — التنفيذ واقف لحد قرار", {
-            order_ref: ex.order_ref,
-            product_key: ex.product_key,
-          });
+          if (!alreadyBlocked) {
+            this.log("store_exec.margin", "execution blocked: sell below live floor", undefined, {
+              order_ref: ex.order_ref,
+              product_key: ex.product_key,
+              sell_egp: ex.sell_egp,
+              floor_egp: floor,
+            });
+            await this.alert("منتج سعره تحت حد هامشه بالتكلفة الحية — التنفيذ واقف لحد قرار", {
+              order_ref: ex.order_ref,
+              product_key: ex.product_key,
+            });
+          }
           return ex;
         }
       }
@@ -383,6 +426,32 @@ export class StoreExecutor {
           product_key: ex.product_key,
         });
         return updated;
+      }
+      // إصلاح W5 #2 (وجذر W7 #3 من مراجعة اللوحة): حالة الطلب بتتقرأ
+      // طازجة قبل ما التسليم يتبعت — طلب اتلغى/اتردّ أثناء ما الشراء
+      // كان عند المورد بيحتجز التسليم للمراجعة اليدوية: مفيش إشعار
+      // عميل ومفيش fulfilled، وبيانات التسليم بتتخزن على سجل
+      // المراجعة عشان الأدمن يحسمها بنفسه.
+      const freshOrder = await store.getOrder(ex.order_ref);
+      if (
+        freshOrder &&
+        (freshOrder.status === "cancelled" ||
+          freshOrder.status === "refunded")
+      ) {
+        const held = await store.updateExecution(ex.id, {
+          status: "manual_review",
+          external_ref: outcome.external_ref || ex.external_ref,
+          delivery: safe,
+          last_error: "delivered_after_order_cancelled",
+        });
+        await this.alert(
+          "المورد سلّم بعد ما الطلب اتلغى/اتردّ — التسليم محتجَز للمراجعة اليدوية ومتبعتش للعميل",
+          {
+            order_ref: ex.order_ref,
+            product_key: ex.product_key,
+          },
+        );
+        return held;
       }
       let updated = await store.updateExecution(ex.id, {
         status: "delivered",
@@ -623,11 +692,28 @@ export class StoreExecutor {
   /** الطلب بيبقى fulfilled بس لما كل بنوده (المغطاة وغيرها) اتسلّمت فعليًا. */
   private async maybeFulfillOrder(order: StoreOrder): Promise<void> {
     const { store } = this.deps;
+    // إصلاح W5 #2: إعادة فحص طازجة قبل كتابة fulfilled — نسخة الطلب
+    // اللي مع المنفّذ ممكن تكون أقدم من إلغاء/ردّ حصل في النص.
+    const fresh = await store.getOrder(order.order_ref);
+    if (
+      !fresh || fresh.status === "cancelled" || fresh.status === "refunded"
+    ) {
+      return;
+    }
     for (const item of order.items) {
       const ex = await store.getExecutionByOrderSku(order.order_ref, item.sku);
       if (!ex || ex.status !== "delivered") return;
     }
-    await store.setOrderStatus(order.order_ref, "fulfilled");
+    // إصلاح W5 #4: فشل كتابة الحالة هنا بيتسجّل مش بيكسر مسار التسليم
+    // (التنفيذ اتسلّم واتبلّغ خلاص — رمي الخطأ لفوق كان هيعلّمه
+    // manual_review في صيد attemptExecution).
+    try {
+      await store.setOrderStatus(order.order_ref, "fulfilled");
+    } catch (e) {
+      this.log("store_exec.fulfill", "setOrderStatus(fulfilled) failed", e, {
+        order_ref: order.order_ref,
+      });
+    }
   }
 
   // ================================================ مسار الأدمن (MR!66)
