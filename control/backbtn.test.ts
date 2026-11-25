@@ -47,14 +47,14 @@ function seg(from: string, to: string): string {
 }
 
 const SUBS = [
-  "prices", "catalog", "suppliers", "events", "settings", "channel",
+  "prices", "catalog", "suppliers", "partners", "events", "settings", "channel",
   "visitors", "preview", "health", "guards", "reviews", "adminUsers",
   "coupons", "merchants", "site",
 ];
 const ROOTS = ["home", "customers", "orders", "chats"];
 
 // ---------- منطق الوجهة النقي ----------
-Deno.test("زر الرجوع: خريطة الشاشات الفرعية هي شاشات «المزيد» الـ١٥ بالظبط", () => {
+Deno.test("زر الرجوع: خريطة الشاشات الفرعية هي شاشات «المزيد» الـ١٦ بالظبط", () => {
   eq(Object.keys(pure.SUB_VIEWS).sort(), [...SUBS].sort(), "sub view set");
   // مطابقة حية مع خريطة «المزيد» الرسمية (PURE-WAVE2): أي شاشة
   // جديدة تدخل الخريطة لازم تدخل هنا، والعكس.

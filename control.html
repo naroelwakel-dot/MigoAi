@@ -512,6 +512,48 @@
   </section>
 </main>
 
+<main id="partnersMain" class="hidden">
+  <button class="btn secondary back view-back-btn" type="button" data-back-from="partners">رجوع</button>
+  <div class="msg" id="partnersMsg"></div>
+
+  <section class="card">
+    <h2>حالة السيرفرات</h2>
+    <div class="sub" style="color:var(--muted); font-size:12px;">السيرفرين اللي الشغل شغال عليهم دلوقتي: ألفا هو اللي بيستقبل الطلبات وبيوزّع الشغل، وبرافو ٢ سيرفر شغل إضافي بينفّذ تفعيلات. لو سيرفر عليه ضغط أو متوقف هتظهر حالته هنا.</div>
+    <div id="serversBody" style="margin-top:8px;"><div class="sub" style="color:var(--muted)">بيحمّل حالة السيرفرات…</div></div>
+    <button class="btn secondary" id="serversReloadBtn" type="button" style="margin-top:12px;">تحديث</button>
+  </section>
+
+  <section class="card">
+    <h2>الشركاء</h2>
+    <div class="sub" style="color:var(--muted); font-size:12px;">شركاء بيشتروا مننا تفعيلات ويدفعوا مقدمًا في محفظة عندنا هنا. اضغط على أي شريك عشان تشوف رصيده وطلباته وتضيف له رصيد أو تسجّل دفعة وصلت منه.</div>
+    <div id="partnersList" style="margin-top:8px;"><div class="sub" style="color:var(--muted)">بيحمّل الشركاء…</div></div>
+    <button class="btn secondary" id="partnersReloadBtn" type="button" style="margin-top:12px;">تحديث</button>
+  </section>
+
+  <section class="card hidden" id="partnerBalanceCard">
+    <h2 id="partnerDetailName">الشريك</h2>
+    <div id="partnerBalanceBody" style="margin-top:8px;"></div>
+    <div class="row-actions" style="margin-top:12px;">
+      <button class="btn" id="partnerCreditBtn" type="button">إضافة رصيد</button>
+      <button class="btn secondary" id="partnerReceivedBtn" type="button">تسجيل دفعة وصلت</button>
+    </div>
+  </section>
+
+  <section class="card hidden" id="partnerOrdersCard">
+    <h2>طلبات اليوم</h2>
+    <div id="partnerTodayBody" style="margin-top:8px;"></div>
+    <h3 style="margin-top:16px;">أحدث الطلبات</h3>
+    <div id="partnerOrdersBody" style="margin-top:8px;"></div>
+  </section>
+
+  <section class="card hidden" id="partnerTxCard">
+    <h2>حركات المحفظة</h2>
+    <div id="partnerTxBody" style="margin-top:8px;"></div>
+    <h3 style="margin-top:16px;">الدفعات اللي وصلت من الشريك</h3>
+    <div id="partnerReceiptsBody" style="margin-top:8px;"></div>
+  </section>
+</main>
+
 <main id="eventsMain" class="hidden">
   <button class="btn secondary back view-back-btn" type="button" data-back-from="events">رجوع</button>
   <div class="msg" id="eventsMsg"></div>
@@ -1445,7 +1487,7 @@ $("homeChatsBtn").addEventListener("click", function(){
 // شغالين، و«المزيد» فيها أسعار الموقع (م٣) والكتالوج والموردون
 // (م٣-ب) والأحداث والمكونات (م٤).
 var navNames = { more: "المزيد" };
-var viewTitles = { home: "مهامي", customers: "العملاء", orders: "الطلبات", chats: "المحادثات", prices: "أسعار الموقع", catalog: "الكتالوج", suppliers: "الموردون", events: "الأحداث", settings: "إعدادات البوت", channel: "قناة التليجرام", coupons: "الكوبونات", merchants: "التجار", site: "الموقع", visitors: "زوار البوت", preview: "شوف كما يراه العميل", health: "صحة النظام", guards: "الحراس", reviews: "التقييمات", adminUsers: "حسابات الموقع" };
+var viewTitles = { home: "مهامي", customers: "العملاء", orders: "الطلبات", chats: "المحادثات", prices: "أسعار الموقع", catalog: "الكتالوج", suppliers: "الموردون", partners: "توريد الشركاء", events: "الأحداث", settings: "إعدادات البوت", channel: "قناة التليجرام", coupons: "الكوبونات", merchants: "التجار", site: "الموقع", visitors: "زوار البوت", preview: "شوف كما يراه العميل", health: "صحة النظام", guards: "الحراس", reviews: "التقييمات", adminUsers: "حسابات الموقع" };
 var viewBackTo = {};
 var viewNavBack = false;
 function showView(name){
@@ -1461,6 +1503,7 @@ function showView(name){
   $("pricesMain").classList.toggle("hidden", name !== "prices");
   $("catalogMain").classList.toggle("hidden", name !== "catalog");
   $("suppliersMain").classList.toggle("hidden", name !== "suppliers");
+  $("partnersMain").classList.toggle("hidden", name !== "partners");
   $("eventsMain").classList.toggle("hidden", name !== "events");
   $("settingsMain").classList.toggle("hidden", name !== "settings");
   $("channelMain").classList.toggle("hidden", name !== "channel");
@@ -1477,7 +1520,7 @@ function showView(name){
   document.querySelectorAll("#bottomNav button").forEach(function(b){
     var nav = b.getAttribute("data-nav");
     // أسعار الموقع والكتالوج والموردون والإعدادات والقناة والكوبونات والتجار بيتفتحوا من «المزيد» فزرها هو اللي بيتلوّن وهم مفتوحين.
-    b.classList.toggle("active", nav === name || ((name === "prices" || name === "catalog" || name === "suppliers" || name === "settings" || name === "channel" || name === "coupons" || name === "merchants" || name === "site" || name === "preview" || name === "health" || name === "guards" || name === "reviews" || name === "adminUsers" || name === "events" || name === "visitors") && nav === "more"));
+    b.classList.toggle("active", nav === name || ((name === "prices" || name === "catalog" || name === "suppliers" || name === "partners" || name === "settings" || name === "channel" || name === "coupons" || name === "merchants" || name === "site" || name === "preview" || name === "health" || name === "guards" || name === "reviews" || name === "adminUsers" || name === "events" || name === "visitors") && nav === "more"));
   });
   if (name !== "chats" && typeof stopChatPolling === "function") stopChatPolling();
   window.scrollTo({ top: 0 });
@@ -1599,6 +1642,13 @@ function refreshVisibleView(){
     if (typeof loadAdminUsers !== "function") return;
     viewRefreshedAt[name] = now;
     loadAdminUsers();
+  } else if (name === "partners") {
+    if (typeof partnersState === "undefined" || !partnersState.loaded) return;
+    if (typeof loadPartners !== "function") return;
+    viewRefreshedAt[name] = now;
+    loadPartners();
+    if (typeof loadServers === "function") loadServers();
+    if (partnersState.detailId && typeof refreshPartnerDetail === "function") refreshPartnerDetail();
   }
 }
 document.addEventListener("visibilitychange", function(){
@@ -1672,7 +1722,8 @@ $("sheetBody").addEventListener("click", function(ev){
   showView(view);
   var ensureMap = {
     prices: ensurePricesLoaded, catalog: ensureCatalogLoaded,
-    suppliers: ensureSuppliersLoaded, coupons: ensureCouponsLoaded,
+    suppliers: ensureSuppliersLoaded, partners: ensurePartnersLoaded,
+    coupons: ensureCouponsLoaded,
     merchants: ensureMerchantsLoaded, events: ensureEventsLoaded,
     channel: ensureChannelLoaded, site: ensureSiteLoaded,
     reviews: ensureReviewsLoaded, adminUsers: ensureAdminUsersLoaded,
@@ -1953,12 +2004,13 @@ function navEntryOf(view, filters, scroll){
 // من غير أي لمس للصفحة، والاختبارات (control/wave2.test.ts)
 // بتقراها من هنا حرفيًا وبتشغّلها.
 // خريطة «المزيد» الرسمية: ٣ مجموعات بالترتيب ده بالظبط، وكل
-// شاشة من الـ١٥ اللي بره الشريط السفلي ليها وصلة صريحة هنا —
-// والشريط نفسه بيغطي مهامي/الطلبات/العملاء/المحادثات، فالـ١٩
+// شاشة من الـ١٦ اللي بره الشريط السفلي ليها وصلة صريحة هنا —
+// والشريط نفسه بيغطي مهامي/الطلبات/العملاء/المحادثات، فالـ٢٠
 // شاشة كلهم ليهم مكان صريح.
 var MORE_GROUPS = [
   { title: "البيع", screens: [
     ["prices", "الأسعار"], ["catalog", "الكتالوج"], ["suppliers", "الموردون"],
+    ["partners", "توريد الشركاء"],
     ["coupons", "الكوبونات"], ["merchants", "التجار"] ] },
   { title: "العملاء والمحتوى", screens: [
     ["events", "الأحداث"], ["channel", "القناة"], ["site", "الموقع"],
@@ -2314,7 +2366,7 @@ function notifBadgeOf(readOk, count){
    تسجيل = «مهامي» شاشة بداية الشغل. التنقّل بالرجوع نفسه مش
    بيسجّل وجهة جديدة — فمفيش لفة رجوع-لقدام. */
 var SUB_VIEWS = {
-  prices: 1, catalog: 1, suppliers: 1, events: 1, settings: 1,
+  prices: 1, catalog: 1, suppliers: 1, partners: 1, events: 1, settings: 1,
   channel: 1, visitors: 1, preview: 1, health: 1, guards: 1,
   reviews: 1, adminUsers: 1, coupons: 1, merchants: 1, site: 1
 };
@@ -6103,6 +6155,422 @@ function runSupplierLink(rowId, op, btn){
 
 $("supReloadBtn").addEventListener("click", loadSuppliers);
 $("registryNewBtn").addEventListener("click", function(){ openRegistrySheet(null); });
+
+// ============================================================
+// قسم توريد الشركاء: شركاء بيشتروا مننا تفعيلات ويدفعوا
+// مقدمًا في محفظة عندنا — الرصيد الفعلي وشرائح الأسعار
+// والمستحق على كل شريك وطلباته وحركات محفظته، وحالة
+// السيرفرين (ألفا وبرافو ٢) اللي الشغل شغال عليهم. كل قراءة
+// وكتابة بتعدّي على البوت من مسارات /control/partner* و
+// /control/servers، والنجاح بيظهر بس بعد رد سليم منه وإعادة
+// قراءة الأرقام من الخادم — مفيش حساب محلي بيتعرض كأنه نهائي.
+// فشل جهة (السيرفرات أو الشركاء أو تفاصيل شريك) بيظهر في
+// بطاقته بس ومش بيوقع باقي اللوحة.
+// ============================================================
+
+function showPartnersMsg(kind, html, withKeyBtn){
+  var box = $("partnersMsg");
+  box.className = "msg " + kind;
+  box.innerHTML = html + (withKeyBtn
+    ? '<button class="btn" id="partnersKeyBtn" type="button">كتابة المفتاح</button>' : "");
+  if (withKeyBtn) $("partnersKeyBtn").addEventListener("click", askKey);
+}
+function hidePartnersMsg(){ $("partnersMsg").className = "msg"; $("partnersMsg").innerHTML = ""; }
+
+/*PURE-PARTNERS-BEGIN*/
+// منطق نقي من غير لمس للصفحة: تحويل السنتات لنص دولار،
+// وكلمات الحالات والحركة بكلام واضح. الاختبارات
+// (control/partners_panel.test.ts) بتقراه من هنا حرفيًا.
+// قيمة بالسنتات -> نص دولار بخانتين ثابتتين (1840 -> ‏"18.40")،
+// أو null لو القيمة مش رقم.
+function usdTextOf(cents){
+  if (cents === null || cents === undefined || cents === "" ||
+      typeof cents === "boolean") return null;
+  var n = Number(cents);
+  if (!isFinite(n)) return null;
+  return (n / 100).toFixed(2);
+}
+// كلمة حالة السيرفر: شغال / عليه ضغط / متوقف.
+function serverStatusText(status){
+  if (status === "ok") return "شغال";
+  if (status === "pressure") return "عليه ضغط";
+  if (status === "down") return "متوقف";
+  return "مش معروف";
+}
+// سبب فشل طلب الشريك بكلام واضح — فاضي لو السبب مش معروف.
+function partnerReasonText(reason){
+  var map = {
+    account_ineligible: "الحساب مش مؤهل",
+    code_rejected: "الكود اترفض",
+    verification_failed: "التحقق فشل",
+    expired: "انتهت المهلة"
+  };
+  return map[reason] || "";
+}
+// حالة طلب الشريك بكلام واضح، والفشل بيتلحق بيه سببه.
+function partnerOrderStatusText(order){
+  var st = order && order.status;
+  if (st === "delivered") return "اتسلّم";
+  if (st === "failed") {
+    var r = partnerReasonText(order.failure_reason);
+    return r ? "فشل — " + r : "فشل";
+  }
+  if (st === "processing") return "شغال دلوقتي";
+  if (st === "awaiting_code") return "مستني الكود";
+  if (st === "awaiting_customer") return "مستني العميل";
+  return "في الانتظار";
+}
+// اسم حركة المحفظة بكلام واضح حسب نوعها.
+function partnerTxText(tx){
+  var t = tx && (tx.type || tx.kind);
+  var map = {
+    credit: "إضافة رصيد",
+    topup: "إضافة رصيد",
+    charge: "خصم تفعيلة اتسلّمت",
+    debit: "خصم تفعيلة اتسلّمت",
+    delivery: "خصم تفعيلة اتسلّمت",
+    price_correction: "تصحيح سعر",
+    correction: "تصحيح سعر",
+    refund: "رجوع رصيد",
+    release: "فك حجز لطلب",
+    reserve: "حجز لطلب"
+  };
+  return map[t] || "حركة محفظة";
+}
+/*PURE-PARTNERS-END*/
+
+var partnersState = { loaded: false, partners: [], detail: null, detailId: "", gen: 0 };
+var serversState = { loaded: false, servers: [], gen: 0 };
+
+function usdOrDash(cents){
+  var t = usdTextOf(cents);
+  return t != null ? "$" + t : "—";
+}
+function numOrDash(v){
+  return (v === null || v === undefined) ? "—" : fmtNum(v);
+}
+// وقت بتوقيت القاهرة: نسبي + مطلق، زي نمط الحراس.
+function cairoTimeText(iso){
+  if (!iso) return null;
+  var t = new Date(iso).getTime();
+  if (!isFinite(t)) return null;
+  try {
+    return new Date(t).toLocaleString("ar-EG-u-nu-latn",
+      { timeZone: "Africa/Cairo", day: "numeric", month: "numeric",
+        hour: "numeric", minute: "2-digit" });
+  } catch (e) { return null; }
+}
+function partnerWhenText(iso){
+  var rel = relTime(iso);
+  var abs = cairoTimeText(iso);
+  if (rel && abs) return rel + " · " + abs;
+  return rel || abs || "—";
+}
+
+function ensurePartnersLoaded(){
+  if (partnersState.loaded) return;
+  partnersState.loaded = true;
+  loadServers();
+  loadPartners();
+}
+
+// ---------------- حالة السيرفرات ----------------
+function loadServers(){
+  var gen = ++serversState.gen;
+  api("/control/servers").then(function(d){
+    if (gen !== serversState.gen) return;
+    serversState.servers = Array.isArray(d.servers) ? d.servers : [];
+    serversState.loaded = true;
+    renderServers();
+  }).catch(function(){
+    if (gen !== serversState.gen) return;
+    $("serversBody").innerHTML = '<div class="sub" style="color:var(--red)">تعذر جلب البيانات — حالة السيرفرات مش متاحة دلوقتي.</div>';
+  });
+}
+function serverBadgeHtml(status){
+  var t = esc(serverStatusText(status));
+  if (status === "ok") return '<span class="badge ok">' + t + "</span>";
+  if (status === "pressure") return '<span class="badge warn">' + t + "</span>";
+  if (status === "down") return '<span class="badge" style="border-color:var(--red); color:#FFD7D5;">' + t + "</span>";
+  return '<span class="badge mut">' + t + "</span>";
+}
+function renderServers(){
+  var box = $("serversBody");
+  if (!serversState.servers.length){
+    box.innerHTML = '<div class="empty">مفيش بيانات سيرفرات دلوقتي.</div>';
+    return;
+  }
+  var html = "";
+  serversState.servers.forEach(function(sv, i){
+    html += '<div' + (i ? ' style="border-top:1px solid var(--border); padding-top:12px; margin-top:12px;"' : "") + ">" +
+      '<div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">' +
+      '<b style="font-size:16px;">' + esc(sv.name || sv.key || "") + "</b>" + serverBadgeHtml(sv.status) + "</div>" +
+      '<div class="kv"><span class="k">حمل الشغل (آخر دقيقة / آخر ٥ دقايق)</span><span class="v num">' +
+        esc(fmtNum(sv.load1)) + " / " + esc(fmtNum(sv.load5)) + "</span></div>" +
+      '<div class="kv"><span class="k">الذاكرة المتاحة</span><span class="v num">' +
+        esc(fmtNum(sv.ram_avail_mb)) + " من " + esc(fmtNum(sv.ram_total_mb)) + " ميجا</span></div>" +
+      '<div class="kv"><span class="k">المساحة الفاضية في القرص</span><span class="v num">' +
+        esc(fmtNum(sv.disk_free_gb)) + " جيجا</span></div>";
+    if (sv.worker) {
+      html += '<div class="kv"><span class="k">محرك الشغل</span><span class="v">' +
+          (sv.worker.cdp ? "شغال" : "متوقف") + "</span></div>" +
+        '<div class="kv"><span class="k">دولة الخروج</span><span class="v">' +
+          esc(sv.worker.exit_country || "—") + "</span></div>";
+    }
+    (Array.isArray(sv.services) ? sv.services : []).forEach(function(svc){
+      html += '<div class="kv"><span class="k">' + esc(svc.name || "") + '</span><span class="v">' +
+        (svc.active ? "شغال" : "متوقف") + "</span></div>";
+    });
+    html += "</div>";
+  });
+  box.innerHTML = html;
+}
+
+// ---------------- قائمة الشركاء ----------------
+function loadPartners(){
+  var gen = ++partnersState.gen;
+  api("/control/partners").then(function(d){
+    if (gen !== partnersState.gen) return;
+    partnersState.partners = Array.isArray(d.partners) ? d.partners : [];
+    renderPartnersList();
+  }).catch(function(e){
+    if (gen !== partnersState.gen) return;
+    if (e && e.noKey) { showPartnersMsg("err", "لازم تكتب مفتاح الأدمن الأول.", true); return; }
+    if (e && e.status === 401) { showPartnersMsg("err", "مفتاح الأدمن غلط أو مش مكتوب. اكتبه تاني عشان تكمل.", true); return; }
+    $("partnersList").innerHTML = '<div class="sub" style="color:var(--red)">تعذر جلب البيانات — الشركاء مش متاحين دلوقتي.</div>';
+  });
+}
+function renderPartnersList(){
+  var box = $("partnersList");
+  if (!partnersState.partners.length){
+    box.innerHTML = '<div class="empty">مفيش شركاء مسجلين دلوقتي.</div>';
+    return;
+  }
+  var html = "";
+  partnersState.partners.forEach(function(p){
+    html += '<div class="result-row" data-partner="' + esc(p.id) + '" style="cursor:pointer;">' +
+      '<div class="who"><b>' + esc(p.name || p.id || "") + "</b>" +
+      "<small>الرصيد الفعلي: " + usdOrDash(p.balance_cents) +
+      (Number(p.owed_cents) > 0 ? " · لسه عليه: " + usdOrDash(p.owed_cents) : " · مفيش مستحق عليه") + "</small></div>" +
+      '<div class="bal num">' + usdOrDash(p.balance_cents) + "<small>الرصيد الفعلي</small></div>" +
+      "</div>";
+  });
+  box.innerHTML = html;
+  box.querySelectorAll("[data-partner]").forEach(function(row){
+    row.addEventListener("click", function(){ openPartnerDetail(row.getAttribute("data-partner")); });
+  });
+}
+
+// ---------------- تفاصيل شريك ----------------
+function openPartnerDetail(id){
+  if (!id) return;
+  partnersState.detailId = id;
+  refreshPartnerDetail().then(function(){
+    var card = $("partnerBalanceCard");
+    if (card && !card.classList.contains("hidden")) {
+      card.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  });
+}
+function refreshPartnerDetail(){
+  var id = partnersState.detailId;
+  if (!id) return Promise.resolve();
+  return api("/control/partner?id=" + encodeURIComponent(id)).then(function(d){
+    if (partnersState.detailId !== id) return;
+    partnersState.detail = d;
+    renderPartnerDetail();
+  }).catch(function(e){
+    if (e && e.noKey) return;
+    if (e && e.status === 401) { showPartnersMsg("err", "مفتاح الأدمن غلط أو مش مكتوب. اكتبه تاني عشان تكمل.", true); return; }
+    showPartnersMsg("err", esc(errText(e, "partners")));
+  });
+}
+function renderPartnerDetail(){
+  var d = partnersState.detail;
+  var p = d && d.partner;
+  if (!p) return;
+  $("partnerBalanceCard").classList.remove("hidden");
+  $("partnerOrdersCard").classList.remove("hidden");
+  $("partnerTxCard").classList.remove("hidden");
+  $("partnerDetailName").textContent = p.name || p.id || "الشريك";
+
+  var html = '<div style="font-size:15px; color:var(--muted);">الرصيد الفعلي</div>' +
+    '<div class="num" style="font-size:30px; font-weight:700; line-height:1.25;">' + usdOrDash(p.balance_cents) + "</div>";
+  var tranches = Array.isArray(p.tranches) ? p.tranches : [];
+  if (tranches.length) {
+    html += '<div class="group-title">دفعات الرصيد اللي لسه فيها فلوس</div>';
+    tranches.forEach(function(t){
+      html += '<div class="kv"><span class="k">فاضل ' + usdOrDash(t.remaining_cents) +
+        '</span><span class="v">بسعر ' + usdOrDash(t.price_cents) + " للتفعيلة</span></div>";
+    });
+  } else {
+    html += '<div class="sub" style="color:var(--muted); margin-top:8px;">مفيش دفعات رصيد فاضلة — الرصيد كله اتصرف.</div>';
+  }
+  html += '<div class="group-title">المستحق على الشريك</div>' +
+    '<div class="kv"><span class="k">اتسجل له رصيد</span><span class="v num">' + usdOrDash(p.credited_cents) + "</span></div>" +
+    '<div class="kv"><span class="k">وصل فعلي</span><span class="v num">' + usdOrDash(p.received_cents) + "</span></div>" +
+    '<div class="kv"><span class="k">لسه عليه</span><span class="v num"' +
+      (Number(p.owed_cents) > 0 ? ' style="color:var(--red);"' : "") + ">" + usdOrDash(p.owed_cents) + "</span></div>";
+  $("partnerBalanceBody").innerHTML = html;
+
+  var today = p.orders_today || {};
+  $("partnerTodayBody").innerHTML =
+    '<div class="cnt-chips">' +
+    '<span class="chip">طلبات النهاردة: <b>' + esc(numOrDash(today.total)) + "</b></span>" +
+    '<span class="chip">اتسلّم: <b>' + esc(numOrDash(today.delivered)) + "</b></span>" +
+    '<span class="chip">فشل: <b>' + esc(numOrDash(today.failed)) + "</b></span>" +
+    '<span class="chip">لسه شغال: <b>' + esc(numOrDash(today.open)) + "</b></span>" +
+    "</div>";
+
+  var orders = Array.isArray(d.orders) ? d.orders : [];
+  if (!orders.length) {
+    $("partnerOrdersBody").innerHTML = '<div class="empty">مفيش طلبات لسه.</div>';
+  } else {
+    var oh = "";
+    orders.forEach(function(o){
+      oh += '<div class="result-row">' +
+        '<div class="who"><b>' + ltrWrap(o.customer_email || "") + "</b>" +
+        "<small>" + esc(partnerOrderStatusText(o)) + " · " + esc(partnerWhenText(o.updated_at || o.created_at)) + "</small></div>" +
+        '<div class="bal num">' + usdOrDash(o.price_cents) + "<small>سعر التفعيلة</small></div>" +
+        "</div>";
+    });
+    $("partnerOrdersBody").innerHTML = oh;
+  }
+
+  var txs = Array.isArray(d.transactions) ? d.transactions : [];
+  if (!txs.length) {
+    $("partnerTxBody").innerHTML = '<div class="empty">مفيش حركات محفظة لسه.</div>';
+  } else {
+    var th = "";
+    txs.forEach(function(tx){
+      th += '<div class="kv"><span class="k">' + esc(partnerTxText(tx)) + " · " +
+          esc(partnerWhenText(tx.created_at || tx.ts)) + '</span><span class="v num">' +
+          usdOrDash(tx.amount_cents) + "</span></div>" +
+        (tx.note ? '<div class="sub" style="color:var(--muted); font-size:12px;">' + esc(tx.note) + "</div>" : "");
+    });
+    $("partnerTxBody").innerHTML = th;
+  }
+
+  var receipts = Array.isArray(d.receipts) ? d.receipts : [];
+  if (!receipts.length) {
+    $("partnerReceiptsBody").innerHTML = '<div class="empty">مفيش دفعات وصلت لسه.</div>';
+  } else {
+    var rh = "";
+    receipts.forEach(function(r){
+      rh += '<div class="kv"><span class="k">دفعة وصلت · ' +
+          esc(partnerWhenText(r.ts || r.created_at)) + '</span><span class="v num">' +
+          usdOrDash(r.amount_cents) + "</span></div>" +
+        (r.note ? '<div class="sub" style="color:var(--muted); font-size:12px;">' + esc(r.note) + "</div>" : "");
+    });
+    $("partnerReceiptsBody").innerHTML = rh;
+  }
+}
+
+// ---------------- إضافة رصيد ----------------
+function openPartnerCredit(){
+  var d = partnersState.detail;
+  var p = d && d.partner;
+  if (!p) return;
+  var defPrice = Number(p.default_price_cents);
+  var body =
+    '<div class="preview">الشريك: <b>' + esc(p.name || p.id || "") + '</b><br>الرصيد دلوقتي: <b class="num">' + usdOrDash(p.balance_cents) + "</b></div>" +
+    '<div class="field"><label>المبلغ (دولار)</label><input id="pcAmt" type="number" inputmode="decimal" min="0" step="0.01"></div>' +
+    '<div class="field"><label>سعر التفعيلة للدفعة دي (دولار)</label><input id="pcPrice" type="number" inputmode="decimal" min="0" step="0.01" value="' +
+      (isFinite(defPrice) && defPrice > 0 ? esc((defPrice / 100).toFixed(2)) : "") + '"></div>' +
+    '<div class="field"><label>ملحوظة (اختياري)</label><input id="pcNote" type="text"></div>' +
+    '<div class="preview" id="pcPreview"></div>';
+  var ctx = openActSheet("إضافة رصيد — " + (p.name || "شريك"), body, "أكّد إضافة الرصيد", function(){
+    var amt = parseFloat($("pcAmt").value);
+    var price = parseFloat($("pcPrice").value);
+    var note = $("pcNote").value.trim();
+    if (!isFinite(amt) || amt <= 0) failValidation("اكتب مبلغ صحيح أكبر من صفر.");
+    if (!isFinite(price) || price <= 0) failValidation("اكتب سعر تفعيلة صحيح أكبر من صفر.");
+    return api("/control/partner-credit", { method: "POST", body: {
+      partner_id: p.id,
+      amount_cents: Math.round(amt * 100),
+      price_cents: Math.round(price * 100),
+      note: note,
+      idempotency_key: ctx.idem
+    } }).then(function(){
+      return refreshPartnerDetail();
+    }).then(function(){
+      loadPartners();
+      showPartnersMsg("ok", "اتضاف الرصيد للشريك — دي الأرقام النهائية بعد ما اتقرأت من الخادم.");
+    });
+  }, "partners");
+  function updPreview(){
+    var amt = parseFloat($("pcAmt").value);
+    var price = parseFloat($("pcPrice").value);
+    var el = $("pcPreview");
+    var balC = Number(p.balance_cents);
+    if (!isFinite(amt) || amt <= 0 || !isFinite(balC)) {
+      el.innerHTML = 'الرصيد دلوقتي: <b class="num">' + usdOrDash(p.balance_cents) + "</b> — اكتب مبلغ عشان تشوف الرصيد بعد الإضافة.";
+      return;
+    }
+    el.innerHTML = 'قبل: <b class="num">' + usdOrDash(p.balance_cents) + '</b> ← بعد: <b class="num">' +
+        usdOrDash(balC + Math.round(amt * 100)) + "</b>" +
+      (isFinite(price) && price > 0
+        ? "<br>الدفعة دي هتتسجل بسعر <b class=\"num\">$" + esc(price.toFixed(2)) + "</b> للتفعيلة — التفعيلات هتتخصم منها بالسعر ده لحد ما الدفعة تخلص."
+        : "") +
+      "<br>الرصيد بعد التنفيذ تقديري — الرقم النهائي بيأكده الخادم.";
+  }
+  $("pcAmt").addEventListener("input", updPreview);
+  $("pcPrice").addEventListener("input", updPreview);
+  updPreview();
+}
+
+// ---------------- تسجيل دفعة وصلت ----------------
+function openPartnerReceived(){
+  var d = partnersState.detail;
+  var p = d && d.partner;
+  if (!p) return;
+  var body =
+    '<div class="preview">الشريك: <b>' + esc(p.name || p.id || "") + '</b><br>لسه عليه دلوقتي: <b class="num">' + usdOrDash(p.owed_cents) + "</b></div>" +
+    '<div class="field"><label>المبلغ اللي وصل (دولار)</label><input id="prAmt" type="number" inputmode="decimal" min="0" step="0.01"></div>' +
+    '<div class="field"><label>ملحوظة (اختياري)</label><input id="prNote" type="text"></div>' +
+    '<div class="preview" id="prPreview"></div>';
+  var ctx = openActSheet("تسجيل دفعة وصلت — " + (p.name || "شريك"), body, "أكّد تسجيل الدفعة", function(){
+    var amt = parseFloat($("prAmt").value);
+    var note = $("prNote").value.trim();
+    if (!isFinite(amt) || amt <= 0) failValidation("اكتب مبلغ صحيح أكبر من صفر.");
+    return api("/control/partner-received", { method: "POST", body: {
+      partner_id: p.id,
+      amount_cents: Math.round(amt * 100),
+      note: note,
+      idempotency_key: ctx.idem
+    } }).then(function(){
+      return refreshPartnerDetail();
+    }).then(function(){
+      loadPartners();
+      showPartnersMsg("ok", "اتسجلت الدفعة اللي وصلت — دي الأرقام النهائية بعد ما اتقرأت من الخادم.");
+    });
+  }, "partners");
+  function updPreview(){
+    var amt = parseFloat($("prAmt").value);
+    var el = $("prPreview");
+    var owedC = Number(p.owed_cents);
+    if (!isFinite(amt) || amt <= 0 || !isFinite(owedC)) {
+      el.innerHTML = 'لسه عليه دلوقتي: <b class="num">' + usdOrDash(p.owed_cents) + "</b> — اكتب مبلغ عشان تشوف اللي هيفضل عليه بعد التسجيل.";
+      return;
+    }
+    var afterC = owedC - Math.round(amt * 100);
+    el.innerHTML = 'قبل: <b class="num">' + usdOrDash(p.owed_cents) + '</b> ← بعد: <b class="num">' +
+        usdOrDash(Math.max(0, afterC)) + "</b>" +
+      (afterC < 0 ? '<br><span class="warn">المبلغ أكبر من اللي لسه عليه — المستحق هيبقى صفر بعد التسجيل.</span>' : "") +
+      "<br>المستحق بعد التنفيذ تقديري — الرقم النهائي بيأكده الخادم.";
+  }
+  $("prAmt").addEventListener("input", updPreview);
+  updPreview();
+}
+
+$("serversReloadBtn").addEventListener("click", function(){ hidePartnersMsg(); loadServers(); });
+$("partnersReloadBtn").addEventListener("click", function(){
+  hidePartnersMsg();
+  loadPartners();
+  if (partnersState.detailId) refreshPartnerDetail();
+});
+$("partnerCreditBtn").addEventListener("click", openPartnerCredit);
+$("partnerReceivedBtn").addEventListener("click", openPartnerReceived);
 
 // ============================================================
 // الأحداث والمكونات (م٤): صندوق موحّد فوق جداول أحداث الموقع

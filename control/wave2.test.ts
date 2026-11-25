@@ -75,24 +75,24 @@ Deno.test("المزيد: ٣ مجموعات بالترتيب والمحتوى ا�
   eq(pure.MORE_GROUPS.map((g) => g.title),
     ["البيع", "العملاء والمحتوى", "التشغيل والحماية"], "group titles");
   eq(pure.moreScreensFlat().map((s) => s.view), [
-    "prices", "catalog", "suppliers", "coupons", "merchants",
+    "prices", "catalog", "suppliers", "partners", "coupons", "merchants",
     "events", "channel", "site", "reviews", "adminUsers", "preview", "visitors",
     "health", "guards", "settings",
-  ], "15 more-screens in plan order");
+  ], "16 more-screens in plan order");
   eq(pure.moreScreensFlat().map((s) => s.name), [
-    "الأسعار", "الكتالوج", "الموردون", "الكوبونات", "التجار",
+    "الأسعار", "الكتالوج", "الموردون", "توريد الشركاء", "الكوبونات", "التجار",
     "الأحداث", "القناة", "الموقع", "التقييمات", "حسابات الموقع",
     "شوف كما يراه العميل", "الزوار", "صحة النظام", "الحراس", "إعدادات البوت",
   ], "screen names");
   const covered = new Set(pure.moreScreensFlat().map((s) => s.view));
   ["home", "orders", "customers", "chats"].forEach((v) => covered.add(v));
-  eq(covered.size, 19, "all 19 screens have an explicit place (bar + more)");
+  eq(covered.size, 20, "all 20 screens have an explicit place (bar + more)");
 });
 
 Deno.test("بحث المزيد: بيصفي بأسماء الشاشات بس", () => {
   eq(pure.filterMoreScreens("الأحداث").map((s) => s.view), ["events"], "by name");
   eq(pure.filterMoreScreens("صحة").map((s) => s.view), ["health"], "partial name");
-  eq(pure.filterMoreScreens("").length, 15, "empty = all");
+  eq(pure.filterMoreScreens("").length, 16, "empty = all");
   eq(pure.filterMoreScreens("مش موجود").length, 0, "no match = none");
   ok(html.includes("دور على شاشة") && html.includes('id="moreSearch"'),
     "search field labelled and present");

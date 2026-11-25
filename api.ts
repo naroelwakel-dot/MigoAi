@@ -79,6 +79,10 @@ import {
   handleControlSuppliersRequest,
 } from "./control/suppliers.ts";
 import {
+  type ControlPartnersDeps,
+  handleControlPartnersRequest,
+} from "./control/partners.ts";
+import {
   type ControlEventsDeps,
   handleControlEventsRequest,
   PostgrestControlEventsClient,
@@ -589,6 +593,27 @@ function getControlSuppliersDeps(): ControlSuppliersDeps {
     logError,
   };
   return _controlSuppliersDeps;
+}
+
+// ---------------------------------------------------------------------------
+// لوحة التحكم: توريد الشركاء وحالة السيرفرين — تمرير خادمي لنقاط
+// البوت الداخلية الخاصة بالشركاء (الرصيد والشرائح والمستحق
+// والطلبات وإضافة الرصيد وتسجيل الدفعات) والسيرفرين (ألفا
+// وبرافو ٢)، بنفس اعتماد جسر الموردين بالظبط.
+// ---------------------------------------------------------------------------
+let _controlPartnersDeps: ControlPartnersDeps | null = null;
+function getControlPartnersDeps(): ControlPartnersDeps {
+  if (_controlPartnersDeps) return _controlPartnersDeps;
+  _controlPartnersDeps = {
+    botClient: new BridgeBotControlProxyClient({
+      baseUrlOf: () => bridgeBaseUrl((n) => Deno.env.get(n)),
+      bridgeTokenOf: controlBridgeTokenOf(),
+    }),
+    isAdmin,
+    corsOf: (r: Request) => corsHeaders(r),
+    logError,
+  };
+  return _controlPartnersDeps;
 }
 
 // ---------------------------------------------------------------------------
@@ -2615,6 +2640,11 @@ Deno.serve(async (req: Request) => {
         getControlSuppliersDeps(),
       );
       if (suppliersRes) return suppliersRes;
+      const partnersRes = await handleControlPartnersRequest(
+        req,
+        getControlPartnersDeps(),
+      );
+      if (partnersRes) return partnersRes;
       const eventsRes = await handleControlEventsRequest(
         req,
         getControlEventsDeps(),
