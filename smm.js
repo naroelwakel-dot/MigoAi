@@ -9,15 +9,15 @@ const vccData = [
     id: "vcc",
     name: "بطاقة VCC دولية (فيزا افتراضية)",
     balanceUsd: "حسب الطلب",
-    priceEgp: 620,
+    priceEgp: 650,
     banner: "images/smm/vcc.webp", bannerAnim: "images/smm/vcc-anim.webp",
     badge: "تفعيل فوري 💳",
     description: "بطاقة فيزا افتراضية دولية تُفعّل الاشتراكات والحملات الإعلانية والشراء من المواقع العالمية، بالجنيه المصري مع كود التحقق 3DS.",
     packages: [
-      { id: "vcc_10", name: "بطاقة برصيد 10$ — 620 ج.م", price: 620, usd: 10 },
-      { id: "vcc_25", name: "بطاقة برصيد 25$ — 1,550 ج.م", price: 1550, usd: 25 },
-      { id: "vcc_50", name: "بطاقة برصيد 50$ — 3,100 ج.م", price: 3100, usd: 50 },
-      { id: "vcc_100", name: "بطاقة برصيد 100$ — 6,200 ج.م", price: 6200, usd: 100 },
+      { id: "vcc_10", name: "بطاقة برصيد 10$ — 650 ج.م", price: 650, usd: 10 },
+      { id: "vcc_25", name: "بطاقة برصيد 25$ — 1,625 ج.م", price: 1625, usd: 25 },
+      { id: "vcc_50", name: "بطاقة برصيد 50$ — 3,250 ج.م", price: 3250, usd: 50 },
+      { id: "vcc_100", name: "بطاقة برصيد 100$ — 6,500 ج.م", price: 6500, usd: 100 },
       { id: "vcc_custom", name: "بطاقة بقيمة مخصصة (تحديد المبلغ عبر واتساب)", price: 100, usd: 1 }
     ]
   }
