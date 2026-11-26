@@ -520,7 +520,7 @@
 
   <section class="card">
     <h2>حالة السيرفرات</h2>
-    <div class="sub" style="color:var(--muted); font-size:12px;">السيرفرين اللي الشغل شغال عليهم دلوقتي: ألفا هو اللي بيستقبل الطلبات وبيوزّع الشغل، وبرافو ٢ سيرفر شغل إضافي بينفّذ تفعيلات. لو سيرفر عليه ضغط أو متوقف هتظهر حالته هنا.</div>
+    <div class="sub" style="color:var(--muted); font-size:12px;">السيرفرات اللي الشغل شغال عليهم دلوقتي: ألفا هو المخ — بيستقبل الطلبات وبيوزّع الشغل وبيشارك في التنفيذ وقت الضغط، وبرافو ٢ ودلتا ٣ سيرفرات شغل بينفّذوا التفعيلات. لو سيرفر عليه ضغط أو متوقف هتظهر حالته هنا.</div>
     <div id="serversBody" style="margin-top:8px;"><div class="sub" style="color:var(--muted)">بيحمّل حالة السيرفرات…</div></div>
     <button class="btn secondary" id="serversReloadBtn" type="button" style="margin-top:12px;">تحديث</button>
   </section>
@@ -6162,7 +6162,7 @@ $("registryNewBtn").addEventListener("click", function(){ openRegistrySheet(null
 // قسم توريد الشركاء: شركاء بيشتروا مننا تفعيلات ويدفعوا
 // مقدمًا في محفظة عندنا — الرصيد الفعلي وشرائح الأسعار
 // والمستحق على كل شريك وطلباته وحركات محفظته، وحالة
-// السيرفرين (ألفا وبرافو ٢) اللي الشغل شغال عليهم. كل قراءة
+// السيرفرات (ألفا وبرافو ٢ ودلتا ٣) اللي الشغل شغال عليهم. كل قراءة
 // وكتابة بتعدّي على البوت من مسارات /control/partner* و
 // /control/servers، والنجاح بيظهر بس بعد رد سليم منه وإعادة
 // قراءة الأرقام من الخادم — مفيش حساب محلي بيتعرض كأنه نهائي.
@@ -6313,10 +6313,16 @@ function renderServers(){
         esc(fmtNum(sv.ram_avail_mb)) + " من " + esc(fmtNum(sv.ram_total_mb)) + " ميجا</span></div>" +
       '<div class="kv"><span class="k">المساحة الفاضية في القرص</span><span class="v num">' +
         esc(fmtNum(sv.disk_free_gb)) + " جيجا</span></div>";
+    if (sv.jobs_cap != null) {
+      html += '<div class="kv"><span class="k">طلبات التفعيل دلوقتي</span><span class="v num">' +
+        esc(fmtNum(sv.jobs_active)) + " / " + esc(fmtNum(sv.jobs_cap)) + "</span></div>";
+    }
     if (sv.worker) {
-      html += '<div class="kv"><span class="k">محرك الشغل</span><span class="v">' +
-          (sv.worker.cdp ? "شغال" : "متوقف") + "</span></div>" +
-        '<div class="kv"><span class="k">دولة الخروج</span><span class="v">' +
+      if (sv.worker.cdp != null) {
+        html += '<div class="kv"><span class="k">محرك الشغل</span><span class="v">' +
+          (sv.worker.cdp ? "شغال" : "متوقف") + "</span></div>";
+      }
+      html += '<div class="kv"><span class="k">دولة الخروج</span><span class="v">' +
           esc(sv.worker.exit_country || "—") + "</span></div>";
     }
     (Array.isArray(sv.services) ? sv.services : []).forEach(function(svc){
