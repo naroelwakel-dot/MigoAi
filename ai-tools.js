@@ -99,7 +99,7 @@ const aiProducts = [
         id: 'ai_muse',
         name: 'Muse AI',
         tag: 'توليد ومونتاج ذكي',
-        price: 140,
+        price: 51,
         desc: 'حساب كامل مخصص للإنتاج المرئي',
         banner: 'images/ai/ai_muse.webp', bannerAnim: 'images/ai/ai_muse-anim.webp'
     },
